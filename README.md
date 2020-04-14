@@ -4,11 +4,11 @@
 2. Build the docker containers with docker-compose up
 3. Migrate the database changes ; 
   - Run `docker exec -it laravel /bin/bash` to jump into the laravel container
-  - navigate to mpmanager directory with `cd mpmanager`
+  - navigate to `mpmanager` directory with `cd mpmanager`
   - Run `php artisan migrate` to initialize the Database
   - The previous step will create all Tables but you need an admin to login to the system. Run the following code snippet to create an Admin/User to login. 
   ```php
-  use App\Models\User;$u = new User();
+  $u = new App\Models\User();
   $u->email = 'admin@admin.com';
   $u->password = Hash::make('your-password');
   $u->name = 'Admin';
