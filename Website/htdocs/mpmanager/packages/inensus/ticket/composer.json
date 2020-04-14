@@ -1,0 +1,23 @@
+{
+    "name": "kemal/ticket",
+    "authors": [
+        {
+            "name": "Kemal",
+            "email": "alchalade@gmail.com"
+        }
+    ],
+    "require": {},
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-4": {
+            "Inensus\\Ticket\\": "src"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Inensus\\Ticket\\TicketServiceProvider"
+            ]
+        }
+    }
+}

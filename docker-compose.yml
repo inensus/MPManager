@@ -1,0 +1,64 @@
+version: '3.1'
+
+services:
+  'laravel':
+    container_name: laravel
+    build:
+      context: Docker/
+    image: laravel/php:72
+
+    environment:
+      VIRTUAL_HOST: mpmanager.local
+    depends_on:
+    - maria
+    links:
+    - maria:db
+    - redis:redis
+
+    volumes:
+    - ./Website/config/php/php.ini:/usr/local/etc/php/php.ini
+    - ./Website/htdocs:/var/www/html
+
+
+  'redis':
+    image: redis:4
+    volumes:
+      - ./redis/:/data
+
+  'phpmyadmin':
+    image: phpmyadmin/phpmyadmin:latest
+    environment:
+      VIRTUAL_HOST: db.mpmanager.local
+
+    depends_on:
+    - maria
+    links:
+    - maria:db
+
+
+  'maria':
+    container_name: maria
+    image: mariadb:10.3
+    environment:
+      MYSQL_ROOT_PASSWORD: laravel
+      MYSQL_DATABASE: laravel
+      MYSQL_USER: laravel
+      MYSQL_PASSWORD: laravel
+    volumes:
+    - ./DB/mysql:/var/lib/mysql
+
+  nginxproxy:
+    container_name: nginx-proxy
+    image: jwilder/nginx-proxy:latest
+    ports:
+      - "80:80"
+      - "443:443"
+      - "6379:6379"
+    environment:
+      VIRTUAL_PROTO: https
+    volumes:
+      - ./NginxProxy/proxy.conf:/etc/nginx/proxy.conf
+      - ./NginxProxy/conf.d:/etc/nginx/conf.d
+      - ./NginxProxy/certs:/etc/nginx/certs
+      - ./NginxProxy/vhost.d:/etc/nginx/vhost.d
+      - /var/run/docker.sock:/tmp/docker.sock:ro
