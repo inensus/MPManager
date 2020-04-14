@@ -1,0 +1,46 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+
+
+/**
+ * Created by PhpStorm.
+ * User: kemal
+ * Date: 14.05.19
+ * Time: 10:39
+ */
+class AddAssignedPersonToTicket extends Migration
+{
+
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        $tableNames = config('tickets.table_names');
+
+        Schema::table($tableNames['ticket'], function (Blueprint $table) {
+            $table->integer('assigned_id')->nullable();
+        });
+
+
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+        $tableNames = config('ticket.table_names');
+        Schema::table($tableNames['ticket'], function (Blueprint $table) {
+            $table->dropColumn('assigned_id');
+        });
+    }
+
+}
