@@ -11,12 +11,23 @@
   use App\Models\User;$u = new User();
   $u->email = 'admin@admin.com';
   $u->password = Hash::make('your-password');
-  $u->password = Hash::make('your-password');
+  $u->name = 'Admin';
   $u->save();
   ```
   This will create a new user. You can leave/exit the container when you are done with it. 
 
-## 2. Essential Configuration
+
+## 2. Install Dependencies 
+ 1. Install php dependencies in the Docker-Container named `laravel`
+   navigate to `mpmanager` directory & run `php ../composer.phar install`
+ 2. Install javascript dependencies with `npm install`.  
+ Note: Node is currently not available in the Docker-Container. Please install the dependencies directly on your own system. 
+ **Tested Node version : v13.8.0**
+
+## 3. Build Frontend
+To build the project navigate to `./Website/htdocs/mpmanager` and run `npm run watch`  
+ Note: Again, node is not available in the container. Please run that command on your own system.
+## 4. Essential Configuration
 There are bound services like the Payment Services (Vodacom Tanzania and Airtel Tanzania), Ticketing Service(Trello API), Critical Logging notification(Slack Channel), WebSocket(Pusher), etc. if you plan to get your payments through these services you need to change/edit following files/configurations
 
 ### Mobile Payment Configurations - Vodacom
