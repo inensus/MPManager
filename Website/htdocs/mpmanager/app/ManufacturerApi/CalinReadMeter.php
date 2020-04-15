@@ -32,10 +32,15 @@ class CalinReadMeter implements IMeterReader
     /**
      * CalinReadMeter constructor.
      * @param MeterConsumption $consumption
+     * @throws \SoapFault
      */
     public function __construct(MeterConsumption $consumption)
     {
-        $this->api = new SoapClient(config('services.calin.meter.api'), ['keep_alive' => false]);
+        try {
+            $this->api = new SoapClient(config('services.calin.meter.api'), ['keep_alive' => false]);
+        } catch (\Exception $exception) {
+            Log::debug('You\'re not able to read out CALIN meters');
+        }
         $this->consumption = $consumption;
     }
 
@@ -46,6 +51,9 @@ class CalinReadMeter implements IMeterReader
      */
     public function readDailyData($meterId, $date)
     {
+        if ($this->api === null) {
+            return;
+        }
         if (substr_count($date, '-') !== 2) {
             throw new InvalidDateException($date, 'date is not in y-m-d format');
         }
@@ -123,8 +131,8 @@ class CalinReadMeter implements IMeterReader
 
     /**
      * @param $data
-     * @throws MeterIsNotReadable
      * @return string
+     * @throws MeterIsNotReadable
      */
     private function fetchResponseData($data): array
     {
