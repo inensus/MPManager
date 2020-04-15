@@ -1,0 +1,138 @@
+window._ = require('lodash')
+window.Popper = require('popper.js').default
+import 'babel-polyfill'
+
+window.axios = require('axios')
+window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest'
+// Add a request interceptor
+window.axios.interceptors.request.use(
+    config => {
+        const token = localStorage.getItem('token')
+        if (token) {
+            config.headers['Authorization'] = 'Bearer ' + token
+        }
+        // config.headers['Content-Type'] = 'application/json';
+        return config
+    },
+    error => {
+        Promise.reject(error)
+    }
+)
+
+import { config } from './config'
+
+Vue.prototype.appConfig = config
+
+import Raphael from 'raphael/raphael'
+
+global.Raphael = Raphael
+
+import Vue from 'vue'
+import VueRouter from 'vue-router'
+import Vuex from 'vuex'
+import moment from 'moment'
+import Notifications from 'vue-notification'
+
+Vue.use(Vuex)
+window.Vue = Vue
+window.Vuex = Vuex
+
+import VueGoogleCharts from 'vue-google-charts'
+
+Vue.use(VueGoogleCharts)
+
+window.moment = moment
+Vue.use(VueRouter)
+
+Vue.use(Notifications)
+
+// import component and stylesheet
+import AirbnbStyleDatepicker from 'vue-airbnb-style-datepicker'
+import 'vue-airbnb-style-datepicker/dist/vue-airbnb-style-datepicker.min.css'
+
+// see docs for available options
+const datepickerOptions = {}
+
+// make sure we can use it in our components
+Vue.use(AirbnbStyleDatepicker, datepickerOptions)
+
+import { resources } from './resources'
+
+window.resources = resources
+
+import Echo from 'laravel-echo'
+
+/**
+ * Pusher
+ */
+window.Pusher = require('pusher-js')
+window.Echo = new Echo({
+    broadcaster: 'pusher',
+    key: '56e4b7fede4ce42e1b84',
+    cluster: 'eu',
+    encrypted: true
+})
+
+/**
+ * Sweet Alert
+ */
+import VueSweetalert2 from 'vue-sweetalert2'
+
+Vue.use(VueSweetalert2)
+
+window.audio = new Audio('../notification/to-the-point.mp3')
+window.onclick = function (e) {
+    console.log(e.target.localName)
+    let target = e.target
+    if (target.localName === 'a' || target.localName === 'i') {
+        let className = target.getAttribute('class')
+        let validClassNames = ['fa fa-compress', 'fa fa-expand', 'button-icon jarviswidget-fullscreen-btn']
+        if (validClassNames.indexOf(className) > -1) {
+            window.dispatchEvent(new Event('resize'))
+        }
+    }
+}
+
+import * as VueGoogleMaps from 'vue2-google-maps'
+
+Vue.use(VueGoogleMaps, {
+    load: {
+        key: 'AIzaSyCiSUjcyWMpV8dAMjIQ-VUaLZZ9NEFIELo',
+    },
+})
+
+import VTooltip from 'v-tooltip'
+
+Vue.use(VTooltip)
+
+import VueHtml2Canvas from 'vue-html2canvas'
+
+Vue.use(VueHtml2Canvas)
+
+import VueMaterial from 'vue-material'
+import 'vue-material/dist/vue-material.min.css'
+import 'vue-material/dist/theme/default.css' // This line here
+Vue.use(VueMaterial)
+
+import VeeValidate from 'vee-validate'
+
+Vue.use(VeeValidate)
+
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { fas } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faJs, faVuejs, faFacebookF, faSkype } from '@fortawesome/free-brands-svg-icons'
+
+library.add(fas)
+library.add(faJs, faFacebookF, faSkype)
+Vue.component('font-awesome-icon', FontAwesomeIcon)
+
+import { VueGrid, VueCell } from 'vue-grd'
+
+Vue.component('vue-grid', VueGrid)
+Vue.component('vue-cell', VueCell)
+
+import Default from './layouts/Default.vue'
+
+Vue.component('default-layout', Default)
+
