@@ -1,0 +1,239 @@
+<template>
+    <md-app class="app-style">
+        <md-app-drawer md-permanent="full" class="drawer-style">
+            <div class="sidebar-layout"></div>
+            <md-toolbar class="md-transparent" md-elevation="1">
+                <div class="md-layout md-gutter md-alignment-center-left p-15">
+                    <div class="md-layout-item md-size-40" style="margin-right: 1vh">
+                        <font-awesome-icon icon="user-circle" class="fa-4x c-white"/>
+                    </div>
+
+                    <div class="md-layout">
+                        <div class="md-layout-item md-size-100 c-white">
+                            <span class="admin-text">{{adminName}}</span>
+                        </div>
+
+                        <div class="md-layout-item md-size-100 c-gray">
+                            <font-awesome-icon icon="clock" swap-opacity/>
+                            <small>{{remaining}}</small>
+                        </div>
+                    </div>
+
+
+                </div>
+
+            </md-toolbar>
+
+            <md-list class="no-bg p-15" md-expand-single>
+                <component :is="'route' in menu ? 'router-link' : 'div'" v-for="(menu,index) in menus" :key="index"
+                           :md-expand="'children' in menu"
+                           :to="menu.route">
+                    <md-list-item :md-expand="'children' in menu" class="kemal">
+                        <!-- add icon if icon is defined -->
+                        <font-awesome-icon :icon="menu.icon" v-if="'icon' in menu" class="c-white icon-box"
+                        />
+
+                        <span class="md-list-item-text">{{menu.name}}</span>
+                        <md-list slot="md-expand" v-if="'children' in menu" class="no-bg">
+                            <md-list-item v-for="(sub,index) in menu.children"
+                                          :key="index"
+
+                            >
+                                <router-link :to="sub.route" class="sub-menu">
+                                    <md-list-item class="md-inset c-white">
+                                        <span class="md-list-item-text"> {{sub.name}}</span>
+                                    </md-list-item>
+                                </router-link>
+                            </md-list-item>
+                        </md-list>
+                    </md-list-item>
+                </component>
+            </md-list>
+        </md-app-drawer>
+    </md-app>
+
+</template>
+
+<script>
+    export default {
+        name: 'SideBar.vue',
+        data: () => (
+            {
+                show_extender: false,
+                admin: null,
+                menus: [
+                    {
+                        name: 'Dashboard',
+                        icon: 'home',
+                        children: [
+                            {
+                                name: 'Clusters',
+                                route: '/'
+                            },
+                            {
+                                name: 'Mini-Grid',
+                                route: '/dashboards/mini-grid'
+                            },
+                        ]
+                    },
+                    {
+                        name: 'Customers',
+                        route: '/people/page/1',
+                        icon: 'user-friends',
+                    },
+                    {
+                        name: 'Meters',
+                        route: '/meters/page/1',
+                        icon: 'bolt',
+                    },
+                    {
+                        name: 'Transactions',
+                        route: '/transactions/page/1',
+                        icon: 'university',
+                    },
+                    {
+                        name: 'Tickets',
+                        icon: 'ticket-alt',
+                        children: [
+                            {
+                                name: 'List',
+                                route: '/tickets'
+                            },
+                            {
+                                name: 'Users',
+                                route: '/tickets/settings/users'
+                            },
+                            {
+                                name: 'Categories',
+                                route: '/tickets/settings/categories'
+                            },
+                        ]
+                    },
+                    {
+                        name: 'Tariffs',
+                        route: '/tariffs',
+                        icon: 'charging-station',
+                    },
+                    {
+                        name: 'Targets',
+                        route: '/targets',
+                        icon: 'bullseye',
+                    },
+                    {
+                        name: 'Reports',
+                        route: '/reports',
+                        icon: 'file-excel',
+                    },
+                    {
+                        name: 'Sms',
+                        icon: 'sms',
+                        children: [
+                            {
+                                name: 'Sms List',
+                                route: '/sms/list/page/1'
+                            },
+                            {
+                                name: 'New Sms',
+                                route: '/sms/newsms'
+                            },
+
+                        ]
+                    },
+                    {
+                        name: 'Asset Types',
+                        route: '/assets/types/page/1',
+                        icon: 'toolbox',
+                    },
+                    {
+                        name: 'Maintenance',
+                        route: '/maintenance',
+                        icon: 'wrench',
+                    }
+                ]
+            }
+        ),
+
+        computed: {
+            adminName() {
+                return this.$store.getters.admin.name
+            },
+            remaining() {
+                let remaining_time = this.$store.getters.admin.remaining_time
+                let remaining_seconds = (remaining_time % 60).toString()
+                return Math.floor(remaining_time / 60).toString() + ':' + ('0' + remaining_seconds).slice(-2)
+            }
+        },
+
+    }
+</script>
+
+<style scoped>
+
+
+    .active-link {
+        background-color: rgba(32, 66, 32, 0.74);
+
+    }
+
+    .exact-active {
+        background: #6b6a6a !important;
+        position: relative;
+        left: -15px;
+        width: calc(100% + 30px) !important;
+    }
+
+    .md-list-item-text {
+        color: #f5e8e8 !important;
+
+    }
+
+    .no-bg {
+        background-color: transparent !important;
+    }
+
+    .c-white {
+        color: #f5e8e8 !important;
+    }
+
+    .sidebar-layout {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+
+    }
+
+    .icon-box {
+        margin-right: 15px;
+        width: 25px !important;
+        height: 25px !important;
+
+    }
+
+    .sub-menu {
+        width: 100% !important;
+    }
+
+    .c-gray {
+        color: gray;
+    }
+
+    .admin-text {
+        font-size: 1.2rem;
+    }
+
+    .app-style {
+        width: calc(100% / 12 * 2);
+        position: fixed;
+    }
+
+    .drawer-style {
+        background-color: #2b2b2b !important;
+        height: 100vh;
+    }
+
+    .p-15 {
+        padding: 15px;
+    }
+
+
+</style>

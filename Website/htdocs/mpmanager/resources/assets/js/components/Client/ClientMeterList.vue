@@ -1,0 +1,87 @@
+<template>
+
+    <div>
+        <widget
+
+            :title="' Meters '"
+
+
+        >
+            <div class="md-layout md-gutter">
+                <div class="md-layout-item md-medium-size-100 md-large-size-100 md-small-size-100">
+                    <md-table style="width:100%" v-model="this.meters" md-card md-fixed-header>
+                        <md-table-row slot="md-table-row" slot-scope="{ item }">
+                            <md-table-cell md-label="#">
+
+                                <font-awesome-icon icon="map-marker"
+                                                   @click="setMapCenter(meter.id)"
+                                                   style="cursor:pointer;"/>
+
+
+                            </md-table-cell>
+                            <md-table-cell md-label="ID" md-sort-by="id">{{ item.id }}</md-table-cell>
+                            <md-table-cell md-label="Serial Nr" md-sort-by="serial_number">{{ item.serial_number }}
+                            </md-table-cell>
+                            <md-table-cell md-label="Max Cur." md-sort-by="max_current">{{ item.max_current }}
+                            </md-table-cell>
+                            <md-table-cell md-label="Phase" md-sort-by="phase">{{ item.phase }}</md-table-cell>
+                            <md-table-cell md-label="Tariff" md-sort-by="tariff.name">{{ item.tariff.name}}
+                                {{item.tariff.price}}
+                            </md-table-cell>
+                        </md-table-row>
+                    </md-table>
+                </div>
+            </div>
+
+        </widget>
+    </div>
+
+
+</template>
+
+<script>
+    import { Meters } from '../../classes/person/meters'
+    import { EventBus } from '../../shared/eventbus'
+    import Widget from '../../shared/widget'
+
+    export default {
+        name: 'ClientMeterList',
+        props: {
+            'meterList': {
+                required: true,
+            }
+        },
+        components: {
+            Widget
+        },
+        data () {
+            return {
+                meter: new Meters(),
+                meters: [],
+            }
+        },
+        mounted: function () {
+            for (let m in this.meterList) {
+                this.getDetail(this.meterList[m])
+            }
+        },
+        methods: {
+            getDetail (meterId) {
+                this.meter.getMeterDetails(meterId).then((meter) => {
+                    this.meters.push(meter)
+                })
+            },
+            setMapCenter (meterId) {
+                EventBus.$emit('map', meterId)
+            }
+        },
+
+    }
+</script>
+
+<style>
+
+    .meter-list {
+        cursor: pointer;
+    }
+</style>

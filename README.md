@@ -2,7 +2,15 @@
 ## 1.Setup the Project
 1. Clone or download the repository
 2. Build the docker containers with docker-compose up
-3. Migrate the database changes ; 
+
+## 2. Install Dependencies 
+ 1. Install php dependencies in the Docker-Container named `laravel`
+   navigate to `mpmanager` directory & run `php ../composer.phar install`
+ 2. Install javascript dependencies with `npm install`.  
+ Note: Node is currently not available in the Docker-Container. Please install the dependencies directly on your own system. 
+ **Tested Node version : v13.8.0**
+
+## 3. Migrate the database changes ; 
   - Run `docker exec -it laravel /bin/bash` to jump into the laravel container
   - navigate to `mpmanager` directory with `cd mpmanager`
   - Run `php artisan migrate` to initialize the Database
@@ -16,18 +24,11 @@
   ```
   This will create a new user. You can leave/exit the container when you are done with it. 
 
-
-## 2. Install Dependencies 
- 1. Install php dependencies in the Docker-Container named `laravel`
-   navigate to `mpmanager` directory & run `php ../composer.phar install`
- 2. Install javascript dependencies with `npm install`.  
- Note: Node is currently not available in the Docker-Container. Please install the dependencies directly on your own system. 
- **Tested Node version : v13.8.0**
-
-## 3. Build Frontend
+## 4. Build Frontend
 To build the project navigate to `./Website/htdocs/mpmanager` and run `npm run watch`  
  Note: Again, node is not available in the container. Please run that command on your own system.
-## 4. Essential Configuration
+
+## 5. Essential Configuration
 There are bound services like the Payment Services (Vodacom Tanzania and Airtel Tanzania), Ticketing Service(Trello API), Critical Logging notification(Slack Channel), WebSocket(Pusher), etc. if you plan to get your payments through these services you need to change/edit following files/configurations
 
 ### Mobile Payment Configurations - Vodacom
@@ -66,7 +67,7 @@ AIRTEL_REQUEST_URL="AIRTEL SERVICE URL"
 
 
 
-## STS Meter Configuration
+### STS Meter Configuration
 Currently, the system supports only CALIN-STS meters. To be able to communicate with Calin and generate STS-Tokens, the following changes should be done;
 1. Your key end the endpoint where you create those tokens. 
 ``` bash
@@ -79,7 +80,7 @@ METER_DATA_URL="REMOTE-METER-READING-URL"
 METER_DATA_KEY="METER-READING-KEY"
 METER_DATA_USER="METER-READING-USER"
 ```
-## Pusher(Web Socket)
+### Pusher(Web Socket)
 Pusher is used to notify your admins when a new ticket is been created.
 ```
 PUSHER_APP_ID="PUSHER-APP-ID"
@@ -88,24 +89,23 @@ PUSHER_APP_SECRET="PUSHER-APP-SECRET"
 PUSHER_APP_CLUSTER="YOUR-CLUSTER ex. eu"
 ```
 
-## Slack
+### Slack
 Slack is the current critical logging service that alerts the admins when something went wrong. Like a transaction is been canceled.
 
 ```bash
 LOG_SLACK_WEBHOOK_URL="SLACK-WEBHOOK-URL"
 ```
 
-# 3. Setup Horizon
+## 6. Setup Horizon
 Please follow the documentation on Laravels official website to configure horizon [Documentation](https://laravel.com/docs/5.7/horizon)
 
 We're running 2-16 instances of each Queue. 16 on important queues like; payment, SMS & token.
 
-
-## 4. Installing  Customer Registration App (Android)
+## 7. Installing  Customer Registration App (Android)
 Please read the project documentation to get an idea of why we're using a separate app to register customers via an Android-App.
 Follow the link to get to the Customer Register App Project
 
-## 5. Setup Sms Communication
+## 8. Setup Sms Communication
 There are currently two supported SMS-Gateways.
 1. Bongo Live Tanzania
 2. Inhouse SMS-Gateway Application
@@ -132,7 +132,7 @@ After that, change the following configuration
         ],
 ```
 
-## Configuration for SMS-Gateway Application
+### Configuration for SMS-Gateway Application
 **Advice: Please read the SMS-Gateway documentation before you continue.**
 
 
@@ -161,10 +161,10 @@ You are not forced to use our inhouse solution for SMS communication. You can ch
 ```
 **Dont forget to change the `callback` variable to a globaly reachable domain**
 
-## Change Predefined SMS Text
+### Change Predefined SMS Text
 To change the predefined SMS texts, please edit `app/Sms/SmsTypes.php`
 
-## Weather Data
+## 9.Weather Data
 The system shows the weather data on the Mini-Grid level. To be able to readout the data from  `Open Weather Map` service you have to register yourself there and get an **Api-KEY**
 Change the following value in `services.php`
 ```bash
@@ -173,7 +173,7 @@ Change the following value in `services.php`
     ]
 ```
 
-## Email
+## 10.Email
 To be able to send E-Mails please edit following configuration variables
 ```bash
 return [
