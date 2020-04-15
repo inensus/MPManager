@@ -2,19 +2,29 @@
 ## 1.Setup the Project
 1. Clone or download the repository
 2. Build the docker containers with docker-compose up
-
+3. The project will be reachable under `mpmanager.local` as default. To be able to reach the site with that domain please 
+enter the following lines to;
+#### For Linux/Mac Users
+```
+/etc/hosts
+127.0.0.1       manager.mpmanager.local
+127.0.0.1       db.manager.mpmanager.local
+``` 
+#### For Windows
+```
+c:\windows\system32\drivers\etc\hosts
+127.0.0.1       manager.mpmanager.local
+127.0.0.1       db.manager.mpmanager.local
+```
 ## 2. Install Dependencies 
- 1. Install php dependencies in the Docker-Container named `laravel`
-   navigate to `mpmanager` directory & run `php ../composer.phar install`
- 2. Install javascript dependencies with `npm install`.  
- Note: Node is currently not available in the Docker-Container. Please install the dependencies directly on your own system. 
- **Tested Node version : v13.8.0**
+Install php dependencies in the Docker-Container named `laravel`  navigate to `mpmanager`  & run `php ../composer.phar install`
+
 
 ## 3. Migrate the database changes ; 
   - Run `docker exec -it laravel /bin/bash` to jump into the laravel container
   - navigate to `mpmanager` directory with `cd mpmanager`
   - Run `php artisan migrate` to initialize the Database
-  - The previous step will create all Tables but you need an admin to login to the system. Run the following code snippet to create an Admin/User to login. 
+  - The previous step will create all Tables but you need an admin to login to the system. Firstly type `php artisan tinker` and then run the following code snippet to create an Admin/User to login. 
   ```php
   $u = new App\Models\User();
   $u->email = 'admin@admin.com';
@@ -24,7 +34,16 @@
   ```
   This will create a new user. You can leave/exit the container when you are done with it. 
 
+For any further Database operations you can directly access `db.mpmanager.local` with following credentials 
+```
+username : laravel
+password: laravel
+```
 ## 4. Build Frontend
+Firstly, install the dependencies via  `npm install`.  
+ Note: Node is currently not available in the Docker-Container. Please install the dependencies directly on your own system. 
+ **Te-?sted Node version : v13.8.0**
+
 To build the project navigate to `./Website/htdocs/mpmanager` and run `npm run watch`  
  Note: Again, node is not available in the container. Please run that command on your own system.
 
