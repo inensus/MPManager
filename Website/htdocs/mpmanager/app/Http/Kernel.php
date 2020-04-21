@@ -3,9 +3,11 @@
 namespace App\Http;
 
 use App\Http\Middleware\AdminJWT;
+use App\Http\Middleware\DataControllerMiddleware;
 use App\Http\Middleware\EncryptCookies;
 use App\Http\Middleware\JwtMiddleware;
 use App\Http\Middleware\RedirectIfAuthenticated;
+use App\Http\Middleware\RestrictionMiddleware;
 use App\Http\Middleware\Transaction;
 use App\Http\Middleware\TransactionRequest;
 use App\Http\Middleware\TrimStrings;
@@ -84,5 +86,7 @@ class Kernel extends HttpKernel
         'transaction.request' => TransactionRequest::class,
         'admin' => AdminJWT::class,
         'jwt.verify' => JwtMiddleware::class,
+        'restriction' => RestrictionMiddleware::class,
+        'data.controller' => DataControllerMiddleware::class,
     ];
 }
