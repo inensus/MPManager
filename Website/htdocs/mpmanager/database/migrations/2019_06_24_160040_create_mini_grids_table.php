@@ -17,6 +17,7 @@ class CreateMiniGridsTable extends Migration
             $table->increments('id');
             $table->integer('cluster_id');
             $table->string('name', 191);
+            $table->integer('data_stream')->default(0);
             $table->timestamps();
         });
     }
