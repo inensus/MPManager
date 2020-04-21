@@ -21,7 +21,7 @@ class CountryService
         $this->country = $country;
     }
 
-    public function getByCode(String $countryCode): Country
+    public function getByCode(String $countryCode)
     {
         return $this->country->where('country_code', $countryCode)->first();
     }
