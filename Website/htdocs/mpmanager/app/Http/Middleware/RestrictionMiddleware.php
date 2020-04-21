@@ -7,6 +7,7 @@ use App\Models\MiniGrid;
 use App\Models\Restriction;
 use Closure;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Request;
 
 /**
  * Class RestrictionMiddleware
@@ -71,14 +72,14 @@ class RestrictionMiddleware
         return $next($request);
     }
 
-    private function handleRestriction(int $limit, $target, $request): bool
+    private function handleRestriction(int $limit, $target, Request $request): bool
     {
         if ($target === 'maintenance-user') {
             $users = $this->maintenanceUsers->count();
             if ($users >= $limit) {
                 return false;
             }
-        } elseif ($target === 'enable-data-stream') {
+        } elseif ($target === 'enable-data-stream' && $request->input('data_stream') === 1) {
             // someone(admin) is trying to enable data-stream capability on the mini-grid dashboard
             $enabled = $this->miniGrid->where('data_stream', 1)->count();
             if ($enabled >= $limit) {
