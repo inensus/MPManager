@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateMiniGridRequest;
 use App\Http\Resources\ApiResource;
 use App\Models\MiniGrid;
 use Illuminate\Http\Request;
@@ -20,18 +21,25 @@ class MiniGridController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * List
+     * @urlParam data_stream filters the list based on data_stream column
      *
+     * @param Request $request
      * @return ApiResource
      */
-    public function index(): ApiResource
+    public function index(Request $request): ApiResource
     {
-        $miniGrids = $this->miniGrid->get();
-        return new ApiResource($miniGrids);
+
+        $miniGrids = $this->miniGrid->newQuery();
+        if ($request->has('data_stream')) {
+            $miniGrids->where('data_stream', $request->input('data_stream'));
+        }
+        return new ApiResource($miniGrids->get());
     }
 
     /**
-     * Display the specified resource.
+     * Detail
+     * @bodyParam id int required
      *
      * @param int $id
      *
@@ -39,7 +47,7 @@ class MiniGridController extends Controller
      *
      * @return ApiResource
      */
-    public function show($id, Request $request)
+    public function show($id, Request $request): ApiResource
     {
         $relation = $request->get('relation');
 
@@ -48,6 +56,23 @@ class MiniGridController extends Controller
         } else {
             $miniGrid = $this->miniGrid->find($id);
         }
+        return new ApiResource($miniGrid);
+    }
+
+    /**
+     * Update
+     * @bodyParam name string The name of the MiniGrid.
+     * @bodyParam data_stream int If the data_stream is enabled or not.
+     *
+     * @param MiniGrid $miniGrid
+     * @param Request $request
+     * @return ApiResource
+     */
+    public function update(MiniGrid $miniGrid, UpdateMiniGridRequest $request): ApiResource
+    {
+        $miniGrid->name = $request->input('name') ?? $miniGrid->name;
+        $miniGrid->data_stream = $request->input('data_stream') ?? $miniGrid->data_stream;
+        $miniGrid->save();
         return new ApiResource($miniGrid);
     }
 }
