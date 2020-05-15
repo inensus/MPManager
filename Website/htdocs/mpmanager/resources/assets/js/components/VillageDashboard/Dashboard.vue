@@ -1,397 +1,411 @@
 <template>
-    <section id="widget-grid">
-        <div class="page-container md-layout-column">
-            <md-toolbar style="margin-bottom: 3rem;">
+    <div>
+        <section id="widget-grid">
+            <div class="page-container md-layout-column">
+                <md-toolbar style="margin-bottom: 3rem;">
 
-                <span class="md-title" v-if="miniGridData">
+                    <span class="md-title" v-if="miniGridData">
                     MiniGrid <strong>{{ miniGridData.name}}</strong>
                 <font-awesome-icon @click="editMiniGrid" icon="wrench"/>
 
                 </span>
+                    <md-switch v-model="enableDataStream" @change="onDataStreamChange($event)" :disabled="switching"
+                               class="data-stream-switch">
+                        <span v-if="!enableDataStream">Activate Data-logger </span>
+                        <span v-else> Deactivate Data-logger</span>
+                    </md-switch>
+                    <div class="md-toolbar-section-end">
 
-
-                <div class="md-toolbar-section-end">
-                    <span style="float: left">
+                        <span style="float: left">
                     Period : {{highlighted.base.from}} - {{highlighted.base.to}}
                 </span>
-                    <md-button class="md-raised" @click="expanded = false">
-                        <font-awesome-icon icon="date"/>
-                        Select Period
-                    </md-button>
-                </div>
-            </md-toolbar>
+                        <md-button class="md-raised" @click="expanded = false">
+                            <font-awesome-icon icon="calendar"/>
+                            Select Period
+                        </md-button>
 
-            <!-- material boxex-->
-            <div class="md-layout md-gutter box-group">
+                    </div>
+                </md-toolbar>
 
-                <box class="md-layout-item md-large-size-25 md-medium-size-50 md-small-size-100"
-                     :center-text="true"
-                     :color="[ '#ffa726','#fb8c00']"
-                     header-text="Sold energy (based on transactions)"
-                     :header-text-color="'#dddddd'"
-                     :sub-text="soldEnergy.toString() +'kWh'"
-                     :sub-text-color="'#e3e3e3'"
-                     box-icon="solar-panel"
-                     :box-icon-color="'#578839'"
-                />
+                <!-- material boxex-->
+                <div class="md-layout md-gutter box-group">
 
-                <box v-if="currentTransaction"
-                     class="md-layout-item
+                    <box class="md-layout-item md-large-size-25 md-medium-size-50 md-small-size-100"
+                         :center-text="true"
+                         :color="[ '#ffa726','#fb8c00']"
+                         header-text="Sold energy (based on transactions)"
+                         :header-text-color="'#dddddd'"
+                         :sub-text="soldEnergy.toString() +'kWh'"
+                         :sub-text-color="'#e3e3e3'"
+                         box-icon="solar-panel"
+                         :box-icon-color="'#578839'"
+                    />
+
+                    <box v-if="currentTransaction"
+                         class="md-layout-item
                             md-large-size-25 md-medium-size-50 md-small-size-0 md-xsmall-hide"
-                     :center-text="true"
-                     :color="[ '#ef5350','#e53935']"
-                     header-text="Processed Transactions"
-                     :header-text-color="'#dddddd'"
-                     :sub-text="readable(currentTransaction[0].amount).toString() "
-                     :sub-text-color="'#e3e3e3'"
-                     box-icon="tasks"
-                     :box-icon-color="'#578839'"
-                />
+                         :center-text="true"
+                         :color="[ '#ef5350','#e53935']"
+                         header-text="Processed Transactions"
+                         :header-text-color="'#dddddd'"
+                         :sub-text="readable(currentTransaction[0].amount).toString() "
+                         :sub-text-color="'#e3e3e3'"
+                         box-icon="tasks"
+                         :box-icon-color="'#578839'"
+                    />
 
-                <box v-if="currentTransaction"
-                     class="md-layout-item
+                    <box v-if="currentTransaction"
+                         class="md-layout-item
                             md-large-size-25 md-medium-size-50 md-small-size-0 md-xsmall-hide"
-                     :center-text="true"
-                     :color="[ '#6eaa44','#578839']"
-                     header-text="Revenue"
-                     :header-text-color="'#dddddd'"
-                     :sub-text="readable(currentTransaction[0].revenue).toString() +this.appConfig.currency"
-                     :sub-text-color="'#e3e3e3'"
-                     box-icon="money-bill"
-                     :box-icon-color="'#578839'"
-                />
+                         :center-text="true"
+                         :color="[ '#6eaa44','#578839']"
+                         header-text="Revenue"
+                         :header-text-color="'#dddddd'"
+                         :sub-text="readable(currentTransaction[0].revenue).toString() +this.appConfig.currency"
+                         :sub-text-color="'#e3e3e3'"
+                         box-icon="money-bill"
+                         :box-icon-color="'#578839'"
+                    />
 
-                <solar-data-and-weather
-                    v-if="this.miniGridData"
-                    :mini_grid_id="this.miniGridId"
-                    :mini_grid_coordinates="this.miniGridData.location.points"
-                />
-            </div>
-            <!-- end material boxex-->
-
-            <div style="margin-top:1rem">&nbsp;</div>
-
-            <energy-chart-box :mini-grid-id="miniGridId"/>
-
-            <div class="md-layout md-gutter">
-                <!-- revenue pie chart -->
-                <div class="md-layout-item md-size-35">
-                    <widget
-                        :id="'revenue-pie'"
-                        :headless="true"
-                        :title="'Revenue Per Customer Type'"
-                        color="red">
-
-                        <GChart v-if="donutData.length>0"
-                                type="PieChart"
-                                :options="donutChartOptions"
-                                :data="donutData">
-
-                        </GChart>
-                        <div v-else class="text-center">
-                            <h4>
-                                <b>No data for selected period</b> {{Object.keys(donutData).length}}
-                            </h4>
-                        </div>
-                    </widget>
+                    <solar-data-and-weather
+                        v-if="this.miniGridData"
+                        :mini_grid_id="this.miniGridId"
+                        :mini_grid_coordinates="this.miniGridData.location.points"
+                    />
                 </div>
-                <!-- revenue targets per customer-->
-                <div class="md-layout-item md-size-35">
-                    <widget
-                        :id="'revenue-targets'"
-                        :headless="true"
-                        :title="'Revenue Targets Per Customer Type'"
-                        color="green">
+                <!-- end material boxex-->
 
-                        <div class="row" v-if="batchRevenues.revenueList !== null && donutData.length>0"
-                             style="margin: 2vh;">
+                <div style="margin-top:1rem">&nbsp;</div>
+                <div class="md-layout md-gutter" v-show="isLoggerActive">
+                    <div class="md-layout-item md-size-100">
+                        <energy-chart-box :mini-grid-id="miniGridId"/>
+                    </div>
+                    <div class="md-layout-item md-size-35">
+                        <widget
+                            :id="'revenue-pie'"
+                            :headless="true"
+                            :title="'Revenue Per Customer Type'"
+                            color="red">
+
+                            <GChart v-if="donutData.length>0"
+                                    type="PieChart"
+                                    :options="donutChartOptions"
+                                    :data="donutData">
+
+                            </GChart>
+                            <div v-else class="text-center">
+                                <h4>
+                                    <b>No data for selected period</b> {{Object.keys(donutData).length}}
+                                </h4>
+                            </div>
+                        </widget>
+                    </div>
+                    <!-- revenue targets per customer-->
+                    <div class="md-layout-item md-size-35">
+                        <widget
+                            :id="'revenue-targets'"
+                            :headless="true"
+                            :title="'Revenue Targets Per Customer Type'"
+                            color="green">
+
+                            <div class="row" v-if="batchRevenues.revenueList !== null && donutData.length>0"
+                                 style="margin: 2vh;">
 
 
-                            <div class="md-layout" style="margin-bottom: 0.8vh;"
-                                 v-for="(revenue, index) in getPercentileList()">
-                                <div class="md-layout-item md-size-100">
-                                    {{index}}
-                                </div>
-                                <div class="md-layout-item md-size-100">
-                                    <div>
-                                        <md-progress-bar class="md-dense" md-mode="determinate"
-                                                         :md-value="targetPercentage(batchRevenues.revenueList.revenue[index], revenue.revenue)">
-
-                                        </md-progress-bar>
-                                        <md-tooltip md-delay="300" md-direction="bottom">
-                                            Targetted Revenue:
-                                            {{ targetPercentage(batchRevenues.revenueList.revenue[index],
-                                            revenue.revenue, false)}} %
-                                            {{readable(batchRevenues.revenueList.revenue[index])}}
-                                        </md-tooltip>
+                                <div class="md-layout" style="margin-bottom: 0.8vh;"
+                                     v-for="(revenue, index) in getPercentileList()">
+                                    <div class="md-layout-item md-size-100">
+                                        {{index}}
                                     </div>
+                                    <div class="md-layout-item md-size-100">
+                                        <div>
+                                            <md-progress-bar class="md-dense" md-mode="determinate"
+                                                             :md-value="targetPercentage(batchRevenues.revenueList.revenue[index], revenue.revenue)">
 
+                                            </md-progress-bar>
+                                            <md-tooltip md-delay="300" md-direction="bottom">
+                                                Targetted Revenue:
+                                                {{ targetPercentage(batchRevenues.revenueList.revenue[index],
+                                                revenue.revenue, false)}} %
+                                                {{readable(batchRevenues.revenueList.revenue[index])}}
+                                            </md-tooltip>
+                                        </div>
+
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
 
-                        <div class="col-sm-12 text-center">
+                            <div class="col-sm-12 text-center">
                             <span v-for="i in totalCircles" style="margin:5px" class="dot compare-color-bg"
                                   :class="currentSelectedTargetCircle=== i-1 ? '':'period-indicator' "
                                   @click="setCircleIndex(i-1)"> </span>
 
-                        </div>
-                        <div class="col-sm-12 text-center">
-                            {{currentSelectedTargetCircle+1}} of {{totalCircles}}
-                        </div>
-
-                    </widget>
-                </div>
-                <!-- sold energy-->
-                <div class="md-layout-item md-size-30">
-                    <div class="col-md-3 col-sm-6">
-                        <widget :id="'tickets-overview'" :headless="true">
-                            <div class="text-center">
-                                <h4>Tickets</h4>
                             </div>
-                            <div class="col-sm-12 margin-top-10">
-                                <span style="font-size: 1.6rem;" v-if="periodMap.length>0">Tickets opened in Week {{periodMap[currentDonutIndex].period}}</span>
-                                <span class="pull-right" v-if="Object.keys(currentTickets).length> 0">{{currentTickets.opened}}</span>
-                            </div>
-
-                            <div class="col-sm-12">
-                                <span style="font-size: 1.6rem;" v-if="periodMap.length>0">Tickets closed in Week {{periodMap[currentDonutIndex].period}}</span>
-                                <span class="pull-right" v-if="Object.keys(currentTickets).length> 0">{{currentTickets.closed.amount}}</span>
-                            </div>
-                            <div class="col-sm-12">
-                                <span style="font-size: 1.6rem;">Avg. Time required</span>
-                                <span class="pull-right" v-if="Object.keys(currentTickets).length> 0">{{ calcutateDuration(currentTickets.closed.avgTime)}}</span>
+                            <div class="col-sm-12 text-center">
+                                {{currentSelectedTargetCircle+1}} of {{totalCircles}}
                             </div>
 
                         </widget>
+                    </div>
+                    <!-- sold energy-->
+                    <div class="md-layout-item md-size-30">
+                        <div class="col-md-3 col-sm-6">
+                            <widget :id="'tickets-overview'" :headless="true">
+                                <div class="text-center">
+                                    <h4>Tickets</h4>
+                                </div>
+                                <div class="col-sm-12 margin-top-10">
+                                    <span style="font-size: 1.6rem;" v-if="periodMap.length>0">Tickets opened in Week {{periodMap[currentDonutIndex].period}}</span>
+                                    <span class="pull-right" v-if="Object.keys(currentTickets).length> 0">{{currentTickets.opened}}</span>
+                                </div>
+
+                                <div class="col-sm-12">
+                                    <span style="font-size: 1.6rem;" v-if="periodMap.length>0">Tickets closed in Week {{periodMap[currentDonutIndex].period}}</span>
+                                    <span class="pull-right" v-if="Object.keys(currentTickets).length> 0">{{currentTickets.closed.amount}}</span>
+                                </div>
+                                <div class="col-sm-12">
+                                    <span style="font-size: 1.6rem;">Avg. Time required</span>
+                                    <span class="pull-right" v-if="Object.keys(currentTickets).length> 0">{{ calcutateDuration(currentTickets.closed.avgTime)}}</span>
+                                </div>
+
+                            </widget>
+
+                        </div>
+
+                        <battery-statuses :mini_grid_id="this.miniGridId"/>
+
 
                     </div>
-
-                    <battery-statuses :mini_grid_id="this.miniGridId"/>
-
 
                 </div>
-
-            </div>
-            <!-- end boxes-->
+                <!-- end boxes-->
 
 
-            <mini-grid-map :mini-grid-id="miniGridId"/>
-            <target-list
-                :target-id="miniGridId"
-                target-type="mini-grid"
-                :base="highlighted.base"
-                :compared="highlighted.compared"
-                @baseDataAvailable=baseDataAvailable
-            />
-
-            <widget :id="'revenue-trends'" :title="'Revenue Trends'">
-                <div class="md-layout md-gutter">
-                    <div class="md-layout-item">
-                        <GChart
-                            type="ColumnChart"
-                            :data="trendChartData.base"
-                            :options="chartOptionsSmall"
-                            :resizeDebounce="500"
-                        />
-                    </div>
-                    <div class="md-layout-item">
-                        <GChart
-                            type="ColumnChart"
-                            :data="trendChartData.compare"
-                            :options="chartOptionsSmall"
-                            :resizeDebounce="500"
-                        />
-                    </div>
-                </div>
-
-
-                <GChart
-                    type="LineChart"
-                    :data="trendChartData.overview"
-                    :options="chartOptions"
-                    :resizeDebounce="500"
+                <mini-grid-map :mini-grid-id="miniGridId"/>
+                <target-list
+                    :target-id="miniGridId"
+                    target-type="mini-grid"
+                    :base="highlighted.base"
+                    :compared="highlighted.compared"
+                    @baseDataAvailable=baseDataAvailable
                 />
 
-            </widget>
+                <widget :id="'revenue-trends'" :title="'Revenue Trends'">
+                    <div class="md-layout md-gutter">
+                        <div class="md-layout-item">
+                            <GChart
+                                type="ColumnChart"
+                                :data="trendChartData.base"
+                                :options="chartOptionsSmall"
+                                :resizeDebounce="500"
+                            />
+                        </div>
+                        <div class="md-layout-item">
+                            <GChart
+                                type="ColumnChart"
+                                :data="trendChartData.compare"
+                                :options="chartOptionsSmall"
+                                :resizeDebounce="500"
+                            />
+                        </div>
+                    </div>
 
-            <widget :id="'ticketing-trends'" :title="'Tickets Overview'">
-                <div class="col-sm-12" style="margin: 2vh;sdasdasasdasdadasdasdfsdtkoaerıı">
-                    <h5>Opened Tickets are on the left side and resolved tickets on the right side</h5>
+
                     <GChart
-                        type="ColumnChart"
-                        :data="openedTicketChartData"
+                        type="LineChart"
+                        :data="trendChartData.overview"
                         :options="chartOptions"
                         :resizeDebounce="500"
                     />
-                </div>
 
+                </widget>
 
-            </widget>
-        </div>
-
-        <div v-if="expanded === false" class="col-md-3 col-sm-4"
-             style="position: fixed; top:3em; right: -10px; z-index: 9999;">
-
-            <widget
-                :id="'period-selector'"
-                :headless="true"
-                :button="true"
-                buttonText="Close"
-                :callback="closeDatePicker"
-                :title="'Period Selector'">
-
-                <md-menu>
-                    <md-button :class="{'active': tab==='weekly'}" @click="tab = 'weekly'" md-menu-trigger>
-                        <font-awesome-icon icon="list"/>
-                        Weekly
-                    </md-button>
-                    <md-button @click="tab = 'monthly'">
-                        <font-awesome-icon icon="list"/>
-                        Monthly
-                    </md-button>
-                    <md-button @click="tab = 'anual'">
-                        <font-awesome-icon icon="list"/>
-                        Anual
-                    </md-button>
-                </md-menu>
-
-
-                <div class="text-center" v-if="tab==='weekly'" :key="tab">
-                    <h4>Base Week</h4>
-                    <div class="col-sm-12">
-                        <datepicker :inline="true" @selected="dateSelectedBase" :highlighted="highlighted.base"
-                                    :monday-first="true"
-                                    :disabledDates="disabled"></datepicker>
-
+                <widget :id="'ticketing-trends'" :title="'Tickets Overview'">
+                    <div class="col-sm-12" style="margin: 2vh;sdasdasasdasdadasdasdfsdtkoaerıı">
+                        <h5>Opened Tickets are on the left side and resolved tickets on the right side</h5>
+                        <GChart
+                            type="ColumnChart"
+                            :data="openedTicketChartData"
+                            :options="chartOptions"
+                            :resizeDebounce="500"
+                        />
                     </div>
 
-                    <h4>Compared Week</h4>
-                    <div class="col-sm-12">
-                        <datepicker :inline="true" @selected="dateSelectedCompared"
-                                    :highlighted="highlighted.compared"
-                                    :monday-first="true"
-                                    :disabledDates="disabled"></datepicker>
-                    </div>
-                </div>
 
-                <div class="text-center" v-if="tab==='monthly'" :key="tab">
-                    <h4>Base Month</h4>
-                    <div class="col-sm-12">
-                        <datepicker :inline="true"
-                                    :minimum-view="'month'"
-                                    :maximum-view="'year'"
-                                    @selected="dateSelectedBase"
-                                    :highlighted="highlighted.base"
-                                    :disabledDates="disabled"/>
-                    </div>
-
-                    <h4>Compared Month</h4>
-                    <div class="col-sm-12">
-                        <datepicker :inline="true"
-                                    :minimum-view="'month'"
-                                    :maximum-view="'year'"
-                                    @selected="dateSelectedCompared"
-                                    :value="highlighted.compared.from"
-                                    :disabledDates="disabled"/>
-                    </div>
-                </div>
-
-
-                <div class="text-center" v-if="tab==='anual'" :key="tab">
-                    <h4>Base Month</h4>
-                    <div class="col-sm-12">
-                        <datepicker :inline="true"
-                                    :minimum-view="'year'"
-                                    :maximum-view="'year'"
-                                    @selected="dateSelectedBase"
-                                    :highlighted="highlighted.tmpBase"
-                                    :disabledDates="disabled"/>
-                    </div>
-
-                    <h4>Compared Month</h4>
-                    <div class="col-sm-12">
-                        <datepicker :inline="true"
-                                    :minimum-view="'year'"
-                                    :maximum-view="'year'"
-                                    @selected="dateSelectedCompared"
-                                    :value="highlighted.tmpCompared.from"
-                                    :disabledDates="disabled"/>
-                    </div>
-                </div>
-
-
-                <div class="col-sm-12 text-center">
-
-                    <md-button class="md-raised" @click="getBatchData"
-                               :disabled="Object.keys(highlighted.base).length===0"> Apply
-                    </md-button>
-                </div>
-            </widget>
-        </div>
-
-
-        <!-- modal-->
-        <transition name="modal" v-if="showModal">
-            <div class="modal-mask">
-                <div class="modal-wrapper">
-                    <div class="modal-container">
-                        <md-card class="md-size-100">
-                            <md-card-header>
-                                <h3>Edit MiniGrid {{miniGridData.name}}</h3>
-                            </md-card-header>
-                            <md-card-content>
-                                <md-field>
-                                    <label for="mini-grid-name">Name</label>
-                                    <md-input type="text" id="mini-grid-name" class="form-control"
-                                              :value="miniGridData.name"></md-input>
-                                </md-field>
-
-                                <md-field>
-                                    <label for="mini-grid-location">Location (Lat, Lon)</label>
-                                    <md-input type="text" id="mini-grid-location"
-                                              class="form-control"
-                                              :value="miniGridData.location!== null ? miniGridData.location.points: ''"
-                                              placeholder="Latitude, Longitude"></md-input>
-
-
-                                </md-field>
-                            </md-card-content>
-                            <md-card-actions>
-                                <md-button class="md-raised md-accent" @click="showModal = false">
-                                    <font-awesome-icon icon="times"/>
-                                    Close
-                                </md-button>
-
-                                <md-button @click="updateMiniGrid" class="md-raised md-primary">
-                                    Update
-                                </md-button>
-                            </md-card-actions>
-                        </md-card>
-
-
-                    </div>
-                </div>
+                </widget>
             </div>
-        </transition>
-        <!-- modal -->
-    </section>
+
+            <div v-if="expanded === false" class="col-md-3 col-sm-4"
+                 style="position: fixed; top:3em; right: -10px; z-index: 9999;">
+
+                <widget
+                    :id="'period-selector'"
+                    :headless="true"
+                    :button="true"
+                    buttonText="Close"
+                    :callback="closeDatePicker"
+                    :title="'Period Selector'">
+
+                    <md-menu>
+                        <md-button :class="{'active': tab==='weekly'}" @click="tab = 'weekly'" md-menu-trigger>
+                            <font-awesome-icon icon="list"/>
+                            Weekly
+                        </md-button>
+                        <md-button @click="tab = 'monthly'">
+                            <font-awesome-icon icon="list"/>
+                            Monthly
+                        </md-button>
+                        <md-button @click="tab = 'anual'">
+                            <font-awesome-icon icon="list"/>
+                            Anual
+                        </md-button>
+                    </md-menu>
+
+
+                    <div class="text-center" v-if="tab==='weekly'" :key="tab">
+                        <h4>Base Week</h4>
+                        <div class="col-sm-12">
+                            <datepicker :inline="true" @selected="dateSelectedBase" :highlighted="highlighted.base"
+                                        :monday-first="true"
+                                        :disabledDates="disabled"></datepicker>
+
+                        </div>
+
+                        <h4>Compared Week</h4>
+                        <div class="col-sm-12">
+                            <datepicker :inline="true" @selected="dateSelectedCompared"
+                                        :highlighted="highlighted.compared"
+                                        :monday-first="true"
+                                        :disabledDates="disabled"></datepicker>
+                        </div>
+                    </div>
+
+                    <div class="text-center" v-if="tab==='monthly'" :key="tab">
+                        <h4>Base Month</h4>
+                        <div class="col-sm-12">
+                            <datepicker :inline="true"
+                                        :minimum-view="'month'"
+                                        :maximum-view="'year'"
+                                        @selected="dateSelectedBase"
+                                        :highlighted="highlighted.base"
+                                        :disabledDates="disabled"/>
+                        </div>
+
+                        <h4>Compared Month</h4>
+                        <div class="col-sm-12">
+                            <datepicker :inline="true"
+                                        :minimum-view="'month'"
+                                        :maximum-view="'year'"
+                                        @selected="dateSelectedCompared"
+                                        :value="highlighted.compared.from"
+                                        :disabledDates="disabled"/>
+                        </div>
+                    </div>
+
+
+                    <div class="text-center" v-if="tab==='anual'" :key="tab">
+                        <h4>Base Month</h4>
+                        <div class="col-sm-12">
+                            <datepicker :inline="true"
+                                        :minimum-view="'year'"
+                                        :maximum-view="'year'"
+                                        @selected="dateSelectedBase"
+                                        :highlighted="highlighted.tmpBase"
+                                        :disabledDates="disabled"/>
+                        </div>
+
+                        <h4>Compared Month</h4>
+                        <div class="col-sm-12">
+                            <datepicker :inline="true"
+                                        :minimum-view="'year'"
+                                        :maximum-view="'year'"
+                                        @selected="dateSelectedCompared"
+                                        :value="highlighted.tmpCompared.from"
+                                        :disabledDates="disabled"/>
+                        </div>
+                    </div>
+
+
+                    <div class="col-sm-12 text-center">
+
+                        <md-button class="md-raised" @click="getBatchData"
+                                   :disabled="Object.keys(highlighted.base).length===0"> Apply
+                        </md-button>
+                    </div>
+                </widget>
+            </div>
+
+            <!-- modal-->
+            <transition name="modal" v-if="showModal">
+                <div class="modal-mask">
+                    <div class="modal-wrapper">
+                        <div class="modal-container">
+                            <md-card class="md-size-100">
+                                <md-card-header>
+                                    <h3>Edit MiniGrid {{miniGridData.name}}</h3>
+                                </md-card-header>
+                                <md-card-content>
+                                    <md-field>
+                                        <label for="mini-grid-name">Name</label>
+                                        <md-input type="text" id="mini-grid-name" class="form-control"
+                                                  :value="miniGridData.name"></md-input>
+                                    </md-field>
+
+                                    <md-field>
+                                        <label for="mini-grid-location">Location (Lat, Lon)</label>
+                                        <md-input type="text" id="mini-grid-location"
+                                                  class="form-control"
+                                                  :value="miniGridData.location!== null ? miniGridData.location.points: ''"
+                                                  placeholder="Latitude, Longitude"></md-input>
+
+
+                                    </md-field>
+                                </md-card-content>
+                                <md-card-actions>
+                                    <md-button class="md-raised md-accent" @click="showModal = false">
+                                        <font-awesome-icon icon="times"/>
+                                        Close
+                                    </md-button>
+
+                                    <md-button @click="updateMiniGrid" class="md-raised md-primary">
+                                        Update
+                                    </md-button>
+                                </md-card-actions>
+                            </md-card>
+
+
+                        </div>
+                    </div>
+                </div>
+            </transition>
+            <!-- modal -->
+            <!-- purchasing modal-->
+            <md-dialog :md-active.sync="ModalVisibility"
+            >
+
+                <md-dialog-content>
+                    <stepper :watchingMiniGrids="watchingMiniGrids" :purchasingType="'logger'" v-if="ModalVisibility">
+
+                    </stepper>
+                </md-dialog-content>
+            </md-dialog>
+            <!-- purchasing modal-->
+        </section>
+
+    </div>
+
 </template>
 
 <script>
     import format from 'date-fns/format'
     import Widget from '../../shared/widget'
     import moment from 'moment'
-    import { BarChart } from 'vue-morris'
-    import { currency } from '../../mixins/currency'
+    import {currency} from '../../mixins/currency'
     import TableList from '../../shared/TableList'
-    import { GChart } from 'vue-google-charts'
-    import { resources } from '../../resources'
+    import {resources} from '../../resources'
     import Datepicker from 'vuejs-datepicker'
-    import { BatchRevenue } from '../../classes/revenue/batch'
-    import * as jsPDF from 'jspdf'
-    import html2canvas from 'html2canvas'
+    import {BatchRevenue} from '../../classes/revenue/batch'
     import TargetList from './TargetList'
     import MiniGridMap from './MiniGripdMap'
     import BatteryStatuses from './BatteryStatuses'
@@ -400,6 +414,9 @@
     import ChartistBox from '../ChartistBox'
     import ChartBox from '../ChartBox'
     import EnergyChartBox from './EnergyChartBox'
+    import {MiniGridService} from '../../services/MiniGridService'
+    import Stepper from '../../shared/stepper'
+    import {EventBus} from '../../shared/eventbus'
 
     export default {
         name: 'Dashboard',
@@ -415,14 +432,15 @@
             TableList,
             Widget,
             Datepicker,
-
+            Stepper
         },
         mixins: [currency],
-        created () {
+
+        created() {
             this.miniGridId = this.$route.params.id
             this.getMiniGridData(this.miniGridId)
         },
-        mounted () {
+        mounted() {
             //set initial dates for periods
             this.initializePeriods()
             this.getBatchData()
@@ -434,14 +452,18 @@
             this.getSoldEnergy()
             this.getSoldEnergy()
             pageSetUp()
+            EventBus.$on('closeModal', (data) => {
+
+                this.ModalVisibility = false
+
+            })
+
         },
         watch: {
             compareData: function () {
-
                 if (this.compareData.length === 0) {
                     return
                 }
-
                 this.compareTotal = 0
                 for (let i = 0; i < this.actualData.length; i++) {
                     this.compareTotal += parseInt(this.compareData[i].amount)
@@ -478,10 +500,10 @@
         },
 
         computed: {
-            compareAnalysisAvailable () {
+            compareAnalysisAvailable() {
                 return this.comparedRevenues.revenueList !== null
             },
-            totalCircles () {
+            totalCircles() {
                 if (this.batchRevenues.revenueList === null) {
                     return 0
                 }
@@ -489,7 +511,7 @@
             },
 
             //the summary of total revenues of both periods
-            totalRevenues () {
+            totalRevenues() {
                 if (this.revenues.length === 0) {
                     return 0
                 }
@@ -522,43 +544,30 @@
 
             },
 
-            currentTarget () {
+            currentTarget() {
                 if (this.donutData.length === 1) {
                     return this.donutData[0].targets
                 }
                 return this.donutData[this.currentDonutIndex].targets
             },
-            currentDonutIndex () {
+            currentDonutIndex() {
                 return this.periodMapIterator % this.periodMap.length
             }
         },
-        data () {
+        data() {
             return {
-                kemalChartData: {
-                    labels: ['00', '01', '02', '03', '04', '05', '06', '07', '08', '09', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'],
-                    series: [{
-                        name: 'state-of-charge',
-                        data: [
-                            { x: new Date(143134652600), y: 53 },
-                            { x: new Date(143234652600), y: 40 },
-                            { x: new Date(143340052600), y: 45 },
-                            { x: new Date(143366652600), y: 40 },
-                            { x: new Date(143410652600), y: 20 },
-                            { x: new Date(143508652600), y: 32 },
-                            { x: new Date(143569652600), y: 18 },
-                            { x: new Date(143579652600), y: 11 }
-                        ]
-                    }, {
-                        name: 'state-of-health',
-                        data: [
-                            { x: new Date(143134652600), y: 53 },
-                            { x: new Date(143234652600), y: 35 },
-                            { x: new Date(143334652600), y: 30 },
-                            { x: new Date(143384652600), y: 30 },
-                            { x: new Date(143568652600), y: 10 }
-                        ]
-                    }]
-                },
+                miniGridService: new MiniGridService(),
+                enableDataStream: false,
+                isLoggerActive: false,
+                ModalVisibility: false,
+                switching: false,
+                watchingMiniGrids: [],
+                activeStep: 'firstStep',
+                firstStep: false,
+                secondStep: false,
+                thirdStep: false,
+                purchaseCode: '',
+
                 showModal: false,
                 datesInitialized: false,
                 currentSelectedTargetCircle: 0,
@@ -676,26 +685,30 @@
             }
 
         },
-
         methods: {
-            closeDatePicker () {
+            closeDatePicker() {
                 this.expanded = true
             },
-            editMiniGrid () {
+            editMiniGrid() {
                 this.showModal = true
             },
-            getMiniGridData (miniGridId) {
-                axios.get(resources.miniGrids.list + '/' + miniGridId + '/?relation=1')
-                    .then((response) => {
-                        this.miniGridData = response.data.data
-                    })
+            async getMiniGridData(miniGridId) {
+                try {
+
+                    this.miniGridData = await this.miniGridService.getMiniGridData(miniGridId)
+                    this.enableDataStream = this.miniGridData.data_stream === 1 ? true : false
+                    this.isLoggerActive = this.enableDataStream
+                } catch (e) {
+                    this.alertNotify('error', e.message)
+                }
+
             },
-            setCircleIndex (index) {
+            setCircleIndex(index) {
                 this.displayedTargetPercetinles[0] = index * 5
                 this.displayedTargetPercetinles[1] = this.displayedTargetPercetinles[0] + 5
                 this.currentSelectedTargetCircle = index
             },
-            getPercentileList () {
+            getPercentileList() {
                 let tmpList = {}
                 let counter = 0
                 for (let t in this.batchRevenues.revenueList.target.targets) {
@@ -711,7 +724,7 @@
                 }
                 return tmpList
             },
-            totalConnectionsByTarget () {
+            totalConnectionsByTarget() {
                 let totalConnections = 0
                 if (this.periodMap.length === 0) return totalConnections
 
@@ -721,7 +734,7 @@
                 })
                 return totalConnections
             },
-            calculateRevenueTargetPercentage (revenue, targetRevenue) {
+            calculateRevenueTargetPercentage(revenue, targetRevenue) {
                 if (revenue === 0 || targetRevenue === 0) return 0
                 return Math.round(
                     parseInt(revenue) * 100
@@ -729,7 +742,7 @@
                     * 100
                 ) / 100
             },
-            baseTargetData (connectionType, type) {
+            baseTargetData(connectionType, type) {
                 if (this.periodMap.length === 0) return 'Target not available'
 
                 let matchTarget = this.periodMap[0].targets.filter(target => {
@@ -748,7 +761,7 @@
 
             },
             //returns a readable string based on [seconds]
-            calcutateDuration (seconds) {
+            calcutateDuration(seconds) {
                 if (seconds === null) return '0'
                 seconds = parseInt(seconds)
 
@@ -756,12 +769,12 @@
 
             },
             //re-formats the date
-            formatPeriodText (date) {
+            formatPeriodText(date) {
                 return moment(date, 'Y-W').format('YYYY MMM Do')
 
             },
 
-            initializePeriods () {
+            initializePeriods() {
                 this.datesInitialized = true
                 //set start period
                 let startingPeriod = moment().weekday(-6).format('YYYY-MM-DD') // last Monday
@@ -770,7 +783,7 @@
             },
 
             //calculates the reached target percentage
-            targetPercentage (actualRevenue, targetRevenue, makeHundred = true) {
+            targetPercentage(actualRevenue, targetRevenue, makeHundred = true) {
                 if (typeof (targetRevenue) === 'undefined') return 0
                 if (targetRevenue === 0) return 100
                 let result = parseInt(parseInt(actualRevenue) * 100 / parseInt(targetRevenue))
@@ -779,7 +792,7 @@
                 return makeHundred === true ? (result > 100 ? 100 : result) : result
             },
 
-            getBatchData () {
+            getBatchData() {
                 this.expanded = true
                 this.highlighted.base = this.highlighted.tmpBase
                 this.highlighted.compared = this.highlighted.tmpCompared
@@ -791,7 +804,7 @@
 
             },
 
-            revenueData (from, to, batchRevenues) {
+            revenueData(from, to, batchRevenues) {
                 return batchRevenues.revenueForPeriod(
                     this.miniGridId,
                     'mini-grid',
@@ -802,7 +815,7 @@
                 })
             },
 
-            getTransactionsOverview () {
+            getTransactionsOverview() {
                 axios.post('/api/mini-grids/' + this.miniGridId + '/transactions', {
                     startDate: this.highlighted.base.from,
                     endDate: this.highlighted.base.to
@@ -813,7 +826,7 @@
                 )
             },
 
-            getSoldEnergy () {
+            getSoldEnergy() {
                 axios.post('/api/mini-grids/' + this.miniGridId + '/energy', {
                     startDate: this.highlighted.base.from,
                     endDate: this.highlighted.base.to
@@ -824,16 +837,16 @@
                 )
             },
 
-            baseDataAvailable (data) {
+            baseDataAvailable(data) {
                 this.batchRevenues = data
 
                 this.initDonutData()
             },
             // get all periods from donut data and maps them into one array
-            initDonutData () {
+            initDonutData() {
                 this.donutData = this.initializeCharts(['Connection Name', 'Revenue'])
             },
-            initializeCharts (initValue) {
+            initializeCharts(initValue) {
                 let donutData = [initValue]
 
                 //donut chart for given period
@@ -847,14 +860,14 @@
 
                 return donutData
             },
-            dateSelectedBase (val) {
+            dateSelectedBase(val) {
                 this.dateSelected(val)
             },
-            dateSelectedCompared (val) {
+            dateSelectedCompared(val) {
                 this.dateSelected(val, false)
             },
 
-            dateSelected (val, base = true) {
+            dateSelected(val, base = true) {
                 if (this.tab === 'monthly') {
                     let date = moment(val)
                     if (base) {
@@ -927,7 +940,7 @@
 
             },
 
-            fillTicketChart () {
+            fillTicketChart() {
                 let openedTicketChartData = []
                 let closedTicketChartData = []
                 axios.get(resources.revenues.tickets + '/' + this.miniGridId).then(response => {
@@ -962,7 +975,7 @@
 
                 })
             },
-            fillRevenueTrends () {
+            fillRevenueTrends() {
 
                 this.trendChartData.base = [['Date']]
                 this.trendChartData.compare = [['Date']]
@@ -1024,7 +1037,7 @@
                 )
             },
             //get all data from the beginning of the time
-            fillRevenueTrendsOverview () {
+            fillRevenueTrendsOverview() {
                 this.trendChartData.overview = [['Date']]
                 axios.post(resources.revenues.trends + '/' + this.miniGridId, {
                     startDate: '2018-08-01',
@@ -1053,7 +1066,7 @@
                     }
                 )
             },
-            formatDates (dateOne, dateTwo) {
+            formatDates(dateOne, dateTwo) {
                 let formattedDates = ''
                 if (dateOne) {
                     formattedDates = format(dateOne, this.dateFormat)
@@ -1064,21 +1077,61 @@
                 }
                 return formattedDates !== '' ? formattedDates : 'Select Dates'
             },
-            refreshChart () {
+            refreshChart() {
                 this.chartData = this.chartTmpData
             },
-            calculateRevenuePercent (current, compared) {
+            calculateRevenuePercent(current, compared) {
                 if (current + compared === 0) return -1
                 return Math.round(current * 100 / compared)
             },
-            updateMiniGrid () {
+            updateMiniGrid() {
                 axios.put(resources.city.list + '/' + this.miniGridId, {
                     'a': 'b'
                 })
                     .then((response) => {
                     })
-            }
+            },
 
+            async onDataStreamChange(value) {
+
+                try {
+
+                    this.switching = true
+                    let data_stream = this.enableDataStream === true ? 1 : 0
+                    await this.miniGridService.setMiniGridDataStream(this.miniGridId, data_stream)
+                    let message = value === true ? 'Data Logger is activated.' : 'Data Logger is deactivated.'
+                    this.alertNotify('success', message)
+                    this.isLoggerActive = value
+                    this.enableDataStream = value
+
+                    this.switching = false
+
+                } catch (e) {
+                    this.switching = false
+                    this.alertNotify('warn', e.message)
+                    this.isLoggerActive = !value
+                    this.enableDataStream = !value
+                    try {
+                        this.watchingMiniGrids = await this.miniGridService.getMiniGridDataStreams(1)
+                        this.ModalVisibility = true
+                    } catch (e) {
+                        this.alertNotify('error', e.message)
+                    }
+                }
+
+
+            },
+
+            alertNotify(type, message) {
+                this.$notify({
+                    group: 'notify',
+                    type: type,
+                    title: type + ' !',
+                    text: message,
+                    speed: 0
+
+                })
+            },
         }
     }
 </script>
@@ -1479,6 +1532,29 @@
     .modal-leave-active .modal-container {
         -webkit-transform: scale(1.1);
         transform: scale(1.1);
+    }
+
+    .exclamation {
+        margin: auto;
+        align-items: center;
+        display: inline-grid;
+        text-align: center;
+
+    }
+
+    .watched-miniGrid-List {
+        font-size: 11px;
+        width: 15%;
+        margin: auto;
+        font-weight: bold;
+    }
+
+    .exclamation-div {
+        margin-top: 2% !important;
+    }
+
+    .data-stream-switch {
+        margin-left: 3rem !important;
     }
 
 </style>

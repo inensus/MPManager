@@ -7,6 +7,8 @@ import MiniGridRepository from './MiniGridRepository'
 import CityRepository from './CityRepository'
 import ConnectionTypeRepository from './ConnectionTypeRepository'
 import ConnectionGroupsRepository from './ConnectionGroupsRepository'
+import RestrictionRepository from './RestrictionRepository'
+
 
 const repositories = {
     'asset': AssetRepository,
@@ -17,7 +19,9 @@ const repositories = {
     'minigrid': MiniGridRepository,
     'city': CityRepository,
     'connectionTypes': ConnectionTypeRepository,
-    'connectionGroups': ConnectionGroupsRepository
+    'connectionGroups': ConnectionGroupsRepository,
+    'restriction':RestrictionRepository,
+
 }
 
 export default {

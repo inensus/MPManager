@@ -108,15 +108,15 @@
     import Widget from '../../shared/widget'
     import Datepicker from 'vuejs-datepicker'
     import NewUser from './NewUser'
-    import { EventBus } from '../../shared/eventbus'
-    import { TicketService } from '../../services/TicketService'
-    import { MaintenanceService } from '../../services/MaintenanceService'
-    import { SmsService } from '../../services/SmsService'
+    import {EventBus} from '../../shared/eventbus'
+    import {TicketService} from '../../services/TicketService'
+    import {MaintenanceService} from '../../services/MaintenanceService'
+    import {SmsService} from '../../services/SmsService'
 
     export default {
         name: 'Maintenance',
-        components: { NewUser, Datepicker, Widget },
-        data () {
+        components: {NewUser, Datepicker, Widget},
+        data() {
             return {
                 newUser: false,
                 categories: [],
@@ -133,11 +133,11 @@
                 this.dueDateSelected(date)
             }
         },
-        created () {
+        created() {
             this.maintenanceData = this.maintenanceService.maintenanceData
             this.maintenanceData.creator = this.$store.state.admin.id
         },
-        mounted () {
+        mounted() {
             this.getCategories()
             this.getEmployees()
             EventBus.$on('newUserClosed', (e) => {
@@ -146,29 +146,30 @@
             })
         },
         methods: {
-            getCategories () {
+            getCategories() {
                 this.ticketService.getCategories().then(data => {
                     this.categories = data
                 }).catch(e => {
                     this.alertNotify('error', e)
                 })
             },
-            getEmployees () {
+            getEmployees() {
                 this.maintenanceService.getEmployees().then(data => {
+
                     this.employees = data
                 }).catch(e => {
                     this.alertNotify('error', e)
                 })
 
             },
-            dueDateSelected (date) {
+            dueDateSelected(date) {
 
                 if (date === null) {
                     return
                 }
                 this.maintenanceService.setDueDate(date)
             },
-            async submitMaintainForm () {
+            async submitMaintainForm() {
                 await this.validateForm('form-maintain').then(result => {
                     if (result) {
                         this.sending = true
@@ -178,7 +179,7 @@
                     }
                 })
             },
-            saveTicket () {
+            saveTicket() {
                 this.ticketService.createMaintenanceTicket(this.maintenanceData).then(status => {
 
                     this.smsService.sendMaintenanceSms(this.maintenanceData).then(response => {
@@ -200,14 +201,14 @@
                 })
                 this.sending = false
             },
-            async validateForm (scope) {
+            async validateForm(scope) {
                 return await this.$validator.validateAll(scope)
             },
-            openNewUser () {
+            openNewUser() {
                 EventBus.$emit('getLists')
                 this.newUser = true
             },
-            alertNotify (type, message) {
+            alertNotify(type, message) {
                 this.$notify({
                     group: 'notify',
                     type: type,
