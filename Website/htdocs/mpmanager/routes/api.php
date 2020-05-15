@@ -91,7 +91,7 @@ Route::group(['middleware' => 'jwt.verify', 'prefix' => 'tariffs'], function () 
 //JWT authentication
 Route::group([
     'middleware' => 'api',
-    'prefix' => 'auth'
+    'prefix'     => 'auth'
 
 ], static function ($router) {
 
@@ -177,16 +177,16 @@ Route::post('androidApp', function (AndroidAppRequest $r) {
         DB::beginTransaction();
 
         //check if the meter id or the phone already exists
-        $meter = Meter::where('serial_number', $r->get('serial_number'))->first();
+        $meter  = Meter::where('serial_number', $r->get('serial_number'))->first();
         $person = null;
 
         if ($meter === null) {
-            $meter = new Meter();
+            $meter          = new Meter();
             $meterParameter = new MeterParameter();
-            $geoLocation = new GeographicalInformation();
+            $geoLocation    = new GeographicalInformation();
         } else {
             $meterParameter = MeterParameter::where('meter_id', $meter->id)->first();
-            $geoLocation = $meterParameter->geo()->first();
+            $geoLocation    = $meterParameter->geo()->first();
             if ($geoLocation === null) {
                 $geoLocation = new GeographicalInformation();
             }
@@ -199,7 +199,7 @@ Route::post('androidApp', function (AndroidAppRequest $r) {
 
         if ($person === null) {
             $personService = new PersonService(new App\Models\Person\Person());
-            $person = $personService->createFromRequest($r);
+            $person        = $personService->createFromRequest($r);
         }
 
         $meter->serial_number = $r->get('serial_number');
@@ -235,10 +235,12 @@ Route::post('androidApp', function (AndroidAppRequest $r) {
         // changes in_use parameter of the meter
         event('meterparameter.saved', $meterParameter->meter_id);
         DB::commit();
+
         return (new ApiResource($person))->response()->setStatusCode(201);
     } catch (Exception $e) {
         DB::rollBack();
         Log::critical('Error while adding new Customer', ['message' => $e->getMessage()]);
+
         return (new Response($e->getMessage()))->setStatusCode(409);
     }
 });

@@ -94,7 +94,15 @@
             </div>
 
         </widget>
+        <md-dialog :md-active.sync="ModalVisibility"
+        >
 
+            <md-dialog-content>
+                <stepper :purchasingType="'maintenance'" v-if="ModalVisibility">
+
+                </stepper>
+            </md-dialog-content>
+        </md-dialog>
     </div>
 
 </template>
@@ -102,20 +110,20 @@
 <script>
     import Modal from '../../modal/modal'
     import widget from '../../shared/widget'
-    import { resources } from '../../resources'
-    import { CityService } from '../../services/CityService'
-    import { MiniGridService } from '../../services/MiniGridService'
-    import { MaintenanceService } from '../../services/MaintenanceService'
-    import { EventBus } from '../../shared/eventbus'
+    import Stepper from '../../shared/stepper'
+    import {CityService} from '../../services/CityService'
+    import {MiniGridService} from '../../services/MiniGridService'
+    import {MaintenanceService} from '../../services/MaintenanceService'
+    import {EventBus} from '../../shared/eventbus'
 
     export default {
         name: 'NewUser',
-        components: { Modal, widget },
+        components: {Modal, widget, Stepper},
         props: {
             newUser: false
         },
 
-        data () {
+        data() {
             return {
 
                 miniGrids: [],
@@ -124,21 +132,26 @@
                 cityService: new CityService(),
                 maintenanceService: new MaintenanceService(),
                 personData: null,
+                ModalVisibility: false,
             }
         },
-        created () {
+        created() {
             this.personData = this.maintenanceService.personData
         },
-        mounted () {
+        mounted() {
             EventBus.$on('getLists', () => {
                 this.getMiniGrids()
                 this.getCities()
             })
+            EventBus.$on('closeModal', (data) => {
 
+                this.ModalVisibility = false
+
+            })
         },
         methods: {
 
-            getMiniGrids () {
+            getMiniGrids() {
                 this.miniGridService.getMiniGrids().then(data => {
 
                     this.miniGrids = data
@@ -149,7 +162,7 @@
                 })
             },
 
-            getCities () {
+            getCities() {
                 this.cityService.getCities().then(data => {
                     this.cities = data
 
@@ -159,7 +172,7 @@
                 })
 
             },
-            async submitNewUserForm () {
+            async submitNewUserForm() {
 
                 let validator = await this.$validator.validateAll('form-user')
                 if (!validator) {
@@ -179,15 +192,22 @@
                     }
                     this.onClose()
                 }).catch((e) => {
-                    this.alertNotify('error', e.message)
+                    console.log(e)
+                    if (e.status_code === 409) {
+                        this.alertNotify('warn', e.message)
+                        this.ModalVisibility = true
+                    } else {
+                        this.alertNotify('error', e.message)
+                    }
+
                 })
 
             },
 
-            onClose () {
+            onClose() {
                 EventBus.$emit('newUserClosed', false)
             },
-            alertNotify (type, message) {
+            alertNotify(type, message) {
                 this.$notify({
                     group: 'notify',
                     type: type,

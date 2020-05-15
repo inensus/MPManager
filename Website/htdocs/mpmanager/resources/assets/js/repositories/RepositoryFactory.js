@@ -5,6 +5,7 @@ import MaintenanceRepository from "./MaintenanceRepository";
 import SmsRepository from "./SmsRepository";
 import MiniGridRepository from "./MiniGridRepository";
 import CityRepository from "./CityRepository";
+import RestrictionRepository from './RestrictionRepository'
 const repositories = {
     'asset': AssetRepository,
     'tariff': TariffRepository,
@@ -12,7 +13,8 @@ const repositories = {
     'maintenance':MaintenanceRepository,
     'sms':SmsRepository,
     'minigrid':MiniGridRepository,
-    'city':CityRepository
+    'city':CityRepository,
+    'restriction':RestrictionRepository
 };
 
 export default {

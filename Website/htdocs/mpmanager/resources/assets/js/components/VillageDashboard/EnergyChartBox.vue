@@ -35,20 +35,20 @@
 </template>
 
 <script>
-    import { BatteryService } from '../../services/BatteryService'
+    import {BatteryService} from '../../services/BatteryService'
     import ChartBox from '../ChartBox'
-    import { PVService } from '../../services/PVService'
+    import {PVService} from '../../services/PVService'
 
     export default {
         name: 'EnergyChartBox',
-        components: { ChartBox },
+        components: {ChartBox},
         props: {
             miniGridId: {
                 type: String,
                 required: true
             }
         },
-        created () {
+        created() {
             this.initBatteryChart()
             this.initPVChart()
         },
@@ -59,7 +59,7 @@
             }
         ),
         methods: {
-            initBatteryChart () {
+            initBatteryChart() {
                 this.batteryService.getBatteryUsageList(this.miniGridId).then((result) => {
                     if (!result) {
                         console.log('Battery chart data failed to load')
@@ -68,7 +68,7 @@
                     this.batteryService.prepareChartData()
                 })
             },
-            initPVChart () {
+            initPVChart() {
                 this.pvService.getList(this.miniGridId).then((result) => {
                     if (!result) {
                         console.log('PV chart data failed to load')
