@@ -1,48 +1,39 @@
 <template>
-    <div>
-        <div class="md-layout" style="display: grid;">
-            <md-card class="card-list-item-content">
-                <div class="card-list-item-header">
-                    <div
-                        class="box"
-                        style="font-size: 1.5rem"
-                        :style="backgroundColor">
-                        <font-awesome-icon :icon="boxIcon" style="color:white;" v-if="!customIcon"/>
-                        <img :src="boxIcon" alt="" v-else>
-                        <slot></slot>
-                    </div>
-                </div>
-                <md-card-content>
-                    <div class="md-layout">
 
-                        <div
-                            class="md-layout-item md-size-100"
-                        >
-                            <div class="information" style="text-align:end">
-                                <div
-                                    class="header-text"
-                                    v-if="headerText"
-                                    v-text="headerText"
-
-                                ></div>
-
-
-                                <div
-                                    class="sub-text"
-                                    v-if="subText"
-                                    v-text="subText"
-                                    :style="'color:' + boxIconColor"
-                                />
-                                <div v-if="additionalText" style="margin-top:5px; color:#a0a0a0;"
-                                     v-text="additionalText">}}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </md-card-content>
-            </md-card>
+    <md-card class="card-list-item-content">
+        <div class="card-list-item-header">
+            <div
+                class="box"
+                style="font-size: 1.5rem"
+                :style="backgroundColor">
+                <font-awesome-icon :icon="boxIcon" style="color:white;" v-if="!customIcon"/>
+                <img :src="boxIcon" alt="" v-else>
+                <slot></slot>
+            </div>
         </div>
-    </div>
+        <md-card-content>
+
+            <div class="information" style="text-align:end">
+                <div
+                    class="header-text"
+                    v-if="headerText"
+                    v-text="headerText"
+
+                ></div>
+
+
+                <small
+                    class="sub-text"
+                    v-if="subText"
+                    v-html="subText"
+                    :style="'color:' + boxIconColor"
+                ></small>
+            </div>
+
+
+        </md-card-content>
+    </md-card>
+
 
 </template>
 
@@ -73,8 +64,7 @@
                 type: Boolean,
                 default: false
             },
-            boxIconColor: String,
-            additionalText: String
+            boxIconColor: String
         },
         computed: {
             backgroundColor: function () {
@@ -128,12 +118,27 @@
 
     .card-list-item-content {
         width: 100% !important;
+
     }
 
     .card-list-item-header {
         margin-top: -1.8rem;
         margin-left: 15px;
         float: left
+    }
+
+    @media screen and (max-width: 479px) {
+        .card-list-item-content {
+            margin-bottom: 1rem !important;
+            min-height: unset;
+        }
+    }
+
+    @media screen and (min-width: 640px) {
+        .card-list-item-content {
+
+            min-height: 100% !important;
+        }
     }
 </style>
 

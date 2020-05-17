@@ -1,6 +1,6 @@
 <template>
     <div class="md-layout md-gutter">
-        <div class="md-layout-item md-size-33">
+        <div class="md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-33">
             <chart-box
                 v-if="batteryService.energyChartData.length>0"
                 title="Battery Discharge"
@@ -9,7 +9,7 @@
                 gradient-start="#035c08"
                 :data="batteryService.energyChartData"/>
         </div>
-        <div class="md-layout-item md-size-33">
+        <div class="md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-33">
             <chart-box
                 v-if="batteryService.stateChartData.length>0"
                 title="Battery State"
@@ -18,7 +18,7 @@
                 gradient-end="#7b1a18"
                 :data="batteryService.stateChartData"/>
         </div>
-        <div class="md-layout-item md-size-33">
+        <div class="md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-33">
             <chart-box
                 v-if="pvService.chartData"
                 title="Pv Generation"

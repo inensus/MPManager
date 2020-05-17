@@ -7,7 +7,7 @@
                   @closed=" () => {this.newUser = false}"></new-user>
         <widget
             title="New Maintenance Request"
-            button-text="New User"
+            button-text="New Maintenance Service Provider"
             :button="true"
             :callback="openNewUser"
             color="green"
@@ -134,7 +134,7 @@
             }
         },
         created() {
-            this.maintenanceData = this.maintenanceService.maintenanceData
+            this.maintenanceData = this.maintenanceService.personData
             this.maintenanceData.creator = this.$store.state.admin.id
         },
         mounted() {
@@ -155,7 +155,6 @@
             },
             getEmployees() {
                 this.maintenanceService.getEmployees().then(data => {
-
                     this.employees = data
                 }).catch(e => {
                     this.alertNotify('error', e)
@@ -245,3 +244,4 @@
         clear: both;
     }
 </style>
+
