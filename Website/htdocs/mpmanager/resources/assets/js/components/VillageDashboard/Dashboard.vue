@@ -1,49 +1,48 @@
 <template>
     <div>
         <section id="widget-grid">
-            <div class="page-container md-layout-column">
-                <md-toolbar style="margin-bottom: 3rem;">
+            <div class="md-layout md-gutter">
+                <div class="md-layout-item md-medium-size-100  md-xsmall-size-100 md-size-100">
+                    <md-toolbar style="margin-bottom: 3rem;">
 
                     <span class="md-title" v-if="miniGridData">
                     MiniGrid <strong>{{ miniGridData.name}}</strong>
                 <font-awesome-icon @click="editMiniGrid" icon="wrench"/>
 
                 </span>
-                    <md-switch v-model="enableDataStream" @change="onDataStreamChange($event)" :disabled="switching"
-                               class="data-stream-switch">
-                        <span v-if="!enableDataStream">Activate Data-logger </span>
-                        <span v-else> Deactivate Data-logger</span>
-                    </md-switch>
-                    <div class="md-toolbar-section-end">
+                        <md-switch v-model="enableDataStream" @change="onDataStreamChange($event)" :disabled="switching"
+                                   class="data-stream-switch">
+                            <span v-if="!enableDataStream">Activate Data-logger </span>
+                            <span v-else> Deactivate Data-logger</span>
+                        </md-switch>
+                        <div class="md-toolbar-section-end">
 
                         <span style="float: left">
                     Period : {{highlighted.base.from}} - {{highlighted.base.to}}
                 </span>
-                        <md-button class="md-raised" @click="expanded = false">
-                            <font-awesome-icon icon="calendar"/>
-                            Select Period
-                        </md-button>
+                            <md-button class="md-raised" @click="expanded = false">
+                                <font-awesome-icon icon="calendar"/>
+                                Select Period
+                            </md-button>
 
-                    </div>
-                </md-toolbar>
-
-                <!-- material boxex-->
-                <div class="md-layout md-gutter box-group">
-
-                    <box class="md-layout-item md-large-size-25 md-medium-size-50 md-small-size-100"
-                         :center-text="true"
-                         :color="[ '#ffa726','#fb8c00']"
-                         header-text="Sold energy (based on transactions)"
-                         :header-text-color="'#dddddd'"
-                         :sub-text="soldEnergy.toString() +'kWh'"
-                         :sub-text-color="'#e3e3e3'"
-                         box-icon="solar-panel"
-                         :box-icon-color="'#578839'"
+                        </div>
+                    </md-toolbar>
+                </div>
+                <div class="md-layout-item md-medium-size-50 md-xsmall-size-100 md-size-25">
+                    <box
+                        :center-text="true"
+                        :color="[ '#ffa726','#fb8c00']"
+                        header-text="Sold energy (based on transactions)"
+                        :header-text-color="'#dddddd'"
+                        :sub-text="soldEnergy.toString() +'kWh'"
+                        :sub-text-color="'#e3e3e3'"
+                        box-icon="solar-panel"
+                        :box-icon-color="'#578839'"
                     />
-
+                </div>
+                <div class="md-layout-item md-medium-size-50 md-xsmall-size-100 md-size-25">
                     <box v-if="currentTransaction"
-                         class="md-layout-item
-                            md-large-size-25 md-medium-size-50 md-small-size-0 md-xsmall-hide"
+
                          :center-text="true"
                          :color="[ '#ef5350','#e53935']"
                          header-text="Processed Transactions"
@@ -53,10 +52,10 @@
                          box-icon="tasks"
                          :box-icon-color="'#578839'"
                     />
-
+                </div>
+                <div class="md-layout-item md-medium-size-50 md-xsmall-size-100 md-size-25">
                     <box v-if="currentTransaction"
-                         class="md-layout-item
-                            md-large-size-25 md-medium-size-50 md-small-size-0 md-xsmall-hide"
+
                          :center-text="true"
                          :color="[ '#6eaa44','#578839']"
                          header-text="Revenue"
@@ -66,176 +65,168 @@
                          box-icon="money-bill"
                          :box-icon-color="'#578839'"
                     />
+                </div>
 
+                <div class="md-layout-item md-medium-size-50 md-xsmall-size-100 md-size-25">
                     <solar-data-and-weather
                         v-if="this.miniGridData"
                         :mini_grid_id="this.miniGridId"
                         :mini_grid_coordinates="this.miniGridData.location.points"
                     />
                 </div>
-                <!-- end material boxex-->
-
                 <div style="margin-top:1rem">&nbsp;</div>
-                <div class="md-layout md-gutter" v-show="isLoggerActive">
-                    <div class="md-layout-item md-size-100">
-                        <energy-chart-box :mini-grid-id="miniGridId"/>
-                    </div>
-                    <div class="md-layout-item md-size-35">
-                        <widget
-                            :id="'revenue-pie'"
-                            :headless="true"
-                            :title="'Revenue Per Customer Type'"
-                            color="red">
+                <div class="md-layout-item md-medium-size-100  md-xsmall-size-100 md-size-100">
+                    <energy-chart-box :mini-grid-id="miniGridId"/>
+                </div>
+                <div class="md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-33">
+                    <widget
+                        :id="'revenue-pie'"
+                        :headless="true"
+                        :title="'Revenue Per Customer Type'"
+                        color="red">
 
-                            <GChart v-if="donutData.length>0"
-                                    type="PieChart"
-                                    :options="donutChartOptions"
-                                    :data="donutData">
+                        <GChart v-if="donutData.length>0"
+                                type="PieChart"
+                                :options="donutChartOptions"
+                                :data="donutData">
 
-                            </GChart>
-                            <div v-else class="text-center">
-                                <h4>
-                                    <b>No data for selected period</b> {{Object.keys(donutData).length}}
-                                </h4>
-                            </div>
-                        </widget>
-                    </div>
-                    <!-- revenue targets per customer-->
-                    <div class="md-layout-item md-size-35">
-                        <widget
-                            :id="'revenue-targets'"
-                            :headless="true"
-                            :title="'Revenue Targets Per Customer Type'"
-                            color="green">
+                        </GChart>
+                        <div v-else class="text-center">
+                            <h4>
+                                <b>No data for selected period</b> {{Object.keys(donutData).length}}
+                            </h4>
+                        </div>
+                    </widget>
+                </div>
+                <div class="md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-33">
+                    <widget
+                        :id="'revenue-targets'"
+                        :headless="true"
+                        :title="'Revenue Targets Per Customer Type'"
+                        color="green">
 
-                            <div class="row" v-if="batchRevenues.revenueList !== null && donutData.length>0"
-                                 style="margin: 2vh;">
+                        <div class="row" v-if="batchRevenues.revenueList !== null && donutData.length>0"
+                             style="margin: 2vh;">
 
 
-                                <div class="md-layout" style="margin-bottom: 0.8vh;"
-                                     v-for="(revenue, index) in getPercentileList()">
-                                    <div class="md-layout-item md-size-100">
-                                        {{index}}
+                            <div class="md-layout" style="margin-bottom: 0.8vh;"
+                                 v-for="(revenue, index) in getPercentileList()">
+                                <div class="md-layout-item md-size-100">
+                                    {{index}}
+                                </div>
+                                <div class="md-layout-item md-size-100">
+                                    <div>
+                                        <md-progress-bar class="md-dense" md-mode="determinate"
+                                                         :md-value="targetPercentage(batchRevenues.revenueList.revenue[index], revenue.revenue)">
+
+                                        </md-progress-bar>
+                                        <md-tooltip md-delay="300" md-direction="bottom">
+                                            Targetted Revenue:
+                                            {{ targetPercentage(batchRevenues.revenueList.revenue[index],
+                                            revenue.revenue, false)}} %
+                                            {{readable(batchRevenues.revenueList.revenue[index])}}
+                                        </md-tooltip>
                                     </div>
-                                    <div class="md-layout-item md-size-100">
-                                        <div>
-                                            <md-progress-bar class="md-dense" md-mode="determinate"
-                                                             :md-value="targetPercentage(batchRevenues.revenueList.revenue[index], revenue.revenue)">
 
-                                            </md-progress-bar>
-                                            <md-tooltip md-delay="300" md-direction="bottom">
-                                                Targetted Revenue:
-                                                {{ targetPercentage(batchRevenues.revenueList.revenue[index],
-                                                revenue.revenue, false)}} %
-                                                {{readable(batchRevenues.revenueList.revenue[index])}}
-                                            </md-tooltip>
-                                        </div>
-
-                                    </div>
                                 </div>
                             </div>
+                        </div>
 
 
-                            <div class="col-sm-12 text-center">
+                        <div class="col-sm-12 text-center">
                             <span v-for="i in totalCircles" style="margin:5px" class="dot compare-color-bg"
                                   :class="currentSelectedTargetCircle=== i-1 ? '':'period-indicator' "
                                   @click="setCircleIndex(i-1)"> </span>
 
-                            </div>
-                            <div class="col-sm-12 text-center">
-                                {{currentSelectedTargetCircle+1}} of {{totalCircles}}
-                            </div>
-
-                        </widget>
-                    </div>
-                    <!-- sold energy-->
-                    <div class="md-layout-item md-size-30">
-                        <div class="col-md-3 col-sm-6">
-                            <widget :id="'tickets-overview'" :headless="true">
-                                <div class="text-center">
-                                    <h4>Tickets</h4>
-                                </div>
-                                <div class="col-sm-12 margin-top-10">
-                                    <span style="font-size: 1.6rem;" v-if="periodMap.length>0">Tickets opened in Week {{periodMap[currentDonutIndex].period}}</span>
-                                    <span class="pull-right" v-if="Object.keys(currentTickets).length> 0">{{currentTickets.opened}}</span>
-                                </div>
-
-                                <div class="col-sm-12">
-                                    <span style="font-size: 1.6rem;" v-if="periodMap.length>0">Tickets closed in Week {{periodMap[currentDonutIndex].period}}</span>
-                                    <span class="pull-right" v-if="Object.keys(currentTickets).length> 0">{{currentTickets.closed.amount}}</span>
-                                </div>
-                                <div class="col-sm-12">
-                                    <span style="font-size: 1.6rem;">Avg. Time required</span>
-                                    <span class="pull-right" v-if="Object.keys(currentTickets).length> 0">{{ calcutateDuration(currentTickets.closed.avgTime)}}</span>
-                                </div>
-
-                            </widget>
-
+                        </div>
+                        <div class="col-sm-12 text-center">
+                            {{currentSelectedTargetCircle+1}} of {{totalCircles}}
                         </div>
 
-                        <battery-statuses :mini_grid_id="this.miniGridId"/>
-
-
-                    </div>
-
+                    </widget>
                 </div>
-                <!-- end boxes-->
-
-
-                <mini-grid-map :mini-grid-id="miniGridId"/>
-                <target-list
-                    :target-id="miniGridId"
-                    target-type="mini-grid"
-                    :base="highlighted.base"
-                    :compared="highlighted.compared"
-                    @baseDataAvailable=baseDataAvailable
-                />
-
-                <widget :id="'revenue-trends'" :title="'Revenue Trends'">
-                    <div class="md-layout md-gutter">
-                        <div class="md-layout-item">
-                            <GChart
-                                type="ColumnChart"
-                                :data="trendChartData.base"
-                                :options="chartOptionsSmall"
-                                :resizeDebounce="500"
-                            />
+                <div class="md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-33">
+                    <widget :id="'tickets-overview'" :headless="true">
+                        <div class="text-center">
+                            <h4>Tickets</h4>
                         </div>
-                        <div class="md-layout-item">
-                            <GChart
-                                type="ColumnChart"
-                                :data="trendChartData.compare"
-                                :options="chartOptionsSmall"
-                                :resizeDebounce="500"
-                            />
+                        <div class="col-sm-12 margin-top-10">
+                            <span style="font-size: 1.6rem;" v-if="periodMap.length>0">Tickets opened in Week {{periodMap[currentDonutIndex].period}}</span>
+                            <span class="pull-right" v-if="Object.keys(currentTickets).length> 0">{{currentTickets.opened}}</span>
                         </div>
-                    </div>
 
+                        <div class="col-sm-12">
+                            <span style="font-size: 1.6rem;" v-if="periodMap.length>0">Tickets closed in Week {{periodMap[currentDonutIndex].period}}</span>
+                            <span class="pull-right" v-if="Object.keys(currentTickets).length> 0">{{currentTickets.closed.amount}}</span>
+                        </div>
+                        <div class="col-sm-12">
+                            <span style="font-size: 1.6rem;">Avg. Time required</span>
+                            <span class="pull-right" v-if="Object.keys(currentTickets).length> 0">{{ calcutateDuration(currentTickets.closed.avgTime)}}</span>
+                        </div>
 
-                    <GChart
-                        type="LineChart"
-                        :data="trendChartData.overview"
-                        :options="chartOptions"
-                        :resizeDebounce="500"
+                    </widget>
+                    <battery-statuses :mini_grid_id="this.miniGridId"/>
+                </div>
+
+                <div class="md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-100">
+                    <mini-grid-map :mini-grid-id="miniGridId"/>
+                </div>
+                <div class="md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-100">
+                    <target-list
+                        :target-id="miniGridId"
+                        target-type="mini-grid"
+                        :base="highlighted.base"
+                        :compared="highlighted.compared"
+                        @baseDataAvailable=baseDataAvailable
                     />
+                </div>
+                <div class="md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-100">
+                    <widget :id="'revenue-trends'" :title="'Revenue Trends'">
+                        <div class="md-layout md-gutter">
+                            <div class="md-layout-item">
+                                <GChart
+                                    type="ColumnChart"
+                                    :data="trendChartData.base"
+                                    :options="chartOptionsSmall"
+                                    :resizeDebounce="500"
+                                />
+                            </div>
+                            <div class="md-layout-item">
+                                <GChart
+                                    type="ColumnChart"
+                                    :data="trendChartData.compare"
+                                    :options="chartOptionsSmall"
+                                    :resizeDebounce="500"
+                                />
+                            </div>
+                        </div>
 
-                </widget>
 
-                <widget :id="'ticketing-trends'" :title="'Tickets Overview'">
-                    <div class="col-sm-12" style="margin: 2vh;sdasdasasdasdadasdasdfsdtkoaerıı">
-                        <h5>Opened Tickets are on the left side and resolved tickets on the right side</h5>
                         <GChart
-                            type="ColumnChart"
-                            :data="openedTicketChartData"
+                            type="LineChart"
+                            :data="trendChartData.overview"
                             :options="chartOptions"
                             :resizeDebounce="500"
                         />
-                    </div>
+
+                    </widget>
+                </div>
+                <div class="md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-100">
+                    <widget :id="'ticketing-trends'" :title="'Tickets Overview'">
+                        <div class="col-sm-12" style="margin: 2vh;">
+                            <h5>Opened Tickets are on the left side and resolved tickets on the right side</h5>
+                            <GChart
+                                type="ColumnChart"
+                                :data="openedTicketChartData"
+                                :options="chartOptions"
+                                :resizeDebounce="500"
+                            />
+                        </div>
 
 
-                </widget>
+                    </widget>
+                </div>
             </div>
-
             <div v-if="expanded === false" class="col-md-3 col-sm-4"
                  style="position: fixed; top:3em; right: -10px; z-index: 9999;">
 
@@ -335,7 +326,6 @@
                     </div>
                 </widget>
             </div>
-
             <!-- modal-->
             <transition name="modal" v-if="showModal">
                 <div class="modal-mask">
@@ -379,7 +369,6 @@
                     </div>
                 </div>
             </transition>
-            <!-- modal -->
             <!-- purchasing modal-->
             <md-dialog :md-active.sync="ModalVisibility"
             >
@@ -435,7 +424,6 @@
             Stepper
         },
         mixins: [currency],
-
         created() {
             this.miniGridId = this.$route.params.id
             this.getMiniGridData(this.miniGridId)
@@ -444,20 +432,15 @@
             //set initial dates for periods
             this.initializePeriods()
             this.getBatchData()
-
             this.fillRevenueTrendsOverview()
             this.fillTicketChart()
-
             this.getTransactionsOverview()
             this.getSoldEnergy()
             this.getSoldEnergy()
             pageSetUp()
             EventBus.$on('closeModal', (data) => {
-
                 this.ModalVisibility = false
-
             })
-
         },
         watch: {
             compareData: function () {
@@ -475,20 +458,15 @@
                     } else {
                         old[0] += ' - ' + this.compareData[i].date
                     }
-
                     this.chartTmpData[i + 1] = old
                 }
                 this.refreshChart()
-
             },
             actualData: function () {
-
                 if (this.actualData.length === 0) {
                     return
                 }
-
                 this.actualTotal = 0
-
                 for (let i = 0; i < this.actualData.length; i++) {
                     this.actualTotal += parseInt(this.actualData[i].amount)
                     this.chartTmpData.push(
@@ -496,9 +474,7 @@
                     )
                 }
             },
-
         },
-
         computed: {
             compareAnalysisAvailable() {
                 return this.comparedRevenues.revenueList !== null
@@ -509,7 +485,6 @@
                 }
                 return Math.ceil(Object.keys(this.batchRevenues.revenueList.target.targets).length / 4)
             },
-
             //the summary of total revenues of both periods
             totalRevenues() {
                 if (this.revenues.length === 0) {
@@ -518,32 +493,24 @@
                 let sum = {
                     revenue: 0,
                     compareRevenue: 0,
-
                     connections: 0,
                     compareNewConnections: 0,
                     totalConnections: 0,
-
                     revenuePerConnection: 0,
                     compareRevenuePerConnection: 0
-
                 }
                 for (let i in this.revenues) {
                     let revenues = this.revenues[i]
                     sum['revenue'] += revenues.revenue
                     sum['compareRevenue'] += revenues.compareRevenue
-
                     sum['connections'] += revenues.newConnections
                     sum['compareNewConnections'] += revenues.compareNewConnections
                     sum['totalConnections'] += revenues.totalConnections
-
                     sum['revenuePerConnection'] += revenues.revenuePerConnection
                     sum['compareRevenuePerConnection'] += revenues.compareRevenuePerConnection
-
                 }
                 return sum
-
             },
-
             currentTarget() {
                 if (this.donutData.length === 1) {
                     return this.donutData[0].targets
@@ -567,7 +534,6 @@
                 secondStep: false,
                 thirdStep: false,
                 purchaseCode: '',
-
                 showModal: false,
                 datesInitialized: false,
                 currentSelectedTargetCircle: 0,
@@ -602,11 +568,9 @@
                 currentTransaction: null,
                 //holds the ticket data for selected period
                 currentTickets: {},
-
                 disabled: {
                     days: [0, 2, 3, 4, 5, 6], // Disable all days except monday
                     customPredictor:
-
                         function (date) {
                             let today = new Date()
                             let minDate = new Date('2018-01-01')
@@ -622,7 +586,6 @@
                     tmpBase: {},
                     tmpCompared: {},
                 },
-
                 tab: 'weekly',
                 expanded: true, // is the determinator whether the period picker should be displayed or not
                 hebele: false,
@@ -654,11 +617,9 @@
                                 true
                         },
                         vAxis: {
-
                             //scaleType: 'mirrorLog',
                         },
                         height: '600',
-
                     },
                 chartOptionsSmall: {
                     chart: {
@@ -680,10 +641,8 @@
                     pieHole: 1,
                     legend: 'bottom',
                     height: 300,
-
                 }
             }
-
         },
         methods: {
             closeDatePicker() {
@@ -694,14 +653,12 @@
             },
             async getMiniGridData(miniGridId) {
                 try {
-
                     this.miniGridData = await this.miniGridService.getMiniGridData(miniGridId)
                     this.enableDataStream = this.miniGridData.data_stream === 1 ? true : false
                     this.isLoggerActive = this.enableDataStream
                 } catch (e) {
                     this.alertNotify('error', e.message)
                 }
-
             },
             setCircleIndex(index) {
                 this.displayedTargetPercetinles[0] = index * 5
@@ -727,7 +684,6 @@
             totalConnectionsByTarget() {
                 let totalConnections = 0
                 if (this.periodMap.length === 0) return totalConnections
-
                 this.periodMap[0].targets.map(item => {
                     totalConnections += item.new_connections
                     return item
@@ -744,36 +700,28 @@
             },
             baseTargetData(connectionType, type) {
                 if (this.periodMap.length === 0) return 'Target not available'
-
                 let matchTarget = this.periodMap[0].targets.filter(target => {
                     return target.connection === connectionType
                 })
                 if (matchTarget.length === 0) {
                     return 'no data for ' + connectionType
                 }
-
                 if (type === 'connections') {
                     return matchTarget[0].new_connections
-
                 } else if (type === 'revenue') {
                     return matchTarget[0].revenue
                 }
-
             },
             //returns a readable string based on [seconds]
             calcutateDuration(seconds) {
                 if (seconds === null) return '0'
                 seconds = parseInt(seconds)
-
                 return Math.floor(moment.duration(seconds, 'seconds').asHours()) + ':' + moment.duration(seconds, 'seconds').minutes() + ':' + moment.duration(seconds, 'seconds').seconds()
-
             },
             //re-formats the date
             formatPeriodText(date) {
                 return moment(date, 'Y-W').format('YYYY MMM Do')
-
             },
-
             initializePeriods() {
                 this.datesInitialized = true
                 //set start period
@@ -781,7 +729,6 @@
                 let startingPeriodDateObj = moment(startingPeriod).toDate()
                 this.dateSelected(startingPeriodDateObj)
             },
-
             //calculates the reached target percentage
             targetPercentage(actualRevenue, targetRevenue, makeHundred = true) {
                 if (typeof (targetRevenue) === 'undefined') return 0
@@ -791,19 +738,14 @@
                     return 0
                 return makeHundred === true ? (result > 100 ? 100 : result) : result
             },
-
             getBatchData() {
                 this.expanded = true
                 this.highlighted.base = this.highlighted.tmpBase
                 this.highlighted.compared = this.highlighted.tmpCompared
-
                 this.fillRevenueTrends()
-
                 this.getSoldEnergy()
                 this.getTransactionsOverview()
-
             },
-
             revenueData(from, to, batchRevenues) {
                 return batchRevenues.revenueForPeriod(
                     this.miniGridId,
@@ -814,7 +756,6 @@
                     return data
                 })
             },
-
             getTransactionsOverview() {
                 axios.post('/api/mini-grids/' + this.miniGridId + '/transactions', {
                     startDate: this.highlighted.base.from,
@@ -825,7 +766,6 @@
                     }
                 )
             },
-
             getSoldEnergy() {
                 axios.post('/api/mini-grids/' + this.miniGridId + '/energy', {
                     startDate: this.highlighted.base.from,
@@ -836,10 +776,8 @@
                     }
                 )
             },
-
             baseDataAvailable(data) {
                 this.batchRevenues = data
-
                 this.initDonutData()
             },
             // get all periods from donut data and maps them into one array
@@ -848,7 +786,6 @@
             },
             initializeCharts(initValue) {
                 let donutData = [initValue]
-
                 //donut chart for given period
                 let data = this.batchRevenues.revenueList.revenue
                 for (let con in data) {
@@ -857,7 +794,6 @@
                         con, parseInt(connectionRev)
                     ])
                 }
-
                 return donutData
             },
             dateSelectedBase(val) {
@@ -866,7 +802,6 @@
             dateSelectedCompared(val) {
                 this.dateSelected(val, false)
             },
-
             dateSelected(val, base = true) {
                 if (this.tab === 'monthly') {
                     let date = moment(val)
@@ -891,7 +826,6 @@
                 } else if (this.tab === 'weekly') {
                     let starting = moment(val).format('YYYY-MM-DD')
                     let nextSunday = moment(new Date(val.getFullYear(), val.getMonth(), val.getDate() + 6, val.getHours(), val.getMinutes())).format('YYYY-MM-DD')
-
                     if (base) {
                         let date = moment(nextSunday)
                         this.highlighted.tmpBase = {
@@ -899,13 +833,11 @@
                             to: nextSunday,
                             includeDisabled: true // Highlight disabled dates
                         }
-
                         this.highlighted.tmpCompared = {
                             from: date.add(-13, 'days').format('YYYY-MM-DD'),
                             to: date.add(6, 'days').format('YYYY-MM-DD'),
                             includeDisabled: true // Highlight disabled dates
                         }
-
                     } else {
                         this.highlighted.tmpCompared = {
                             from: val,
@@ -916,19 +848,16 @@
                 } else if (this.tab === 'anual') {
                     let date = moment(val)
                     if (base) {
-
                         this.highlighted.tmpBase = {
                             from: date.format('YYYY-01-01'),
                             to: date.format('YYYY-12-31'),
                             includeDisabled: true // Highlight disabled dates
                         }
-
                         this.highlighted.tmpCompared = {
                             from: date.add(-1, 'years').format('YYYY-01-01'),
                             to: date.format('YYYY-12-31'),
                             includeDisabled: true // Highlight disabled dates
                         }
-
                     } else {
                         this.highlighted.tmpCompared = {
                             from: date.format('YYYY-01-01'),
@@ -937,23 +866,18 @@
                         }
                     }
                 }
-
             },
-
             fillTicketChart() {
                 let openedTicketChartData = []
                 let closedTicketChartData = []
                 axios.get(resources.revenues.tickets + '/' + this.miniGridId).then(response => {
                     let data = response.data.data
-
                     openedTicketChartData.push(['Period'])
                     closedTicketChartData.push(['Period'])
-
                     for (let category in data.categories) {
                         openedTicketChartData[0].push(data.categories[category].label_name)
                         closedTicketChartData[0].push(data.categories[category].label_name)
                     }
-
                     for (let oT in data) {
                         if (oT === 'categories') {
                             continue
@@ -972,11 +896,9 @@
                     }
                     this.openedTicketChartData = openedTicketChartData
                     this.closedTicketChartData = closedTicketChartData
-
                 })
             },
             fillRevenueTrends() {
-
                 this.trendChartData.base = [['Date']]
                 this.trendChartData.compare = [['Date']]
                 axios.post(resources.revenues.trends + '/' + this.miniGridId, {
@@ -986,9 +908,7 @@
                     (response) => {
                         let data = response.data.data
                         if (this.tab === 'monthly') {
-
                         }
-
                         for (let dt in data) {
                             for (let tariffNames in data[dt]) {
                                 this.trendChartData.base[0].push(tariffNames)
@@ -1007,11 +927,9 @@
                                 tmpChartData.push(data[x][d].revenue)
                                 totalRev += data[x][d].revenue
                             }
-
                             tmpChartData.push(totalRev)
                             this.trendChartData.base.push(tmpChartData)
                         }
-
                         if (Object.keys(this.highlighted.compared).length > 0) { //compare data is also available.
                             axios.post(resources.revenues.trends + '/' + this.miniGridId, {
                                 startDate: this.highlighted.compared.from,
@@ -1029,10 +947,8 @@
                                         tmpChartData.push(totalRev)
                                         this.trendChartData.compare.push(tmpChartData)
                                     }
-
                                 })
                         }
-
                     }
                 )
             },
@@ -1073,7 +989,6 @@
                 }
                 if (dateTwo) {
                     formattedDates += ' - ' + format(dateTwo, this.dateFormat)
-
                 }
                 return formattedDates !== '' ? formattedDates : 'Select Dates'
             },
@@ -1091,11 +1006,8 @@
                     .then((response) => {
                     })
             },
-
             async onDataStreamChange(value) {
-
                 try {
-
                     this.switching = true
                     let data_stream = this.enableDataStream === true ? 1 : 0
                     await this.miniGridService.setMiniGridDataStream(this.miniGridId, data_stream)
@@ -1103,9 +1015,7 @@
                     this.alertNotify('success', message)
                     this.isLoggerActive = value
                     this.enableDataStream = value
-
                     this.switching = false
-
                 } catch (e) {
                     this.switching = false
                     this.alertNotify('warn', e.message)
@@ -1118,10 +1028,7 @@
                         this.alertNotify('error', e.message)
                     }
                 }
-
-
             },
-
             alertNotify(type, message) {
                 this.$notify({
                     group: 'notify',
@@ -1129,7 +1036,6 @@
                     title: type + ' !',
                     text: message,
                     speed: 0
-
                 })
             },
         }
@@ -1184,17 +1090,14 @@
         border: 1px solid;
         font-size: 1.2rem;
         position: absolute;
-
         left: -12%;
         top: 0;
-
     }
 
     .close-period:hover {
         left: 0;
         padding-left: 48px;
         margin-left: -50px;
-
     }
 
     .close-period > button {
@@ -1224,7 +1127,6 @@
         background-color: #c7cfdc;
         border: #cccccc;
         color: #1b1e21;
-
     }
 
     div {
@@ -1246,7 +1148,6 @@
     }
 
     .period-navigation {
-
         background-color: #3276b1;
         padding: 5px;
         color: white;
@@ -1256,14 +1157,11 @@
         border-radius: 11px;
         font-size: 1.5rem;
         margin-bottom: 2rem;
-
     }
 
     .period-navigation > .arrows {
-
         position: absolute;
         top: 1.5rem;
-
     }
 
     .arrows.right {
@@ -1456,7 +1354,6 @@
         background-color: #c79121;
     }
 
-
     .modal-mask {
         position: fixed;
         z-index: 1001;
@@ -1519,7 +1416,6 @@
      * You can easily play with the modal transition by editing
      * these styles.
      */
-
     .modal-enter {
         opacity: 0;
     }
@@ -1539,7 +1435,6 @@
         align-items: center;
         display: inline-grid;
         text-align: center;
-
     }
 
     .watched-miniGrid-List {
@@ -1556,5 +1451,5 @@
     .data-stream-switch {
         margin-left: 3rem !important;
     }
-
 </style>
+

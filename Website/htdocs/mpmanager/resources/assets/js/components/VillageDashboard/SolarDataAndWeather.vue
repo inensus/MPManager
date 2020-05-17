@@ -1,6 +1,6 @@
 <template>
 
-    <div class="md-layout-item md-size-25">
+    <div>
         <md-card>
             <div v-if="solar_data && solar_data.length> 0"> Solar reading from ground :
                 {{this.solar_data}}
@@ -65,8 +65,8 @@
 
     export default {
         name: 'SolarDataAndWeather',
-        components: { Box, Widget },
-        data () {
+        components: {Box, Widget},
+        data() {
             return {
                 solar_data: null,
                 weather: null,
@@ -82,7 +82,7 @@
                 required: true
             }
         },
-        created () {
+        created() {
             this.getSolarData()
             this.getWeatherData()
         },
@@ -92,13 +92,13 @@
             }
         },
         methods: {
-            getSolarData () {
+            getSolarData() {
                 axios.get(resources.solar.detail + this.mini_grid_id + '/solar')
                     .then((response) => {
                         this.solar_data = response.data.data
                     })
             },
-            getWeatherData () {
+            getWeatherData() {
                 let points = this.mini_grid_coordinates.split(',')
 
                 let req = new Request('https://api.openweathermap.org/data/2.5/weather?APPID=4a84b68e24abd9d99758a67f8d1d984b&units=metric&lat=' + points[0] + '&lon=' + points[1], {

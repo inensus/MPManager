@@ -1,39 +1,53 @@
 <template>
-    <md-app class="app-style">
-        <md-app-drawer md-permanent="full" class="drawer-style">
-            <div class="sidebar-layout"></div>
-            <md-toolbar class="md-transparent" md-elevation="1">
-                <div class="md-layout md-gutter md-alignment-center-left p-15">
-                    <div class="md-layout-item md-size-40" style="margin-right: 1vh">
-                        <font-awesome-icon icon="user-circle" class="fa-4x c-white"/>
-                    </div>
+    <div
+        class="sidebar"
+        :data-color="sidebarItemColor"
+        :style="sidebarStyle"
+    >
+        <div class="logo">
+            <div class="brand-column">
 
-                    <div class="md-layout">
-                        <div class="md-layout-item md-size-100 c-white">
-                            <span class="admin-text">{{adminName}}</span>
-                        </div>
+                <img class="logo" alt="logo" :src="imgLogo"/>
 
-                        <div class="md-layout-item md-size-100 c-gray">
-                            <font-awesome-icon icon="clock" swap-opacity/>
-                            <small>{{remaining}}</small>
-                        </div>
-                    </div>
+                <div class="company-header">MicroPowerManager<br>Open Source</div>
+            </div>
 
 
+        </div>
+
+        <div class="ramaining-content" style="display: inline-flex">
+            <div class="md-layout md-gutter md-alignment-center-left p-15">
+                <div class="md-layout-item md-size-40" style="margin-right: 1vh">
+                    <font-awesome-icon icon="user-circle" class="fa-4x c-white"/>
                 </div>
 
-            </md-toolbar>
+                <div class="md-layout">
+                    <div class="md-layout-item md-size-100 c-white">
+                        <span class="admin-text">{{adminName}}</span>
+                    </div>
 
+                    <div class="md-layout-item md-size-100 c-gray">
+                        <font-awesome-icon icon="clock" swap-opacity/>
+                        <small>{{remaining}}</small>
+                    </div>
+                </div>
+
+
+            </div>
+
+        </div>
+        <div class="sidebar-wrapper">
+            <slot name="content"></slot>
             <md-list class="no-bg p-15" md-expand-single>
                 <component :is="'route' in menu ? 'router-link' : 'div'" v-for="(menu,index) in menus" :key="index"
                            :md-expand="'children' in menu"
                            :to="menu.route">
-                    <md-list-item :md-expand="'children' in menu" class="kemal">
+                    <md-list-item :md-expand="'children' in menu">
                         <!-- add icon if icon is defined -->
                         <font-awesome-icon :icon="menu.icon" v-if="'icon' in menu" class="c-white icon-box"
                         />
 
-                        <span class="md-list-item-text">{{menu.name}}</span>
+                        <span class="md-list-item-text c-white">{{menu.name}}</span>
                         <md-list slot="md-expand" v-if="'children' in menu" class="no-bg">
                             <md-list-item v-for="(sub,index) in menu.children"
                                           :key="index"
@@ -41,7 +55,7 @@
                             >
                                 <router-link :to="sub.route" class="sub-menu">
                                     <md-list-item class="md-inset c-white">
-                                        <span class="md-list-item-text"> {{sub.name}}</span>
+                                        <span class="md-list-item-text c-white"> {{sub.name}}</span>
                                     </md-list-item>
                                 </router-link>
                             </md-list-item>
@@ -49,14 +63,14 @@
                     </md-list-item>
                 </component>
             </md-list>
-        </md-app-drawer>
-    </md-app>
-
+        </div>
+    </div>
 </template>
-
 <script>
+
+
     export default {
-        name: 'SideBar.vue',
+
         data: () => (
             {
                 show_extender: false,
@@ -130,7 +144,7 @@
                         children: [
                             {
                                 name: 'Sms List',
-                                route: '/sms/list/page/1'
+                                route: '/sms/list'
                             },
                             {
                                 name: 'New Sms',
@@ -152,7 +166,35 @@
                 ]
             }
         ),
+        props: {
+            title: {
+                type: String,
+                default: 'MicroPowerManager Open Source'
+            },
+            sidebarBackgroundImage: {
+                type: String,
+                default: null
+            },
+            imgLogo: {
+                type: String,
+                default: require('../../../images/Logo1.png')
+            },
+            sidebarItemColor: {
+                type: String,
+                default: 'green',
 
+            },
+
+            autoClose: {
+                type: Boolean,
+                default: true
+            }
+        },
+        provide() {
+            return {
+                autoClose: this.autoClose
+            }
+        },
         computed: {
             adminName() {
                 return this.$store.getters.admin.name
@@ -161,14 +203,54 @@
                 let remaining_time = this.$store.getters.admin.remaining_time
                 let remaining_seconds = (remaining_time % 60).toString()
                 return Math.floor(remaining_time / 60).toString() + ':' + ('0' + remaining_seconds).slice(-2)
-            }
-        },
+            },
+            sidebarStyle() {
+                return {
 
+                    background: '#2b2b2b !important'
+                }
+            }
+        }
     }
 </script>
+<style>
+    .brand-column {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+        overflow: visible;
+        margin-top: 0px;
+        -webkit-box-align: center;
+        -webkit-align-items: center;
+        -ms-flex-align: center;
+        align-items: center;
+        grid-auto-columns: 1fr;
+        grid-column-gap: 16px;
+        grid-row-gap: 16px;
+        -ms-grid-columns: 1fr 1fr;
+        grid-template-columns: 1fr 1fr;
+        -ms-grid-rows: auto auto;
+        grid-template-rows: auto auto;
+        -o-object-fit: fill;
+        object-fit: fill;
+    }
 
-<style scoped>
+    .brand-column {
+        text-align: center;
+        padding-left: 2rem !important
+    }
 
+    @media screen and (min-width: 991px) {
+        .nav-mobile-menu {
+            display: none;
+        }
+    }
+
+    .company-header {
+        color: white;
+        font-weight: bold;
+    }
 
     .active-link {
         background-color: rgba(32, 66, 32, 0.74);
@@ -182,10 +264,10 @@
         width: calc(100% + 30px) !important;
     }
 
-    .md-list-item-text {
-        color: #f5e8e8 !important;
+    /*  .md-list-item-text {
+          color: #f5e8e8 !important;
 
-    }
+      }*/
 
     .no-bg {
         background-color: transparent !important;
@@ -235,5 +317,8 @@
         padding: 15px;
     }
 
-
+    .ramaining-content {
+        display: inline-flex;
+        padding-left: 0.7rem;
+    }
 </style>
