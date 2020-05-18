@@ -83,11 +83,11 @@
             show() {
                 this.showAdd = true
             },
-            alertNotify(Group, message) {
+            alertNotify(type, message) {
                 this.$notify({
                     group: 'notify',
-                    Group: Group,
-                    title: Group + ' !',
+                    type: type,
+                    title: type + ' !',
                     text: message
                 })
             },
