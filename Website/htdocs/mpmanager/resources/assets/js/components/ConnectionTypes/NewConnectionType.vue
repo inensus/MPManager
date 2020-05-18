@@ -40,9 +40,7 @@
 
 <script>
     import Widget from '../../shared/widget'
-    import {AccessRate} from '../../classes/AccessRate'
-
-    import {ConnectionTypeService} from '../../services/ConnectionTypeService'
+    import {ConnectionService} from '../../services/ConnectionsService'
     import {EventBus} from '../../shared/eventbus'
 
     export default {
@@ -50,13 +48,13 @@
         components: {Widget},
         data() {
             return {
-                connectionTypeService: new ConnectionTypeService(),
+                connectionTypeService: new ConnectionService('types'),
                 connectionType: null,
                 showAdd: false,
             }
         },
         created() {
-            this.connectionType = this.connectionTypeService.connectionType
+            this.connectionType = this.connectionTypeService.connection
         },
         mounted() {
             EventBus.$on('showNewConnectionType', this.show)
@@ -71,7 +69,7 @@
                 this.hide()
                 try {
 
-                   await this.connectionTypeService.createConnectionType(this.connectionType.name)
+                    await this.connectionTypeService.createConnectionType(this.connectionType.name)
                     this.alertNotify('success', 'ConnectionType has registered.')
                     EventBus.$emit('connectionTypeAdded', this.connectionType)
                 } catch (e) {

@@ -33,7 +33,7 @@
     import Widget from '../../shared/widget'
     import {EventBus} from '../../shared/eventbus'
     import TableList from '../../shared/TableList'
-    import {ConnectionTypeService} from '../../services/ConnectionTypeService'
+    import {ConnectionService} from '../../services/ConnectionsService'
     import NewConnectionType from './NewConnectionType'
 
     export default {
@@ -50,7 +50,7 @@
 
         data() {
             return {
-                connectionTypeService: new ConnectionTypeService(),
+                connectionTypeService: new ConnectionService('types'),
                 subscriber: 'connection-types-list',
                 connectionTypes: [],
             }
