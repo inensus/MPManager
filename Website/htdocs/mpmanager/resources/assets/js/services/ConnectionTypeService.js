@@ -19,7 +19,7 @@ export class ConnectionTypeService {
             name: null,
             target: this.target
         }
-        this.paginator = new Paginator(resources.connections.list)
+        this.paginator = new Paginator(resources.connections.store)
     }
 
     updateList(data) {
@@ -33,7 +33,7 @@ export class ConnectionTypeService {
                 updated_at: data[a].updated_at,
                 edit: false,
             }
-            this.connectionTypes.push(assetType)
+            this.connectionTypes.push(connectionType)
             return this.connectionTypes
         }
 
