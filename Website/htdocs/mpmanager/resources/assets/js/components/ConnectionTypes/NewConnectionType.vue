@@ -1,41 +1,98 @@
 <template>
     <widget
+        v-if="showAdd"
         :id="'new-connection-type'"
         :title="'Add New Connection Type'">
-        <div class="margin-top-10">
-            <div class="col-sm-2">
+
+
+        <md-card>
+            <md-card-header>
                 Name of the Connection
-            </div>
-            <div class="col-sm-10">
-                <input class="full-width form-control" type="text" v-model="connection.name"
-                       placeholder="Connection Name">
-            </div>
-            <div class="col-sm-12">
-                <button class="btn btn-success" @click="store">Save</button>
-            </div>
-        </div>
+            </md-card-header>
+            <md-card-content>
+                <div class="md-layout md-gutter">
+                    <div class="md-layout-item">
+                        <md-field :class="{'md-invalid': errors.has('name')}">
+                            <label for="name">Connection Name</label>
+                            <md-input
+                                id="name"
+                                name="name"
+                                v-model="connectionType.name"
+                                v-validate="'required|min:3'"
+                            />
+                            <span class="md-error">{{ errors.first('name') }}</span>
+                        </md-field>
+
+                    </div>
+                </div>
+            </md-card-content>
+
+            <md-card-actions>
+                <md-button role="button" class="md-raised md-primary" @click="store">Save
+                </md-button>
+                <md-button role="button" class="md-raised" @click="hide">Close</md-button>
+            </md-card-actions>
+        </md-card>
     </widget>
+
 
 </template>
 
 <script>
-    import Widget from "../../shared/widget";
-    import {ConnectionsType} from "../../classes/connection/ConnectionsType";
+    import Widget from '../../shared/widget'
+    import {AccessRate} from '../../classes/AccessRate'
+
+    import {ConnectionTypeService} from '../../services/ConnectionTypeService'
+    import {EventBus} from '../../shared/eventbus'
 
     export default {
-        name: "NewConnectionType",
+        name: 'NewConnectionType',
         components: {Widget},
         data() {
             return {
-                connection: new ConnectionsType(),
-            };
+                connectionTypeService: new ConnectionTypeService(),
+                connectionType: null,
+                showAdd: false,
+            }
+        },
+        created() {
+            this.connectionType = this.connectionTypeService.connectionType
+        },
+        mounted() {
+            EventBus.$on('showNewConnectionType', this.show)
         },
         methods: {
-            store() {
-                this.connection.store().then(() => {
-                    this.$router.push({path: '/connection-types'});
-                });
-            }
+            async store() {
+                let validator = await this.$validator.validateAll()
+                if (!validator) {
+
+                    return
+                }
+                this.hide()
+                try {
+
+                   await this.connectionTypeService.createConnectionType(this.connectionType.name)
+                    this.alertNotify('success', 'ConnectionType has registered.')
+                    EventBus.$emit('connectionTypeAdded', this.connectionType)
+                } catch (e) {
+                    this.alertNotify('error', e.message)
+                }
+
+            },
+            hide() {
+                this.showAdd = false
+            },
+            show() {
+                this.showAdd = true
+            },
+            alertNotify(type, message) {
+                this.$notify({
+                    group: 'notify',
+                    type: type,
+                    title: type + ' !',
+                    text: message
+                })
+            },
         }
     }
 </script>
