@@ -174,6 +174,19 @@ let routes = [
         name: 'new-connection-types',
         meta: {layout: 'default'},
     },
+    // connection-types
+    {
+        path: '/connection-groups',
+        component: require('./components/ConnectionGroups/ConnectionGroupsList').default,
+        name: 'connection-groups',
+        meta: {layout: 'default'},
+    },
+    {
+        path: '/connection-types/new',
+        component: require('./components/ConnectionGroups/NewConnectionGroup').default,
+        name: 'new-connection-group',
+        meta: {layout: 'default'},
+    },
     {
         path: '/sms/list',
         component: require('./components/Sms/List').default,
