@@ -3,7 +3,7 @@ import {ErrorHandler} from '../Helpers/ErrorHander'
 import {Paginator} from '../classes/paginator'
 import {resources} from '../resources'
 
-export class connectionGroupService {
+export class ConnectionGroupService {
     constructor() {
         this.repository = RepositoryFactory.get('connectionGroups')
         this.connectionGroups = []
@@ -55,7 +55,7 @@ export class connectionGroupService {
         }
     }
 
-    async createConnectionGoup(name) {
+    async createConnectionGroup(name) {
         try {
             let connectionGroup_PM = {
                 name: name
