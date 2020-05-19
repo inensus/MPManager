@@ -4,6 +4,7 @@
 namespace App\Http\Controllers;
 
 
+use App\Http\Requests\CreateConnectionGroupRequest;
 use App\Http\Resources\ApiResource;
 use App\Models\ConnectionGroup;
 
@@ -23,6 +24,18 @@ class ConnectionGroupController
     {
 
         $connectionGroups = $this->connectionGroup->get();
+
         return new ApiResource($connectionGroups);
+    }
+
+    public function store(CreateConnectionGroupRequest $request)
+    {
+        $name = $request->input('name');
+
+        $this->connectionGroup->name = $name;
+        $this->connectionGroup->save();
+
+        return new ApiResource($this->connectionGroup);
+
     }
 }
