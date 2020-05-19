@@ -1,8 +1,8 @@
 <template>
     <widget
         v-if="showAdd"
-        :id="'new-connection-type'"
-        :title="'Add New Connection Type'">
+        :id="'new-connection-group'"
+        :title="'Add New Connection Group'">
 
 
         <md-card>
@@ -17,7 +17,7 @@
                             <md-input
                                 id="name"
                                 name="name"
-                                v-model="connectionType.name"
+                                v-model="connectionGroup.name"
                                 v-validate="'required|min:3'"
                             />
                             <span class="md-error">{{ errors.first('name') }}</span>
@@ -40,26 +40,24 @@
 
 <script>
     import Widget from '../../shared/widget'
-    import {AccessRate} from '../../classes/AccessRate'
-
-    import {ConnectionTypeService} from '../../services/ConnectionTypeService'
     import {EventBus} from '../../shared/eventbus'
+    import {ConnectionGroupService} from '../../services/ConnectionGroupService'
 
     export default {
-        name: 'NewConnectionType',
+        name: 'NewConnectionGroup',
         components: {Widget},
         data() {
             return {
-                connectionTypeService: new ConnectionTypeService(),
-                connectionType: null,
+                connectionGroupService: new ConnectionGroupService(),
+                connectionGroup: null,
                 showAdd: false,
             }
         },
         created() {
-            this.connectionType = this.connectionTypeService.connectionType
+            this.connectionGroup = this.connectionGroupService.connectionGroup
         },
         mounted() {
-            EventBus.$on('showNewConnectionType', this.show)
+            EventBus.$on('showNewConnectionGroup', this.show)
         },
         methods: {
             async store() {
@@ -71,9 +69,9 @@
                 this.hide()
                 try {
 
-                   await this.connectionTypeService.createConnectionType(this.connectionType.name)
-                    this.alertNotify('success', 'ConnectionType has registered.')
-                    EventBus.$emit('connectionTypeAdded', this.connectionType)
+                    await this.connectionGroupService.createConnectionGroup(this.connectionGroup.name)
+                    this.alertNotify('success', 'ConnectionGroup has registered.')
+                    EventBus.$emit('connectionGroupAdded', this.connectionGroup)
                 } catch (e) {
                     this.alertNotify('error', e.message)
                 }

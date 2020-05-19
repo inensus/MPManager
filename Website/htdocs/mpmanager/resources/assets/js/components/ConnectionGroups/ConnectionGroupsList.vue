@@ -1,13 +1,13 @@
 <template>
     <div>
-        <NewConnectionType/>
+        <NewConnectionGroup/>
         <widget
-            :id="'connection-types-list'"
-            :title="'Connection Types'"
-            :paginator="connectionTypes.paginator"
+            :id="'connection-Groups-list'"
+            :title="'Connection Groups'"
+            :paginator="connectionGroups.paginator"
             :subscriber="subscriber"
             :button="true"
-            :button-text="'New Connection Type'"
+            :button-text="'New Connection Group'"
             :callback="addNew"
         >
             <md-table md-card style="margin-left: 0">
@@ -15,9 +15,9 @@
                     <md-table-head>ID</md-table-head>
                     <md-table-head>Name</md-table-head>
                 </md-table-row>
-                <md-table-row v-for="type in connectionTypes" :key="type.id">
-                    <md-table-cell> {{ type.id}}</md-table-cell>
-                    <md-table-cell> {{ type.name}}</md-table-cell>
+                <md-table-row v-for="Group in connectionGroups" :key="Group.id">
+                    <md-table-cell> {{ Group.id}}</md-table-cell>
+                    <md-table-cell> {{ Group.name}}</md-table-cell>
 
                 </md-table-row>
 
@@ -33,36 +33,36 @@
     import Widget from '../../shared/widget'
     import {EventBus} from '../../shared/eventbus'
     import TableList from '../../shared/TableList'
-    import {ConnectionTypeService} from '../../services/ConnectionTypeService'
-    import NewConnectionType from './NewConnectionType'
+    import {ConnectionGroupService} from '../../services/ConnectionGroupService'
+    import NewConnectionGroup from './NewConnectionGroup'
 
     export default {
-        name: 'ConnectionTypesList',
-        components: {TableList, Widget, NewConnectionType},
+        name: 'ConnectionGroupsList',
+        components: {TableList, Widget, NewConnectionGroup},
         mounted() {
             EventBus.$on('pageLoaded', this.reloadList)
             EventBus.$on('searching', this.searching)
             EventBus.$on('end_searching', this.endSearching)
-            EventBus.$on('connectionTypeAdded', this.getConnectionTypes)
+            EventBus.$on('connectionGroupAdded', this.getConnectionGroups)
 
-            this.getConnectionTypes()
+            this.getConnectionGroups()
         },
 
         data() {
             return {
-                connectionTypeService: new ConnectionTypeService(),
-                subscriber: 'connection-types-list',
-                connectionTypes: [],
+                connectionGroupService: new ConnectionGroupService(),
+                subscriber: 'connection-Groups-list',
+                connectionGroups: [],
             }
         },
         methods: {
             reloadList(subscriber, data) {
                 if (subscriber !== this.subscriber) return
-                this.connectionTypes = this.connectionTypeService.updateList(data)
+                this.connectionGroups = this.connectionGroupService.updateList(data)
             },
-            async getConnectionTypes() {
+            async getConnectionGroups() {
                 try {
-                    this.connectionTypes = await this.connectionTypeService.getConnectionTypes()
+                    this.connectionGroups = await this.connectionGroupService.getConnectionGroups()
 
                 } catch (e) {
 
@@ -70,15 +70,15 @@
                 }
             },
             addNew() {
-                EventBus.$emit('showNewConnectionType')
+                EventBus.$emit('showNewConnectionGroup')
             },
 
         },
-        alertNotify(type, message) {
+        alertNotify(Group, message) {
             this.$notify({
                 group: 'notify',
-                type: type,
-                title: type + ' !',
+                Group: Group,
+                title: Group + ' !',
                 text: message
             })
         },
