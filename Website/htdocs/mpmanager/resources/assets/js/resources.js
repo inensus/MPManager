@@ -25,13 +25,14 @@ export let resources = {
         authData: '/user-data',
     },
     address: {
-        list: '/api/addresses/', // {:ownerId} get
-        new: '/api/addresses/', //post
-        update: '/api/addresses', //put
-        delete: '/api/addresses', //delete
+        list: '/api/addresses/',
+        create: '/api/addresses/',
+        update: '/api/addresses',
+        delete: '/api/addresses',
     },
     city: {
         'list': '/api/cities',
+        'create': '/api/cities',
     },
 
     admin: {
@@ -136,7 +137,8 @@ export let resources = {
     },
     clusters: {
         'list': '/api/clusterlist',
-        'geo': '/api/clusters/geo',
+        'geo': '/api/clusters/geo/',
+        'show_geo': '/api/clusters/',
         'revenue': {
             'overview': '/api/clusters/revenue',
             'trends': '/api/clusters/', //{id}/revenue/analysis
