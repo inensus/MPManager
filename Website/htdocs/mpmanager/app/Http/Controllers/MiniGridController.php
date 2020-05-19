@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreMiniGridRequest;
 use App\Http\Resources\ApiResource;
 use App\Models\MiniGrid;
 use Illuminate\Http\Request;
@@ -18,7 +19,11 @@ class MiniGridController extends Controller
     {
         $this->miniGrid = $miniGrid;
     }
+    public function store(StoreMiniGridRequest $request)
+    {
+        echo $request->input('name');
 
+    }
     /**
      * Display a listing of the resource.
      *
