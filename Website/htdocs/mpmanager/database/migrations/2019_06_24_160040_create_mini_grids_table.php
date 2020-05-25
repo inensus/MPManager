@@ -16,8 +16,8 @@ class CreateMiniGridsTable extends Migration
         Schema::create('mini_grids', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('cluster_id');
-            $table->string('name', 191);
-            $table->integer('data_stream')->default(0);
+            $table->string('name', data_stream191);
+            $table->integer('')->default(0);
             $table->timestamps();
         });
     }

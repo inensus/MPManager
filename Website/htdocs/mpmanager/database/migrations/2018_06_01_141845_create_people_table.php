@@ -25,7 +25,6 @@ class CreatePeopleTable extends Migration
             $table->integer('is_customer')->default(1);
             $table->softDeletes();
             $table->timestamps();
-            $table->softDeletes();
         });
     }
 
