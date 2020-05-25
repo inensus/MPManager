@@ -218,6 +218,7 @@
         methods: {
             async getUsers () {
                 let users = await this.adminService.getUserList()
+
                 users.forEach(u => {
                     let usr = {
                         id: u.id,
