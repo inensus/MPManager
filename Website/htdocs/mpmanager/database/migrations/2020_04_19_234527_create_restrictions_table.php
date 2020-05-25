@@ -21,7 +21,6 @@ class CreateRestrictionsTable extends Migration
             $table->integer('limit');
             $table->timestamps();
         });
-
         $this->addDefault();
     }
 
@@ -37,15 +36,21 @@ class CreateRestrictionsTable extends Migration
 
     public function addDefault()
     {
+        $timeStamp = \Carbon\Carbon::now();
+
         DB::table('restrictions')->insert([
             'target' => 'enable-data-stream',
-            'default' => 5,
-            'limit' => 5
+            'default' => '5',
+            'limit' => '5',
+            'created_at' => $timeStamp,
+            'updated_at' => $timeStamp,
         ]);
         DB::table('restrictions')->insert([
             'target' => 'maintenance-user',
-            'default' => 5,
-            'limit' => 5
+            'default' => '5',
+            'limit' => '5',
+            'created_at' => $timeStamp,
+            'updated_at' => $timeStamp,
         ]);
 
     }
