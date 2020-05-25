@@ -33,9 +33,12 @@
                     </div>
                     <div class="md-layout-item md-size-100 exclamation-div">
                         <md-button class="md-raised md-primary"
+                                   v-if="!loadingNextStep"
                                    @click="nextStep('firstStep', 'secondStep')">
                             Continue
                         </md-button>
+
+                        <md-progress-bar md-mode="indeterminate" v-else/>
                     </div>
                 </div>
             </div>
@@ -54,9 +57,11 @@
                     </div>
                     <div class="md-layout-item md-size-100 exclamation-div">
                         <md-button class="md-raised md-primary"
+                                   v-if="!loadingNextStep"
                                    @click="nextStep('secondStep', 'thirdStep')">
                             Continue
                         </md-button>
+                        <md-progress-bar md-mode="indeterminate" v-else/>
                     </div>
                 </div>
             </div>
@@ -78,11 +83,11 @@
                     </div>
                     <div class="md-layout-item md-size-100" id="logger-done-fail"
                          v-if="PaymentProcess===false">
-                        <span class="failure-span">There is something wrong   <font-awesome-icon class="fail-icon"
-                                                                                                 icon="exclamation"/></span>
+                        <span class="failure-span">Something went wrong <font-awesome-icon class="fail-icon"
+                                                                                           icon="exclamation"/></span>
 
                         <div class="md-layout-item md-size-100 exclamation-div">
-                            <span>Payment failed. please contact the system administrator.</span>
+                            <span>We were not able to process your Payment. Please contact the administrator.</span>
                         </div>
                     </div>
 
@@ -101,8 +106,8 @@
 <script>
 
 
-    import {RestrictionService} from '../services/RestrictionService'
-    import {EventBus} from './eventbus'
+    import { RestrictionService } from '../services/RestrictionService'
+    import { EventBus } from './eventbus'
 
     export default {
         name: 'Stepper',
@@ -111,9 +116,9 @@
             purchasingType: String,
             watchingMiniGrids: Array
         },
-        data() {
+        data () {
             return {
-
+                loadingNextStep: false,
                 restrictionService: new RestrictionService(),
                 activeStep: 'firstStep',
                 firstStep: false,
@@ -124,8 +129,10 @@
             }
         },
         methods: {
-            async nextStep(id, index) {
+            async nextStep (id, index) {
                 this[id] = true
+                this.loadingNextStep = true
+                console.log('start')
                 if (id === 'firstStep' && index === 'secondStep') {
                     if (this.purchasingType === 'logger') {
                         window.open('https://micropowermanager.com/logger', '_blank')
@@ -149,6 +156,7 @@
                             this.PaymentProcess = true
                         }
                     } catch (e) {
+                        console.log(e)
                         this.PaymentProcess = false
 
                     }
@@ -156,10 +164,12 @@
                         this.activeStep = index
                     }
                 }
+                console.log('stop')
+                this.loadingNextStep = false
 
             },
 
-            closeStepper() {
+            closeStepper () {
 
                 EventBus.$emit('closeModal', this.PaymentProcess)
             }
