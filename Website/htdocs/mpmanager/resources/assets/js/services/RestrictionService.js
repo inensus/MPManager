@@ -21,9 +21,7 @@ export class RestrictionService {
                 return new ErrorHandler(response.error, 'http', response.status)
             }
         } catch (e) {
-            console.log(e)
-            let errorMessage = e
-            return new ErrorHandler(errorMessage, 'http')
+            return new ErrorHandler(e, 'http')
         }
     }
 
@@ -35,8 +33,7 @@ export class RestrictionService {
         }
         try {
             let response = await this.repository.check(restriction_PM)
-            if (response.status === 200) {
-
+            if (response.status === 200 || response.status === 201) {
                 return true
             } else {
                 return new ErrorHandler(response.error, 'http', response.status)
