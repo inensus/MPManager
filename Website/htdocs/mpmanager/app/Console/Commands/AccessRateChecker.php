@@ -63,5 +63,7 @@ class AccessRateChecker extends Command
                 //unpaid = 1 send customer a reminder
             }
         }
+
+        return 0;
     }
 }

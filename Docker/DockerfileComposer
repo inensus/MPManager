@@ -1,0 +1,19 @@
+FROM composer
+
+RUN set -eux;\
+    apk add \
+    freetype \
+    libpng \
+    libjpeg-turbo \
+    libxml2-dev \
+    libzip-dev\
+    freetype-dev\
+    libjpeg-turbo-dev\
+    libpng-dev
+
+
+# install php extentions
+RUN docker-php-ext-install gd pcntl soap
+#RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-png-dir=/usr --with-jpeg-dir=/usr \
+#&& docker-php-ext-configure pcntl --enable-pcntl
+

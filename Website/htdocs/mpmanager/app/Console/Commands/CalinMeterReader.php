@@ -49,7 +49,7 @@ class CalinMeterReader extends Command
         $this->calinReadMeter = $calinReadMeter;
     }
 
-    public function handle(): void
+    public function handle()
     {
         //get all online meters
         $meters = $this->meter::whereHas('meterType', function ($q) {
@@ -62,5 +62,7 @@ class CalinMeterReader extends Command
             1,
             ['date' => $readingDate]
         );
+
+        return 0;
     }
 }

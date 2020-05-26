@@ -63,7 +63,8 @@ class AddMeterAddress extends Command
             $address->owner()->associate($meter);
             $address->geo()->associate($meter->geo()->first());
             $address->save();
-
         }
+
+        return 0;
     }
 }
