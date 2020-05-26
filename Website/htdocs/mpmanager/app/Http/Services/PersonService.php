@@ -48,7 +48,9 @@ class PersonService
 
         $countryService = App::make(CountryService::class);
         $country = $countryService->getByCode(request('nationality') ?? 'TZ');
-        $person = $this->addCitizenship($person, $country);
+        if ($country !== null) {
+            $person = $this->addCitizenship($person, $country);
+        }
 
         $addressService = App::make(AddressService::class);
 

@@ -19,7 +19,7 @@ window.axios.interceptors.request.use(
     }
 )
 
-import { config } from './config'
+import {config} from './config'
 
 Vue.prototype.appConfig = config
 
@@ -56,7 +56,7 @@ const datepickerOptions = {}
 // make sure we can use it in our components
 Vue.use(AirbnbStyleDatepicker, datepickerOptions)
 
-import { resources } from './resources'
+import {resources} from './resources'
 
 window.resources = resources
 
@@ -114,20 +114,25 @@ import 'vue-material/dist/vue-material.min.css'
 import 'vue-material/dist/theme/default.css' // This line here
 Vue.use(VueMaterial)
 
+import SidebarComponent from './components/Sidebar'
+
+Vue.use(SidebarComponent)
+import '../sass/mpm.scss'
+
 import VeeValidate from 'vee-validate'
 
 Vue.use(VeeValidate)
 
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { fas } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { faJs, faVuejs, faFacebookF, faSkype } from '@fortawesome/free-brands-svg-icons'
+import {library} from '@fortawesome/fontawesome-svg-core'
+import {fas} from '@fortawesome/free-solid-svg-icons'
+import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
+import {faJs, faVuejs, faFacebookF, faSkype} from '@fortawesome/free-brands-svg-icons'
 
 library.add(fas)
 library.add(faJs, faFacebookF, faSkype)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
 
-import { VueGrid, VueCell } from 'vue-grd'
+import {VueGrid, VueCell} from 'vue-grd'
 
 Vue.component('vue-grid', VueGrid)
 Vue.component('vue-cell', VueCell)

@@ -1,11 +1,11 @@
 import Repository from '../repositories/RepositoryFactory'
-import {ErrorHandler} from "../Helpers/ErrorHander";
+import {ErrorHandler} from '../Helpers/ErrorHander'
 import moment from 'moment'
 
 export class MaintenanceService {
     constructor() {
-        this.repository = Repository.get('maintenance');
-        this.employees = [];
+        this.repository = Repository.get('maintenance')
+        this.employees = []
         this.maintenanceData = {
             creator: null,
             maintenance: true,
@@ -15,50 +15,53 @@ export class MaintenanceService {
             amount: null,
             description: null,
             dueDate: null,
-        };
+        }
         this.personData = {
-            customer_type: "maintenance",
+            customer_type: 'maintenance',
             name: null,
             surname: null,
             phone: null,
             city_id: null,
             mini_grid_id: null,
-            sex: "male"
+            sex: 'male'
         }
 
     }
 
     async getEmployees() {
         try {
-            let response = await this.repository.list();
-            console.log(response)
+            let response = await this.repository.list()
             if (response.status === 200 || response.status === 201) {
-                this.employees = response.data.data;
-                return this.employees;
+                this.employees = response.data.data
+                return this.employees
             } else {
-                return new ErrorHandler(response.error, 'http', response.status);
+                return new ErrorHandler(response.error, 'http', response.status)
             }
         } catch (e) {
-            return new ErrorHandler(e, 'http');
+            return new ErrorHandler(e, 'http')
         }
     }
 
     async createMaintenance(personalData) {
         try {
-            let response = await this.repository.create(personalData);
+            let response = await this.repository.create(personalData)
+
             if (response.status === 200 || response.status === 201) {
-                return response;
+                return response
             } else {
-                return new ErrorHandler(response.error, 'http', response.status);
+
+                return new ErrorHandler(response.error, 'http', response.status)
             }
         } catch (e) {
-            return new ErrorHandler(e, 'http');
+            let erorMessage = e.response.data.data.message
+
+            return new ErrorHandler(erorMessage, 'http',e.response.status)
         }
 
     }
 
     setDueDate(date) {
-        let formattedDate = moment(date);
+        let formattedDate = moment(date)
         this.maintenanceData.dueDate = formattedDate.format('YYYY-MM-DD')
 
     }
