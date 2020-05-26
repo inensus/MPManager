@@ -1,4 +1,14 @@
+
 # Development
+
+## System Requirements
+
+PHP ^7.3
+
+Node ^v13.8.0
+
+
+
 ## 1.Setup the Project
 1. Clone or download the repository
 2. Build the docker containers with docker-compose up
@@ -17,8 +27,8 @@ c:\windows\system32\drivers\etc\hosts
 127.0.0.1       db.manager.mpmanager.local
 ```
 ## 2. Install Dependencies 
-Install php dependencies in the Docker-Container named `laravel`  navigate to `mpmanager`  & run `php ../composer.phar install`
-
+All the dependencies will be automatically installed on step **1.2**. However, if you need additional dependencies, install them in the `laravel` container.
+To Install additional php dependencies enter the Docker-Container named `laravel`  navigate to `mpmanager`  & run `php ../composer.phar install XXX`
 
 ## 3. Migrate the database changes ; 
   - Run `docker exec -it laravel /bin/bash` to jump into the laravel container
@@ -40,12 +50,8 @@ username : laravel
 password: laravel
 ```
 ## 4. Build Frontend
-Firstly, install the dependencies via  `npm install`.  
- Note: Node is currently not available in the Docker-Container. Please install the dependencies directly on your own system. 
- **Te-?sted Node version : v13.8.0**
-
 To build the project navigate to `./Website/htdocs/mpmanager` and run `npm run watch`  
- Note: Again, node is not available in the container. Please run that command on your own system.
+Note: `node` is not available in the container. Please run that command on your own system.
 
 ## 5. Essential Configuration
 There are bound services like the Payment Services (Vodacom Tanzania and Airtel Tanzania), Ticketing Service(Trello API), Critical Logging notification(Slack Channel), WebSocket(Pusher), etc. if you plan to get your payments through these services you need to change/edit following files/configurations
@@ -84,8 +90,6 @@ The following change should be done in the `.env` file
 AIRTEL_REQUEST_URL="AIRTEL SERVICE URL"
 ```
 
-
-
 ### STS Meter Configuration
 Currently, the system supports only CALIN-STS meters. To be able to communicate with Calin and generate STS-Tokens, the following changes should be done;
 1. Your key end the endpoint where you create those tokens. 
@@ -116,7 +120,7 @@ LOG_SLACK_WEBHOOK_URL="SLACK-WEBHOOK-URL"
 ```
 
 ## 6. Setup Horizon
-Please follow the documentation on Laravels official website to configure horizon [Documentation](https://laravel.com/docs/5.7/horizon)
+Please follow the documentation on Laravels official website to configure horizon [Documentation](https://laravel.com/docs/7.x/horizon)
 
 We're running 2-16 instances of each Queue. 16 on important queues like; payment, SMS & token.
 
