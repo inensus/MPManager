@@ -16,7 +16,7 @@ class AddTicketCategoriesOutsourcing extends Migration
         //get ticketing table names
         $tableNames = config('tickets.table_names');
         Schema::table($tableNames['ticket_categories'], static function (Blueprint $table) {
-            $table->boolean('out_source');
+            $table->boolean('out_source')->default(false);
         });
     }
 
