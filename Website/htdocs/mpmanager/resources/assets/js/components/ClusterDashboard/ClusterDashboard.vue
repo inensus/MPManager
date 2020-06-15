@@ -25,7 +25,15 @@
 
         <div class="row">
             <div class="col-sm-12" v-if="clusterData">
-                <cluster-map :miniGrids="clusterData.mini_grids"/>
+                <Map
+                    :geoData="geoData"
+                    :constantLocations="constantLocations"
+                    :constantMarkerUrl="miniGridIcon"
+                    :center="center"
+                    :markingInfos="markingInfos"
+
+                />
+                <!--<cluster-map :miniGrids="clusterData.mini_grids"/>-->
             </div>
         </div>
 
@@ -51,47 +59,45 @@
 </template>
 
 <script>
-    import { EventBus } from '../../shared/eventbus'
-    import '../../shared/TableList'
 
+    import '../../shared/TableList'
+    import Map from '../../shared/Map'
     import Widget from '../../shared/widget'
     import BoxGroup from './BoxGroup'
     import FinancialOverview from './FinancialOverview'
-    import { resources } from '../../resources'
     import ClusterMap from './ClusterMap'
     import RevenueAnalysis from './RevenueAnalysis'
     import RevenueTrends from './RevenueTrends'
     import TargetList from '../VillageDashboard/TargetList'
+    import { ClusterService } from '../../services/ClusterService'
+    import { MappingService } from '../../services/MappingService'
+    import miniGridIcon from '../../../icons/miniGrid.png'
 
     export default {
         name: 'ClusterList',
 
-        components: { TargetList, RevenueTrends, RevenueAnalysis, ClusterMap, FinancialOverview, BoxGroup, Widget },
-
-        created () {
-            this.clusterId = this.$route.params.id
+        components: {
+            TargetList,
+            RevenueTrends,
+            RevenueAnalysis,
+            ClusterMap,
+            FinancialOverview,
+            BoxGroup,
+            Widget,
+            Map
         },
-
-        mounted () {
-            EventBus.$emit('bread', this.bcd)
-            this.initDates()
-            this.getMiniGridList()
-
-        },
-
         data () {
             return {
-                clusterId: null, // the cluster id which passed via url
-                clusterData: null, //contains simple cluster data like name and assigned minigrids
-                bcd: {
-                    'Home': {
-                        'href': '/'
-                    },
-                    'Clusters': {
-                        'href': null,
-                    },
-                },
+                clusterService: new ClusterService(),
+                mappingService: new MappingService(),
+                miniGridIcon: miniGridIcon,
+                clusterId: null,
+                clusterData: null,
                 clusters: null,
+                geoData: null,
+                constantLocations: [],
+                markingInfos: [],
+                center: [0, 0],
                 base: {},
                 compared: {},
                 boxData: {
@@ -105,6 +111,17 @@
 
             }
         },
+        created () {
+            this.clusterId = this.$route.params.id
+        },
+
+        mounted () {
+
+            this.initDates()
+            this.getMiniGridList()
+
+        },
+
         methods: {
             initDates () {
                 this.base = {
@@ -116,13 +133,25 @@
                     to: moment().add(1, 'months').endOf('month').format('YYYY-MM-DD hh:mm')
                 }
             },
+            async getMiniGridList () {
+                this.clusterData = await this.clusterService.getDetails(this.clusterId)
+                let clusterGeoData = await this.clusterService.getClusterGeoLocation(this.clusterId)
+                this.center = [clusterGeoData.lat, clusterGeoData.lon]
+                this.geoData = this.mappingService.focusLocation(clusterGeoData)
+                this.boxData['mini_grids'] = this.clusterData.mini_grids.length
+                for (let i in this.clusterData.mini_grids) {
+                    let miniGrids = this.clusterData.mini_grids
 
-            //gets the cluster list form the api and assigns it to clusterData
-            getMiniGridList () {
-                axios.get(resources.clusters.detail + this.clusterId).then((response) => {
-                    this.clusterData = response.data.data
-                    this.boxData['mini_grids'] = this.clusterData.mini_grids.length
-                })
+                    let points = miniGrids[i].location.points.split(',')
+                    let lat = points[0]
+                    let lon = points[1]
+
+                    let markingInfo = this.mappingService.createMarkinginformation(miniGrids[i].id, miniGrids[i].name, lat, lon)
+
+                    this.markingInfos.push(markingInfo)
+                    this.constantLocations.push([lat, lon])
+
+                }
             },
 
             addRevenue (data) {
@@ -134,7 +163,15 @@
             addConnections (data) {
                 this.boxData['people'] = data
                 this.boxData['meters'] = data
-            }
+            },
+            alertNotify (type, message) {
+                this.$notify({
+                    group: 'notify',
+                    type: type,
+                    title: type + ' !',
+                    text: message
+                })
+            },
         },
 
     }
