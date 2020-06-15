@@ -23,8 +23,8 @@ class CreatePeopleTable extends Migration
             $table->string('sex', 6)->nullable();
             $table->integer('nationality')->nullable();
             $table->integer('is_customer')->default(1);
-            $table->timestamps();
             $table->softDeletes();
+            $table->timestamps();
         });
     }
 

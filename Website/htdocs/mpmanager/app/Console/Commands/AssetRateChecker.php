@@ -74,6 +74,8 @@ class AssetRateChecker extends Command
     {
         $this->remindUpComingRates(3);
         $this->findOverDueRates();
+
+        return 0;
     }
 
     /**

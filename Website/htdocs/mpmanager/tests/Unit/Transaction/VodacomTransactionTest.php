@@ -13,7 +13,6 @@ use Tests\TestCase;
  * Date: 04.07.18
  * Time: 14:28
  */
-
 class VodacomTransactionTest extends TestCase
 {
 
@@ -53,9 +52,7 @@ class VodacomTransactionTest extends TestCase
     public function testNewTransaction()
     {
         $request = Request::create(URL::route('vodacomTransaction'), 'POST',
-            [
-            ]
-            , [], [],
+            [], [], [],
             [
                 'REMOTE_ADDR' => config('services.vodacom.ips')[0],
                 'CONTENT_TYPE' => 'text/xml',

@@ -16,9 +16,11 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
  *
  * @package App
  *
- * @property $id int
- * @property $name string
- * @property $cluster_id int
+ * @property int $id
+ * @property string $name
+ * @property int $cluster_id
+ * @property int $data_stream;
+ *
  */
 class MiniGrid extends Model
 {

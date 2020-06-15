@@ -52,6 +52,9 @@ Route::group(['prefix' => 'mini-grids'], static function () {
     Route::post('/{id}/energy', 'RevenueController@soldEnergyPerMiniGrid');
     Route::get('/{id}/batteries', 'BatteryController@showByMiniGrid');
     Route::get('/{id}/solar', 'SolarController@showByMiniGrid');
+
+    Route::put('/{miniGrid}', 'MiniGridController@update')->middleware('restriction:enable-data-stream');
+
 });
 
 Route::post('/revenue/analysis/', 'RevenueController@analysis');
@@ -69,7 +72,7 @@ Route::group(['prefix' => 'manufacturers'], static function () {
 });
 
 Route::group(['prefix' => 'pv',], static function () {
-    Route::post('/', 'PVController@store');
+    Route::post('/', 'PVController@store')->middleware('data.controller');
     Route::get('/{miniGridId}', 'PVController@show');
 
 }
@@ -300,5 +303,8 @@ Route::group(['prefix' => 'connection-groups'], function () {
 
 Route::group(['prefix' => '/maintenance'], function () {
     Route::get('/', 'MaintenanceUserController@index');
-    Route::post('/user', 'MaintenanceUserController@store');
+    Route::post('/user', 'MaintenanceUserController@store')
+        ->middleware('restriction:maintenance-user');
 });
+
+Route::post('/restrictions', 'RestrictionController@store');

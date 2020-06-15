@@ -78,8 +78,8 @@
         data: () => ({
             authError: false,
             form: {
-                email: null,
-                password: null
+                email: 'demo@inensus.com',
+                password: 123123
             },
 
             userSaved: false,
@@ -155,6 +155,7 @@
         font-size: x-large !important;
         padding: 1rem 1rem 0 1rem;
         margin-bottom: 0 !important;
+        font-weight: bold !important;
     }
 
     .subtitle {

@@ -5,19 +5,39 @@ services:
     container_name: laravel
     build:
       context: Docker/
-    image: laravel/php:72
+    image: laravel/php:73
 
     environment:
       VIRTUAL_HOST: mpmanager.local
     depends_on:
-    - maria
+      - maria
     links:
-    - maria:db
-    - redis:redis
+      - maria:db
+      - redis:redis
 
     volumes:
-    - ./Website/config/php/php.ini:/usr/local/etc/php/php.ini
-    - ./Website/htdocs:/var/www/html
+      - ./Website/config/php/php.ini:/usr/local/etc/php/php.ini
+      - ./Website/htdocs:/var/www/html
+
+  'composer':
+    container_name: mpmanager_composer
+    build:
+      context: Docker/
+      dockerfile: DockerfileComposer
+    restart: 'no'
+
+    command: install
+    volumes:
+      - ./Website/htdocs/mpmanager:/app
+
+  'node':
+    container_name: mpmanager_node
+    image: "node:14.3"
+    working_dir: /home/node/app
+    volumes:
+      - ./Website/htdocs/mpmanager:/home/node/app
+    command:
+      npm install
 
 
   'redis':
@@ -31,9 +51,9 @@ services:
       VIRTUAL_HOST: db.mpmanager.local
 
     depends_on:
-    - maria
+      - maria
     links:
-    - maria:db
+      - maria:db
 
 
   'maria':
@@ -45,7 +65,7 @@ services:
       MYSQL_USER: laravel
       MYSQL_PASSWORD: laravel
     volumes:
-    - ./DB/mysql:/var/lib/mysql
+      - ./DB/mysql:/var/lib/mysql
 
   nginxproxy:
     container_name: nginx-proxy
