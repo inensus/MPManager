@@ -47,6 +47,7 @@ Route::group(['prefix' => 'batteries'], static function () {
 
 Route::group(['prefix' => 'mini-grids'], static function () {
     Route::get('/', 'MiniGridController@index');
+    Route::post('/', 'MiniGridController@store');
     Route::get('/{id}', 'MiniGridController@show');
     Route::post('/{id}/transactions', 'RevenueController@transactionRevenuePerMiniGrid');
     Route::post('/{id}/energy', 'RevenueController@soldEnergyPerMiniGrid');
@@ -284,6 +285,7 @@ Route::group(['prefix' => '/clusters'], function () {
     Route::post('/{id}/revenue', 'RevenueController@getClusterRevenue');
     Route::post('/', 'ClusterController@store');
     Route::get('/{id}', 'ClusterController@show');
+    Route::get('/{cluster}/geo', 'ClusterController@showGeo');
 });
 
 Route::get('/clusterlist', 'ClusterController@index');

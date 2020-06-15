@@ -162,6 +162,24 @@
                         name: 'Maintenance',
                         route: '/maintenance',
                         icon: 'wrench',
+                    },
+                    {
+                        name: 'Setup System ',
+                        icon:'cogs',
+                        children: [
+                            {
+                                name: 'Add Cluster',
+                                route: '/clusters/add',
+                            },
+                            {
+                                name: 'Add MiniGrid',
+                                route: '/setup/add-mini-grid',
+                            },
+                            {
+                                name: 'Add Village',
+                                route: '/setup/add-village',
+                            }
+                        ]
                     }
                 ]
             }

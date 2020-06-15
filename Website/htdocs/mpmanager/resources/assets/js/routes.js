@@ -212,6 +212,19 @@ let routes = [
         meta: {layout: 'default'},
     },
     {
+        path: '/setup/add-village',
+        component: require('./components/VillageDashboard/AddVillage').default,
+        name: 'add-village',
+        meta: {layout: 'default'},
+    },
+    {
+        path: '/setup/add-mini-grid',
+        component: require('./components/ClustersDashboard/AddMiniGrid').default,
+        name: 'add-mini-grid',
+        meta: {layout: 'default'}
+
+    },
+    {
         path: '/assets/types',
         component: require('./components/Assets/AssetTypeList').default,
         name: 'asset-types',

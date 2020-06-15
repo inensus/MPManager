@@ -105,7 +105,18 @@ class ClusterController
             ->find($id);
         return new ApiResource($cluster);
     }
+    public function showGeo(Cluster $cluster)
+    {
 
+
+        try {
+            $clusterData = Storage::disk('local')->get($cluster->name . '.json');
+        } catch (FileNotFoundException $e) {
+        }
+
+        $cluster['geo'] = json_decode($clusterData);
+        return new ApiResource($cluster);
+    }
     /**
      * Gives the json files back which contains the polygon of the given cluster
      */
@@ -163,8 +174,6 @@ class ClusterController
         //fire the create geo-json event. It creates a json file with coordinates
         event(new ClusterEvent($this->cluster, $geoType, $geoData));
 
-        // iterate over cities and attach them to cluster
-        $this->clusterService->attachCities($this->cluster, $cities);
 
         return new ApiResource(
             $this->cluster

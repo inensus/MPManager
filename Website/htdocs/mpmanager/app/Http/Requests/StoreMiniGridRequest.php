@@ -3,16 +3,17 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class CityRequest extends FormRequest
+class StoreMiniGridRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize(): bool
-	{
+    public function authorize()
+    {
         return true;
     }
 
@@ -21,12 +22,12 @@ class CityRequest extends FormRequest
      *
      * @return array
      */
-    public function rules(): array
-	{
+    public function rules()
+    {
         return [
-            'name' => 'required|unique:cities',
-            //'country' => 'required|exists:countries,country_code'
-            'mini_grid_id' => 'required|exists:mini_grids,id'
+            'name' => 'required|min:3',
+            'cluster_id' => 'required|exists:clusters,id',
+            'geo_data' => 'required',
         ];
     }
 }
