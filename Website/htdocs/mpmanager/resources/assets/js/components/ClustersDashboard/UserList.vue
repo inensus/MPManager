@@ -1,36 +1,61 @@
 <template>
-    <ul class="list-group">
-        <li class="list-group-item" v-for="user in users" :key="user.id" @click="selectUser(user.id)"
-            :class="selectedUser === user.id ?'active': ''" style="cursor:pointer;">
-            {{user.name}}
-        </li>
-    </ul>
+    <div>
+        <md-field>
+
+            <md-select
+                @md-selected="selectUser"
+                v-model="selectedUser"
+                name="user"
+                id="user"
+                placeholder="Assign Cluster Manager"
+            >
+
+                <md-option v-for="(user,index) in users" :value="index" :key="index">{{user.name}}</md-option>
+            </md-select>
+
+        </md-field>
+    </div>
+
 </template>
 
 <script>
-    import { resources } from '../../resources'
+    import {resources} from '../../resources'
+    import {UserService} from '../../services/UserService'
 
     export default {
         name: 'UserList',
-        mounted () {
+        mounted() {
             this.getUserList()
         },
-        data () {
+        data() {
             return {
+                userService : new UserService(),
                 users: null,
                 selectedUser: null,
             }
         },
         methods: {
-            selectUser (user) {
+            selectUser(user) {
                 this.selectedUser = user
                 this.$emit('userSelected', user)
             },
-            getUserList () {
-                axios.get(resources.admin.list).then((response) => {
-                    this.users = response.data.data
+
+          async  getUserList() {
+                try {
+                    this.users = await  this.userService.getUsers()
+                }catch (e) {
+                    this.alertNotify('error', e.message)
+                }
+
+            },
+            alertNotify(type, message) {
+                this.$notify({
+                    group: 'notify',
+                    type: type,
+                    title: type + ' !',
+                    text: message
                 })
-            }
+            },
         }
     }
 </script>
