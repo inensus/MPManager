@@ -23,6 +23,7 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 class MiniGrid extends Model
 {
 
+    protected $fillable = ['name', 'cluster_id'];
 
     public function cities(): HasMany
     {

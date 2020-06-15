@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreMiniGridRequest extends FormRequest
 {
@@ -24,7 +25,9 @@ class StoreMiniGridRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'=>'required|min:3'
+            'name' => 'required|min:3',
+            'cluster_id' => 'required|exists:clusters,id',
+            'geo_data' => 'required',
         ];
     }
 }

@@ -19,11 +19,14 @@ class MiniGridController extends Controller
     {
         $this->miniGrid = $miniGrid;
     }
+
     public function store(StoreMiniGridRequest $request)
     {
-        echo $request->input('name');
+        $miniGrid = $this->miniGrid::create($request->all());
 
+        return new ApiResource($miniGrid);
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -32,6 +35,7 @@ class MiniGridController extends Controller
     public function index(): ApiResource
     {
         $miniGrids = $this->miniGrid->get();
+
         return new ApiResource($miniGrids);
     }
 
@@ -53,6 +57,7 @@ class MiniGridController extends Controller
         } else {
             $miniGrid = $this->miniGrid->find($id);
         }
+
         return new ApiResource($miniGrid);
     }
 }
