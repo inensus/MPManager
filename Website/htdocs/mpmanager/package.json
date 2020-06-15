@@ -42,6 +42,7 @@
         "jspdf": "^1.5.3",
         "laravel-echo": "^1.6.1",
         "leaflet": "^1.6.0",
+        "leaflet-draw": "1.0.4",
         "leaflet.icon.glyph": "^0.2.0",
         "mpm": "0.0.1",
         "node-gyp": "^6.1.0",
