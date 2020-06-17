@@ -54,6 +54,11 @@ Route::group(['prefix' => 'mini-grids'], static function () {
     Route::get('/{id}/solar', 'SolarController@showByMiniGrid');
 
     Route::put('/{miniGrid}', 'MiniGridController@update')->middleware('restriction:enable-data-stream');
+    Route::get('/{MiniGrid}/battery-readings', 'BatteryController@show');
+    Route::get('/{MiniGrid}/energy-readings', 'EnergyController@show');
+    Route::get('/{MiniGrid}/solar-readings', 'SolarController@show');
+    Route::get('/{MiniGrid}/pv-readings', 'PVController@showReadings');
+    Route::get('/{MiniGrid}/weather-readings', 'BatteryController@show');
 
 });
 
