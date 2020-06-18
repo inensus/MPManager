@@ -43,7 +43,7 @@
                                         @click="locationSelected(geo)">
                                         <md-icon v-bind:class="{ 'selected-list-item': geo.selected }">location_on
                                         </md-icon>
-                                        <md-icon v-if="geo.drawType==='draw'"
+                                        <md-icon v-if="geo.draw_type==='draw'"
                                                  v-bind:class="{ 'selected-list-item': geo.selected }">edit
                                         </md-icon>
                                         <span class="md-list-item-text">{{geo.display_name}} </span>
@@ -161,7 +161,7 @@
 
                             this.geoDataItems.splice(i, 1)
                         } else if (
-                            item.drawType === 'set' &&
+                            item.draw_type === 'set' &&
                             this.clusterName !== '' &&
                             !item.display_name.toLowerCase().includes(this.clusterName.toLowerCase())) {
                             this.geoDataItems.splice(i, 1)
@@ -188,7 +188,7 @@
                 deletedItemIds.forEach((id) => {
                     for (let i = this.geoDataItems.length; i--;) {
                         let deletedGeoDataItem = this.geoDataItems[i]
-                        if (deletedGeoDataItem._leaflet_id === id) this.geoDataItems.splice(i, 1)
+                        if (deletedGeoDataItem.leaflet_id === id) this.geoDataItems.splice(i, 1)
                     }
                 })
                 if (this.geoDataItems.length === 0) {
@@ -197,7 +197,7 @@
             })
             EventBus.$on('getEditedGeoDataItems', (editedItems) => {
                 editedItems.forEach((e) => {
-                    let editedGeoDataItem = this.geoDataItems.filter(x => x._leaflet_id === e._leaflet_id)[0]
+                    let editedGeoDataItem = this.geoDataItems.filter(x => x.leaflet_id === e.leaflet_id)[0]
 
                     if (editedGeoDataItem !== undefined) {
 
