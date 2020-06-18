@@ -25,6 +25,7 @@ export class MappingService {
             if (response.status === 200) {
                 let { data } = response
                 this.geoData = this.filterResultsOut(data, filtered_types)
+
                 return this.geoData
             } else {
                 return new ErrorHandler(response.error, 'http', response.status)
@@ -40,10 +41,12 @@ export class MappingService {
         let result = []
         this.geoDataItems = []
         for (let i in geoData) {
+
             let geoType = geoData[i].geojson.type
             if (Object.keys(filtered_types).length > 0 && !(geoType.toLowerCase() in filtered_types)) {
                 continue
             }
+            geoData[i].searched = true
             result.push(geoData[i])
         }
 
@@ -80,7 +83,8 @@ export class MappingService {
                 if (coordinate.lat === undefined && coordinate.lng === undefined) {
                     locations.push(coordinate)
                 } else {
-                    locations.push([coordinate.lng, coordinate.lat])
+
+                    locations.push([coordinate.lat, coordinate.lng])
                 }
             }
         }
@@ -93,9 +97,11 @@ export class MappingService {
 
     }
 
-    createMarkinginformation (id, name, lat, lon) {
+    createMarkinginformation (id, name,serialNumber, lat, lon) {
         this.markingInfo = {
+
             id: id,
+            serialNumber:serialNumber,
             name: name,
             lat: lat,
             lon: lon
