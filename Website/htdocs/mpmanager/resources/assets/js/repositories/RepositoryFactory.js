@@ -8,9 +8,12 @@ import CityRepository from './CityRepository'
 import ConnectionTypeRepository from './ConnectionTypeRepository'
 import ConnectionGroupsRepository from './ConnectionGroupsRepository'
 
-
 import RestrictionRepository from './RestrictionRepository'
-
+import MappingRepository from './MappingRepository'
+import ClusterRepository from './ClusterRepository'
+import UserRepository from './UserRepository'
+import MeterRepository from './MeterRepository'
+import PersonRepository from './PersonRepository'
 
 const repositories = {
     'asset': AssetRepository,
@@ -20,14 +23,14 @@ const repositories = {
     'sms': SmsRepository,
     'minigrid': MiniGridRepository,
     'city': CityRepository,
-    'map':MappingRepository,
-    'user':UserRepository,
-    'cluster':ClusterRepository,
+    'map': MappingRepository,
+    'user': UserRepository,
+    'cluster': ClusterRepository,
     'connectionTypes': ConnectionTypeRepository,
     'connectionGroups': ConnectionGroupsRepository,
-    'restriction':RestrictionRepository,
-
-
+    'restriction': RestrictionRepository,
+    'meter':MeterRepository,
+    'person':PersonRepository
 
 }
 
