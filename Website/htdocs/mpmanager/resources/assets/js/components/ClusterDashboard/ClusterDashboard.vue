@@ -144,7 +144,7 @@
                     let lat = points[0]
                     let lon = points[1]
 
-                    let markingInfo = this.mappingService.createMarkinginformation(miniGrids[i].id, miniGrids[i].name, lat, lon)
+                    let markingInfo = this.mappingService.createMarkinginformation(miniGrids[i].id, miniGrids[i].name, null,lat, lon)
 
                     this.markingInfos.push(markingInfo)
                     this.constantLocations.push([lat, lon])
