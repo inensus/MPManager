@@ -49,7 +49,7 @@
                                         <md-input
                                             id="latitude"
                                             name="latitude"
-                                            type="number"
+
                                             maxlength="8"
                                             step="any"
                                             v-model="miniGridLatLng.lat"
@@ -63,7 +63,7 @@
                                         <md-input
                                             id="longitude"
                                             name="longitude"
-                                            type="number"
+
                                             step="any"
                                             maxlength="8"
                                             v-model="miniGridLatLng.lon"
@@ -93,7 +93,7 @@
                             :markerLocations="markerLocations"
                             :remove="true"
                             :center="center"
-
+                            :markerUrl="markerUrl"
                         />
                     </div>
                 </md-card-content>
@@ -131,6 +131,7 @@
                 geoData: null,
                 center: [0, 0],
                 marker: true,
+                markerUrl: marker,
                 miniGridName: '',
                 miniGridLatLng: {
                     lat: null,
