@@ -69,7 +69,7 @@
 
                 <div class="md-layout-item md-medium-size-50 md-xsmall-size-100 md-size-25">
                     <solar-data-and-weather
-                        v-if="this.miniGridData"
+                        v-if="this.miniGridData.location!==undefined"
                         :mini_grid_id="this.miniGridId"
                         :mini_grid_coordinates="this.miniGridData.location.points"
                     />
@@ -346,7 +346,7 @@
                                         <label for="mini-grid-location">Location (Lat, Lon)</label>
                                         <md-input type="text" id="mini-grid-location"
                                                   class="form-control"
-                                                  :value="miniGridData.location!== null ? miniGridData.location.points: ''"
+                                                  :value="miniGridData.location!== undefined ? miniGridData.location.points: ''"
                                                   placeholder="Latitude, Longitude"></md-input>
 
 
@@ -390,22 +390,22 @@
     import format from 'date-fns/format'
     import Widget from '../../shared/widget'
     import moment from 'moment'
-    import {currency} from '../../mixins/currency'
+    import { currency } from '../../mixins/currency'
     import TableList from '../../shared/TableList'
-    import {resources} from '../../resources'
+    import { resources } from '../../resources'
     import Datepicker from 'vuejs-datepicker'
-    import {BatchRevenue} from '../../classes/revenue/batch'
+    import { BatchRevenue } from '../../classes/revenue/batch'
     import TargetList from './TargetList'
-    import MiniGridMap from './MiniGripdMap'
     import BatteryStatuses from './BatteryStatuses'
     import SolarDataAndWeather from './SolarDataAndWeather'
     import Box from '../Box'
     import ChartistBox from '../ChartistBox'
     import ChartBox from '../ChartBox'
     import EnergyChartBox from './EnergyChartBox'
-    import {MiniGridService} from '../../services/MiniGridService'
+    import { MiniGridService } from '../../services/MiniGridService'
     import Stepper from '../../shared/stepper'
-    import {EventBus} from '../../shared/eventbus'
+    import { EventBus } from '../../shared/eventbus'
+    import MiniGridMap from './MiniGridMap'
 
     export default {
         name: 'Dashboard',
@@ -424,11 +424,11 @@
             Stepper
         },
         mixins: [currency],
-        created() {
+        created () {
             this.miniGridId = this.$route.params.id
             this.getMiniGridData(this.miniGridId)
         },
-        mounted() {
+        mounted () {
             //set initial dates for periods
             this.initializePeriods()
             this.getBatchData()
@@ -476,17 +476,17 @@
             },
         },
         computed: {
-            compareAnalysisAvailable() {
+            compareAnalysisAvailable () {
                 return this.comparedRevenues.revenueList !== null
             },
-            totalCircles() {
+            totalCircles () {
                 if (this.batchRevenues.revenueList === null) {
                     return 0
                 }
                 return Math.ceil(Object.keys(this.batchRevenues.revenueList.target.targets).length / 4)
             },
             //the summary of total revenues of both periods
-            totalRevenues() {
+            totalRevenues () {
                 if (this.revenues.length === 0) {
                     return 0
                 }
@@ -511,17 +511,17 @@
                 }
                 return sum
             },
-            currentTarget() {
+            currentTarget () {
                 if (this.donutData.length === 1) {
                     return this.donutData[0].targets
                 }
                 return this.donutData[this.currentDonutIndex].targets
             },
-            currentDonutIndex() {
+            currentDonutIndex () {
                 return this.periodMapIterator % this.periodMap.length
             }
         },
-        data() {
+        data () {
             return {
                 miniGridService: new MiniGridService(),
                 enableDataStream: false,
@@ -539,6 +539,7 @@
                 currentSelectedTargetCircle: 0,
                 displayedTargetPercetinles: [0, 5],
                 miniGridData: null,
+                miniGridId: null,
                 chartEvents:
                     {
                         select: () => {
@@ -588,7 +589,7 @@
                 },
                 tab: 'weekly',
                 expanded: true, // is the determinator whether the period picker should be displayed or not
-                hebele: false,
+
                 revenues: [],
                 tmpRevenues: [],
                 init: true,
@@ -645,13 +646,13 @@
             }
         },
         methods: {
-            closeDatePicker() {
+            closeDatePicker () {
                 this.expanded = true
             },
-            editMiniGrid() {
+            editMiniGrid () {
                 this.showModal = true
             },
-            async getMiniGridData(miniGridId) {
+            async getMiniGridData (miniGridId) {
                 try {
                     this.miniGridData = await this.miniGridService.getMiniGridData(miniGridId)
                     this.enableDataStream = this.miniGridData.data_stream === 1 ? true : false
@@ -660,12 +661,12 @@
                     this.alertNotify('error', e.message)
                 }
             },
-            setCircleIndex(index) {
+            setCircleIndex (index) {
                 this.displayedTargetPercetinles[0] = index * 5
                 this.displayedTargetPercetinles[1] = this.displayedTargetPercetinles[0] + 5
                 this.currentSelectedTargetCircle = index
             },
-            getPercentileList() {
+            getPercentileList () {
                 let tmpList = {}
                 let counter = 0
                 for (let t in this.batchRevenues.revenueList.target.targets) {
@@ -681,7 +682,7 @@
                 }
                 return tmpList
             },
-            totalConnectionsByTarget() {
+            totalConnectionsByTarget () {
                 let totalConnections = 0
                 if (this.periodMap.length === 0) return totalConnections
                 this.periodMap[0].targets.map(item => {
@@ -690,7 +691,7 @@
                 })
                 return totalConnections
             },
-            calculateRevenueTargetPercentage(revenue, targetRevenue) {
+            calculateRevenueTargetPercentage (revenue, targetRevenue) {
                 if (revenue === 0 || targetRevenue === 0) return 0
                 return Math.round(
                     parseInt(revenue) * 100
@@ -698,7 +699,7 @@
                     * 100
                 ) / 100
             },
-            baseTargetData(connectionType, type) {
+            baseTargetData (connectionType, type) {
                 if (this.periodMap.length === 0) return 'Target not available'
                 let matchTarget = this.periodMap[0].targets.filter(target => {
                     return target.connection === connectionType
@@ -713,16 +714,16 @@
                 }
             },
             //returns a readable string based on [seconds]
-            calcutateDuration(seconds) {
+            calcutateDuration (seconds) {
                 if (seconds === null) return '0'
                 seconds = parseInt(seconds)
                 return Math.floor(moment.duration(seconds, 'seconds').asHours()) + ':' + moment.duration(seconds, 'seconds').minutes() + ':' + moment.duration(seconds, 'seconds').seconds()
             },
             //re-formats the date
-            formatPeriodText(date) {
+            formatPeriodText (date) {
                 return moment(date, 'Y-W').format('YYYY MMM Do')
             },
-            initializePeriods() {
+            initializePeriods () {
                 this.datesInitialized = true
                 //set start period
                 let startingPeriod = moment().weekday(-6).format('YYYY-MM-DD') // last Monday
@@ -730,7 +731,7 @@
                 this.dateSelected(startingPeriodDateObj)
             },
             //calculates the reached target percentage
-            targetPercentage(actualRevenue, targetRevenue, makeHundred = true) {
+            targetPercentage (actualRevenue, targetRevenue, makeHundred = true) {
                 if (typeof (targetRevenue) === 'undefined') return 0
                 if (targetRevenue === 0) return 100
                 let result = parseInt(parseInt(actualRevenue) * 100 / parseInt(targetRevenue))
@@ -738,7 +739,7 @@
                     return 0
                 return makeHundred === true ? (result > 100 ? 100 : result) : result
             },
-            getBatchData() {
+            getBatchData () {
                 this.expanded = true
                 this.highlighted.base = this.highlighted.tmpBase
                 this.highlighted.compared = this.highlighted.tmpCompared
@@ -746,7 +747,7 @@
                 this.getSoldEnergy()
                 this.getTransactionsOverview()
             },
-            revenueData(from, to, batchRevenues) {
+            revenueData (from, to, batchRevenues) {
                 return batchRevenues.revenueForPeriod(
                     this.miniGridId,
                     'mini-grid',
@@ -756,7 +757,7 @@
                     return data
                 })
             },
-            getTransactionsOverview() {
+            getTransactionsOverview () {
                 axios.post('/api/mini-grids/' + this.miniGridId + '/transactions', {
                     startDate: this.highlighted.base.from,
                     endDate: this.highlighted.base.to
@@ -766,7 +767,7 @@
                     }
                 )
             },
-            getSoldEnergy() {
+            getSoldEnergy () {
                 axios.post('/api/mini-grids/' + this.miniGridId + '/energy', {
                     startDate: this.highlighted.base.from,
                     endDate: this.highlighted.base.to
@@ -776,15 +777,15 @@
                     }
                 )
             },
-            baseDataAvailable(data) {
+            baseDataAvailable (data) {
                 this.batchRevenues = data
                 this.initDonutData()
             },
             // get all periods from donut data and maps them into one array
-            initDonutData() {
+            initDonutData () {
                 this.donutData = this.initializeCharts(['Connection Name', 'Revenue'])
             },
-            initializeCharts(initValue) {
+            initializeCharts (initValue) {
                 let donutData = [initValue]
                 //donut chart for given period
                 let data = this.batchRevenues.revenueList.revenue
@@ -796,13 +797,13 @@
                 }
                 return donutData
             },
-            dateSelectedBase(val) {
+            dateSelectedBase (val) {
                 this.dateSelected(val)
             },
-            dateSelectedCompared(val) {
+            dateSelectedCompared (val) {
                 this.dateSelected(val, false)
             },
-            dateSelected(val, base = true) {
+            dateSelected (val, base = true) {
                 if (this.tab === 'monthly') {
                     let date = moment(val)
                     if (base) {
@@ -867,7 +868,7 @@
                     }
                 }
             },
-            fillTicketChart() {
+            fillTicketChart () {
                 let openedTicketChartData = []
                 let closedTicketChartData = []
                 axios.get(resources.revenues.tickets + '/' + this.miniGridId).then(response => {
@@ -898,7 +899,7 @@
                     this.closedTicketChartData = closedTicketChartData
                 })
             },
-            fillRevenueTrends() {
+            fillRevenueTrends () {
                 this.trendChartData.base = [['Date']]
                 this.trendChartData.compare = [['Date']]
                 axios.post(resources.revenues.trends + '/' + this.miniGridId, {
@@ -953,7 +954,7 @@
                 )
             },
             //get all data from the beginning of the time
-            fillRevenueTrendsOverview() {
+            fillRevenueTrendsOverview () {
                 this.trendChartData.overview = [['Date']]
                 axios.post(resources.revenues.trends + '/' + this.miniGridId, {
                     startDate: '2018-08-01',
@@ -982,7 +983,7 @@
                     }
                 )
             },
-            formatDates(dateOne, dateTwo) {
+            formatDates (dateOne, dateTwo) {
                 let formattedDates = ''
                 if (dateOne) {
                     formattedDates = format(dateOne, this.dateFormat)
@@ -992,21 +993,21 @@
                 }
                 return formattedDates !== '' ? formattedDates : 'Select Dates'
             },
-            refreshChart() {
+            refreshChart () {
                 this.chartData = this.chartTmpData
             },
-            calculateRevenuePercent(current, compared) {
+            calculateRevenuePercent (current, compared) {
                 if (current + compared === 0) return -1
                 return Math.round(current * 100 / compared)
             },
-            updateMiniGrid() {
+            updateMiniGrid () {
                 axios.put(resources.city.list + '/' + this.miniGridId, {
                     'a': 'b'
                 })
                     .then((response) => {
                     })
             },
-            async onDataStreamChange(value) {
+            async onDataStreamChange (value) {
                 try {
                     this.switching = true
                     let data_stream = this.enableDataStream === true ? 1 : 0
@@ -1029,7 +1030,7 @@
                     }
                 }
             },
-            alertNotify(type, message) {
+            alertNotify (type, message) {
                 this.$notify({
                     group: 'notify',
                     type: type,
