@@ -193,16 +193,20 @@
             },
             async getMiniGrids () {
                 try {
+                    this.constantLocations = []
                     this.miniGrids = await this.miniGridService.getMiniGrids()
                     if (this.miniGrids.length > 0) {
 
+                        this.constantLocations = []
+                        this.markingInfos = []
                         this.selectedMiniGridId = this.miniGrids[this.miniGrids.length - 1].id
                         let miniGridGeoData = await this.miniGridService.getMiniGridGeoData(this.selectedMiniGridId)
                         let Points = miniGridGeoData.location.points.split(',')
                         this.miniGridLatLng.lat = Points[0]
                         this.miniGridLatLng.lon = Points[1]
+
                         await this.getGeoData(this.miniGrids[this.miniGrids.length - 1].cluster_id)
-                        let markingInfo = this.mappingService.createMarkinginformation(miniGridGeoData.id, miniGridGeoData.name, Points[0], Points[1])
+                        let markingInfo = this.mappingService.createMarkinginformation(miniGridGeoData.id, miniGridGeoData.name, null,Points[0], Points[1])
                         this.markingInfos.push(markingInfo)
                         this.constantLocations.push([this.miniGridLatLng.lat, this.miniGridLatLng.lon])
 
@@ -243,16 +247,23 @@
                 this.markerLocations = []
                 this.markerLocations.push([this.cityLatLng.lat, this.cityLatLng.lon])
             },
-            selectMiniGrid (miniGridId) {
+            async selectMiniGrid (miniGridId) {
                 this.cityLatLng = {
                     lat: null,
                     lon: null
                 }
-
-                let clusterId = this.miniGrids.filter(x => x.id === miniGridId).map(x => x.cluster_id)[0]
-
-                this.getGeoData(clusterId)
-
+                this.constantLocations = []
+                this.markingInfos = []
+                let miniGrid = this.miniGrids.filter(x => x.id === miniGridId)[0]
+                this.selectedMiniGridId = miniGridId
+                let miniGridGeoData = await this.miniGridService.getMiniGridGeoData(this.selectedMiniGridId)
+                let Points = miniGridGeoData.location.points.split(',')
+                this.miniGridLatLng.lat = Points[0]
+                this.miniGridLatLng.lon = Points[1]
+                await this.getGeoData(miniGrid.cluster_id)
+                let markingInfo = this.mappingService.createMarkinginformation(miniGridGeoData.id, miniGridGeoData.name, Points[0], Points[1])
+                this.markingInfos.push(markingInfo)
+                this.constantLocations.push([this.miniGridLatLng.lat, this.miniGridLatLng.lon])
             },
             getValidateVillage () {
                 this.sending = true
