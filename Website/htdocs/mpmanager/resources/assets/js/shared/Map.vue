@@ -87,6 +87,18 @@
             },
             markingInfos: {
                 default: null
+            },
+            zoom: {
+                type: Number,
+                default: 9
+            },
+            maxZoom: {
+                type: Number,
+                default: 20
+            },
+            isMeter: {
+                type: Boolean,
+                default: false
             }
         },
         data () {
@@ -102,9 +114,6 @@
             }
 
         },
-        created () {
-
-        },
         mounted () {
 
             this.drawingOptions = {
@@ -118,7 +127,7 @@
                     circle: this.circle,
                 },
                 edit: {
-                    featureGroup: this.editableLayers,
+                    featureGroup: null,
                     remove: this.remove,
                     edit: this.edit
                 }
@@ -129,35 +138,45 @@
                 let editedItems = []
                 let editedLayers = e.layers
                 editedLayers.eachLayer((layer) => {
-                    let type = e.layerType
-                    if (type === 'marker') {
-                        layer.bindPopup('A popup!')
-                        type = 'Marker'
-                    } else if (type === 'polygon') {
-                        type = 'Polygon'
+
+                    let type = layer._latlngs === undefined ? 'Marker' : 'Polygon'
+                    if (type === 'Marker') {
+
+                        let geoDataItem = {
+                            id: layer._tooltip._content.split('-')[1],
+                            meterSerial: layer._tooltip._content.split('-')[0],
+                            lat: layer._latlng.lat,
+                            lng: layer._latlng.lng
+                        }
+                        editedItems.push(geoDataItem)
+                    } else {
+
+                        let sumLat = 0
+                        let sumLon = 0
+
+                        for (let i = 0; i < layer._latlngs[0].length; i++) {
+
+                            let coordinates = layer._latlngs[0][i]
+                            sumLat += coordinates.lat
+                            sumLon += coordinates.lng
+                        }
+                        let avgLat = sumLat / layer._latlngs[0].length
+                        let avgLon = sumLon / layer._latlngs[0].length
+                        let geoDataItem = service.manualDrawingLocationConvert({
+                            leaflet_id: layer._leaflet_id,
+                            type: 'manual',
+                            geojson: {
+                                type: type,
+                                coordinates: layer._latlngs,
+                            },
+                            display_name: '',
+                            selected: false,
+                            lat: avgLat,
+                            lon: avgLon,
+                        })
+
+                        editedItems.push(geoDataItem)
                     }
-                    let sumLat = 0
-                    let sumLon = 0
-                    for (let i = 0; i < layer._latlngs[0].length; i++) {
-                        let coordinates = layer._latlngs[0][i]
-                        sumLat += coordinates.lat
-                        sumLon += coordinates.lng
-                    }
-                    let avgLat = sumLat / layer._latlngs[0].length
-                    let avgLon = sumLon / layer._latlngs[0].length
-                    let geoDataItem = service.manualDrawingLocationConvert({
-                        _leaflet_id: layer._leaflet_id,
-                        type: 'manual',
-                        geojson: {
-                            type: type,
-                            coordinates: layer._latlngs,
-                        },
-                        display_name: '',
-                        selected: false,
-                        lat: avgLat,
-                        lon: avgLon,
-                    })
-                    editedItems.push(geoDataItem)
                 })
                 EventBus.$emit('getEditedGeoDataItems', editedItems)
             })
@@ -198,7 +217,7 @@
                     if (bounds.contains(layer._latlng)) {
                         drawLayer.addLayer(layer)
                         let geoDataItem = {
-                            _leaflet_id: layer._leaflet_id,
+                            leaflet_id: layer._leaflet_id,
                             type: 'manual',
                             geojson: {
                                 type: type,
@@ -206,7 +225,7 @@
                             },
                             display_name: '',
                             selected: false,
-                            drawType: 'draw',
+                            draw_type: 'draw',
                             lat: 0,
                             lon: 0,
                         }
@@ -220,7 +239,7 @@
                     let feature = layer.feature = layer.feature || {}
                     feature.type = feature.type || 'Feature'
                     let props = feature.properties = feature.properties || {}
-                    props.drawType = 'draw'
+                    props.draw_type = 'draw'
                     props.selected = false
 
                     drawLayer.addLayer(layer)
@@ -236,7 +255,7 @@
                     let avgLat = sumLat / layer._latlngs[0].length
                     let avgLon = sumLon / layer._latlngs[0].length
                     let geoDataItem = service.manualDrawingLocationConvert({
-                        _leaflet_id: layer._leaflet_id,
+                        leaflet_id: layer._leaflet_id,
                         type: 'manual',
                         geojson: {
                             type: type,
@@ -244,7 +263,7 @@
                         },
                         display_name: '',
                         selected: false,
-                        drawType: 'draw',
+                        draw_type: 'draw',
                         lat: avgLat,
                         lon: avgLon,
                     })
@@ -262,11 +281,11 @@
             generateMap (options, center) {
 
                 this.mapInitialized = true
-                this.map = L.map('map').setView(center, 9)
-                L.tileLayer(this.osmUrl, { maxZoom: 18, attribution: this.osmAttrib }).addTo(this.map)
+                this.map = L.map('map').setView(center, this.zoom)
+                L.tileLayer(this.osmUrl, { maxZoom: this.maxZoom, attribution: this.osmAttrib }).addTo(this.map)
                 this.editableLayers = new L.FeatureGroup()
                 this.map.addLayer(this.editableLayers)
-
+                options.edit.featureGroup = this.editableLayers
                 if (options.draw.marker !== false) {
                     let marker = L.Icon.extend({
                         options: {
@@ -289,8 +308,13 @@
                 this.editableLayers.clearLayers()
                 let editableLayer = this.editableLayers
                 for (let i = 0; i < geoData.length; i++) {
-
                     let geoType = geoData[i].geojson.type
+                    let coordinatesClone = []
+                    coordinatesClone[0] = []
+                    geoData[i].geojson.coordinates[0].forEach(e => {
+                        coordinatesClone[0].push([e[1], e[0]])
+                    })
+
                     let drawing = {
                         'type': 'FeatureCollection',
                         'crs': {
@@ -303,16 +327,17 @@
                             'type': 'Feature',
                             'properties': {
                                 'popupContent': geoData[i].display_name,
-                                'drawType': geoData[i].drawType === undefined ? 'set' : geoData[i].drawType,
+                                'draw_type': geoData[i].draw_type === undefined ? 'set' : geoData[i].draw_type,
                                 'selected': geoData[i].selected === undefined ? false : geoData[i].selected,
                                 'clusterId': geoData[i].clusterId === undefined ? -1 : geoData[i].clusterId,
                             },
                             'geometry': {
                                 'type': geoType,
-                                'coordinates': geoData[i].geojson.coordinates
+                                'coordinates': geoData[i].searched === true ? geoData[i].geojson.coordinates : coordinatesClone
                             }
                         }]
                     }
+
                     let polygonColor = this.mappingService.strToHex(geoData[i].display_name)
                     let geoDataItems = this.geoDataItems
                     let router = this.$router
@@ -320,6 +345,7 @@
                         {
                             style: { fillColor: polygonColor, color: polygonColor },
                             onEachFeature: function (feature, layer) {
+
                                 let type = layer.feature.geometry.type
                                 let clusterId = layer.feature.properties.clusterId
                                 if (type === 'Polygon' && clusterId !== -1) {
@@ -327,18 +353,18 @@
                                         router.push({ path: '/clusters/' + clusterId })
                                     })
                                 }
-
                                 editableLayer.addLayer(layer)
                                 let geoDataItem = {
-                                    _leaflet_id: layer._leaflet_id,
+                                    leaflet_id: layer._leaflet_id,
                                     type: 'manual',
                                     geojson: {
                                         type: geoData[i].geojson.type,
-                                        coordinates: geoData[i].geojson.coordinates,
+                                        coordinates: geoData[i].searched === true ? coordinatesClone : geoData[i].geojson.coordinates
                                     },
+                                    searched: false,
                                     display_name: geoData[i].display_name,
                                     selected: feature.properties.selected,
-                                    drawType: feature.properties.drawType,
+                                    draw_type: feature.properties.draw_type,
                                     lat: geoData[i].lat,
                                     lon: geoData[i].lon,
                                 }
@@ -351,55 +377,107 @@
                 EventBus.$emit('getSearchedGeoDataItems', this.geoDataItems)
             },
             setMarker (markerLocations, isConstant) {
+                if (isConstant) {
+                    markerLocations.forEach((e) => {
+                        let markerIcon = L.icon({
+                            iconSize: [40.4, 44],
+                            iconAnchor: [20, 43],
+                            popupAnchor: [0, -51],
+                            iconUrl: this.constantMarkerUrl
+                        })
+                        let markerLayer = L.marker(e, { icon: markerIcon })
 
-                let editableLayer = this.editableLayers
-                let drawedLayers = editableLayer.getLayers()
-                markerLocations.forEach((e) => {
-                    let polygon = drawedLayers[0]
-                    let bounds = polygon.getBounds()
-                    if (this.markerCount !== 0) {
-                        if (drawedLayers.length > this.markerCount) {
-                            for (let i = 0; i <= drawedLayers.length - this.markerCount; i++) {
-                                let marker = drawedLayers[i]
+                        if (this.markingInfos !== null) {
+                            let markingInfo = this.markingInfos.filter(x => x.lat === e[0] && x.lon === e[1])[0]
+                            if (markingInfo !== undefined) {
+                                markerLayer.bindTooltip('Mini Grid: ' + markingInfo.name)
+                                let parent = this
+                                markerLayer.on('click', function (e) {
+                                    parent.routeToDetail(markingInfo.id, markingInfo.name)
+                                })
+                            }
 
-                                if (marker._icon !== undefined && !marker._icon.currentSrc.includes('miniGrid')) {
+                        }
+                        markerLayer.addTo(this.map)
+                    })
+                } else {
+                    let editableLayer = this.editableLayers
+                    let drawedLayers = editableLayer.getLayers()
+                    markerLocations.forEach((e) => {
 
-                                    editableLayer.removeLayer(marker)
+                        let polygon = drawedLayers[0]
+                        if (this.markerCount !== 0) {
+                            if (drawedLayers.length > this.markerCount) {
+                                for (let i = 0; i <= drawedLayers.length - this.markerCount; i++) {
+                                    let marker = drawedLayers[i]
+                                    if (marker._icon !== undefined && !marker._icon.currentSrc.includes('miniGrid')) {
+
+                                        editableLayer.removeLayer(marker)
+                                    }
+
+                                }
+                            }
+                        }
+                        let markerIcon = L.icon({
+                            iconSize: [40.4, 44],
+                            iconAnchor: [20, 43],
+                            popupAnchor: [0, -51],
+                            iconUrl: this.markerUrl
+                        })
+                        let markerLayer = L.marker(e, { icon: markerIcon })
+                        if (this.markingInfos !== null) {
+                            let markingInfo = this.markingInfos.filter(x => x.lat === e[0] && x.lon === e[1])[0]
+                            if (markingInfo !== undefined) {
+                                if (this.isMeter) {
+                                    markerLayer.bindTooltip(markingInfo.serialNumber + '-' + markingInfo.id)
+                                    let parent = this
+                                    markerLayer.on('click', function (e) {
+                                        parent.routeToDetail(markingInfo.serialNumber, markingInfo.name)
+                                    })
+                                } else {
+                                    markerLayer.bindTooltip('Mini Grid: ' + markingInfo.name)
+                                    let parent = this
+                                    markerLayer.on('click', function (e) {
+                                        parent.routeToDetail(markingInfo.id, markingInfo.name)
+                                    })
                                 }
 
                             }
-                        }
-                    }
-                    let markerIcon = L.icon({
-                        iconSize: [40.4, 44],
-                        iconAnchor: [20, 43],
-                        popupAnchor: [0, -51],
-                        iconUrl: isConstant === true ? this.constantMarkerUrl : this.markerUrl
-                    })
-                    let markerLayer = L.marker(e, { icon: markerIcon })
-                    if (this.markingInfos!==null){
-                        let markingInfo = this.markingInfos.filter(x => x.lat === e[0] && x.lon === e[1])[0]
-                        if (markingInfo!==undefined){
-                            markerLayer.bindTooltip('Mini Grid: ' + markingInfo.name)
-                            let parent = this
-                            markerLayer.on('click', function (e) {
-                                parent.toMiniGridDashboard(markingInfo.id)
-                            })
+
                         }
 
-                    }
-                    markerLayer.addTo(editableLayer)
-                    if (bounds.contains(markerLayer._latlng)) {
                         markerLayer.addTo(editableLayer)
-                    } else {
-                        editableLayer.removeLayer(markerLayer)
-                        EventBus.$emit('markerError', 'Please position your mini-grid within the selected cluster boundaries.')
-                    }
+                        if (polygon !== undefined) {
+                            let bounds = polygon.getBounds()
+                            if (bounds.contains(markerLayer._latlng)) {
+                                markerLayer.addTo(editableLayer)
+                            } else {
+                                if (this.isMeter) {
+                                    markerLayer.addTo(editableLayer)
+                                    let lat = markerLayer._latlng.lat
+                                    let lon = markerLayer._latlng.lng
+                                    this.map.setView({ lat, lon }, this.zoom)
+                                } else {
+                                    editableLayer.removeLayer(markerLayer)
+                                }
+                                EventBus.$emit('markerError', 'Please position your mini-grid within the selected cluster boundaries.')
+                            }
+                        } else {
+                            let lat = markerLayer._latlng.lat
+                            let lon = markerLayer._latlng.lng
+                            this.map.setView({ lat, lon }, this.zoom)
+                        }
+                    })
+                }
 
-                })
             },
-            toMiniGridDashboard (miniGridId) {
-                this.$router.push('/dashboards/mini-grid/' + miniGridId)
+            routeToDetail (Id, name) {
+                if (name === null) {
+                    this.$router.push('/meters/' + Id)
+                } else {
+                    this.$router.push('/dashboards/mini-grid/' + Id)
+                }
+
             },
         },
         watch: {
