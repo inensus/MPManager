@@ -33,7 +33,10 @@ return [
     */
 
     'channels' => [
-
+        'stack' => [
+            'driver' => 'stack',
+            'channels' => ['single', 'slack'],
+        ],
 
         'single' => [
             'driver' => 'single',
@@ -48,6 +51,13 @@ return [
             'days' => 7,
         ],
 
+        'slack' => [
+            'driver' => 'slack',
+            'url' => env('LOG_SLACK_WEBHOOK_URL'),
+            'username' => 'Error Messenger',
+            'emoji' => ':boom:',
+            'level' => 'critical',
+        ],
 
 
         'stderr' => [
