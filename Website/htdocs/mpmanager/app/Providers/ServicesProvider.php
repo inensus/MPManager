@@ -4,24 +4,25 @@ namespace App\Providers;
 
 use App\Http\Services\AddressService;
 use App\Http\Services\CountryService;
-use App\Http\Services\RolesService;
 use App\Http\Services\PersonService;
+use App\Http\Services\RolesService;
 use App\Models\Address\Address;
 use App\Models\AssetPerson;
 use App\Models\Battery;
 use App\Models\Country;
-
 use App\Models\Meter\MeterParameter;
 use App\Models\Person\Person;
 use App\Models\PV;
 use App\Models\Role\RoleDefinition;
 use App\Models\Role\Roles;
+use App\Models\Solar;
 use App\Observers\AddressesObserver;
 use App\Observers\AssetPersonObserver;
 use App\Observers\BatteryObserver;
 use App\Observers\MeterParameterObserver;
 use App\Observers\PersonObserver;
 use App\Observers\PVObserver;
+use App\Observers\SolarObserver;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Horizon\Horizon;
 
@@ -41,9 +42,10 @@ class ServicesProvider extends ServiceProvider
         AssetPerson::observe(AssetPersonObserver::class);
         PV::observe(PVObserver::class);
         Battery::observe(BatteryObserver::class);
-        Horizon::auth(function ($request) {
+        Horizon::auth(static function ($request) {
             return true;
         });
+        Solar::observe(SolarObserver::class);
     }
 
     /**

@@ -4,89 +4,50 @@
 namespace App\Http\Controllers;
 
 
+use App\Http\Requests\SolarCreateRequest;
 use App\Http\Resources\ApiResource;
-use App\Models\Solar;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Http\Request;
+use App\Services\ISolarService;
 
 class SolarController extends Controller
 {
     /**
-     * @var Solar
+     * @var ISolarService
      */
-    private $solar;
+    private $solarService;
 
-    public function __construct(Solar $solar)
+    public function __construct(ISolarService $solarService)
     {
-        $this->solar = $solar;
+        $this->solarService = $solarService;
     }
 
-    public function show(Request $request, $miniGridId)
+    public function index(): ApiResource
     {
-        $solarReadings = $this->solar->newQuery()
-            ->where('mini_grid_id', $miniGridId);
-
-        if ($startDate = $request->input('start_date')) {
-            $solarReadings->where('time_stamp', '>=',
-                Carbon::createFromTimestamp($startDate)->format('Y-m-d H:i:s'));
-        }
-        if ($endDate = $request->input('end_date')) {
-
-            $solarReadings->where('time_stamp', '<=',
-                Carbon::createFromTimestamp($endDate)->format('Y-m-d H:i:s')
-            );
-        }
-
-
-        if ($request->input('weather')) {
-            $solarReadings->with('weatherData');
-        }
-
-
-        return new ApiResource($solarReadings->get());
+        $solarReadings = $this->solarService->list();
+        return new ApiResource($solarReadings);
     }
 
-    public function showByMiniGrid(Request $request, $id): ApiResource
+    public function listByMiniGrid($miniGridId)
     {
-        try {
-            $solarData = $this->solar::where('mini_grid_id', $id)
-                ->latest()
-                ->firstOrFail();
-            return new ApiResource($solarData);
-        } catch (ModelNotFoundException $exception) {
-            return new ApiResource([]);
-        }
+        echo "miniGridId " . $miniGridId;
+        $solarReadings = $this->solarService->lisByMiniGrid($miniGridId);
+
+        return new ApiResource($solarReadings);
     }
 
-    public function store(Request $request): ApiResource
-    { // Contribute Kemal 12.12.2019
-        $miniGridId = $request->get('mini_grid_id');
-        $solarDatas = $request->get('solar_reading');
-
-
-        foreach ($solarDatas as $solarData) {
-
-            $solar = $this->solar::create([
-                'mini_grid_id' => $miniGridId,
-                'node_id' => $request->get('node_id'),
-                'device_id' => $request->get('device_id'),
-                'starting_time' => $solarData['starting_time'],
-                'ending_time' => $solarData['ending_time'],
-                'min' => (int)$solarData['min'],
-                'max' => (int)$solarData['max'],
-                'average' => (int)$solarData['average'],
-                'duration' => $solarData['duration'],
-                'readings' => $solarData['total_readings'],
-                'time_stamp' => $request->input('time_stamp'),
-            ]);
+    public function showByMiniGrid($miniGridId)
+    {
+        if ($reading = $this->solarService->showByMiniGrid($miniGridId)) {
+            return new ApiResource($reading);
         }
-        //queue weather api
 
-        event('solar.received', [
-            'solar' => $solar,
-            'mini_grid_id' => $miniGridId,
-        ]);
+        return response()->setStatusCode(404)->json(['data' => 'Nothing found']);
+    }
+
+    public function store(SolarCreateRequest $request): ApiResource
+    { //unused parameter $request is needed for validation
+
+        $solar = $this->solarService->create();
+
         return new ApiResource($solar);
     }
 }
