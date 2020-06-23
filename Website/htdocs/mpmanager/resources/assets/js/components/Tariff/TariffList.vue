@@ -1,3 +1,5 @@
+
+
 <template>
     <div>
 
@@ -14,7 +16,7 @@
             <md-table
                 v-if="tariffList.length>0"
                 v-model="tariffList"
-                md-sort="name"
+                md-sort="id"
                 md-sort-order="asc"
                 md-card>
 
@@ -42,16 +44,16 @@
 
 <script>
     import Widget from '../../shared/widget'
-    import {currency} from '../../mixins/currency'
+    import { currency } from '../../mixins/currency'
     import Add from './Add'
-    import {EventBus} from '../../shared/eventbus'
-    import {TariffService} from '../../services/TariffService'
+    import { EventBus } from '../../shared/eventbus'
+    import { TariffService } from '../../services/TariffService'
 
     export default {
         name: 'TariffList',
-        components: {Widget, Add},
+        components: { Widget, Add },
         mixins: [currency],
-        data() {
+        data () {
             return {
 
                 tariffService: new TariffService(),
@@ -59,29 +61,34 @@
 
             }
         },
-        mounted() {
-            this.tariffService.getTariffs().then(tariffs => {
-                this.tariffList = tariffs;
+        mounted () {
 
-            }).catch((e) => {
-                this.alertNotify('error', e)
-            });
+            this.getTariffs()
             EventBus.$on('tariffAdded', this.addToList)
         },
         methods: {
-            showNewTariff() {
+
+            async getTariffs () {
+                try {
+                    this.tariffList = await this.tariffService.getTariffs()
+                } catch (e) {
+                    this.alertNotify('error', e.message)
+                }
+            },
+            showNewTariff () {
                 EventBus.$emit('showNewTariff')
             },
-            addToList(tariff) {
-                this.tariffList.push(tariff)
+            addToList (tariff) {
+                this.tariffList = this.tariffService.addToList(tariff)
+
             },
-            alertNotify(type, message) {
+            alertNotify (type, message) {
                 this.$notify({
-                    group: "notify",
+                    group: 'notify',
                     type: type,
-                    title: type + " !",
+                    title: type + ' !',
                     text: message
-                });
+                })
             },
         },
     }
@@ -90,3 +97,4 @@
 <style scoped>
 
 </style>
+
