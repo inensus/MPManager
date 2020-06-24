@@ -164,20 +164,20 @@
                         icon: 'wrench',
                     },
                     {
-                        name: 'Setup System ',
-                        icon:'cogs',
+                        name: 'Add Cluster Bricks',
+                        icon: 'cogs',
                         children: [
                             {
                                 name: 'Add Cluster',
-                                route: '/clusters/add',
+                                route: '/add-cluster-bricks/add-cluster',
                             },
                             {
                                 name: 'Add MiniGrid',
-                                route: '/setup/add-mini-grid',
+                                route: '/add-cluster-bricks/add-mini-grid',
                             },
                             {
                                 name: 'Add Village',
-                                route: '/setup/add-village',
+                                route: '/add-cluster-bricks/add-village',
                             }
                         ]
                     }
@@ -208,21 +208,21 @@
                 default: true
             }
         },
-        provide() {
+        provide () {
             return {
                 autoClose: this.autoClose
             }
         },
         computed: {
-            adminName() {
+            adminName () {
                 return this.$store.getters.admin.name
             },
-            remaining() {
+            remaining () {
                 let remaining_time = this.$store.getters.admin.remaining_time
                 let remaining_seconds = (remaining_time % 60).toString()
                 return Math.floor(remaining_time / 60).toString() + ':' + ('0' + remaining_seconds).slice(-2)
             },
-            sidebarStyle() {
+            sidebarStyle () {
                 return {
 
                     background: '#2b2b2b !important'
