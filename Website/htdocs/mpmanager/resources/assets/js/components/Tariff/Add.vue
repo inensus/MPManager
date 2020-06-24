@@ -63,7 +63,7 @@
                                     <md-input id="ar_period"
                                               name="access_rate_period"
                                               v-model="accessRate.period"
-                                              v-validate="'required|integer'"
+                                              v-validate="'required|integer|min_value:1'"
                                     />
                                     <span
                                         class="md-error">{{ errors.first('Access-Rate-Form.access_rate_period') }}</span>
@@ -147,8 +147,11 @@
                                               v-validate="'required|integer'"
                                               class="social-input"
                                     />
+
                                     <span class="md-error">{{ errors.first('Social-Form.daily_allowance') }}</span>
+                                    <span class="md-suffix">Wh.</span>
                                 </md-field>
+
                             </div>
                             <div class="md-layout-item md-large-size-50 md-medium-size-50 md-small-size-50 "></div>
 
@@ -171,6 +174,7 @@
                                         class="social-input"
                                     />
                                     <span class="md-error">{{ errors.first('Social-Form.social_price') }}</span>
+                                    <span class="md-suffix">TZS</span>
                                 </md-field>
                             </div>
                             <div class="md-layout-item md-large-size-50 md-medium-size-50 md-small-size-50 "></div>
@@ -196,6 +200,7 @@
                                     />
                                     <span
                                         class="md-error">{{ errors.first('Social-Form.initial_energy_budget') }}</span>
+                                    <span class="md-suffix">Wh.</span>
                                 </md-field>
                             </div>
                             <div class="md-layout-item md-large-size-50 md-medium-size-50 md-small-size-50 "></div>
@@ -221,6 +226,7 @@
                                     />
                                     <span
                                         class="md-error">{{ errors.first('Social-Form.maximum_stacked_energy') }}</span>
+                                    <span class="md-suffix">Wh.</span>
                                 </md-field>
                             </div>
                             <div class="md-layout-item md-large-size-50 md-medium-size-50 md-small-size-50 "></div>
@@ -299,7 +305,7 @@
                     try {
                         this.hide()
 
-                        this.tariffService.setAccessRate(this.accessRate)
+                        this.tariffService.setAccessRate(this.hasAccessRate, this.accessRate)
                         this.tariff = await this.tariffService.createTariff()
                         EventBus.$emit('tariffAdded', this.tariff)
                         this.alertNotify('success', 'New tariff registered successfully.')
