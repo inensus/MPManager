@@ -31,12 +31,12 @@ let routes = [
     },
     {
         path: '/dashboards/mini-grid/:id',
-        component: require('./components/VillageDashboard/Dashboard').default,
+        component: require('./components/MiniGrid/Dashboard').default,
         meta: { layout: 'default' },
     },
     {
         path: '/dashboards/mini-grid/',
-        component: require('./components/VillageDashboard/Selector').default,
+        component: require('./components/MiniGrid/Selector').default,
         meta: { layout: 'default' },
     },
     {
@@ -213,13 +213,13 @@ let routes = [
     },
     {
         path: '/add-cluster-bricks/add-village',
-        component: require('./components/VillageDashboard/AddVillage').default,
+        component: require('./components/Village/AddVillage').default,
         name: 'add-village',
         meta: { layout: 'default' },
     },
     {
         path: '/add-cluster-bricks/add-mini-grid',
-        component: require('./components/ClustersDashboard/AddMiniGrid').default,
+        component: require('./components/MiniGrid/AddMiniGrid').default,
         name: 'add-mini-grid',
         meta: { layout: 'default' }
 

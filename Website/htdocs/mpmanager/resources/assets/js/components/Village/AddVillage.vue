@@ -232,7 +232,7 @@
 
                         await this.cityService.createCity(this.cityName, this.clusterId, this.selectedMiniGridId, this.geoData)
 
-                        this.alertNotify('success', 'The City you add is stored successfully.')
+                        this.alertNotify('success', 'The Village you add is stored successfully.')
 
                     } catch (e) {
                         this.alertNotify('error', e.message)

@@ -66,7 +66,7 @@
     import ClusterMap from './ClusterMap'
     import RevenueAnalysis from './RevenueAnalysis'
     import RevenueTrends from './RevenueTrends'
-    import TargetList from '../VillageDashboard/TargetList'
+    import TargetList from '../MiniGrid/TargetList'
     import { ClusterService } from '../../services/ClusterService'
     import { MappingService } from '../../services/MappingService'
     import miniGridIcon from '../../../icons/miniGrid.png'
