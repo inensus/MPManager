@@ -1,6 +1,6 @@
 <template>
     <div>
-        <!--<password-protection></password-protection>-->
+        <password-protection></password-protection>
         <widget
             title="Add New Mini-Grid"
             color="green">
