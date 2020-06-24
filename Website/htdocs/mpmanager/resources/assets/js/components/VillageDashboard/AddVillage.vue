@@ -118,7 +118,6 @@
 
 <script>
     import PasswordProtection from '../PasswordProtection'
-    import customMap from '../../shared/Map/customMap'
     import Widget from '../../shared/widget'
     import { MiniGridService } from '../../services/MiniGridService'
     import { CityService } from '../../services/CityService'
@@ -134,7 +133,6 @@
         components: {
             Widget,
             PasswordProtection,
-            customMap,
             Map,
         },
         data () {
@@ -206,7 +204,7 @@
                         this.miniGridLatLng.lon = Points[1]
 
                         await this.getGeoData(this.miniGrids[this.miniGrids.length - 1].cluster_id)
-                        let markingInfo = this.mappingService.createMarkinginformation(miniGridGeoData.id, miniGridGeoData.name, null,Points[0], Points[1])
+                        let markingInfo = this.mappingService.createMarkinginformation(miniGridGeoData.id, miniGridGeoData.name, null, Points[0], Points[1])
                         this.markingInfos.push(markingInfo)
                         this.constantLocations.push([this.miniGridLatLng.lat, this.miniGridLatLng.lon])
 
