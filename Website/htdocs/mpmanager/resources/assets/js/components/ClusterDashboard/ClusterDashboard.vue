@@ -95,7 +95,7 @@
                 geoData: null,
                 constantLocations: [],
                 markingInfos: [],
-                center: [0, 0],
+                center: this.appConfig.mapStartingPoint,
                 base: {},
                 compared: {},
                 boxData: {

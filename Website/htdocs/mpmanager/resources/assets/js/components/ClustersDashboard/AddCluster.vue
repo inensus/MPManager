@@ -139,7 +139,7 @@
             return {
                 clusterService: new ClusterService(),
                 mappingService: new MappingService(),
-                center: [-2.500381, 32.889060],
+                center: this.appConfig.mapStartingPoint,
                 geoData: null,
                 clusterName: '',
                 user: null,

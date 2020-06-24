@@ -66,7 +66,7 @@
                 currentMap: 0,
                 show: true,
                 geoData: null,
-                center: [48, -1.219482],
+                center: this.appConfig.mapStartingPoint,
                 miniGrids: null,
                 clusterLayer: null,
                 clusterGeo: {}

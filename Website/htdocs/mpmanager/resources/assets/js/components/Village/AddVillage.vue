@@ -144,7 +144,7 @@
                 miniGridService: new MiniGridService(),
                 mappingService: new MappingService(),
                 geoData: null,
-                center: [0, 0],
+                center: this.appConfig.mapStartingPoint,
                 villageSaved: false,
                 sending: false,
                 lastVillage: null,

@@ -65,7 +65,7 @@
             },
             center: {
                 type: Array,
-                default: [-2.500381, 32.889060]
+                default: this.appConfig.mapStartingPoint
             },
             filtered_types: {
                 type: Object,

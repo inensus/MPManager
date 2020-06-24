@@ -57,7 +57,7 @@
                 loading: false,
                 show: true,
                 geoData: null,
-                center: [0, 0],
+                center: this.appConfig.mapStartingPoint,
                 miniGrids: null,
                 clusterLayer: null,
                 clusterId: null,

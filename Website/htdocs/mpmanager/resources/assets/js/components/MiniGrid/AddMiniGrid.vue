@@ -129,7 +129,7 @@
                 miniGridService: new MiniGridService(),
                 clusterId: null,
                 geoData: null,
-                center: [0, 0],
+                center: this.appConfig.mapStartingPoint,
                 marker: true,
                 markerUrl: marker,
                 miniGridName: '',
