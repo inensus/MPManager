@@ -24,9 +24,9 @@ export class TariffService {
         this.socialTariff =
             {
                 dailyAllowance: null,
-                price: 0,
-                initialEnergyBudget: 0,
-                maximumStackedEnergy: 0
+                price: null,
+                initialEnergyBudget: null,
+                maximumStackedEnergy: null
             }
         this.components = []
 
@@ -73,25 +73,38 @@ export class TariffService {
     }
 
     async createTariff () {
-        let tariff_PM = {
+        let tariffPM = {
             'name': this.tariff.name,
-            'price': this.tariff.price,
+            'price': Number(this.tariff.price),
             'currency': this.tariff.currency,
             'factor': this.tariff.factor,
-            'access_rate_period': this.tariff.accessRate.period,
-            'access_rate_amount': this.tariff.accessRate.amount,
-            'components': this.components,
-            'social_tariff': {
-                'daily_allowance': this.socialTariff.dailyAllowance,
-                'price': this.socialTariff.price,
-                'initial_energy_budget': this.socialTariff.initialEnergyBudget,
-                'maximum_stacked_energy': this.socialTariff.maximumStackedEnergy
+
+        }
+        if (this.components.length) {
+            tariffPM.components = this.components.map((x) => {
+                return {
+                    'name': x.name,
+                    'price': Number(x.price)
+                }
+            })
+        }
+        if (this.socialTariff.dailyAllowance) {
+            tariffPM.social_tariff = {
+                'daily_allowance': Number(this.socialTariff.dailyAllowance),
+                'price': Number(this.socialTariff.price),
+                'initial_energy_budget': Number(this.socialTariff.initialEnergyBudget),
+                'maximum_stacked_energy': Number(this.socialTariff.maximumStackedEnergy)
             }
+
+        }
+        if (this.tariff.accessRate) {
+            tariffPM.access_rate_period = Number(this.tariff.accessRate.period)
+            tariffPM.access_rate_amount = Number(this.tariff.accessRate.amount)
         }
         try {
-            console.log(tariff_PM)
-            let response = await this.repository.create(tariff_PM)
-            debugger
+
+            let response = await this.repository.create(tariffPM)
+
             if (response.status === 200 || response.status === 201) {
 
                 let tariffData = response.data.data
@@ -131,16 +144,8 @@ export class TariffService {
         return this.list
     }
 
-    setAccessRate (accessRate) {
-
-        if (accessRate.period === null) {
-            accessRate.period = 0
-        }
-        if (accessRate.amount === null) {
-            accessRate.amount = 0
-        }
-
-        this.tariff.accessRate = accessRate
+    setAccessRate (hasAccessRate, accessRate) {
+        this.tariff.accessRate = hasAccessRate ? accessRate : null
     }
 
     addAdditionalCostComponent () {
