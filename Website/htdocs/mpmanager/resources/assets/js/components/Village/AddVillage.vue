@@ -1,6 +1,6 @@
 <template>
     <div>
-        <!-- <password-protection></password-protection>-->
+        <password-protection></password-protection>
         <widget title="Add New Village" color="green">
 
             <md-card class="md-layout-item md-size-100">
