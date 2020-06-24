@@ -25,7 +25,6 @@ class CityRequest extends FormRequest
 	{
         return [
             'name' => 'required|unique:cities',
-            //'country' => 'required|exists:countries,country_code'
             'mini_grid_id' => 'required|exists:mini_grids,id'
         ];
     }
