@@ -164,8 +164,8 @@
                         icon: 'wrench',
                     },
                     {
-                        name: 'Add Cluster Bricks',
-                        icon: 'cogs',
+                        name: 'Locations',
+                        icon: 'map-marker',
                         children: [
                             {
                                 name: 'Add Cluster',
