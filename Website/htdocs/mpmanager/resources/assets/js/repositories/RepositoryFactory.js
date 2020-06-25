@@ -14,6 +14,7 @@ import ClusterRepository from './ClusterRepository'
 import UserRepository from './UserRepository'
 import MeterRepository from './MeterRepository'
 import PersonRepository from './PersonRepository'
+import AuthenticationRepository from './AuthenticationRepository'
 
 const repositories = {
     'asset': AssetRepository,
@@ -30,7 +31,8 @@ const repositories = {
     'connectionGroups': ConnectionGroupsRepository,
     'restriction': RestrictionRepository,
     'meter':MeterRepository,
-    'person':PersonRepository
+    'person':PersonRepository,
+    'authentication':AuthenticationRepository
 
 }
 
