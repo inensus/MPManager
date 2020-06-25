@@ -62,7 +62,7 @@
 </template>
 
 <script>
-    import {validationMixin} from 'vuelidate'
+    import { validationMixin } from 'vuelidate'
 
     import {
         required,
@@ -70,7 +70,8 @@
         // minLength,
         // maxLength
     } from 'vuelidate/lib/validators'
-    import {Admin} from '../../classes/admin'
+    import { Admin } from '../../classes/admin'
+    import { AuthenticationService } from '../../services/AuthenticationService'
 
     export default {
         name: 'login-card',
@@ -84,34 +85,34 @@
 
             userSaved: false,
             sending: false,
-            admin: new Admin()
+            admin: new Admin(),
+            service: new AuthenticationService()
         }),
 
         methods: {
-            clearForm() {
+            clearForm () {
                 this.$v.$reset();
                 (this.form.password = null), (this.form.email = null)
             },
-            async saveUser() {
+            async authenticate () {
                 this.sending = true
-
-                let admin_response = await this.$store.state.admin.authenticate(
-                    this.form.email,
-                    this.form.password
-                )
-                this.sending = false
-                if (admin_response) {
+                try {
+                    let email = this.form.email
+                    let password = this.form.password
+                    await this.$store.dispatch('auth/authenticate', { email, password })
+                    this.sending = false
                     this.$router.push('/')
-                } else {
+                } catch (e) {
+                    this.sending = false
                     this.authError = true
                 }
             },
-            async validateUser() {
+            async validateUser () {
 
                 let validator = await this.$validator.validateAll()
 
                 if (validator) {
-                    this.saveUser()
+                    await this.authenticate()
                 }
 
             }
