@@ -65,7 +65,7 @@
             },
             center: {
                 type: Array,
-                default: this.appConfig.mapStartingPoint
+
             },
             filtered_types: {
                 type: Object,
@@ -115,7 +115,7 @@
 
         },
         mounted () {
-
+            this.center = this.appConfig.mapStartingPoint
             this.drawingOptions = {
                 position: 'topright',
                 draw: {
