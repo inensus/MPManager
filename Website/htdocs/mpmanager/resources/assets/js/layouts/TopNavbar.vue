@@ -51,7 +51,7 @@
 
 <script>
     export default {
-        data() {
+        data () {
             return {
                 open: false,
                 toggleCard: false
@@ -59,13 +59,17 @@
             }
         },
         methods: {
-            logout() {
-                this.$router.replace('/login')
+            logout () {
+                this.$store.dispatch('auth/logOut').then(() => {
+                    debugger
+                    this.$router.replace('/login')
+                })
+
             },
-            toggle() {
+            toggle () {
                 this.toggleCard = !this.toggleCard
             },
-            toggleSidebar() {
+            toggleSidebar () {
                 this.$sidebar.displaySidebar(!this.$sidebar.showSidebar)
             }
         }
