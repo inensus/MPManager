@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\UpdateMiniGridRequest;
+use App\Http\Requests\StoreMiniGridRequest;
 use App\Http\Resources\ApiResource;
 use App\Models\MiniGrid;
 use Illuminate\Http\Request;
@@ -18,6 +18,13 @@ class MiniGridController extends Controller
     public function __construct(MiniGrid $miniGrid)
     {
         $this->miniGrid = $miniGrid;
+    }
+
+    public function store(StoreMiniGridRequest $request)
+    {
+        $miniGrid = $this->miniGrid::create($request->all());
+
+        return new ApiResource($miniGrid);
     }
 
     /**
@@ -56,6 +63,7 @@ class MiniGridController extends Controller
         } else {
             $miniGrid = $this->miniGrid->find($id);
         }
+
         return new ApiResource($miniGrid);
     }
 

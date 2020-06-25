@@ -36,7 +36,7 @@
                 show: true,
                 enableTooltip: true,
                 zoom: 20,
-                center: [48, -1.219482],
+                center: this.appConfig.mapStartingPoint,
                 geojson: null,
                 fillColor: '#e4ce7f',
                 url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',

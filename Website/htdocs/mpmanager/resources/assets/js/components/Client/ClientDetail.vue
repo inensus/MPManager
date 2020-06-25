@@ -33,7 +33,7 @@
                     <client-meter-list :meterList="meters"/>
                 </div>
                 <div class="client-detail-card">
-                    <mapiko :meters="meters" v-if="meters.length>0"/>
+                    <client-map :meterIds="meters"/>
                 </div>
             </div>
         </div>
@@ -41,8 +41,6 @@
 </template>
 
 <script>
-    import { Person } from '../../classes/person'
-    import { EventBus } from '../../shared/eventbus'
     import PaymentFlow from './PaymentFlow'
     import Transactions from './Transactions'
     import PaymentDetail from './PaymentDetail'
@@ -50,33 +48,25 @@
     import Ticket from './Ticket'
     import Widget from '../../shared/widget'
     import Addresses from './Addresses'
-
     import Datepicker from 'vuejs-datepicker'
     import ClientMeterList from './ClientMeterList'
     import SmsHistory from './SmsHistory'
     import ClientPersonalData from './ClientPersonalData'
     import DeferredPayments from './DeferredPayments'
+    import { PersonService } from '../../services/PersonService'
+    import ClientMap from './ClientMap'
 
     export default {
         name: 'ClientDetail',
         data () {
             return {
+                personService: new PersonService(),
                 personId: null,
                 isLoaded: false,
                 editPerson: false,
                 person: null,
                 meters: [],
-                bcd: {
-                    Home: {
-                        href: '/'
-                    },
-                    Customers: {
-                        href: '/people'
-                    },
-                    Detail: {
-                        href: null
-                    }
-                }
+
             }
         },
         components: {
@@ -91,14 +81,15 @@
             Mapiko,
             Ticket,
             Addresses,
-            Datepicker
+            Datepicker,
+            ClientMap
         },
         created () {
             this.personId = this.$route.params.id
             this.getDetails(this.personId)
         },
         mounted () {
-            EventBus.$emit('bread', this.bcd)
+
         },
         destroyed () {
             this.$store.state.person = null
@@ -106,21 +97,31 @@
         },
 
         methods: {
-            getDetails (id) {
-                axios.get(resources.person.list + '/' + id).then(response => {
-                    let data = response.data.data
-                    this.isLoaded = true
+            async getDetails (id) {
+                try {
 
-                    this.person = new Person().initialize(data)
+                    this.person = await this.personService.getPerson(id)
+                    this.isLoaded = true
                     this.$store.state.person = this.person
                     this.meters = []
-                    for (let i in data.meters) {
-                        this.meters.push(data.meters[i].meter.id)
+
+                    for (let i in this.person.meters) {
+                        this.meters.push(this.person.meters[i].meter.id)
                     }
-                })
+                } catch (e) {
+                    this.alertNotify('error', e.message)
+                }
             },
             dateForHumans (date) {
                 return moment(date, 'YYYY-MM-DD HH:mm:ss').fromNow()
+            },
+            alertNotify (type, message) {
+                this.$notify({
+                    group: 'notify',
+                    type: type,
+                    title: type + ' !',
+                    text: message
+                })
             }
         }
     }

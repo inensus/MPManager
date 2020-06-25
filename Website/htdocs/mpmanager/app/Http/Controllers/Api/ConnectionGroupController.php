@@ -24,6 +24,7 @@ class ConnectionGroupController
     {
 
         $connectionGroups = $this->connectionGroup->get();
+
         return new ApiResource($connectionGroups);
     }
 

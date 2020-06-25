@@ -12,6 +12,7 @@ use App\Models\Battery;
 use App\Models\Country;
 
 use App\Models\Meter\MeterParameter;
+use App\Models\MiniGrid;
 use App\Models\Person\Person;
 use App\Models\PV;
 use App\Models\Role\RoleDefinition;
@@ -20,6 +21,7 @@ use App\Observers\AddressesObserver;
 use App\Observers\AssetPersonObserver;
 use App\Observers\BatteryObserver;
 use App\Observers\MeterParameterObserver;
+use App\Observers\MiniGridObserver;
 use App\Observers\PersonObserver;
 use App\Observers\PVObserver;
 use Illuminate\Support\ServiceProvider;
@@ -44,6 +46,7 @@ class ServicesProvider extends ServiceProvider
         Horizon::auth(function ($request) {
             return true;
         });
+        MiniGrid::observe(MiniGridObserver::class);
     }
 
     /**
