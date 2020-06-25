@@ -65,6 +65,7 @@
             },
             center: {
                 type: Array,
+                default: function(){return this.appConfig.mapStartingPoint}
 
             },
             filtered_types: {
@@ -90,7 +91,7 @@
             },
             zoom: {
                 type: Number,
-                default: 9
+                default: 6
             },
             maxZoom: {
                 type: Number,
@@ -372,7 +373,7 @@
                             }
                         })
 
-                    this.map.setView([geoData[i].lat, geoData[i].lon], 10)
+                    this.map.setView([geoData[i].lat, geoData[i].lon], this.zoom)
                 }
                 EventBus.$emit('getSearchedGeoDataItems', this.geoDataItems)
             },
