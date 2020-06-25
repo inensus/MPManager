@@ -135,7 +135,7 @@ let routes = [
     },
 
     {
-        path: '/add-cluster-bricks/add-cluster',
+        path: '/locations/add-cluster',
         component: require('./components/ClustersDashboard/AddCluster').default,
         name: 'cluster-new',
         meta: { layout: 'default' },
@@ -212,13 +212,13 @@ let routes = [
         meta: { layout: 'default' },
     },
     {
-        path: '/add-cluster-bricks/add-village',
+        path: '/locations/add-village',
         component: require('./components/Village/AddVillage').default,
         name: 'add-village',
         meta: { layout: 'default' },
     },
     {
-        path: '/add-cluster-bricks/add-mini-grid',
+        path: '/locations/add-mini-grid',
         component: require('./components/MiniGrid/AddMiniGrid').default,
         name: 'add-mini-grid',
         meta: { layout: 'default' }

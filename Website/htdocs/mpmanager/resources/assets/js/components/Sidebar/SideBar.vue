@@ -169,15 +169,15 @@
                         children: [
                             {
                                 name: 'Add Cluster',
-                                route: '/add-cluster-bricks/add-cluster',
+                                route: '/locations/add-cluster',
                             },
                             {
                                 name: 'Add MiniGrid',
-                                route: '/add-cluster-bricks/add-mini-grid',
+                                route: '/locations/add-mini-grid',
                             },
                             {
                                 name: 'Add Village',
-                                route: '/add-cluster-bricks/add-village',
+                                route: '/locations/add-village',
                             }
                         ]
                     }
