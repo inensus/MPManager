@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
 
-class TariffRequest extends FormRequest
+class TariffCreateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -31,8 +31,16 @@ class TariffRequest extends FormRequest
             'price' => 'required|integer', // 100 times of original price to support 2 decimal numbers.
             'currency' => 'required|string|max:20',
             'factor' => 'sometimes|integer',
-            'access_rate_period' => 'required|integer',
-            'access_rate_amount' => 'required|integer',
+            'access_rate_period' => 'required_with:access_rate_amount|integer|min:1',
+            'access_rate_amount' => 'required_with:access_rate_period|integer',
+            'social_tariff' => 'sometimes|required',
+            'social_tariff.daily_allowance' => 'required_with:social_tariff',
+            'social_tariff.price' => 'required_with:social_tariff',
+            'social_tariff.initial_energy_budget' => 'required_with:social_tariff',
+            'social_tariff.maximum_stacked_energy' => 'required_with:social_tariff',
+            'components' => 'sometimes|required|array',
+            'components.*.name' => 'required_with:components',
+            'components.*.price' => 'required_with:components',
         ];
     }
 

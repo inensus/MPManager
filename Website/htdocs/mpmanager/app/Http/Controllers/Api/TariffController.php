@@ -3,11 +3,9 @@
 namespace App\Http\Controllers;
 
 
-use App\Http\Requests\TariffRequest;
+use App\Http\Requests\TariffCreateRequest;
 use App\Http\Resources\ApiResource;
-
 use App\Models\Meter\MeterTariff;
-use Illuminate\Http\Request;
 
 /**
  * @group Tariffs
@@ -50,27 +48,21 @@ class TariffController extends Controller
      * @bodyParam factor int. The factor between two different sub tariffs. Like day/night sub-tariffs.
      * @bodyParam currency string
      * @bodyParam price int required The price is;  wanted-kWh-price  X 100 . The last two digits are basically the amount after  comma.
-     * @param TariffRequest $request
+     * @param TariffCreateRequest $request
      * @return ApiResource
      */
-    public function store(TariffRequest $request)
+    public function store(TariffCreateRequest $request): ApiResource
     {
-        $tariff = new MeterTariff();
-        $tariff->name = request('name', '');
-        $tariff->factor = request('factor', null);
-        $tariff->currency = request('currency', '');
-        $tariff->price = request('price');
-        $tariff->save();
-        //append access-rate for the output
-        $tariff->access_rate = $tariff->accessRate()->create([
-            'amount' => request('access_rate_amount'),
-            'period' => request('access_rate_period'),
-        ]);
+        $tariff = MeterTariff::create(
+            [
+                'name' => $request->input('name'),
+                'factor' => $request->input('factor'),
+                'currency' => $request->input('currency'),
+                'price' => $request->input('price'),
+                'total_price' => $request->input('price'),
+            ]);
 
-
-        return new ApiResource(
-            $tariff
-        );
+        return new ApiResource($tariff);
     }
 
 }
