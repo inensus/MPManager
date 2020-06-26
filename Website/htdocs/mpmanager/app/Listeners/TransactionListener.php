@@ -6,8 +6,6 @@ use App\Lib\ITransactionProvider;
 
 use App\Models\Transaction\Transaction;
 use App\Transaction\TransactionAdapter;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Support\Facades\Log;
 use function config;

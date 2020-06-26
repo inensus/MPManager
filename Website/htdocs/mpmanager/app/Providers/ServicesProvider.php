@@ -4,14 +4,14 @@ namespace App\Providers;
 
 use App\Http\Services\AddressService;
 use App\Http\Services\CountryService;
-use App\Http\Services\RolesService;
 use App\Http\Services\PersonService;
+use App\Http\Services\RolesService;
 use App\Models\Address\Address;
 use App\Models\AssetPerson;
 use App\Models\Battery;
 use App\Models\Country;
-
 use App\Models\Meter\MeterParameter;
+use App\Models\Meter\MeterTariff;
 use App\Models\MiniGrid;
 use App\Models\Person\Person;
 use App\Models\PV;
@@ -21,6 +21,8 @@ use App\Observers\AddressesObserver;
 use App\Observers\AssetPersonObserver;
 use App\Observers\BatteryObserver;
 use App\Observers\MeterParameterObserver;
+
+use App\Observers\MeterTariffObserver;
 use App\Observers\MiniGridObserver;
 use App\Observers\PersonObserver;
 use App\Observers\PVObserver;
@@ -46,8 +48,8 @@ class ServicesProvider extends ServiceProvider
         Horizon::auth(function ($request) {
             return true;
         });
-        MiniGrid::observe(MiniGridObserver::class);
-    }
+        MeterTariff::observe(MeterTariffObserver::class);
+        MiniGrid::observe(MiniGridObserver::class);    }
 
     /**
      * Register services.

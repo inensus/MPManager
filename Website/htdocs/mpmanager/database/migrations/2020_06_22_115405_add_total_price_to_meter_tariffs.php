@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMiniGridsTable extends Migration
+class AddTotalPriceToMeterTariffs extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,8 @@ class CreateMiniGridsTable extends Migration
      */
     public function up()
     {
-        Schema::create('mini_grids', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('cluster_id');
-            $table->string('name', 191);
-            $table->integer('data_stream')->default(0);
-            $table->timestamps();
+        Schema::table('meter_tariffs', function (Blueprint $table) {
+            $table->integer('total_price')->unsigned()->nullable();
         });
     }
 
@@ -29,6 +25,8 @@ class CreateMiniGridsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('mini_grids');
+        Schema::table('meter_tariffs', function (Blueprint $table) {
+            $table->dropColumn('total_price');
+        });
     }
 }

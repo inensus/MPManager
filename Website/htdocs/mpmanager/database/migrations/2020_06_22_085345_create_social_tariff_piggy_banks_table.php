@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateMiniGridsTable extends Migration
+class CreateSocialTariffPiggyBanksTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,11 @@ class CreateMiniGridsTable extends Migration
      */
     public function up()
     {
-        Schema::create('mini_grids', function (Blueprint $table) {
-            $table->increments('id');
-            $table->integer('cluster_id');
-            $table->string('name', 191);
-            $table->integer('data_stream')->default(0);
+        Schema::create('social_tariff_piggy_banks', function (Blueprint $table) {
+            $table->id();
+            $table->integer('savings');
+            $table->integer('meter_parameter_id');
+            $table->integer('social_tariff_id');
             $table->timestamps();
         });
     }
@@ -29,6 +29,6 @@ class CreateMiniGridsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('mini_grids');
+        Schema::dropIfExists('social_tariff_piggy_banks');
     }
 }
