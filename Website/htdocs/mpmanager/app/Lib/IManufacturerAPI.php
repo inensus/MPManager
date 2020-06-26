@@ -8,6 +8,7 @@
 
 namespace App\Lib;
 
+use App\Models\Meter\Meter;
 use App\Models\Meter\MeterToken;
 
 interface IManufacturerAPI
@@ -16,6 +17,6 @@ interface IManufacturerAPI
      * @param $tokenData
      * @return MeterToken
      */
-    public function generateToken($tokenData): MeterToken;
+    public function generateToken(Meter $meters, $energy): array;
 
 }
