@@ -118,7 +118,7 @@ class EnergyTransactionProcessor implements ShouldQueue
         } catch (ModelNotFoundException $exception) {
             // meter has no piggy bank account
         }
-        $kWhToBeCharged += $amount / ($meterParameter->tariff()->first()->price / 100);
+        $kWhToBeCharged += $amount / ($meterParameter->tariff()->first()->total_price / 100);
 
         return round($kWhToBeCharged, 2);
     }
