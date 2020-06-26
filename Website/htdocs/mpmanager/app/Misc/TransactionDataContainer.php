@@ -18,11 +18,11 @@ use App\Models\Meter\MeterParameter;
 use App\Models\Meter\MeterTariff;
 use App\Models\Meter\MeterToken;
 use App\Models\Transaction\Transaction;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Log;
-use Exception;
 use RuntimeException;
 
 class TransactionDataContainer
@@ -66,6 +66,10 @@ class TransactionDataContainer
      */
     public $paid_rates;
 
+    /**
+     * @var float
+     */
+    public $chargedEnergy;
 
     /**
      * @param Transaction $transaction
@@ -77,8 +81,9 @@ class TransactionDataContainer
      */
     public static function initialize(Transaction $transaction, bool $withToken = false): TransactionDataContainer
     {
-        $token = new MeterToken();
         $container = new self;
+        $container->chargedEnergy = 0;
+
         $container->transaction = $transaction;
         //get meter
         try {

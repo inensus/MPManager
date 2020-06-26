@@ -17,6 +17,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class TariffPricingComponent extends Model
 {
+    protected $guarded = [];
+
     public function owner()
     {
         return $this->morphTo();
