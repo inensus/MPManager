@@ -112,19 +112,19 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::group(['prefix' => 'assets'], function () {
+Route::group(['prefix' => 'appliances'], function () {
     Route::group(['prefix' => 'types'], function () {
-        Route::get('/', 'AssetTypeController@index');
-        Route::post('/', 'AssetTypeController@store');
-        Route::put('/{asset_type}', 'AssetTypeController@update');
-        Route::delete('/{asset_type}', 'AssetTypeController@destroy');
+        Route::get('/', 'ApplianceTypeController@index');
+        Route::post('/', 'ApplianceTypeController@store');
+        Route::put('/{appliance_type}', 'ApplianceTypeController@update');
+        Route::delete('/{appliance_type}', 'ApplianceTypeController@destroy');
 
-        Route::post('/{asset_type}/people/{person}', 'AssetPersonController@store');
-        Route::get('/people/{person}', 'AssetPersonController@show');
+        Route::post('/{appliance_type}/people/{person}', 'AppliancePersonController@store');
+        Route::get('/people/{person}', 'AppliancePersonController@show');
     });
 
     Route::group(['prefix' => 'rates'], static function () {
-        Route::put('/{asset_rate}', 'AssetRateController@update');
+        Route::put('/{appliance_rate}', 'ApplianceRateController@update');
     });
 
 });

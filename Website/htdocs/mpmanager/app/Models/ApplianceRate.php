@@ -8,28 +8,28 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 /**
- * Class AssetRate
+ * Class ApplianceRate
  * @package App\Models
  *
- * @property $asset_person_id int
+ * @property $appliance_person_id int
  * @property $rate_cost int
  * @property $remaining int
  * @property $due_date string
  *
  */
-class AssetRate extends Model
+class ApplianceRate extends Model
 {
     //
     protected $fillable = [
-        'asset_person_id',
+        'appliance_person_id',
         'rate_cost',
         'remaining',
         'due_date',
     ];
 
-    public function assetPerson(): BelongsTo
+    public function appliancePerson(): BelongsTo
     {
-        return $this->belongsTo(AssetPerson::class);
+        return $this->belongsTo(AppliancePerson::class);
     }
 
     public function logs(): MorphMany

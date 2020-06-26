@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\AssetRate;
+use App\Models\ApplianceRate;
 use App\Models\User;
 use App\Sms\SmsTypes;
 use Exception;
@@ -12,25 +12,25 @@ use Inensus\Ticket\Services\BoardService;
 use Inensus\Ticket\Services\CardService;
 use Inensus\Ticket\Services\TicketService;
 
-class AssetRateChecker extends Command
+class ApplianceRateChecker extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'asset.rate:check';
+    protected $signature = 'appliance.rate:check';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Checks if any asset rate is due and creates a ticket and reminds the customer';
+    protected $description = 'Checks if any appliance rate is due and creates a ticket and reminds the customer';
     /**
-     * @var AssetRate
+     * @var ApplianceRate
      */
-    private $assetRate;
+    private $applianceRate;
     /**
      * @var BoardService
      */
@@ -47,19 +47,19 @@ class AssetRateChecker extends Command
     /**
      * Create a new command instance.
      *
-     * @param AssetRate $assetRate
+     * @param ApplianceRate $applianceRate
      * @param BoardService $boardService
      * @param CardService $cardService
      * @param TicketService $ticketService
      */
     public function __construct(
-        AssetRate $assetRate,
+        ApplianceRate $applianceRate,
         BoardService $boardService,
         CardService $cardService,
         TicketService $ticketService
     ) {
         parent::__construct();
-        $this->assetRate = $assetRate;
+        $this->applianceRate = $applianceRate;
         $this->boardService = $boardService;
         $this->cardService = $cardService;
         $this->ticketService = $ticketService;
@@ -85,7 +85,7 @@ class AssetRateChecker extends Command
     private function findOverDueRates(): void
     {
         $date = date('Y-m-d');
-        $over_due_rates = $this->assetRate::with(['assetPerson.assetType', 'assetPerson.person.addresses'])
+        $over_due_rates = $this->applianceRate::with(['appliancePerson.applianceType', 'appliancePerson.person.addresses'])
             ->whereDate('due_date', '<', $date)
             ->where('remaining', '>', 0)
             ->where('remind', 0)
@@ -94,7 +94,7 @@ class AssetRateChecker extends Command
         echo "\n" . count($over_due_rates) . ' overdue rates found' . "\n";
         foreach ($over_due_rates as $over_due_rate) {
             //send sms reminder to customer
-            $this->sendReminderSms($over_due_rate, SmsTypes::ASSET_RATE_OVER_DUE_REMINDER);
+            $this->sendReminderSms($over_due_rate, SmsTypes::APPLIANCE_RATE_OVER_DUE_REMINDER);
 
             //set the remind flag to follow up
             $over_due_rate->remind = 1;
@@ -114,40 +114,40 @@ class AssetRateChecker extends Command
     {
         $base_time = time();
         $rate_date = date('Y-m-t', strtotime('+' . $difference . ' days', $base_time));
-        $due_asset_rates = $this->assetRate::with(['assetPerson.assetType', 'assetPerson.person.addresses'])
+        $due_appliance_rates = $this->applianceRate::with(['appliancePerson.applianceType', 'appliancePerson.person.addresses'])
             ->whereDate('due_date', '<=', $rate_date)
             ->where('remaining', '>', 0)
-            ->whereHas('assetPerson.person.addresses', static function ($q) {
+            ->whereHas('appliancePerson.person.addresses', static function ($q) {
                 $q->where('is_primary', 1);
             })
             ->get();
 
 
-        echo "\n" . count($due_asset_rates) . ' upcoming rates found' . "\n";
+        echo "\n" . count($due_appliance_rates) . ' upcoming rates found' . "\n";
 
-        foreach ($due_asset_rates as $asset_rate) {
+        foreach ($due_appliance_rates as $appliance_rate) {
             //send sms reminder to customer
-            $this->sendReminderSms($asset_rate, SmsTypes::ASSET_RATE_REMINDER);
+            $this->sendReminderSms($appliance_rate, SmsTypes::APPLIANCE_RATE_REMINDER);
 
 
-            $this->createReminderTicket($asset_rate);
+            $this->createReminderTicket($appliance_rate);
 
         }
     }
 
-    private function sendReminderSms(AssetRate $assetRate, int $smsType): void
+    private function sendReminderSms(ApplianceRate $applianceRate, int $smsType): void
     {
         event('sms.send',
             [
-                'sender' => $assetRate->assetPerson->person->addresses[0]->phone,
+                'sender' => $applianceRate->appliancePerson->person->addresses[0]->phone,
                 'type' => $smsType,
-                'data' => $assetRate,
-                'trigger' => $assetRate,
+                'data' => $applianceRate,
+                'trigger' => $applianceRate,
             ]);
     }
 
 
-    private function createReminderTicket(AssetRate $assetRate, $overDue = false): void
+    private function createReminderTicket(ApplianceRate $applianceRate, $overDue = false): void
     {
         //create ticket for customer service
         $board = $this->boardService->initializeBoard();
@@ -156,17 +156,17 @@ class AssetRateChecker extends Command
         //reformat due date if it is set
         if ($overDue) {
             $category = Label::where('label_name', 'Payments Issue')->first();
-            $description = 'Customer didn\'t pay ' . $assetRate->remaining . 'TZS on ' . $assetRate->due_date;
+            $description = 'Customer didn\'t pay ' . $applianceRate->remaining . 'TZS on ' . $applianceRate->due_date;
         } else {
             $category = Label::where('label_name', 'Customer Follow Up')->first();
-            $description = 'Customer should pay ' . $assetRate->remaining . 'TZS until ' . $assetRate->due_date;
+            $description = 'Customer should pay ' . $applianceRate->remaining . 'TZS until ' . $applianceRate->due_date;
         }
 
         $trelloParams = [
             'idList' => $card->card_id,
-            'name' => $assetRate->assetPerson->assetType->name . ' rate reminder',
+            'name' => $applianceRate->appliancePerson->applianceType->name . ' rate reminder',
             'desc' => $description,
-            'due' => $assetRate->due_date === '1970-01-01' ? null : $assetRate->due_date,
+            'due' => $applianceRate->due_date === '1970-01-01' ? null : $applianceRate->due_date,
             'idMembers' => null,
 
         ];
@@ -175,7 +175,7 @@ class AssetRateChecker extends Command
         try {
             $this->ticketService->create(
                 $creator->id,
-                $assetRate->assetPerson->person->id,
+                $applianceRate->appliancePerson->person->id,
                 'person',
                 $category->id,
                 null,

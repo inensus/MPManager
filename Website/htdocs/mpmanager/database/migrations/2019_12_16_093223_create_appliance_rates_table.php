@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAssetRatesTable extends Migration
+class CreateApplianceRatesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,9 @@ class CreateAssetRatesTable extends Migration
      */
     public function up()
     {
-        Schema::create('asset_rates', function (Blueprint $table) {
+        Schema::create('appliance_rates', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('asset_person_id');
+            $table->integer('appliance_person_id');
             $table->integer('rate_cost');
             $table->integer('remaining');
             $table->dateTime('due_date');
@@ -31,6 +31,6 @@ class CreateAssetRatesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('asset_rates');
+        Schema::dropIfExists('appliance_rates');
     }
 }

@@ -1,24 +1,24 @@
 <template>
     <div>
         <widget
-            v-if="addNewAssetType"
-            title="Add New Asset Type">
+            v-if="addNewApplianceType"
+            title="Add New Appliance Type">
             <md-card>
                 <md-card-content>
-                    <md-field :class="{'md-invalid': errors.has('asset')}">
-                        <label>Asset Type Name</label>
-                        <md-input v-model="asset.name"
-                                  placeholder="Asset Type Name"
+                    <md-field :class="{'md-invalid': errors.has('appliance')}">
+                        <label>Appliance Type Name</label>
+                        <md-input v-model="appliance.name"
+                                  placeholder="Appliance Type Name"
                                   type="text"
-                                  name="asset"
-                                  id="asset"
+                                  name="appliance"
+                                  id="appliance"
                                   v-validate="'required|min:4'"
                         ></md-input>
-                        <span class="md-error">{{ errors.first('asset') }}</span>
+                        <span class="md-error">{{ errors.first('appliance') }}</span>
                     </md-field>
                 </md-card-content>
                 <md-card-actions>
-                    <md-button class="md-raised md-primary" @click="saveAsset()">
+                    <md-button class="md-raised md-primary" @click="saveAppliance()">
                         <md-icon>save</md-icon>
                         Save
                     </md-button>
@@ -35,37 +35,37 @@
 </template>
 <script>
     import Widget from '../../shared/widget'
-    import {AssetService} from '../../services/AssetService'
+    import {ApplianceService} from '../../services/ApplianceService'
     import {EventBus} from "../../shared/eventbus";
 
     export default {
-        name: 'AddAssetType',
+        name: 'AddApplianceType',
         components: {Widget},
         props: {
-            addNewAssetType: false,
+            addNewApplianceType: false,
         },
         data() {
             return {
-                assetService: new AssetService(),
-                asset: null,
+                applianceService: new ApplianceService(),
+                appliance: null,
 
 
             }
         },
         created() {
-            this.asset = this.assetService.asset;
+            this.appliance = this.applianceService.appliance;
         },
         mounted() {
 
         },
         methods: {
-            async saveAsset() {
+            async saveAppliance() {
                 let validation = await this.$validator.validateAll();
                 if (!validation) {
                     return
                 }
-                this.assetService.createAsset().then((response) => {
-                    this.alertNotify('success', 'AssetType has registered.')
+                this.applianceService.createAppliance().then((response) => {
+                    this.alertNotify('success', 'ApplianceType has registered.')
                 }).catch((e) => {
                     this.alertNotify('error', e.message)
                 });
@@ -73,7 +73,7 @@
             },
 
             closeAddComponent() {
-                EventBus.$emit('addAssetTypeClosed', false);
+                EventBus.$emit('addApplianceTypeClosed', false);
             },
             alertNotify(type, message) {
                 this.$notify({
