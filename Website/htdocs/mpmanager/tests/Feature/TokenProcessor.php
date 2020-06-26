@@ -51,7 +51,7 @@ class TokenProcessor extends TestCase
 
         //create meter
         Meter::create([
-            'serial_number' => '47000319492',
+            'serial_number' => '4700005646',
             'meter_type_id' => 1,
             'in_use' => 1,
             'manufacturer_id' => 1,
@@ -68,7 +68,7 @@ class TokenProcessor extends TestCase
 
         factory(VodacomTransaction::class)->create();
         $transaction = factory(Transaction::class)->make();
-        $transaction->message = '47000319492';
+        $transaction->message = '4700005646';
 
         $vodacomTransaction = VodacomTransaction::query()->first();
         $vodacomTransaction->transaction()->save($transaction);
