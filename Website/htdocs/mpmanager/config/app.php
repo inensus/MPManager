@@ -164,9 +164,8 @@ return [
 
         App\Providers\VodacomServiceProvider::class,
         App\Providers\ServicesProvider::class, //for helper services
-
+        \App\Providers\ServicesServiceProvider::class, // repositories
         Tymon\JWTAuth\Providers\LaravelServiceProvider::class,
-        // Tymon\JWTAuth\Providers\JWTAuthServiceProvider:class
     ],
 
     /*

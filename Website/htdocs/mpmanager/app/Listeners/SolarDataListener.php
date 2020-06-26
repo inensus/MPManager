@@ -4,16 +4,24 @@ namespace App\Listeners;
 
 
 use App\Exceptions\WeatherProviderUnreachable;
-use App\Lib\IWeatherDataProvider;
 use App\Models\MiniGrid;
 use App\Models\Solar;
 use App\Models\WeatherData;
+use App\Services\IWeatherDataProvider;
+use Carbon\Carbon;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Psy\Exception\ErrorException;
 
+
+/**
+ * Class SolarDataListener
+ * @package App\Listeners
+ * @Kemal
+ * TODO: replace that listener with an model observer and fetch the data on a separate job that is triggered by "created" method .
+ */
 class  SolarDataListener
 {
     /**
@@ -40,6 +48,11 @@ class  SolarDataListener
         $this->miniGrid = $miniGrid;
     }
 
+    /**
+     * @param Solar $solar
+     * @param int $miniGridId
+     * @throws WeatherProviderUnreachable
+     */
     public function onSolarReading(Solar $solar, int $miniGridId): void
     {
         try {
@@ -52,36 +65,42 @@ class  SolarDataListener
             return;
         }
 
-        Log::debug('Points', $miniGridPoints);
 
         $currentWeather = $this->weatherDataProvider->getCurrentWeatherData($miniGridPoints);
-        if ($currentWeather->getStatusCode() === 200) {
-            $currentWeatherData = $currentWeather->getBody();
-        } else {
-            throw new WeatherProviderUnreachable('Current weather data is not available',
-                (string)$currentWeather->getBody());
+        if ($currentWeather->getStatusCode() !== 200) {
+            throw new WeatherProviderUnreachable('Current weather data is not available ' . (string)$currentWeather->getBody(),
+                $currentWeather->getStatusCode());
         }
+        $currentWeatherData = $currentWeather->getBody();
+
 
         $forecastWeather = $this->weatherDataProvider->getWeatherForeCast($miniGridPoints);
-        if ($forecastWeather->getStatusCode() === 200) {
-            $forecastWeatherData = $forecastWeather->getBody();
-        } else {
-            throw new WeatherProviderUnreachable('Current weather data is not available',
-                (string)$forecastWeather->getBody());
-        }
+        if ($forecastWeather->getStatusCode() !== 200) {
+            throw new WeatherProviderUnreachable('Current weather data is not available ' . (string)$forecastWeather->getBody()
+            ,$forecastWeather->getStatusCode());
 
-        $currentWeatherFileName = 'current-' . $solar->node_id . $solar->device_id . $solar->time_stamp . '.json';
-        $forecastWeatherFileName = 'forecast-' . $solar->node_id . $solar->device_id . $solar->time_stamp . '.json';
+        }
+        $forecastWeatherData = $forecastWeather->getBody();
+
+        $date = Carbon::parse($solar->time_stamp);
+        $currentWeatherFileName = 'current-' . $solar->node_id . $solar->device_id . $date->timestamp . '.json';
+        $forecastWeatherFileName = 'forecast-' . $solar->node_id . $solar->device_id . $date->timestamp . '.json';
         $this->weatherData::create([
             'solar_id' => $solar->id,
             'current_weather_data' => $currentWeatherFileName,
             'forecast_weather_data' => $forecastWeatherFileName,
-            'record_time' => $solar->time_stamp,
+            'record_time' => $date->timestamp,
         ]);
-        Storage::disk('local')->put('solar-reading/' . $currentWeatherFileName, (string)$currentWeatherData);
-        Storage::disk('local')->put('solar-reading/' . $forecastWeatherFileName, (string)$forecastWeatherData);
+
+        $this->storeWeatherData($currentWeatherFileName, (string)$currentWeatherData);
+        $this->storeWeatherData($forecastWeatherFileName, (string)$forecastWeatherData);
+    }
 
 
+    private function storeWeatherData($fileName, $data)
+    {
+
+        Storage::disk('local')->put('solar-reading/' . $fileName, $data);
     }
 
     private function getMiniGridLocation(int $miniGridId): array

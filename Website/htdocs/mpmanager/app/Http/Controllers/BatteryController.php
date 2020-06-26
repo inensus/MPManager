@@ -7,8 +7,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreBatteryStateRequest;
 use App\Http\Resources\ApiResource;
 use App\Models\Battery;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Inensus\Ticket\Trello\Api;
 
 /**
  * @group Battery
@@ -28,6 +28,25 @@ class BatteryController extends Controller
     public function __construct(Battery $battery)
     {
         $this->battery = $battery;
+    }
+
+
+    public function show(Request $request, $miniGridId)
+    {
+        $batteryReadings = $this->battery->newQuery()
+            ->where('mini_grid_id', $miniGridId);
+
+        if ($startDate = $request->input('start_date')) {
+            $batteryReadings->where('read_out', '>=',
+                Carbon::createFromTimestamp($startDate)->format('Y-m-d H:i:s'));
+        }
+        if ($endDate = $request->input('end_date')) {
+
+            $batteryReadings->where('read_out', '<=',
+                Carbon::createFromTimestamp($endDate)->format('Y-m-d H:i:s')
+            );
+        }
+        return new ApiResource($batteryReadings->get());
     }
 
     /**

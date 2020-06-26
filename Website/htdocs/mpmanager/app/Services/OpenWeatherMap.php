@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Weather;
+namespace App\Services;
 
 use App\Exceptions\WeatherParametersMissing;
-use App\Lib\IWeatherDataProvider;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
 use Psr\Http\Message\ResponseInterface;
@@ -20,7 +19,7 @@ class OpenWeatherMap implements IWeatherDataProvider
     public function __construct(Client $httpClient)
     {
         $this->apiKey = config('services.weather.owm_app_id');
-        Log::debug("api key", [$this->apiKey]);
+        Log::debug('api key', [$this->apiKey]);
         $this->httpClient = $httpClient;
     }
 

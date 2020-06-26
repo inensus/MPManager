@@ -7,6 +7,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreEnergyRequest;
 use App\Http\Resources\ApiResource;
 use App\Models\Energy;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class EnergyController extends Controller
 {
@@ -61,5 +63,24 @@ class EnergyController extends Controller
 
         }
         return new ApiResource(['result' => 'success']);
+    }
+
+
+    public function show(Request $request, $miniGridId)
+    {
+        $energyReadings = $this->energy->newQuery()
+            ->where('mini_grid_id', $miniGridId);
+
+        if ($startDate = $request->input('start_date')) {
+            $energyReadings->where('read_out', '>=',
+                Carbon::createFromTimestamp($startDate)->format('Y-m-d H:i:s'));
+        }
+        if ($endDate = $request->input('end_date')) {
+
+            $energyReadings->where('read_out', '<=',
+                Carbon::createFromTimestamp($endDate)->format('Y-m-d H:i:s')
+            );
+        }
+        return new ApiResource($energyReadings->get());
     }
 }
