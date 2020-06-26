@@ -16,7 +16,7 @@ export class TariffService {
             accessRate: null
 
         }
-        this.AccessRate = {
+        this.accessRate = {
             id: null,
             amount: null,
             period: null

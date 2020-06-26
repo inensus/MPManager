@@ -283,7 +283,7 @@
             show () {
                 this.showAdd = true
                 this.tariff = this.tariffService.tariff
-                this.accessRate = this.tariffService.AccessRate
+                this.accessRate = this.tariffService.accessRate
             },
             async saveTariff () {
                 let validatorTariff = true
