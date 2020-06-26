@@ -31,10 +31,6 @@ class SolarCreateRequest extends FormRequest
             'solar_reading.readings' => 'required',
             'solar_reading.average' => 'required',
             'solar_reading.total' => 'required',
-            //'solar_reading..ending_time' => 'required',
-            //'solar_reading.min' => 'required',
-            //'solar_reading.max' => 'required',
-            //'solar_reading.*.duration' => 'required',
             'time_stamp' => 'required',
 
         ];
