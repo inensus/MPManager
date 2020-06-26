@@ -4,25 +4,25 @@
 namespace App\Events;
 
 
-use App\Models\AssetPerson;
+use App\Models\AppliancePerson;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class AssetPersonCreated
+class AppliancePersonCreated
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
-     * @var AssetPerson
+     * @var AppliancePerson
      */
-    private $assetPerson;
+    private $appliancePerson;
 
-    public function __construct(AssetPerson $assetPerson)
+    public function __construct(AppliancePerson $appliancePerson)
     {
-        $this->assetPerson = $assetPerson;
+        $this->appliancePerson = $appliancePerson;
     }
 
     /**
@@ -32,6 +32,6 @@ class AssetPersonCreated
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('assetPerson.created');
+        return new PrivateChannel('appliancePerson.created');
     }
 }

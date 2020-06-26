@@ -1,16 +1,16 @@
 <template>
     <div>
 
-        <AddAssetType :addNewAssetType="addNewAssetType"/>
+        <AddApplianceType :addNewApplianceType="addNewApplianceType"/>
         <widget
-            :title="'Asset Types'"
+            :title="'Appliance Types'"
             :search="true"
             :subscriber="subscriber"
-            :route_name="'/assets/types'"
+            :route_name="'/appliance/types'"
             :button="true"
-            button-text="New Asset Type"
-            :callback="() => {addNewAssetType = true}"
-            :paginator="assetService.paginator"
+            button-text="New Appliance Type"
+            :callback="() => {addNewApplianceType = true}"
+            :paginator="applianceService.paginator"
             color="green">
 
             <md-table>
@@ -19,7 +19,7 @@
                         ID
                     </md-table-head>
                     <md-table-head>
-                        Asset Type
+                        Appliance Type
                     </md-table-head>
                     <md-table-head>
 
@@ -30,16 +30,16 @@
                 </md-table-row>
 
 
-                <md-table-row v-for="(asset_type,index) in assetService.list" style="cursor:pointer;" :key="index">
+                <md-table-row v-for="(appliance_type,index) in applianceService.list" style="cursor:pointer;" :key="index">
 
-                    <md-table-cell> {{ asset_type.id}}
+                    <md-table-cell> {{ appliance_type.id}}
                     </md-table-cell>
 
                     <md-table-cell>
-                        <div class="md-layout" v-if="!asset_type.edit">
-                            {{ asset_type.name}}&nbsp;&nbsp;
+                        <div class="md-layout" v-if="!appliance_type.edit">
+                            {{ appliance_type.name}}&nbsp;&nbsp;
                             <div class="md-layout-item" style="display: inline-block; cursor: pointer; color: #2b542c"
-                                 @click="asset_type.edit = true">
+                                 @click="appliance_type.edit = true">
                                 <font-awesome-icon icon="pen"/>&nbsp;Edit
                             </div>
 
@@ -47,27 +47,27 @@
                         <div class="md-layout-item" v-else>
                             <md-field>
 
-                                <md-input type="text" v-model="asset_type.name"></md-input>
+                                <md-input type="text" v-model="appliance_type.name"></md-input>
                             </md-field>
                         </div>
                     </md-table-cell>
 
                     <md-table-cell>
                         <div class="md-layout-item" style="display: inline-block; cursor: pointer; color: #2b542c"
-                             v-if="asset_type.edit"
-                             @click="updateAssetType(asset_type)">
+                             v-if="appliance_type.edit"
+                             @click="updateApplianceType(appliance_type)">
                             <font-awesome-icon icon="save"/>
                             Save
                         </div>
                         <div class="md-layout-item" v-else
                              style="display: inline-block; cursor: pointer; color:#ac2925; float:right"
-                             @click="deleteAssetType(asset_type)">
-                            <font-awesome-icon icon="trash"/>
+                             @click="deleteApplianceType(appliance_type)">
+                             <font-awesome-icon icon="trash"/>
                             Delete
                         </div>
                     </md-table-cell>
 
-                    <md-table-cell class="hidden-xs">{{asset_type.updated_at}}</md-table-cell>
+                    <md-table-cell class="hidden-xs">{{appliance_type.updated_at}}</md-table-cell>
 
 
                 </md-table-row>
@@ -79,30 +79,30 @@
 
 <script>
     import Widget from '../../shared/widget'
-    import AddAssetType from './AddAssetType'
+    import AddApplianceType from './AddApplianceType'
     import {EventBus} from '../../shared/eventbus'
-    import {AssetService} from '../../services/AssetService'
+    import {ApplianceService} from '../../services/ApplianceService'
 
     export default {
-        name: 'AssetTypeList',
-        components: {Widget, AddAssetType},
+        name: 'ApplianceTypeList',
+        components: {Widget, AddApplianceType},
 
         data() {
             return {
-                addNewAssetType: false,
-                subscriber: 'asset-list',
-                assetService: new AssetService(),
-                assetTypes: [],
+                addNewApplianceType: false,
+                subscriber: 'appliance-list',
+                applianceService: new ApplianceService(),
+                applianceTypes: [],
 
             }
         },
         mounted() {
-            EventBus.$on('assetTypeAdded', this.addToList)
+            EventBus.$on('applianceTypeAdded', this.addToList)
             EventBus.$on('pageLoaded', this.reloadList)
-            EventBus.$on('addAssetTypeClosed', this.closeAddComponent)
+            EventBus.$on('addApplianceTypeClosed', this.closeAddComponent)
         },
         beforeDestroy() {
-            EventBus.$off('assetTypeAdded', this.addToList)
+            EventBus.$off('applianceTypeAdded', this.addToList)
             EventBus.$off('pageLoaded', this.reloadList)
 
         },
@@ -110,38 +110,38 @@
             reloadList(subscriber, data) {
 
                 if (subscriber !== this.subscriber) return
-                this.assetService.updateList(data)
+                this.applianceService.updateList(data)
 
             },
-            addToList(asset_type) {
-                let asset_t = {
-                        id: asset_type.id,
-                        name: asset_type.name,
+            addToList(appliance_type) {
+                let appliance_t = {
+                        id: appliance_type.id,
+                        name: appliance_type.name,
                         edit: false,
-                        asset_type_name: asset_type.name
+                        appliance_type_name: appliance_type.name
 
                     }
                 ;
-                this.assetService.list.push(asset_t)
+                this.applianceService.list.push(appliance_t)
             },
 
-            updateAssetType(asset_type) {
-                asset_type.edit = false;
+            updateApplianceType(appliance_type) {
+                appliance_type.edit = false;
 
-                this.assetService.updateAsset(asset_type)
+                this.applianceService.updateAppliance(appliance_type)
                     .then((response) => {
-                        this.alertNotify('success', asset_type.name + ' has updated.')
+                        this.alertNotify('success', appliance_type.name + ' has updated.')
 
                     }).catch(e => {
                     this.alertNotify('error', e.message)
                 })
             },
 
-            deleteAssetType(asset_type) {
+            deleteApplianceType(appliance_type) {
 
-                this.assetService.deleteAsset(asset_type)
+                this.applianceService.deleteAppliance(appliance_type)
                     .then((response) => {
-                        this.alertNotify('success', asset_type.name + ' has deleted.')
+                        this.alertNotify('success', appliance_type.name + ' has deleted.')
                         location.reload()
                     }).catch(e => {
                     this.alertNotify('error', e.message)
@@ -151,7 +151,7 @@
 
             closeAddComponent(data) {
 
-                this.addNewAssetType = data
+                this.addNewApplianceType = data
             },
             alertNotify(type, message) {
                 this.$notify({

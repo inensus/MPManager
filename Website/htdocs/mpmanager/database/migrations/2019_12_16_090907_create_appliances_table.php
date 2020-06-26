@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAssetPeopleTable extends Migration
+class CreateAppliancesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,12 @@ class CreateAssetPeopleTable extends Migration
      */
     public function up()
     {
-        Schema::create('asset_people', function (Blueprint $table) {
+        Schema::create('appliances', function (Blueprint $table) {
             $table->increments('id');
-            $table->integer('asset_type_id');
-            $table->integer('person_id');
-            $table->integer('total_cost');
-            $table->integer('rate_count');
+            $table->string('name');
+            $table->integer('appliance_type_id');
+            $table->integer('default_price');
+            $table->integer('default_rate');
             $table->timestamps();
         });
     }
@@ -30,6 +30,6 @@ class CreateAssetPeopleTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('asset_people');
+        Schema::dropIfExists('appliances');
     }
 }

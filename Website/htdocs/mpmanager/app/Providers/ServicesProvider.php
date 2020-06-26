@@ -7,7 +7,7 @@ use App\Http\Services\CountryService;
 use App\Http\Services\PersonService;
 use App\Http\Services\RolesService;
 use App\Models\Address\Address;
-use App\Models\AssetPerson;
+use App\Models\AppliancePerson;
 use App\Models\Battery;
 use App\Models\Country;
 use App\Models\Meter\MeterParameter;
@@ -19,7 +19,7 @@ use App\Models\Role\RoleDefinition;
 use App\Models\Role\Roles;
 use App\Models\Solar;
 use App\Observers\AddressesObserver;
-use App\Observers\AssetPersonObserver;
+use App\Observers\AppliancePersonObserver;
 use App\Observers\BatteryObserver;
 use App\Observers\MeterParameterObserver;
 
@@ -44,17 +44,18 @@ class ServicesProvider extends ServiceProvider
         Person::observe(PersonObserver::class);
         Address::observe(AddressesObserver::class);
         MeterParameter::observe(MeterParameterObserver::class);
-        AssetPerson::observe(AssetPersonObserver::class);
+        AppliancePerson::observe(AppliancePersonObserver::class);
         PV::observe(PVObserver::class);
         Battery::observe(BatteryObserver::class);
         Horizon::auth(static function ($request) {
             return true;
         });
         Solar::observe(SolarObserver::class);
+        MeterTariff::observe(MeterTariffObserver::class);
+        MiniGrid::observe(MiniGridObserver::class);
     }
 
-        MeterTariff::observe(MeterTariffObserver::class);
-        MiniGrid::observe(MiniGridObserver::class);    }
+
 
 
     /**

@@ -7,7 +7,7 @@ use App\Helpers\MailHelper;
 use App\ManufacturerApi\CalinApi;
 use App\Misc\LoanDataContainer;
 use App\Models\AccessRate\AccessRate;
-use App\Models\AssetRate;
+use App\Models\ApplianceRate;
 use App\Models\Cluster;
 use App\Models\Manufacturer;
 use App\Models\Meter\MeterParameter;
@@ -47,7 +47,7 @@ class AppServiceProvider extends ServiceProvider
                 'vodacom_transaction' => VodacomTransaction::class,
                 'airtel_transaction' => \App\Models\Transaction\AirtelTransaction::class,
                 'access_rate' => AccessRate::class,
-                'asset_loan' => AssetRate::class,
+                'asset_loan' => ApplianceRate::class,
                 'cluster' => Cluster::class,
                 'mini-grid' => MiniGrid::class,
             ]

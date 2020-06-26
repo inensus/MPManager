@@ -3,18 +3,18 @@ import {EventBus} from "../shared/eventbus";
 import {Paginator} from "../classes/paginator";
 import {ErrorHandler} from "../Helpers/ErrorHander";
 
-export class AssetService {
+export class ApplianceService {
     constructor() {
-        this.repository = Repository.get('asset');
+        this.repository = Repository.get('appliance');
         this.list = [];
-        this.asset = {
+        this.appliance = {
             id: null,
             name: null,
             updated_at: null,
             edit: false,
-            asset_type_name: null
+            appliance_type_name: null
         };
-        this.paginator = new Paginator(resources.assets.list);
+        this.paginator = new Paginator(resources.appliances.list);
 
     }
 
@@ -31,26 +31,26 @@ export class AssetService {
 
         for (let a in data) {
 
-            let assetType = {
+            let applianceType = {
                 id: data[a].id,
                 name: data[a].name,
                 updated_at: data[a].updated_at,
                 edit: false,
             };
-            this.list.push(assetType);
+            this.list.push(applianceType);
         }
 
     }
 
-    async createAsset() {
-        this.asset.asset_type_name = this.asset.name;
+    async createAppliance() {
+        this.appliance.appliance_type_name = this.appliance.name;
         try {
-            let response = await this.repository.create(this.asset);
+            let response = await this.repository.create(this.appliance);
             if (response.status === 200 || response.status === 201) {
-                this.asset.id = response.data.data.id;
-                this.asset.name = response.data.data.name;
-                this.asset.updated_at = response.data.data.updated_at;
-                EventBus.$emit('assetTypeAdded', this.asset);
+                this.appliance.id = response.data.data.id;
+                this.appliance.name = response.data.data.name;
+                this.appliance.updated_at = response.data.data.updated_at;
+                EventBus.$emit('applianceTypeAdded', this.appliance);
             } else {
                 return new ErrorHandler(response.error, 'http', response.status);
             }
@@ -60,9 +60,9 @@ export class AssetService {
 
     }
 
-    async updateAsset(asset) {
+    async updateAppliance(appliance) {
         try {
-            let response = await this.repository.update(asset.id, asset);
+            let response = await this.repository.update(appliance.id, appliance);
             if (response.status === 200 || response.status === 201) {
                 return response;
             } else {
@@ -75,9 +75,9 @@ export class AssetService {
 
     }
 
-    async deleteAsset(asset) {
+    async deleteAppliance(appliance) {
         try {
-            let response = await this.repository.delete(asset.id);
+            let response = await this.repository.delete(appliance.id);
             if (response.status === 200 || response.status === 201) {
                 return response;
             } else {

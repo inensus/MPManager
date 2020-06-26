@@ -90,7 +90,7 @@ let routes = [
     },
     {
         path: '/tickets/settings/users',
-        component: require('./components/Ticket/UserManagement').default,
+        component: require('./components/Ticket/TicketUserManagement').default,
         meta: { layout: 'default' },
     },
     {
@@ -225,27 +225,21 @@ let routes = [
 
     },
     {
-        path: '/assets/types',
-        component: require('./components/Assets/AssetTypeList').default,
-        name: 'asset-types',
-        meta: { layout: 'default' },
-    },
-    {
-        path: '/assets/types/page/:page_number',
-        component: require('./components/Assets/AssetTypeList').default,
+        path: '/appliance/types/page/:page_number',
+        component: require('./components/Appliance/ApplianceTypeList').default,
         meta: { layout: 'default' },
     },
 
     {
         path: '/profile',
-        component: require('./components/Profile/Profile').default,
+        component: require('./components/Profile/User').default,
         meta: { layout: 'default' },
     },
     {
         path: '/profile/management',
-        component: require('./components/Profile/ProfileManagement').default,
+        component: require('./components/Profile/UserManagement').default,
         meta: { layout: 'default' },
-    }
+    },
 
 ]
 

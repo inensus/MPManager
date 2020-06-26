@@ -3,23 +3,23 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\ApiResource;
-use App\Models\AssetPerson;
-use App\Models\AssetType;
+use App\Models\AppliancePerson;
+use App\Models\ApplianceType;
 use App\Models\Person\Person;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-class AssetPersonController extends Controller
+class AppliancePersonController extends Controller
 {
 
     /**
-     * @var AssetPerson
+     * @var AppliancePerson
      */
-    private $assetPerson;
+    private $appliancePerson;
 
-    public function __construct(AssetPerson $assetPerson)
+    public function __construct(AppliancePerson $appliancePerson)
     {
-        $this->assetPerson = $assetPerson;
+        $this->appliancePerson = $appliancePerson;
     }
 
     /**
@@ -36,21 +36,21 @@ class AssetPersonController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param AssetType $assetType
+     * @param ApplianceType $applianceType
      * @param Person $person
      * @param Request $request
      * @return ApiResource
      */
-    public function store(AssetType $assetType, Person $person, Request $request): ApiResource
+    public function store(ApplianceType $applianceType, Person $person, Request $request): ApiResource
     {
-        $assetPerson = $this->assetPerson::create([
+        $appliancePerson = $this->appliancePerson::create([
             'person_id' => $person->id,
-            'asset_type_id' => $assetType->id,
+            'appliance_type_id' => $applianceType->id,
             'total_cost' => $request->get('cost'),
             'rate_count' => $request->get('rate'),
 
         ]);
-        return new ApiResource($assetPerson);
+        return new ApiResource($appliancePerson);
     }
 
     /**
@@ -62,20 +62,20 @@ class AssetPersonController extends Controller
      */
     public function show(Person $person, Request $request): ApiResource
     {
-        $assets = $this->assetPerson::with('assetType', 'rates.logs', 'logs.owner')
+        $appliances = $this->appliancePerson::with('applianceType', 'rates.logs', 'logs.owner')
             ->where('person_id', $person->id)
             ->get();
-        return new ApiResource($assets);
+        return new ApiResource($appliances);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param Request $request
-     * @param AssetPerson $assetPerson
+     * @param AppliancePerson $appliancePerson
      * @return Response
      */
-    public function update(Request $request, AssetPerson $assetPerson)
+    public function update(Request $request, AppliancePerson $appliancePerson)
     {
         //
     }
@@ -83,10 +83,10 @@ class AssetPersonController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param AssetPerson $assetPerson
+     * @param AppliancePerson $appliancePerson
      * @return Response
      */
-    public function destroy(AssetPerson $assetPerson)
+    public function destroy(AppliancePerson $appliancePerson)
     {
         //
     }

@@ -154,8 +154,8 @@
                         ]
                     },
                     {
-                        name: 'Asset Types',
-                        route: '/assets/types/page/1',
+                        name: 'Appliance Types',
+                        route: '/appliance/types/page/1',
                         icon: 'toolbox',
                     },
                     {
@@ -214,15 +214,15 @@
             }
         },
         computed: {
-            adminName () {
+            adminName() {
                 return this.$store.getters.admin.name
             },
-            remaining () {
+            remaining() {
                 let remaining_time = this.$store.getters.admin.remaining_time
                 let remaining_seconds = (remaining_time % 60).toString()
                 return Math.floor(remaining_time / 60).toString() + ':' + ('0' + remaining_seconds).slice(-2)
             },
-            sidebarStyle () {
+            sidebarStyle() {
                 return {
 
                     background: '#2b2b2b !important'

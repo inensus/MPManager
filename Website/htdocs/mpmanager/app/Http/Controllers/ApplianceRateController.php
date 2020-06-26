@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\ApiResource;
-use App\Models\AssetRate;
+use App\Models\ApplianceRate;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-class AssetRateController extends Controller
+class ApplianceRateController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -43,10 +43,10 @@ class AssetRateController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param AssetRate $assetRate
+     * @param ApplianceRate $applianceRate
      * @return Response
      */
-    public function show(AssetRate $assetRate)
+    public function show(ApplianceRate $applianceRate)
     {
         //
     }
@@ -54,10 +54,10 @@ class AssetRateController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param AssetRate $assetRate
+     * @param ApplianceRate $applianceRate
      * @return Response
      */
-    public function edit(AssetRate $assetRate)
+    public function edit(ApplianceRate $applianceRate)
     {
         //
     }
@@ -66,33 +66,33 @@ class AssetRateController extends Controller
      * Update the specified resource in storage.
      *
      * @param Request $request
-     * @param AssetRate $assetRate
+     * @param ApplianceRate $applianceRate
      * @return ApiResource
      */
-    public function update(Request $request, AssetRate $assetRate): ApiResource
+    public function update(Request $request, ApplianceRate $applianceRate): ApiResource
     {
         // notify log listener
         event('new.log', [
             'logData' => [
                 'user_id' => $request->get('admin_id'),
-                'affected' => $assetRate->assetPerson,
-                'action' => 'Remaining rate ' . $assetRate->due_date . ' cost updated. From ' . $assetRate->remaining . ' to ' . $request->get('remaining')
+                'affected' => $applianceRate->appliancePerson,
+                'action' => 'Remaining rate ' . $applianceRate->due_date . ' cost updated. From ' . $applianceRate->remaining . ' to ' . $request->get('remaining')
             ]
         ]);
 
 
-        $assetRate->remaining = $request->get('remaining');
-        $assetRate->update();
-        return new ApiResource($assetRate);
+        $applianceRate->remaining = $request->get('remaining');
+        $applianceRate->update();
+        return new ApiResource($applianceRate);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param AssetRate $assetRate
+     * @param ApplianceRate $applianceRate
      * @return Response
      */
-    public function destroy(AssetRate $assetRate)
+    public function destroy(ApplianceRate $applianceRate)
     {
         //
     }
