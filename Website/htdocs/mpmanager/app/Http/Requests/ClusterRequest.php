@@ -13,8 +13,8 @@ use Illuminate\Foundation\Http\FormRequest;
 
 
 /**
- * @urlParam id required The ID of the post.
- * @urlParam lang The language.
+ * @urlParam  id required The ID of the post.
+ * @urlParam  lang The language.
  * @bodyParam name string required The name  of the cluster.
  * @bodyParam geo_type string required. Describes if the polygon created manually or fetched from the internet.
  * @bodyParam geo_data string required. Holds coordinates if the polygon created manually or the external url  which contains a geojson.
@@ -43,10 +43,10 @@ class ClusterRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => 'required',
+            'name'     => 'required',
             'geo_type' => 'required',
             'geo_data' => 'required',
-            'cities' => 'required',
+
             'manager_id' => 'required',
         ];
     }

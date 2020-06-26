@@ -162,6 +162,24 @@
                         name: 'Maintenance',
                         route: '/maintenance',
                         icon: 'wrench',
+                    },
+                    {
+                        name: 'Locations',
+                        icon: 'map-marker',
+                        children: [
+                            {
+                                name: 'Add Cluster',
+                                route: '/locations/add-cluster',
+                            },
+                            {
+                                name: 'Add MiniGrid',
+                                route: '/locations/add-mini-grid',
+                            },
+                            {
+                                name: 'Add Village',
+                                route: '/locations/add-village',
+                            }
+                        ]
                     }
                 ]
             }
@@ -190,21 +208,21 @@
                 default: true
             }
         },
-        provide() {
+        provide () {
             return {
                 autoClose: this.autoClose
             }
         },
         computed: {
-            adminName() {
+            adminName () {
                 return this.$store.getters.admin.name
             },
-            remaining() {
+            remaining () {
                 let remaining_time = this.$store.getters.admin.remaining_time
                 let remaining_seconds = (remaining_time % 60).toString()
                 return Math.floor(remaining_time / 60).toString() + ':' + ('0' + remaining_seconds).slice(-2)
             },
-            sidebarStyle() {
+            sidebarStyle () {
                 return {
 
                     background: '#2b2b2b !important'

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MiniGrid;
 use App\Models\City;
 use App\Models\Country;
 use App\Http\Requests\CityRequest;
@@ -20,11 +21,15 @@ class CityController extends Controller
      * @var City
      */
     private $city;
+    /**
+     * @var MiniGrid
+     */
+    private $miniGrid;
 
-
-    public function __construct(City $city)
+    public function __construct(City $city, MiniGrid $miniGrid)
     {
         $this->city = $city;
+        $this->miniGrid = $miniGrid;
     }
 
     /**
@@ -83,16 +88,13 @@ class CityController extends Controller
      */
     public function store(CityRequest $request)
     {
-        $validation = Validator::make($request->all(), City::$rules);
-        if ($validation->fails()) {
-            throw new ValidationException($validation);
-        }
-        $country = Country::where('country_code', request('country'))->first();
 
+        $miniGrid = $this->miniGrid->find($request->input('mini_grid_id'));
 
         $this->city->name = request('name');
+        $this->city->miniGrid()->associate($miniGrid);
         $this->city->save();
-        $this->city->country()->associate($country);
+        //$this->city->country()->associate($country);
         //$country->cities()->save($this->city);
 
         //save and return object
