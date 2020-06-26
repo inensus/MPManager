@@ -4,9 +4,10 @@ namespace App\Models\Meter;
 
 use App\Models\AccessRate\AccessRate;
 use App\Models\Address\Address;
+use App\Models\BaseModel;
 use App\Models\ConnectionGroup;
 use App\Models\GeographicalInformation;
-use App\Models\BaseModel;
+use App\Models\SocialTariffPiggyBank;
 use App\Models\SubConnectionType;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
@@ -22,12 +23,11 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property int meter_id
  * @property int tariff_id
  * @property int connection_type_id
- * @property mixed tariff
  */
 class MeterParameter extends BaseModel
 {
     protected $hidden = ['owner_id', 'owner_type', 'meter_id', 'tariff_id'];
-
+    protected $guarded = [];
 
     public function connectionType(): BelongsTo
     {
@@ -76,5 +76,11 @@ class MeterParameter extends BaseModel
     public function connectionGroup(): BelongsTo
     {
         return $this->belongsTo(ConnectionGroup::class);
+    }
+
+
+    public function socialTariffPiggyBank()
+    {
+        return $this->hasOne(SocialTariffPiggyBank::class);
     }
 }

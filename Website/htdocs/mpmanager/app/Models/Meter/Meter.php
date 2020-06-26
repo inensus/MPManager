@@ -2,9 +2,9 @@
 
 namespace App\Models\Meter;
 
-use App\Models\Manufacturer;
 use App\Models\AccessRate\AccessRatePayment;
 use App\Models\BaseModel;
+use App\Models\Manufacturer;
 use App\Models\Transaction\Transaction;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -21,6 +21,7 @@ use PDO;
  */
 class Meter extends BaseModel
 {
+    protected $guarded = [];
     public static $rules = [
         'serial_number' => 'required|min:1|unique:meters',
         'meter_type_id' => 'exists:meter_types,id',

@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreatePaymentHistoriesTable extends Migration
 {
@@ -16,6 +16,7 @@ class CreatePaymentHistoriesTable extends Migration
         Schema::create('payment_histories', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('amount');
+            $table->integer('transaction_id');
             $table->string('payment_service');
             $table->string('sender');
             $table->string('payment_type'); //energy, loand, etc.

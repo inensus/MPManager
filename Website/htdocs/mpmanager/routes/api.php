@@ -47,6 +47,7 @@ Route::group(['prefix' => 'batteries'], static function () {
 
 Route::group(['prefix' => 'mini-grids'], static function () {
     Route::get('/', 'MiniGridController@index');
+    Route::post('/', 'MiniGridController@store');
     Route::get('/{id}', 'MiniGridController@show');
     Route::post('/{id}/transactions', 'RevenueController@transactionRevenuePerMiniGrid');
     Route::post('/{id}/energy', 'RevenueController@soldEnergyPerMiniGrid');
@@ -96,7 +97,7 @@ Route::group(['middleware' => 'jwt.verify', 'prefix' => 'tariffs'], function () 
 //JWT authentication
 Route::group([
     'middleware' => 'api',
-    'prefix' => 'auth'
+    'prefix'     => 'auth'
 
 ], static function ($router) {
 
@@ -182,16 +183,16 @@ Route::post('androidApp', function (AndroidAppRequest $r) {
         DB::beginTransaction();
 
         //check if the meter id or the phone already exists
-        $meter = Meter::where('serial_number', $r->get('serial_number'))->first();
+        $meter  = Meter::where('serial_number', $r->get('serial_number'))->first();
         $person = null;
 
         if ($meter === null) {
-            $meter = new Meter();
+            $meter          = new Meter();
             $meterParameter = new MeterParameter();
-            $geoLocation = new GeographicalInformation();
+            $geoLocation    = new GeographicalInformation();
         } else {
             $meterParameter = MeterParameter::where('meter_id', $meter->id)->first();
-            $geoLocation = $meterParameter->geo()->first();
+            $geoLocation    = $meterParameter->geo()->first();
             if ($geoLocation === null) {
                 $geoLocation = new GeographicalInformation();
             }
@@ -204,7 +205,7 @@ Route::post('androidApp', function (AndroidAppRequest $r) {
 
         if ($person === null) {
             $personService = new PersonService(new App\Models\Person\Person());
-            $person = $personService->createFromRequest($r);
+            $person        = $personService->createFromRequest($r);
         }
 
         $meter->serial_number = $r->get('serial_number');
@@ -289,6 +290,7 @@ Route::group(['prefix' => '/clusters'], function () {
     Route::post('/{id}/revenue', 'RevenueController@getClusterRevenue');
     Route::post('/', 'ClusterController@store');
     Route::get('/{id}', 'ClusterController@show');
+    Route::get('/{cluster}/geo', 'ClusterController@showGeo');
 });
 
 Route::get('/clusterlist', 'ClusterController@index');

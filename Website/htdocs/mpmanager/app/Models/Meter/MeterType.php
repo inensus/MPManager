@@ -6,6 +6,7 @@ use App\Models\BaseModel;
 
 class MeterType extends BaseModel
 {
+    protected $guarded = [];
     public static $rules = [
         'online' => 'required',
         'phase' => 'required',

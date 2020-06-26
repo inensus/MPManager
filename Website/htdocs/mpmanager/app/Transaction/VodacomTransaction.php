@@ -11,7 +11,6 @@ namespace App\Transaction;
 
 use App\Exceptions\VodacomHeartBeatException;
 use App\Lib\ITransactionProvider;
-
 use App\Models\Transaction\Transaction;
 use App\Models\Transaction\TransactionConflicts;
 use Exception;
@@ -73,6 +72,9 @@ class VodacomTransaction implements ITransactionProvider
      */
     public function sendResult(bool $requestType, Transaction $transaction): void
     {
+        if (!app()->environment('production')) {
+            return;
+        }
         $requestContent = $this->prepareRequest($requestType);
 
         $request = new Client();
@@ -232,19 +234,13 @@ class VodacomTransaction implements ITransactionProvider
     /**
      * Store the commonly used data
      *
-     * @return \App\Transaction
+     * @return Transaction
      */
     public function saveCommonData(): Model
     {
         $transaction = $this->vodacomTransaction->transaction()->save($this->transaction);
         return $transaction;
     }
-
-    /**
-     * CUSTOM HELPER FUNCTIONS    l
-     *                            l
-     *                           \/
-     */
 
 
     /**
