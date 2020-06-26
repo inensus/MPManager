@@ -99,7 +99,6 @@
                 try {
                     let email = this.form.email
                     let password = this.form.password
-                    debugger
                     await this.$store.dispatch('auth/authenticate', { email, password })
                     this.sending = false
                     this.$router.push('/')
