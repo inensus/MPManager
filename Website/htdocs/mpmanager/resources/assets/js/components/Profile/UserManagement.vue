@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <widget
-            title="Profile Management"
+            title="User Management"
             :button-text="'NEW USER'"
             :button="true"
             :callback="()=>{showNewUser = true}"
@@ -218,7 +218,6 @@
         methods: {
             async getUsers () {
                 let users = await this.adminService.getUserList()
-
                 users.forEach(u => {
                     let usr = {
                         id: u.id,
@@ -318,7 +317,8 @@
                         this.alertNotify('success', 'New user created.')
                         this.showNewUser = false
                         this.cities = []
-                        this.getUsers()
+                        this.user.id = this.users.length+1
+                        this.users.push(this.user)
                     } else {
                         this.alertNotify('error', response.error.message)
                     }
