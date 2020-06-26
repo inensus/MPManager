@@ -26,7 +26,9 @@ class CreateSubTargetsTable extends Migration
             $table->timestamps();
 
 
+
         });
+
     }
 
     /**

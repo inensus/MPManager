@@ -5,12 +5,25 @@ namespace App\Models;
 use App\Models\Address\Address;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Support\Facades\Hash;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
+/**
+ * Class User
+ * @package App\Models
+ *
+ * @property int $id
+ *
+ */
 class User extends Authenticatable implements JWTSubject
 {
     use Notifiable;
 
+
+    public function setPasswordAttribute($password): void
+    {
+        $this->attributes['password'] = Hash::make($password);
+    }
 
     /**
      * The attributes that are mass assignable.

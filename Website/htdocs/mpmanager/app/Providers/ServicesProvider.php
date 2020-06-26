@@ -17,6 +17,7 @@ use App\Models\Person\Person;
 use App\Models\PV;
 use App\Models\Role\RoleDefinition;
 use App\Models\Role\Roles;
+use App\Models\Solar;
 use App\Observers\AddressesObserver;
 use App\Observers\AssetPersonObserver;
 use App\Observers\BatteryObserver;
@@ -26,6 +27,7 @@ use App\Observers\MeterTariffObserver;
 use App\Observers\MiniGridObserver;
 use App\Observers\PersonObserver;
 use App\Observers\PVObserver;
+use App\Observers\SolarObserver;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Horizon\Horizon;
 
@@ -45,11 +47,15 @@ class ServicesProvider extends ServiceProvider
         AssetPerson::observe(AssetPersonObserver::class);
         PV::observe(PVObserver::class);
         Battery::observe(BatteryObserver::class);
-        Horizon::auth(function ($request) {
+        Horizon::auth(static function ($request) {
             return true;
         });
+        Solar::observe(SolarObserver::class);
+    }
+
         MeterTariff::observe(MeterTariffObserver::class);
         MiniGrid::observe(MiniGridObserver::class);    }
+
 
     /**
      * Register services.

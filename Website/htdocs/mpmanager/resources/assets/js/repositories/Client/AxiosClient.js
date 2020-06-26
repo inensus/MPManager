@@ -3,20 +3,23 @@ import { EventBus } from '../../shared/eventbus'
 
 const baseUrl = 'http://mpmanager.local/'
 
-let token = null
-
-EventBus.$on('token.set', (data) => {
-    console.log('Token verisi geldi')
-    token = data
-})
-
-console.log('LOGIN', 'BURADAYIM')
-
-export default axios.create(
+const axiosClient = axios.create(
     {
         baseUrl,
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
     }
 )
+
+axiosClient.interceptors.request.use(
+    config => {
+        const token = localStorage.getItem('token')
+        if (token) {
+            config.headers['Authorization'] = 'Bearer ' + token
+        }
+        return config
+    },
+    error => {
+        Promise.reject(error)
+    }
+)
+
+export default axiosClient

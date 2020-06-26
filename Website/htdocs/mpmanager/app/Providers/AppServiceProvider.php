@@ -4,7 +4,6 @@ namespace App\Providers;
 
 
 use App\Helpers\MailHelper;
-use App\Lib\IWeatherDataProvider;
 use App\ManufacturerApi\CalinApi;
 use App\Misc\LoanDataContainer;
 use App\Models\AccessRate\AccessRate;
@@ -23,7 +22,6 @@ use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
-use App\Weather\OpenWeatherMap;
 use PHPMailer\PHPMailer\PHPMailer;
 
 class AppServiceProvider extends ServiceProvider
@@ -94,9 +92,6 @@ class AppServiceProvider extends ServiceProvider
                 new Transaction()
             );
         });
-
-        //Bind open weather map  to IWeatherDataProvider interface
-        $this->app->bind(IWeatherDataProvider::class, OpenWeatherMap::class);
 
     }
 }

@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Cluster extends Model
 {
+    protected $guarded = [];
     /**
      * A cluster has a cluster-manager who is responsible for the cluster.
      *

@@ -8,6 +8,7 @@ use App\Helpers\PowerConverter;
 use App\Http\Requests\PVRequest;
 use App\Http\Resources\ApiResource;
 use App\Models\PV;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -27,6 +28,25 @@ class PVController extends Controller
     public function __construct(PV $pv)
     {
         $this->pv = $pv;
+    }
+
+
+    public function showReadings(Request $request, $miniGridId)
+    {
+        $pvReadings = $this->pv->newQuery()
+            ->where('mini_grid_id', $miniGridId);
+
+        if ($startDate = $request->input('start_date')) {
+            $pvReadings->where('reading_date', '>=',
+                Carbon::createFromTimestamp($startDate)->format('Y-m-d H:i:s'));
+        }
+        if ($endDate = $request->input('end_date')) {
+
+            $pvReadings->where('reading_date', '<=',
+                Carbon::createFromTimestamp($endDate)->format('Y-m-d H:i:s')
+            );
+        }
+        return new ApiResource($pvReadings->get());
     }
 
     /**
