@@ -238,12 +238,12 @@ let routes = [
 
     {
         path: '/profile',
-        component: require('./components/Profile/Profile').default,
+        component: require('./components/Profile/User').default,
         meta: { layout: 'default' },
     },
     {
         path: '/profile/management',
-        component: require('./components/Profile/ProfileManagement').default,
+        component: require('./components/Profile/UserManagement').default,
         meta: { layout: 'default' },
     }
 
