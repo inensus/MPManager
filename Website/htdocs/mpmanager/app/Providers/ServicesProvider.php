@@ -51,7 +51,7 @@ class ServicesProvider extends ServiceProvider
             return true;
         });
         Solar::observe(SolarObserver::class);
-    }
+
 
         MeterTariff::observe(MeterTariffObserver::class);
         MiniGrid::observe(MiniGridObserver::class);    }
