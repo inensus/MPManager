@@ -6,7 +6,8 @@
 
                 <md-card-content>
                     <div class="md-layout md-gutter">
-                        <div class="md-layout-item md-large-size-33 md-medium-size-33 md-small-size-100">
+                        <div
+                            class="md-layout-item md-xlarge-size-33 md-large-size-33 md-medium-size-33 md-small-size-100">
                             <md-field class="{'md-invalid': errors.has('clusterName')}">
                                 <label>Cluster Name</label>
                                 <md-input
@@ -20,16 +21,19 @@
                                 <span class="md-error">{{ errors.first('asset') }}</span>
                             </md-field>
                         </div>
-                        <div class="md-layout-item md-large-size-33 md-medium-size-33 md-small-size-100">
+                        <div
+                            class="md-layout-item md-xlarge-size-33 md-large-size-33 md-medium-size-33 md-small-size-100">
 
                             <user-list @userSelected="userSelected"></user-list>
                         </div>
-                        <div class="md-layout-item md-large-size-33 md-medium-size-33 md-small-size-100">
+                        <div
+                            class="md-layout-item md-xlarge-size-33 md-large-size-33 md-medium-size-33 md-small-size-100">
 
                             <md-button class="md-primary save-button" @click="saveCluster()">Save</md-button>
                         </div>
 
-                        <div class="md-layout-item md-large-size-100 md-medium-size-100 md-small-size-100">
+                        <div
+                            class="md-layout-item md-xlarge-size-33 md-large-size-100 md-medium-size-100 md-small-size-100">
                             <md-list>
                                 <div v-if="geoDataItems.length>0">
                                     <md-subheader v-if="typed  && clusterName!==''">Search results for {{clusterName}}
@@ -58,7 +62,8 @@
                                 </div>
                             </md-list>
                         </div>
-                        <div class="md-layout-item md-large-size-100 md-medium-size-100 md-small-size-100 map-area">
+                        <div
+                            class="md-layout-item md-xlarge-size-33 md-large-size-100 md-medium-size-100 md-small-size-100 map-area">
                             <Map
                                 :geoData="geoData"
                                 :clusterName="clusterName"
