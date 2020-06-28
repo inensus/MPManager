@@ -5,9 +5,8 @@ namespace App\Services;
 
 use App\Exceptions\MailNotSentException;
 use App\Helpers\PasswordGenerator;
-use App\Http\Resources\ApiResource;
 use App\Models\User;
-
+use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
@@ -15,10 +14,9 @@ use Illuminate\Support\Facades\Log;
 class UserService implements IUserService
 {
 
-
     public function create(array $userData)
     {
-        return User::create([
+        return User::query()->create([
             'name' => $userData['name'],
             'password' => $userData['password'],
             'email' => $userData['email'],
@@ -33,40 +31,39 @@ class UserService implements IUserService
     public function updateAddress($user, $createOnFailure = true): ?User
     {
         try {
-            $user->addresses()->first();
-            $user = $this->userRepository->userAddress($userId);
+            $user->addresses()->firstOrFail();
         } catch (ModelNotFoundException $exception) {
             return null;
         }
 
         if ($user->address === null) {
             if ($createOnFailure) {
-                $address = $this->addressRepository->create(
-                    request()->only('phone', 'email', 'street', 'city_id', 'is_primary'));
-
-                $user->address = $this->userRepository->bindAddress($user, $address);
+                $user->address()->create(request()->only('phone', 'email', 'street', 'city_id', 'is_primary'));
                 return $user;
             }
             return null;
 
         }
 
-        $user->address = $this->addressRepository->update(
-            request()->only('email', 'phone', 'street', 'city_id', 'is_primary'),
-            $user->address->id,
+        $user->address()->update(
+            request()->only('email', 'phone', 'street', 'city_id', 'is_primary')
         );
         return $user;
     }
 
 
-    public function resetPassword(string $email): ?User
+    public function resetPassword(string $email)
     {
         try {
             $newPassword = PasswordGenerator::generatePassword();
-        } catch (\Exception $exception) {
+        } catch (Exception $exception) {
             $newPassword = time();
         }
-        $user = User::where('email', $email)->first();
+        try {
+            $user = User::query()->where('email', $email)->firstOrFail();
+        } catch (ModelNotFoundException $x) {
+            return null;
+        }
 
         $user->password = $newPassword;
         $user->update();
@@ -84,7 +81,8 @@ class UserService implements IUserService
             );
         } catch (MailNotSentException $exception) {
             Log::debug('Failed to reset password', [
-                'id' => '478efhd3497gvfdhjkwgsdjkl4ghgdf',
+                'id' => '4
+                78efhd3497gvfdhjkwgsdjkl4ghgdf',
                 'message' => 'Password reset email for ' . $user->email . ' failed',
                 'reason' => $exception->getMessage(),
             ]);
