@@ -10,7 +10,7 @@
                 placeholder="Assign Cluster Manager"
             >
 
-                <md-option v-for="(user,index) in users" :value="index" :key="index">{{user.name}}</md-option>
+                <md-option v-for="(user,index) in users" :value="user.id" :key="user.id">{{user.name}}</md-option>
             </md-select>
 
         </md-field>
@@ -19,36 +19,36 @@
 </template>
 
 <script>
-    import {resources} from '../../resources'
-    import {UserService} from '../../services/UserService'
+    import { resources } from '../../resources'
+    import { UserService } from '../../services/UserService'
 
     export default {
         name: 'UserList',
-        mounted() {
+        mounted () {
             this.getUserList()
         },
-        data() {
+        data () {
             return {
-                userService : new UserService(),
+                userService: new UserService(),
                 users: null,
                 selectedUser: null,
             }
         },
         methods: {
-            selectUser(user) {
+            selectUser (user) {
                 this.selectedUser = user
                 this.$emit('userSelected', user)
             },
 
-          async  getUserList() {
+            async getUserList () {
                 try {
-                    this.users = await  this.userService.getUsers()
-                }catch (e) {
+                    this.users = await this.userService.getUsers()
+                } catch (e) {
                     this.alertNotify('error', e.message)
                 }
 
             },
-            alertNotify(type, message) {
+            alertNotify (type, message) {
                 this.$notify({
                     group: 'notify',
                     type: type,
