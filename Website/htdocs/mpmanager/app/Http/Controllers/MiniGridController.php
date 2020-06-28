@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreMiniGridRequest;
+use App\Http\Requests\UpdateMiniGridRequest;
 use App\Http\Resources\ApiResource;
 use App\Models\MiniGrid;
 use Illuminate\Http\Request;
@@ -73,7 +74,7 @@ class MiniGridController extends Controller
      * @bodyParam data_stream int If the data_stream is enabled or not.
      *
      * @param MiniGrid $miniGrid
-     * @param Request $request
+     * @param UpdateMiniGridRequest $request
      * @return ApiResource
      */
     public function update(MiniGrid $miniGrid, UpdateMiniGridRequest $request): ApiResource
