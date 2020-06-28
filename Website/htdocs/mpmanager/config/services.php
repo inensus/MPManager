@@ -47,9 +47,9 @@ return [
     'pagination' => 25,
 
     'calin' => [
-        'url' => env('CALIN_CLIENT_URL',),
-        'key' => env('CALIN_KEY',),
-        'api' => env('CALIN_CLIENT_URL',),
+        'url' => env('CALIN_CLIENT_URL'),
+        'key' => env('CALIN_KEY'),
+        'api' => env('CALIN_CLIENT_URL'),
         'user_id' => env('CALIN_USER_ID'),
         'meter' => [
             'key' => env('METER_DATA_KEY'),
@@ -57,7 +57,7 @@ return [
             'api' => env('METER_DATA_URL'),
         ],
     ],
-    'manufacturer_master_key' => '36dKhvjwE58!M2.A@L', // the key which is required to be add a new  manufacturer
+    'manufacturer_master_key' => '36dKhvjwE58!M2.A@L', // the key which is required to  add a new  manufacturer
 
     'sms' => [
         'bongo' => [
