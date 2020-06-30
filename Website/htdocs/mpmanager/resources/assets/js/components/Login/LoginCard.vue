@@ -7,14 +7,14 @@
             <div class="description" v-if="authError">Authentication failed. Check your credentials</div>
         </div>
         <div class="content">
-            <form class="md-layout" @submit.prevent="validateUser">
+            <form class="md-layout" @submit.prevent="validateUser" data-vv-scope="Login-Form">
                 <md-card class="md-layout-item">
                     <md-card-header>
                         <div class="md-title"></div>
                     </md-card-header>
 
                     <md-card-content>
-                        <md-field :class="{'md-invalid': errors.has('email')}">
+                        <md-field :class="{'md-invalid': errors.has('Login-Form.email')}">
                             <label for="email">Email</label>
                             <md-input
                                 type="email"
@@ -23,12 +23,12 @@
                                 autocomplete="email"
                                 v-model="form.email"
                                 :disabled="sending"
-                                :v-validate="'required|email'"
+                                v-validate="'required|email'"
                             />
-                            <span class="md-error">{{ errors.first('email') }}</span>
+                            <span class="md-error">{{ errors.first('Login-Form.email') }}</span>
                         </md-field>
 
-                        <md-field :class="{'md-invalid': errors.has('password')}">
+                        <md-field :class="{'md-invalid': errors.has('Login-Form.password')}">
                             <label for="password">Password</label>
                             <md-input
                                 type="password"
@@ -38,7 +38,7 @@
                                 :disabled="sending"
                                 v-validate="'required|min:6|max:15'"
                             />
-                            <span class="md-error">{{ errors.first('password') }}</span>
+                            <span class="md-error">{{ errors.first('Login-Form.password') }}</span>
                         </md-field>
                     </md-card-content>
 
@@ -79,8 +79,8 @@
         data: () => ({
             authError: false,
             form: {
-                email: 'demo@inensus.com',
-                password: 123123
+                email: null,
+                password: null
             },
 
             userSaved: false,
@@ -109,7 +109,7 @@
             },
             async validateUser () {
 
-                let validator = await this.$validator.validateAll()
+                let validator = await this.$validator.validateAll('Login-Form')
 
                 if (validator) {
                     await this.authenticate()
