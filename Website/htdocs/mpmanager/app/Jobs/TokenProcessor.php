@@ -97,7 +97,7 @@ class TokenProcessor implements ShouldQueue
                 event('transaction.failed', [
                     $this->transactionContainer->transaction,
                     'Token generation request failed with following reason ' . $e->getMessage()
-                ],);
+                ]);
                 return;
             }
             $token = app()->make(MeterToken::class);
