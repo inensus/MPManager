@@ -1,15 +1,23 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import {Person} from '../classes/person'
-import {Meters} from '../classes/person/meters'
-import {Admin} from '../classes/admin'
+import { Person } from '../classes/person'
+import { Meters } from '../classes/person/meters'
+import { Admin } from '../classes/admin'
 import * as auth from '../store/modules/authentication'
-import VuexPersist from 'vuex-persist';
-Vue.use(Vuex);
+import VuexPersist from 'vuex-persist'
+
+Vue.use(Vuex)
 const vuexLocalStorage = new VuexPersist({
+    reducer: (state) => ({
+        auth: {
+            authenticateUser: state.auth.authenticateUser,
+
+        }
+    }),
+
     key: 'vuex',
     storage: window.localStorage,
-});
+})
 export default new Vuex.Store({
     modules: {
         auth

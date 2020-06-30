@@ -3,12 +3,10 @@ import { AuthenticationService } from '../../services/AuthenticationService'
 export const namespaced = true
 
 export const state = {
+    service: new AuthenticationService(),
     authenticateUser: {},
     status: '',
-    token: ''
-
 }
-
 export const mutations = {
     AUTH_REQUEST (state) {
         state.status = 'loading'
@@ -22,21 +20,19 @@ export const mutations = {
         state.status = 'error'
     },
     SET_LOGOUT (state) {
+        state.service = new AuthenticationService()
         state.status = ''
         state.token = ''
         state.authenticateUser = {}
     },
 }
-
 export const actions = {
+    authenticate ({ commit, state, dispatch }, { email, password }) {
 
-    authenticate ({ commit, dispatch }, { email, password }) {
-
-        let authenticationService = new AuthenticationService()
         commit('AUTH_REQUEST')
         return new Promise((resolve, reject) => {
 
-            authenticationService.authenticate(email, password)
+            state.service.authenticate(email, password)
                 .then(user => {
 
                     commit('AUTH_SUCCESS', user)
@@ -48,11 +44,11 @@ export const actions = {
         })
 
     },
-    refreshToken ({ commit, dispatch }, token) {
-        let authenticationService = new AuthenticationService()
+    refreshToken ({ commit, state, dispatch }, token) {
+
         commit('AUTH_REQUEST')
         return new Promise((resolve, reject) => {
-            authenticationService.refreshToken(token)
+            state.service.refreshToken(token)
                 .then(user => {
 
                     commit('AUTH_SUCCESS', user)
@@ -83,4 +79,6 @@ export const getters = {
     getToken: state => {
         return state.authenticateUser.token
     },
+    authenticationService: state => state.service,
+
 }
