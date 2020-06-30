@@ -68,7 +68,7 @@
 </template>
 <script>
 
-
+    import store from '../../store/store'
     export default {
 
         data: () => (
@@ -214,11 +214,12 @@
             }
         },
         computed: {
-            adminName() {
-                return this.$store.getters.admin.name
+            adminName () {
+                return this.$store.getters['auth/getAuthenticateUser'].name
             },
-            remaining() {
-                let remaining_time = this.$store.getters.admin.remaining_time
+            remaining () {
+                let remaining_time = this.$store.getters['auth/getAuthenticateUser'].remaining_time
+
                 let remaining_seconds = (remaining_time % 60).toString()
                 return Math.floor(remaining_time / 60).toString() + ':' + ('0' + remaining_seconds).slice(-2)
             },
