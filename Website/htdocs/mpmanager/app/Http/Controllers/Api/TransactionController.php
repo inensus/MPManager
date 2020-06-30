@@ -136,7 +136,7 @@ class TransactionController extends Controller
                     $q->whereHas('meter', function ($q) use ($tariff) {
                         $q->whereHas('meterParameter', function ($q) use ($tariff) {
                             $q->whereHas('tariff', function ($q) use ($tariff) {
-                                $q->where('name', 'LIKE', '%' . $tariff . '%');
+                                $q->where('id', $tariff);
                             });
                         });
                     });
@@ -147,7 +147,7 @@ class TransactionController extends Controller
                     $q->whereHas('meter', function ($q) use ($tariff) {
                         $q->whereHas('meterParameter', function ($q) use ($tariff) {
                             $q->whereHas('tariff', function ($q) use ($tariff) {
-                                $q->where('name', 'LIKE', '%' . $tariff . '%');
+                                $q->where('id', $tariff);
                             });
                         });
                     });
@@ -307,7 +307,6 @@ class TransactionController extends Controller
 
         //fire transaction.saved -> confirms the transaction
         event('transaction.saved', $transactionProvider);
-
 
 
         if (config('app.env') === 'production') {//production queue
