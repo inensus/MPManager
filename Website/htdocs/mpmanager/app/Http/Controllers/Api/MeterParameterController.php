@@ -5,14 +5,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\MeterParameterRequest;
 use App\Http\Resources\ApiResource;
-use App\Models\AccessRate\AccessRatePayment;
 use App\Models\ConnectionType;
 use App\Models\GeographicalInformation;
-use App\Models\Meter\Meter;
 use App\Models\Meter\MeterParameter;
 use App\Models\Meter\MeterTariff;
 use App\Models\Person\Person;
-use App\PaymentHandler\AccessRate;
+use App\Models\SubConnectionType;
 use Illuminate\Http\Request;
 
 /**
@@ -121,7 +119,7 @@ class MeterParameterController extends Controller
         if ($personId !== -1) {
             $parameter->owner()->associate(Person::findOrFail($personId));
         } elseif ($connectionId !== -1) {
-            $parameter->connectionType()->associate(ConnectionType::findOrFail($connectionId));
+            $parameter->connectionType()->associate(SubConnectionType::findOrFail($connectionId));
         } elseif ($tariffId !== -1) {
             $parameter->tariff()->associate(MeterTariff::findOrFail($tariffId));
 

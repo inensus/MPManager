@@ -2,20 +2,37 @@
 
 namespace App\Http\Controllers;
 
-use App\SubConnectionType;
+use App\Http\Resources\ApiResource;
+use App\Models\SubConnectionType;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class SubConnectionTypeController extends Controller
 {
+
+    /**
+     * @var SubConnectionType
+     */
+    private $subConnectionType;
+
+    public function __construct(SubConnectionType $subConnectionType)
+    {
+        $this->subConnectionType = $subConnectionType;
+    }
+
     /**
      * Display a listing of the resource.
      *
-     * @return Response
+     * @return ApiResource
      */
     public function index()
     {
-        //
+        if (request()->input('paginate') === null) {
+            $connectionTypes = $this->subConnectionType->newQuery()->paginate(15);
+        } else {
+            $connectionTypes = $this->subConnectionType->newQuery()->get();
+        }
+        return new ApiResource($connectionTypes);
     }
 
     /**

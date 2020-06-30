@@ -31,7 +31,7 @@ class MeterParameter extends BaseModel
 
     public function connectionType(): BelongsTo
     {
-        return $this->belongsTo(SubConnectionType::class);
+        return $this->belongsTo(SubConnectionType::class, 'connection_type_id', 'id');
     }
 
     public function tariff(): BelongsTo
@@ -84,3 +84,5 @@ class MeterParameter extends BaseModel
         return $this->hasOne(SocialTariffPiggyBank::class);
     }
 }
+
+
