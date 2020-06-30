@@ -132,6 +132,7 @@ export let resources = {
     },
     connections: {
         'list': '/api/connection-groups',
+        'sublist': '/api/sub-connection-types',
         'number_of_customers': '/api/meters/parameters/connection-types',
         'store': '/api/connection-types',
     },

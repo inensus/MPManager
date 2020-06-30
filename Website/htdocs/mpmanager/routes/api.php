@@ -278,8 +278,8 @@ Route::group(['prefix' => 'targets'], function () {
 Route::group(['prefix' => 'connection-types'], function () {
     Route::get('/', 'ConnectionTypeController@index');
     Route::post('/', 'ConnectionTypeController@store');
-
 });
+Route::get('/sub-connection-types', 'SubConnectionTypeController@index');
 
 
 Route::group(['prefix' => '/clusters'], function () {
