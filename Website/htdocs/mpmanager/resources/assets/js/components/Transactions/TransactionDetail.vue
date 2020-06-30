@@ -2,22 +2,23 @@
     <section id="widget-grid" v-if="transaction">
         <div class="row">
             <div class="md-layout md-gutter">
-                <div class="md-layout-item md-size-50">
+                <div
+                    class="md-layout-item  md-xlarge-size-50  md-large-size-50 md-medium-size-50  md-small-size-100 md-xsmall-size-100">
                     <div class="transaction-detail-card">
                         <widget title="Provider Specific Information">
                             <md-card>
                                 <md-card-content>
 
 
-                                            <vodacom-transaction-detail
-                                                :ot="ot"
-                                                v-if="transaction.original_transaction_type === 'vodacom_transaction'"
-                                            />
+                                    <vodacom-transaction-detail
+                                        :ot="ot"
+                                        v-if="transaction.original_transaction_type === 'vodacom_transaction'"
+                                    />
 
-                                            <airtel-transaction-detail
-                                                :ot="ot"
-                                                v-if="transaction.original_transaction_type === 'airtel_transaction'"
-                                            />
+                                    <airtel-transaction-detail
+                                        :ot="ot"
+                                        v-if="transaction.original_transaction_type === 'airtel_transaction'"
+                                    />
 
 
                                 </md-card-content>
@@ -27,7 +28,8 @@
 
                 </div>
 
-                <div class="md-layout-item md-size-50">
+                <div
+                    class="md-layout-item  md-xlarge-size-50  md-large-size-50 md-medium-size-50  md-small-size-100 md-xsmall-size-100">
                     <div class="transaction-detail-card">
                         <widget color="red" title="Details">
                             <md-card>
@@ -92,7 +94,7 @@
                             <md-card>
                                 <md-card-content v-if="ot.status===1">
                                     <div class="md-layout md-gutter md-size-100" justify="around">
-                                        <div class="md-layout-item md-size-40" >
+                                        <div class="md-layout-item md-size-40">
                                             <div>
                                                 <div class="md-layout">
                                                     <div class="md-layout-item md-subheader">Payment For</div>
@@ -137,20 +139,20 @@
                             <md-card>
                                 <md-card-content v-if="transaction.sms">
 
-                                            <div class="md-layout md-gutter md-size-100">
-                                                <div class="md-layout-item md-subheader md-size-20">To</div>
-                                                <div class="md-layout-item md-subheader md-size-80">
-                                                    {{transaction.sms.receiver}}
-                                                </div>
-                                            </div>
-                                            <div class="md-layout md-gutter md-size-100">
-                                                <div class="md-layout-item md-subheader md-size-20">Body</div>
-                                                <div class="md-layout-item md-subheader md-size-75 message-box">
+                                    <div class="md-layout md-gutter md-size-100">
+                                        <div class="md-layout-item md-subheader md-size-20">To</div>
+                                        <div class="md-layout-item md-subheader md-size-80">
+                                            {{transaction.sms.receiver}}
+                                        </div>
+                                    </div>
+                                    <div class="md-layout md-gutter md-size-100">
+                                        <div class="md-layout-item md-subheader md-size-20">Body</div>
+                                        <div class="md-layout-item md-subheader md-size-75 message-box">
 
-                                                    {{transaction.sms.body}}
+                                            {{transaction.sms.body}}
 
-                                                </div>
-                                            </div>
+                                        </div>
+                                    </div>
 
                                 </md-card-content>
                             </md-card>
@@ -166,18 +168,20 @@
 </template>
 
 <script>
-    import {resources} from "../../resources";
+    import { resources } from '../../resources'
 
-    import {EventBus} from "../../shared/eventbus";
-    import {timing} from "../../mixins/timing";
-    import {currency} from "../../mixins/currency";
-    import VodacomTransactionDetail from "./VodacomTransactionDetail";
-    import PaymentHistoryChart from "./PaymentHistoryChart";
-    import AirtelTransactionDetail from "./AirtelTransactionDetail";
-    import Widget from "../../shared/widget";
+    import { EventBus } from '../../shared/eventbus'
+    import { timing } from '../../mixins/timing'
+    import { currency } from '../../mixins/currency'
+    import VodacomTransactionDetail from './VodacomTransactionDetail'
+    import PaymentHistoryChart from './PaymentHistoryChart'
+    import AirtelTransactionDetail from './AirtelTransactionDetail'
+    import Widget from '../../shared/widget'
+    import { TransactionService } from '../../services/TransactionService'
+    import { PersonService } from '../../services/PersonService'
 
     export default {
-        name: "TransactionDetail",
+        name: 'TransactionDetail',
         components: {
             AirtelTransactionDetail,
             Widget,
@@ -185,70 +189,63 @@
             PaymentHistoryChart
         },
         mixins: [timing, currency],
-        created() {
-            this.transactionId = this.$route.params.id;
+        created () {
+            this.transactionId = this.$route.params.id
         },
-        mounted() {
-            this.getDetail(this.transactionId);
-            EventBus.$emit("bread", this.bcd);
-            // this.$on("pageLoaded", function() {
-            //   window.setTimeout(() => {
-            //     pageSetUp();
-            //   }, 100);
-            // });
-            // pageSetup();
+        mounted () {
+            this.getDetail(this.transactionId)
         },
-        data() {
+        data () {
             return {
-                paginator: null,
-                bcd: {
-                    Home: {
-                        href: "/"
-                    },
-                    Transactions: {
-                        href: "/transactions"
-                    },
-                    Detail: {
-                        href: null
-                    }
-                },
+                transactionService: new TransactionService(),
+                personService: new PersonService(),
                 transactionId: null,
                 transaction: null,
                 personName: null,
                 personId: null
-            };
+            }
         },
         computed: {
             ot: function () {
-                return this.transaction.original_transaction;
+                return this.transaction.original_transaction
             }
         },
         methods: {
-            getDetail(id) {
-                axios
-                    .get(resources.transactions.detail + this.transactionId)
-                    .then(response => {
-                        this.transaction = response.data.data;
+            async getDetail (id) {
 
-                        if (response.data.data.payment_histories !== null) {
-                            this.getRelatedPerson(
-                                response.data.data.payment_histories[0].payer_id
-                            );
-                        }
-                    });
-            },
-            meterDetail() {
-            },
+                try {
+                    this.transaction = await this.transactionService.getTransaction(id)
+                    if (this.transaction.payment_histories !== null) {
+                        await this.getRelatedPerson(this.transaction.payment_histories[0].payer_id)
+                    }
+                } catch (e) {
+                    this.alertNotify('error', e.message)
+                }
 
-            getRelatedPerson(personId) {
-                axios.get(resources.person.detail + personId).then(response => {
+            },
+            async getRelatedPerson (personId) {
+                try {
+                    let person = await this.personService.getPerson(personId)
                     this.personName =
-                        response.data.data.name + " " + response.data.data.surname;
-                    this.personId = response.data.data.id;
-                });
-            }
+                        person.name + ' ' + person.surname
+                    this.personId = person.id
+                } catch (e) {
+                    this.alertNotify('error', e.message)
+                }
+
+            },
+            alertNotify (type, message) {
+                this.$notify({
+                    group: 'notify',
+                    type: type,
+                    title: type + ' !',
+                    text: message,
+                    speed: 0
+                })
+            },
+
         }
-    };
+    }
 </script>
 
 <style scoped>
