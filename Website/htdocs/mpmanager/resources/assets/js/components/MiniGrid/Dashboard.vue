@@ -1,6 +1,101 @@
 <template>
     <div>
         <section id="widget-grid">
+            <div v-if="expanded === false" class="md-size-100" style="margin-bottom: 1.3vh;">
+
+                <md-toolbar class="md-primary">
+                    <div class="md-layout-item md-size-60">
+                        <md-tabs class="md-primary" md-alignment="left">
+                            <md-tab id="tab-home" md-label="Weekly" @click="tab = 'weekly'"></md-tab>
+                            <md-tab id="tab-pages" md-label="Monthly" @click="tab = 'monthly'"></md-tab>
+                            <md-tab id="tab-posts" md-label="Anual" @click="tab = 'anual'"></md-tab>
+                        </md-tabs>
+                    </div>
+
+                    <div class="md-toolbar-section-end">
+                        <md-button class="md-raised  md-dense" @click="getBatchData"
+                                   :disabled="Object.keys(highlighted.base).length===0">Apply
+                        </md-button>
+                        <md-button class="md-raised md-accent md-dense" @click="closeDatePicker">Close</md-button>
+                    </div>
+
+                </md-toolbar>
+
+
+                <div class="md-layout md-size-90">
+                    <div class="text-center md-layout md-gutter" v-if="tab==='weekly'" :key="tab">
+
+                        <div class="md-layout-item md-size-50" style="margin-bottom: 1vh;">
+                            <h4>Base Week</h4>
+                            <datepicker :inline="true" @selected="dateSelectedBase" :highlighted="highlighted.base"
+                                        :monday-first="true"
+                                        :disabledDates="disabled"></datepicker>
+
+                        </div>
+
+
+                        <div class="md-layout-item md-size-50" style="margin-bottom: 1vh;">
+                            <h4>Compared Week</h4>
+                            <datepicker :inline="true" @selected="dateSelectedCompared"
+                                        :highlighted="highlighted.compared"
+                                        :monday-first="true"
+                                        :disabledDates="disabled"></datepicker>
+                        </div>
+                    </div>
+
+                    <div class="text-center md-layout md-gutter" v-if="tab==='monthly'" :key="tab">
+
+                        <div class="md-layout-item md-size-50" style="margin-bottom: 1vh;">
+                            <h4>Base Month</h4>
+                            <datepicker :inline="true"
+                                        :minimum-view="'month'"
+                                        :maximum-view="'year'"
+                                        @selected="dateSelectedBase"
+                                        :highlighted="highlighted.base"
+                                        :disabledDates="disabled"/>
+                        </div>
+
+
+                        <div class="md-layout-item md-size-50" style="margin-bottom: 1vh;">
+                            <h4>Compared Month</h4>
+                            <datepicker :inline="true"
+                                        :minimum-view="'month'"
+                                        :maximum-view="'year'"
+                                        @selected="dateSelectedCompared"
+                                        :value="highlighted.compared.from"
+                                        :disabledDates="disabled"/>
+                        </div>
+                    </div>
+
+
+                    <div class="text-center md-layout md-gutter" v-if="tab==='anual'" :key="tab">
+
+                        <div class="md-layout-item md-size-50" style="margin-bottom: 1vh;">
+                            <h4>Base Year</h4>
+                            <datepicker :inline="true"
+                                        :minimum-view="'year'"
+                                        :maximum-view="'year'"
+                                        @selected="dateSelectedBase"
+                                        :highlighted="highlighted.tmpBase"
+                                        :disabledDates="disabled"/>
+                        </div>
+
+
+                        <div class="md-layout-item md-size-50" style="margin-bottom: 1vh;">
+                            <h4>Compared Year</h4>
+                            <datepicker :inline="true"
+                                        :minimum-view="'year'"
+                                        :maximum-view="'year'"
+                                        @selected="dateSelectedCompared"
+                                        :value="highlighted.tmpCompared.from"
+                                        :disabledDates="disabled"/>
+                        </div>
+                    </div>
+                </div>
+                <md-divider style="height: 1vh; background-color: #90CAF9 !important;"></md-divider>
+
+            </div>
+            <!-- modal-->
             <div class="md-layout md-gutter">
                 <div class="md-layout-item md-medium-size-100  md-xsmall-size-100 md-size-100">
                     <md-toolbar style="margin-bottom: 3rem;">
@@ -18,7 +113,7 @@
                         <div class="md-toolbar-section-end">
 
                         <span style="float: left">
-                    Period : {{highlighted.base.from}} - {{highlighted.base.to}}
+                    Period : {{highlighted.base.from}} - {{highlighted.compared.to}}
                 </span>
                             <md-button class="md-raised" @click="expanded = false">
                                 <font-awesome-icon icon="calendar"/>
@@ -66,7 +161,6 @@
                          :box-icon-color="'#578839'"
                     />
                 </div>
-
                 <div class="md-layout-item md-medium-size-50 md-xsmall-size-100 md-size-25">
                     <solar-data-and-weather
                         v-if="this.miniGridData.location!==undefined"
@@ -74,10 +168,16 @@
                         :mini_grid_coordinates="this.miniGridData.location.points"
                     />
                 </div>
+
+
                 <div style="margin-top:1rem">&nbsp;</div>
-                <div class="md-layout-item md-medium-size-100  md-xsmall-size-100 md-size-100">
+
+
+                <div class="md-layout-item md-size-100">
                     <energy-chart-box :mini-grid-id="miniGridId"/>
                 </div>
+
+
                 <div class="md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-33">
                     <widget
                         :id="'revenue-pie'"
@@ -227,106 +327,7 @@
                     </widget>
                 </div>
             </div>
-            <div v-if="expanded === false" class="col-md-3 col-sm-4"
-                 style="position: fixed; top:3em; right: -10px; z-index: 9999;">
 
-                <widget
-                    :id="'period-selector'"
-                    :headless="true"
-                    :button="true"
-                    buttonText="Close"
-                    :callback="closeDatePicker"
-                    :title="'Period Selector'">
-
-                    <md-menu>
-                        <md-button :class="{'active': tab==='weekly'}" @click="tab = 'weekly'" md-menu-trigger>
-                            <font-awesome-icon icon="list"/>
-                            Weekly
-                        </md-button>
-                        <md-button @click="tab = 'monthly'">
-                            <font-awesome-icon icon="list"/>
-                            Monthly
-                        </md-button>
-                        <md-button @click="tab = 'anual'">
-                            <font-awesome-icon icon="list"/>
-                            Anual
-                        </md-button>
-                    </md-menu>
-
-
-                    <div class="text-center" v-if="tab==='weekly'" :key="tab">
-                        <h4>Base Week</h4>
-                        <div class="col-sm-12">
-                            <datepicker :inline="true" @selected="dateSelectedBase" :highlighted="highlighted.base"
-                                        :monday-first="true"
-                                        :disabledDates="disabled"></datepicker>
-
-                        </div>
-
-                        <h4>Compared Week</h4>
-                        <div class="col-sm-12">
-                            <datepicker :inline="true" @selected="dateSelectedCompared"
-                                        :highlighted="highlighted.compared"
-                                        :monday-first="true"
-                                        :disabledDates="disabled"></datepicker>
-                        </div>
-                    </div>
-
-                    <div class="text-center" v-if="tab==='monthly'" :key="tab">
-                        <h4>Base Month</h4>
-                        <div class="col-sm-12">
-                            <datepicker :inline="true"
-                                        :minimum-view="'month'"
-                                        :maximum-view="'year'"
-                                        @selected="dateSelectedBase"
-                                        :highlighted="highlighted.base"
-                                        :disabledDates="disabled"/>
-                        </div>
-
-                        <h4>Compared Month</h4>
-                        <div class="col-sm-12">
-                            <datepicker :inline="true"
-                                        :minimum-view="'month'"
-                                        :maximum-view="'year'"
-                                        @selected="dateSelectedCompared"
-                                        :value="highlighted.compared.from"
-                                        :disabledDates="disabled"/>
-                        </div>
-                    </div>
-
-
-                    <div class="text-center" v-if="tab==='anual'" :key="tab">
-                        <h4>Base Month</h4>
-                        <div class="col-sm-12">
-                            <datepicker :inline="true"
-                                        :minimum-view="'year'"
-                                        :maximum-view="'year'"
-                                        @selected="dateSelectedBase"
-                                        :highlighted="highlighted.tmpBase"
-                                        :disabledDates="disabled"/>
-                        </div>
-
-                        <h4>Compared Month</h4>
-                        <div class="col-sm-12">
-                            <datepicker :inline="true"
-                                        :minimum-view="'year'"
-                                        :maximum-view="'year'"
-                                        @selected="dateSelectedCompared"
-                                        :value="highlighted.tmpCompared.from"
-                                        :disabledDates="disabled"/>
-                        </div>
-                    </div>
-
-
-                    <div class="col-sm-12 text-center">
-
-                        <md-button class="md-raised" @click="getBatchData"
-                                   :disabled="Object.keys(highlighted.base).length===0"> Apply
-                        </md-button>
-                    </div>
-                </widget>
-            </div>
-            <!-- modal-->
             <transition name="modal" v-if="showModal">
                 <div class="modal-mask">
                     <div class="modal-wrapper">
@@ -635,7 +636,7 @@
                     vAxis: {
                         //scaleType: 'mirrorLog',
                     },
-                    colors: ['#739e73', '#3276b1', '#78002e', '#dce775',],
+                    colors: ['#739e73', '#448aff', '#78002e', '#dce775',],
                     height: 220,
                 },
                 donutChartOptions: { // options for donut chart
@@ -760,7 +761,7 @@
             getTransactionsOverview () {
                 axios.post('/api/mini-grids/' + this.miniGridId + '/transactions', {
                     startDate: this.highlighted.base.from,
-                    endDate: this.highlighted.base.to
+                    endDate: this.highlighted.compared.to
                 }).then(
                     (response) => {
                         this.currentTransaction = response.data.data
@@ -770,7 +771,7 @@
             getSoldEnergy () {
                 axios.post('/api/mini-grids/' + this.miniGridId + '/energy', {
                     startDate: this.highlighted.base.from,
-                    endDate: this.highlighted.base.to
+                    endDate: this.highlighted.compared.to
                 }).then(
                     (response) => {
                         this.soldEnergy = response.data.data
@@ -1058,7 +1059,7 @@
     }
 
     .compare-color {
-        color: #3276b1;
+        color: #448aff;
     }
 
     .red {
@@ -1071,7 +1072,7 @@
     }
 
     .compare-color-bg {
-        background-color: #3276b1 !important;
+        background-color: #448aff !important;
         color: whitesmoke !important;
     }
 
@@ -1149,7 +1150,7 @@
     }
 
     .period-navigation {
-        background-color: #3276b1;
+        background-color: #448aff;
         padding: 5px;
         color: white;
         border: 1px;
@@ -1451,6 +1452,10 @@
 
     .data-stream-switch {
         margin-left: 3rem !important;
+    }
+
+    .vdp-datepicker__calendar .cell.selected {
+        background: #90CAF9 !important;
     }
 </style>
 
