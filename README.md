@@ -33,9 +33,8 @@ To Install additional php dependencies enter the Docker-Container named `laravel
 ## 3. Migrate the database changes ; 
   - Run `docker exec -it laravel /bin/bash` to jump into the laravel container
   - navigate to `mpmanager` directory with `cd mpmanager`
-  - Run `php artisan migrate --seed` to initialize the Database. The `-seed`  option will create the default user to login.
-  - Default user to login is `admin@admin.com` and `basic-password` 
-  This will create a new user. You can leave/exit the container when you are done with it. 
+  - Run `php artisan migrate --seed` to initialize the Database. The `--seed`  option will create the default user to login.
+  - Default user to login is `admin@admin.com` and `basic-password` .
 
 For any further Database operations you can directly access `db.mpmanager.local` with following credentials 
 ```
