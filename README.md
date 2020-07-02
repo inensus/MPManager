@@ -17,14 +17,14 @@ enter the following lines to;
 #### For Linux/Mac Users
 ```
 /etc/hosts
-127.0.0.1       manager.mpmanager.local
-127.0.0.1       db.manager.mpmanager.local
+127.0.0.1       mpmanager.local
+127.0.0.1       db.mpmanager.local
 ``` 
 #### For Windows
 ```
 c:\windows\system32\drivers\etc\hosts
-127.0.0.1       manager.mpmanager.local
-127.0.0.1       db.manager.mpmanager.local
+127.0.0.1       mpmanager.local
+127.0.0.1       db.mpmanager.local
 ```
 ## 2. Install Dependencies 
 All the dependencies will be automatically installed on step **1.2**. However, if you need additional dependencies, install them in the `laravel` container.
@@ -35,6 +35,7 @@ To Install additional php dependencies enter the Docker-Container named `laravel
   - navigate to `mpmanager` directory with `cd mpmanager`
   - Run `php artisan migrate --seed` to initialize the Database. The `--seed`  option will create the default user to login.
   - Default user to login is `admin@admin.com` and `basic-password` .
+
 
 For any further Database operations you can directly access `db.mpmanager.local` with following credentials 
 ```
