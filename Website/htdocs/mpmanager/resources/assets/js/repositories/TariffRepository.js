@@ -1,12 +1,14 @@
-const resource = '/api/tariffs';
+const resource = '/api/tariffs'
+import Client from './Client/AxiosClient'
 
 export default {
 
-    list() {
-        return axios.get(`${resource}`)
+    list () {
+        return Client.get(`${resource}`)
+
     },
-    create(tariff) {
-        return axios.post(`${resource}`, tariff)
+    create (tariff) {
+        return Client.post(`${resource}`, tariff)
     }
 
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreMiniGridRequest;
 use App\Http\Requests\UpdateMiniGridRequest;
 use App\Http\Resources\ApiResource;
 use App\Models\MiniGrid;
@@ -18,6 +19,13 @@ class MiniGridController extends Controller
     public function __construct(MiniGrid $miniGrid)
     {
         $this->miniGrid = $miniGrid;
+    }
+
+    public function store(StoreMiniGridRequest $request)
+    {
+        $miniGrid = $this->miniGrid::create($request->only('cluster_id', 'name'));
+
+        return new ApiResource($miniGrid);
     }
 
     /**
@@ -56,6 +64,7 @@ class MiniGridController extends Controller
         } else {
             $miniGrid = $this->miniGrid->find($id);
         }
+
         return new ApiResource($miniGrid);
     }
 
@@ -65,7 +74,7 @@ class MiniGridController extends Controller
      * @bodyParam data_stream int If the data_stream is enabled or not.
      *
      * @param MiniGrid $miniGrid
-     * @param Request $request
+     * @param UpdateMiniGridRequest $request
      * @return ApiResource
      */
     public function update(MiniGrid $miniGrid, UpdateMiniGridRequest $request): ApiResource

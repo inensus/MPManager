@@ -10,6 +10,7 @@ namespace App\ManufacturerApi;
 
 
 use App\Lib\IManufacturerAPI;
+use App\Models\Meter\Meter;
 use App\Models\Meter\MeterToken;
 use Exception;
 use GuzzleHttp\Client;
@@ -51,28 +52,47 @@ class CalinApi implements IManufacturerAPI
     }
 
     /**
-     * @param $tokenData
-     *
+     * @param Meter $meter
+     * @param $energy
      * @return MeterToken
      * @throws Exception
      */
-    public function generateToken($tokenData): MeterToken
+    public function generateToken(Meter $meter, $energy): array
     {
         $timestamp = time();
-        $toCharge = round($tokenData->transaction->amount / (float)($tokenData->tariff->price / 100), 1);
-        $cipherText = $this->generateCipherText($tokenData->meter->id, 'INENSUS',
-            $tokenData->meter->serial_number, 'CreditToken', $toCharge, $timestamp);
+        $cipherText = $this->generateCipherText(
+            $meter->id,
+            config('services.calin.user_id'),
+            $meter->serial_number,
+            'CreditToken',
+            $energy,
+            $timestamp);
 
         $tokenParams = [
-            'serial_id' => $tokenData->meter->id,
-            'user_id' => 'INENSUS',
-            'meter_id' => $tokenData->meter->serial_number,
+            'serial_id' => $meter->id,
+            'user_id' => config('services.calin.user_id'),
+            'meter_id' => $meter->serial_number,
             'token_type' => 'CreditToken',
-            'amount' => $toCharge,
+            'amount' => $energy,
             'timestamp' => $timestamp,
             'ciphertext' => $cipherText,
         ];
-        //TODO make request in a seperate funciton
+
+
+        return [
+            'token' => $this->tokenRequest($tokenParams),
+            'energy' => $energy
+        ];
+    }
+
+    /**
+     * Makes the external call to CALIN API and resturns the token.
+     * @param $tokenParams
+     * @return string
+     * @throws Exception
+     */
+    private function tokenRequest($tokenParams): string
+    {
         $request = $this->api->post(
             "http://api.calinhost.com/api/token",
             [
@@ -84,23 +104,16 @@ class CalinApi implements IManufacturerAPI
             ]
         );
 
-
         $tokenResult = json_decode((string)$request->getBody(), true);
         //token generation failed, re-try to re-create the token 2 more times
         if ((int)$tokenResult['result_code'] !== 0) {
             Log::critical('Token generation failed', $tokenParams);
-            throw  new Exception($tokenResult['reason']);
+            throw new Exception($tokenResult['reason']);
 
         }
-        $token = $tokenResult['result'];
-
-
-        $tokenModel = new MeterToken();
-        $tokenModel->token = $token;
-        $tokenModel->energy = $toCharge;
-
-        return $tokenModel;
+        return $tokenResult['result'];
     }
+
 
     private function initClient(): void
     {

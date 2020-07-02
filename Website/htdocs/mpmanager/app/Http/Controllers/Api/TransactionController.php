@@ -136,7 +136,7 @@ class TransactionController extends Controller
                     $q->whereHas('meter', function ($q) use ($tariff) {
                         $q->whereHas('meterParameter', function ($q) use ($tariff) {
                             $q->whereHas('tariff', function ($q) use ($tariff) {
-                                $q->where('name', 'LIKE', '%' . $tariff . '%');
+                                $q->where('id', $tariff);
                             });
                         });
                     });
@@ -147,7 +147,7 @@ class TransactionController extends Controller
                     $q->whereHas('meter', function ($q) use ($tariff) {
                         $q->whereHas('meterParameter', function ($q) use ($tariff) {
                             $q->whereHas('tariff', function ($q) use ($tariff) {
-                                $q->where('name', 'LIKE', '%' . $tariff . '%');
+                                $q->where('id', $tariff);
                             });
                         });
                     });
@@ -309,12 +309,12 @@ class TransactionController extends Controller
         event('transaction.saved', $transactionProvider);
 
 
-        if (config('app.url') === 'https://micropowermanager.com') {//production queue
+        if (config('app.env') === 'production') {//production queue
             $queue = 'payment';
         } else {
-            if (config('app.url') === 'https://staging.micropowermanager.com') { //staging queue
+            if (config('app.env') === 'staging') { //staging queue
                 $queue = 'staging_payment';
-            } else { // local queue
+            } else { // local queue‚
                 $queue = 'local_payment';
             }
         }

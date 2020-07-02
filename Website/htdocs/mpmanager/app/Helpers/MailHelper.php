@@ -50,7 +50,10 @@ class MailHelper
      */
     public function sendPlain($to, $title, $body, $attachment = null): void
     {
-
+        //don't send any mails while  testing
+        if (config('app.env') === 'testing') {
+            return;
+        }
         $this->mailer->setFrom($this->mailSettings['default_sender']);
         $this->mailer->addReplyTo($this->mailSettings['default_sender']);
 

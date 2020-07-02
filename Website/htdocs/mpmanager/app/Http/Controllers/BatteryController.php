@@ -7,8 +7,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreBatteryStateRequest;
 use App\Http\Resources\ApiResource;
 use App\Models\Battery;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Inensus\Ticket\Trello\Api;
 
 /**
  * @group Battery
@@ -28,6 +28,25 @@ class BatteryController extends Controller
     public function __construct(Battery $battery)
     {
         $this->battery = $battery;
+    }
+
+
+    public function show(Request $request, $miniGridId)
+    {
+        $batteryReadings = $this->battery->newQuery()
+            ->where('mini_grid_id', $miniGridId);
+
+        if ($startDate = $request->input('start_date')) {
+            $batteryReadings->where('read_out', '>=',
+                Carbon::createFromTimestamp($startDate)->format('Y-m-d H:i:s'));
+        }
+        if ($endDate = $request->input('end_date')) {
+
+            $batteryReadings->where('read_out', '<=',
+                Carbon::createFromTimestamp($endDate)->format('Y-m-d H:i:s')
+            );
+        }
+        return new ApiResource($batteryReadings->get());
     }
 
     /**
@@ -61,6 +80,7 @@ class BatteryController extends Controller
         $state_of_charge_data = $battery_data['state_of_charge'];
         $state_of_health_data = $battery_data['state_of_health'];
         $total = $battery_data['battery_discharge'];
+        $cTotal = $battery_data['battery_charge'];
 
         $battery = $this->battery::create([
             'mini_grid_id' => $request->get('mini_grid_id'),
@@ -81,6 +101,11 @@ class BatteryController extends Controller
             'd_total_unit' => $total['unit'],
             'd_newly_energy' => 0,
             'd_newly_energy_unit' => 'Wh',
+
+            'c_total' => str_replace(',', '.', $cTotal['charge']),
+            'c_total_unit' => $cTotal['unit'],
+            'c_newly_energy' => 0,
+            'c_newly_energy_unit' => 'Wh',
 
             'read_out' => $request->get('read_out'),
         ]);

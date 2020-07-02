@@ -69,52 +69,60 @@
                   </div>
                   <div class="md-layout" v-else>
                     <div class="md-layout-item">
-                      <md-select class @input="newTariff =$event.target.value">
-                        <md-option v-for="tariff in tariffs" :key="tariff.id" :value="tariff.id">
-                          {{tariff.name}} {{
-                          tariff.price/100}}
-                        </md-option>
-                      </md-select>
+                        <md-field>
+                            <label for="tariff">Tariff</label>
+                            <md-select name="tariff" v-model="newTariff">
+                                <md-option v-for="tariff in tariffs"
+                                           :key="tariff.id" :value="tariff.id">
+                                    {{tariff.name}} {{
+                                    tariff.price/100}}
+                                </md-option>
+                            </md-select>
+                        </md-field>
                     </div>
-                    <md-button class="md-icon-button" @click="updateTariff(newTariff)">
-                      <md-icon class="md-primary">save</md-icon>
-                    </md-button>
-                    <md-button class="md-icon-button" @click="editTariff=false">
-                      <md-icon class="md-accent">cancel</md-icon>
-                    </md-button>
+                      <md-button class="md-icon-button" @click="updateTariff(newTariff)">
+                          <md-icon class="md-primary">save</md-icon>
+                      </md-button>
+                      <md-button class="md-icon-button" @click="editTariff=false">
+                          <md-icon class="md-accent">cancel</md-icon>
+                      </md-button>
                   </div>
                 </div>
               </div>
-              <div class="md-layout">
-                <div class="md-layout-item">Connection Type</div>
-                <div class="md-layout-item">
-                  <div v-if="editConnection===false" class="col-sm-6">
-                    {{meter.connection.name}}
-                    <i class="fa fa-pencil" @click="editConnection = true"></i>
-                  </div>
-                  <div class="md-layout" v-else>
+                <div class="md-layout">
+                    <div class="md-layout-item">Connection Type</div>
                     <div class="md-layout-item">
-                      <select @input="newConnectionType =$event.target.value">
-                        <option
-                          v-for="connectionType in connectionTypes.list"
-                          :value="connectionType.id"
-                          :key="connectionType.id"
-                        >{{connectionType.name}}</option>
-                      </select>
+                        <div v-if="editConnection===false" class="col-sm-6">
+                            {{meter.connection.name}}
+                            <i class="fa fa-pencil" @click="editConnection = true"></i>
+                        </div>
+                        <div class="md-layout" v-else>
+                            <div class="md-layout-item">
+
+                                <md-field>
+                                    <label for="connectiontype">Connection Type</label>
+                                    <md-select name="connectiontype"
+                                               v-model="newConnectionType">
+                                        <md-option v-for="connectionType in connectionTypes.list"
+                                                   :key="connectionType.id" :value="connectionType.id">
+                                            {{connectionType.name}}
+                                        </md-option>
+                                    </md-select>
+                                </md-field>
+                            </div>
+                            <md-button class="md-icon-button" @click="updateConnection(newConnectionType)">
+                                <md-icon class="md-primary">save</md-icon>
+                            </md-button>
+                            <md-button class="md-icon-button" @click="editConnection=false">
+                                <md-icon class="md-accent">cancel</md-icon>
+                            </md-button>
+                        </div>
                     </div>
-                    <md-button class="md-icon-button" @click="updateConnection(newConnectionType)">
-                      <md-icon class="md-primary">save</md-icon>
-                    </md-button>
-                    <md-button class="md-icon-button" @click="editConnection=false">
-                      <md-icon class="md-accent">cancel</md-icon>
-                    </md-button>
-                  </div>
                 </div>
-              </div>
-              <div class="md-layout">
-                <div class="md-layout-item">Last Payment</div>
-                <div class="md-layout-item">3 days ago</div>
-              </div>
+                <div class="md-layout">
+                    <div class="md-layout-item">Last Payment</div>
+                    <div class="md-layout-item">3 days ago</div>
+                </div>
             </md-card-content>
           </md-card>
         </widget>
@@ -197,237 +205,240 @@
     </widget>
 
     <airbnb-style-datepicker
-      :trigger-element-id="'datepicker-button-trigger'"
-      :mode="'range'"
-      :date-one="dates.dateOne"
-      :date-two="dates.dateTwo"
-      :min-date="'2018-01-01'"
-      :endDate="dates.today"
-      :fullscreen-mobile="true"
-      :months-to-show="2"
-      :offset-y="500"
-      v-on:date-one-selected="function(val) { dates.dateOne = val }"
-      v-on:date-two-selected="function(val) { dates.dateTwo = val }"
-      @apply="getConsumptions"
+        :trigger-element-id="'datepicker-button-trigger'"
+        :mode="'range'"
+        :date-one="dates.dateOne"
+        :date-two="dates.dateTwo"
+        :min-date="'2018-01-01'"
+        :endDate="dates.today"
+        :fullscreen-mobile="true"
+        :months-to-show="2"
+        :offset-y="500"
+        v-on:date-one-selected="function(val) { dates.dateOne = val }"
+        v-on:date-two-selected="function(val) { dates.dateTwo = val }"
+        @apply="getConsumptions"
     ></airbnb-style-datepicker>
 
- 
 
-    <md-dialog v-if="meter!==null && meter.loaded===true" :md-active.sync="showModal">
-      <md-dialog-title >Reassign {{meter.serialNumber}}</md-dialog-title>
+      <md-dialog v-if="meter!==null && meter.loaded===true" :md-active.sync="showModal">
+          <md-dialog-title>Reassign {{meter.serialNumber}}</md-dialog-title>
+          <md-dialog-content>
 
-      <md-dialog-actions>
-        <md-button class="md-accent" @click="closeModal()">Close</md-button>
-        <md-card>
-          <md-card-header>
-            <div class="md-title">
-              Current Owner :
-              <small>{{meter.owner.name}} {{meter.owner.surname}}</small>
-            </div>
-          </md-card-header>
+              <md-card>
+                  <md-card-header>
+                      <div class="md-title">
+                          Current Owner :
+                          <small>{{meter.owner.name}} {{meter.owner.surname}}</small>
+                      </div>
+                  </md-card-header>
 
-          <md-card-content>
-            <div class="md-layout">
-              <div class="md-layout-item">New Owner</div>
+                  <md-card-content>
+                      <div class="md-layout">
+                          <div class="md-layout-item">New Owner</div>
 
-              <md-autocomplete
-                v-model="customerSearchTerm"
-                :md-options="searchNames"
-                @md-changed="searchFor"
-                @md-opened="searchFor"
-                @md-selected="selectCustomer"
-              >
-                <label>Customer Name</label>
-                <template slot="md-autocomplete-item" slot-scope="{ item }">{{ item.name }}</template>
-              </md-autocomplete>
-            </div>
-          </md-card-content>
-        </md-card>
-        <md-button v-if="show_confirm" class="md-primary btn-lg" @click="saveNewOwner()">Save</md-button>
-      </md-dialog-actions>
-    </md-dialog>
+                          <md-autocomplete
+                              v-model="customerSearchTerm"
+                              :md-options="searchNames"
+                              @md-changed="searchFor"
+                              @md-opened="searchFor"
+                              @md-selected="selectCustomer"
+                          >
+                              <label>Customer Name</label>
+                              <template slot="md-autocomplete-item" slot-scope="{ item }">{{ item.name }}</template>
+                          </md-autocomplete>
+                      </div>
+                  </md-card-content>
+              </md-card>
+
+          </md-dialog-content>
+          <md-dialog-actions>
+              <md-button v-if="showModal" class="md-primary btn-lg" @click="saveNewOwner()">Save</md-button>
+              <md-button class="md-accent" @click="closeModal()">Close</md-button>
+          </md-dialog-actions>
+      </md-dialog>
   </div>
 </template>
 
 <script>
-import Widget from "../../shared/widget";
-import { Transactions } from "../../classes/meter/transactions";
-import { EventBus } from "../../shared/eventbus";
-import { Consumptions } from "../../classes/meter/Consumptions";
-import { GChart } from "vue-google-charts";
-import { Meter } from "../../classes/meter/meter";
-import Modal from "../../modal/modal";
-import { resources } from "../../resources";
-import { ConnectionTypes } from "../../classes/connection/ConnectionTypes";
-import { currency } from "../../mixins/currency";
+    import Widget from '../../shared/widget'
+    import { Transactions } from '../../classes/meter/transactions'
+    import { EventBus } from '../../shared/eventbus'
+    import { Consumptions } from '../../classes/meter/Consumptions'
+    import { Meter } from '../../classes/meter/meter'
+    import Modal from '../../modal/modal'
+    import { resources } from '../../resources'
+    import { ConnectionTypes } from '../../classes/connection/ConnectionTypes'
+    import { currency } from '../../mixins/currency'
 
-const debounce = require("debounce");
+    const debounce = require('debounce')
 
-export default {
-  name: "MeterDetail",
-  components: { Modal, Widget },
-  mixins: [currency],
-  created() {
-    EventBus.$on("pageLoaded", this.reloadList);
-    //initialize dates
-    let baseDate = moment();
-    this.dates.today = baseDate.format("YYYY-MM-DD");
-    this.dates.dateTwo = baseDate.add(-1, "days").format("YYYY-MM-DD");
-    this.dates.dateOne = baseDate.add(-1, "weeks").format("YYYY-MM-DD");
-  },
-  mounted() {
-    EventBus.$emit("bread", this.bcd);
-    this.transactions = new Transactions(this.$route.params.id);
-    this.consumptions = new Consumptions(this.$route.params.id);
-    this.meter = new Meter(this.$route.params.id);
-    this.meter.detail().then(() => {
-      this.meter.revenue();
-    });
-
-    this.getConsumptions();
-    this.getTariffs();
-    this.connectionTypes.getConnectionTypes();
-  },
-  data() {
-    return {
-      subscriber: "meter.transactions",
-      transactions: null,
-      consumptions: null,
-      meter: null,
-      chartData: [],
-      hideSearch: true,
-      showModal: false,
-      searchTerm: "",
-      customerSearchTerm: "",
-      newOwner: null,
-      searchNames: [],
-      editTariff: false,
-      newTariff: null,
-      tariffs: [],
-      //meter connection controlller
-      connectionTypes: new ConnectionTypes(),
-      //re-assing connection flag
-      editConnection: false,
-
-      bcd: {
-        Home: {
-          href: "/"
+    export default {
+        name: 'MeterDetail',
+        components: { Modal, Widget },
+        mixins: [currency],
+        created () {
+            EventBus.$on('pageLoaded', this.reloadList)
+            //initialize dates
+            let baseDate = moment()
+            this.dates.today = baseDate.format('YYYY-MM-DD')
+            this.dates.dateTwo = baseDate.add(-1, 'days').format('YYYY-MM-DD')
+            this.dates.dateOne = baseDate.add(-1, 'weeks').format('YYYY-MM-DD')
         },
-        Meters: {
-          href: "/meters"
+        mounted () {
+            EventBus.$emit('bread', this.bcd)
+            this.transactions = new Transactions(this.$route.params.id)
+            this.consumptions = new Consumptions(this.$route.params.id)
+            this.meter = new Meter(this.$route.params.id)
+            this.meter.detail().then(() => {
+                console.log('this meter', this.meter)
+                this.meter.revenue()
+            })
+
+            this.getConsumptions()
+            this.getTariffs()
+            this.connectionTypes.getSubConnectionTypes()
         },
-        Detail: {
-          href: null
-        }
-      },
-      chartOptions: {
-        chart: {
-          title: "Company Performance",
-          subtitle: "Sales, Expenses, and Profit: 2014-2017"
-        },
-        height: 400,
-        colors: ["#1b9e77", "#d95f02", "#7570b3"]
-      },
-      dates: {
-        dateTwo: null,
-        dateOne: null,
-        today: null,
-        difference: 0
-      },
-      loading: true
-    };
-  },
-  watch: {
-    //   searchTerm: debounce(function(e) {
-    //     if (this.searchTerm.length < 3) {
-    //       this.hideSearch = true;
-    //       return;
-    //     }
-    //     this.searchFor(this.searchTerm);
-    //   }, 250)
-  },
+        data () {
+            return {
+                subscriber: 'meter.transactions',
+                transactions: null,
+                consumptions: null,
+                meter: null,
+                chartData: [],
+                hideSearch: true,
+                showModal: false,
+                searchTerm: '',
+                customerSearchTerm: '',
+                newOwner: null,
+                searchNames: [],
+                editTariff: false,
+                newTariff: null,
+                newConnectionType: null,
+                tariffs: [],
+                //meter connection controlller
+                connectionTypes: new ConnectionTypes(),
+                //re-assing connection flag
+                editConnection: false,
 
-  methods: {
-    navigateOwner(ownerId) {
-      this.$router.push("/people/" + ownerId);
-    },
-
-    getTariffs() {
-      axios.get(resources.tariff.list).then(response => {
-        this.tariffs = response.data.data;
-      });
-    },
-    reloadList(subscriber, data) {
-      if (subscriber !== this.subscriber) return;
-      this.transactions.updateList(data);
-    },
-    getConsumptions() {
-      this.loading = true;
-
-      this.chartData = [];
-      this.consumptions
-        .getData(this.dates.dateOne, this.dates.dateTwo)
-        .then(response => {
-          this.loading = false;
-          if (this.consumptions.data.length === 0) {
-            this.chartData = [];
-            return;
-          }
-          this.chartData.push(["Date", "Consumption", "Credit"]);
-          this.chartData = this.chartData.concat(this.consumptions.data);
-        });
-    },
-    selectCustomer(c) {
-      this.customerSearchTerm = c.name;
-      this.newOwner = c;
-    },
-    searchFor(term) {
-      if (term != undefined && term.length > 2) {
-        return axios
-          .get(resources.person.search, { params: { term: term, paginate: 0 } })
-          .then(response => {
-            this.searchNames = [];
-            for (let i in response.data.data) {
-              let person = response.data.data[i];
-              this.searchNames.push({
-                id: person.id,
-                name: person.name + " " + person.surname
-              });
+                bcd: {
+                    Home: {
+                        href: '/'
+                    },
+                    Meters: {
+                        href: '/meters'
+                    },
+                    Detail: {
+                        href: null
+                    }
+                },
+                chartOptions: {
+                    chart: {
+                        title: 'Company Performance',
+                        subtitle: 'Sales, Expenses, and Profit: 2014-2017'
+                    },
+                    height: 400,
+                    colors: ['#1b9e77', '#d95f02', '#7570b3']
+                },
+                dates: {
+                    dateTwo: null,
+                    dateOne: null,
+                    today: null,
+                    difference: 0
+                },
+                loading: true
             }
-            this.hideSearch = false;
+        },
+        watch: {
+            //   searchTerm: debounce(function(e) {
+            //     if (this.searchTerm.length < 3) {
+            //       this.hideSearch = true;
+            //       return;
+            //     }
+            //     this.searchFor(this.searchTerm);
+            //   }, 250)
+        },
 
-            return this.searchNames.map(x => ({
-              id: x.id,
-              name: x.name,
-              toLowerCase: () => x.name.toLowerCase(),
-              toString: () => x.name
-            }));
-            // return this.searchNames;
-          });
-      } else {
-        this.hideSearch = true;
-      }
-    },
-    resetOwner() {
-      this.searchTerm = "";
-      this.hideSearch = true;
-      this.newOwner = null;
-      this.searchNames = [];
-    },
-    setOwner(owner) {
-      this.newOwner = owner;
-    },
-    closeModal() {
-      this.resetOwner();
-      this.showModal = false;
-    },
-    updateTariff(tariffId) {
-      this.updateParameter(this.meter.id, { tariffId: tariffId });
-    },
-    updateConnection(connectionId) {
-      let data = { connectionId: connectionId };
-      this.updateParameter(this.meter.id, data);
-    },
+        methods: {
+            navigateOwner (ownerId) {
+                this.$router.push('/people/' + ownerId)
+            },
+
+            getTariffs () {
+                axios.get(resources.tariff.list).then(response => {
+                    this.tariffs = response.data.data
+                })
+            },
+            reloadList (subscriber, data) {
+                if (subscriber !== this.subscriber) return
+                this.transactions.updateList(data)
+            },
+            getConsumptions () {
+                this.loading = true
+
+                this.chartData = []
+                this.consumptions
+                    .getData(this.dates.dateOne, this.dates.dateTwo)
+                    .then(response => {
+                        this.loading = false
+                        if (this.consumptions.data.length === 0) {
+                            this.chartData = []
+                            return
+                        }
+                        this.chartData.push(['Date', 'Consumption', 'Credit'])
+                        this.chartData = this.chartData.concat(this.consumptions.data)
+                    })
+            },
+            selectCustomer (c) {
+                this.customerSearchTerm = c.name
+                this.newOwner = c
+            },
+            searchFor (term) {
+                if (term != undefined && term.length > 2) {
+                    return axios
+                        .get(resources.person.search, { params: { term: term, paginate: 0 } })
+                        .then(response => {
+                            this.searchNames = []
+                            for (let i in response.data.data) {
+                                let person = response.data.data[i]
+                                this.searchNames.push({
+                                    id: person.id,
+                                    name: person.name + ' ' + person.surname
+                                })
+                            }
+                            this.hideSearch = false
+
+                            return this.searchNames.map(x => ({
+                                id: x.id,
+                                name: x.name,
+                                toLowerCase: () => x.name.toLowerCase(),
+                                toString: () => x.name
+                            }))
+                            // return this.searchNames;
+                        })
+                } else {
+                    this.hideSearch = true
+                }
+            },
+            resetOwner () {
+                this.searchTerm = ''
+                this.hideSearch = true
+                this.newOwner = null
+                this.searchNames = []
+            },
+            setOwner (owner) {
+                this.newOwner = owner
+            },
+            closeModal () {
+                this.resetOwner()
+                this.showModal = false
+            },
+            updateTariff (tariffId) {
+                this.updateParameter(this.meter.id, { tariffId: tariffId })
+            },
+            updateConnection (connectionId) {
+                let data = { connectionId: connectionId }
+                this.updateParameter(this.meter.id, data)
+            },
 
     updateParameter(meterId, params) {
       axios

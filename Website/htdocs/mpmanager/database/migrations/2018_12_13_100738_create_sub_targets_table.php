@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateSubTargetsTable extends Migration
 {
@@ -14,8 +14,7 @@ class CreateSubTargetsTable extends Migration
     public function up()
     {
         Schema::create('sub_targets', function (Blueprint $table) {
-            $table->engine = 'MyISAM';
-            $table->bigInteger('id')->unsigned();
+            $table->increments('id');
             $table->integer('target_id');
             $table->integer('connection_id');
             $table->unsignedInteger('revenue')->default(0);
@@ -26,10 +25,10 @@ class CreateSubTargetsTable extends Migration
 
             $table->timestamps();
 
-            $table->primary(['id', 'target_id', 'connection_id']);
+
 
         });
-        DB::statement('ALTER TABLE sub_targets MODIFY id INTEGER NOT NULL AUTO_INCREMENT');
+
     }
 
     /**

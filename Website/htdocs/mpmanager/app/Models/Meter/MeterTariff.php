@@ -5,6 +5,8 @@ namespace App\Models\Meter;
 use App\Models\AccessRate\AccessRate;
 use App\Models\BaseModel;
 use App\Models\CustomerGroup;
+use App\Models\SocialTariff;
+use App\Models\TariffPricingComponent;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -14,12 +16,16 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @package App
  *
  * @property string $name
- * @property int $price (10 times the price. Allows to play with .00 decimals)
+ * @property int $price (100 times the price. Allows to play with .00 decimals)
+ * @property int $total_price (100 times the price. Allows to play with .00 decimals)
  * @property string $currency
  * @property int|null $factor
  */
-class MeterTariff extends BaseModel
+class   MeterTariff extends BaseModel
 {
+    protected $table = 'meter_tariffs';
+    protected $guarded = [];
+
     public function meterParameter(): HasMany
     {
         return $this->hasMany(MeterParameter::class, 'tariff_id');
@@ -41,5 +47,15 @@ class MeterTariff extends BaseModel
     public function accessRate(): HasOne
     {
         return $this->hasOne(AccessRate::class, 'tariff_id');
+    }
+
+    public function pricingComponent(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    {
+        return $this->morphMany(TariffPricingComponent::class, 'owner');
+    }
+
+    public function socialTariff()
+    {
+        return $this->hasOne(SocialTariff::class, 'tariff_id');
     }
 }

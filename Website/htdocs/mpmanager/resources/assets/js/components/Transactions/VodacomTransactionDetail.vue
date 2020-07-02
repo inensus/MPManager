@@ -1,12 +1,14 @@
 <template>
-    <widget>
+    <div>
+
+
         <div class="md-layout">
             <div class="md-layout-item md-subheader">
                 Mobile Provider
             </div>
             <div class="md-layout-item md-subheader n-font">
-                <img src="http://micropowermanager.com/storage/icons/vodacom.png"
-                style="max-height: 35px;">
+                <img src="https://vodacom.co.tz/media/logo/stores/1/logo.png"
+                     style="max-height: 35px;">
             </div>
         </div>
         <hr class="hr-d">
@@ -45,22 +47,27 @@
                 {{ot.transaction_id}}
             </div>
         </div>
-    </widget>
+    </div>
 
 </template>
 
 <script>
+
+
     export default {
-        name: "VodacomTransactionDetail",
+
+        name: 'VodacomTransactionDetail',
+
         props: ['ot']
     }
 </script>
 
 <style scoped>
-    .n-font{
-        font-weight: 100!important;
+    .n-font {
+        font-weight: 100 !important;
     }
-    .hr-d{
+
+    .hr-d {
         height: 1pt;
         margin: auto;
         padding: 0;
@@ -68,6 +75,6 @@
         border: 0;
         /* transition: margin-left .3s cubic-bezier(.4,0,.2,1); */
         /* will-change: margin-left; */
-        background-color: rgba(0,0,0,0.12);
+        background-color: rgba(0, 0, 0, 0.12);
     }
 </style>

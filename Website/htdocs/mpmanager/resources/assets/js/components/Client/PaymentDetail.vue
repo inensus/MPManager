@@ -1,20 +1,20 @@
 <template>
     <div>
-        <widget :title="' Payment Overview '+ period">
+        <widget :title="' Payment Overview '+ periodName">
             <div slot="tabbar">
                 <md-field>
-                    <label>Period</label>
-                    <md-select name="period" id="period" v-model="period" @md-selected="getFlow">
-                        <md-option value="D">Daily</md-option>
-                        <md-option value="W">Weekly</md-option>
-                        <md-option value="M">Monthly</md-option>
-                        <md-option value="Y">Annually</md-option>
+                    <label class="period-style">Period</label>
+                    <md-select class="period-style md-has-value" name="period" id="period" v-model="period" @md-selected="getFlow">
+                        <md-option  value="D">Daily</md-option>
+                        <md-option  value="W">Weekly</md-option>
+                        <md-option  value="M">Monthly</md-option>
+                        <md-option  value="Y">Annually</md-option>
 
                     </md-select>
                 </md-field>
             </div>
             <div class="md-layout md-gutter">
-                <div class="md-layout-item md-medium-size-100 md-large-size-100 md-small-size-100">
+                <div class="md-layout-item md-size-95">
                     <GChart
                         type="ColumnChart"
                         :data="chartData"
@@ -44,7 +44,8 @@
             return {
                 contentWidth: 0,
                 personId: null,
-                period: 'Monthly',
+                period:'M',
+                periodName: 'Monthly',
                 chartData: [],
                 chartOptions: {
                     chart: {
@@ -73,16 +74,16 @@
             getFlow (period = 'M') {
                 switch (period) {
                     case 'Y':
-                        this.period = 'Annually'
+                        this.periodName = 'Annually'
                         break
                     case 'M':
-                        this.period = 'Monthly'
+                        this.periodName = 'Monthly'
                         break
                     case 'W':
-                        this.period = 'Weekly'
+                        this.periodName = 'Weekly'
                         break
                     case 'D':
-                        this.period = 'Daily'
+                        this.periodName = 'Daily'
                         break
 
                 }
@@ -112,5 +113,13 @@
         float: right;
         padding-right: 2.5rem !important;
         padding-left: 2.5rem !important;
+    }
+    .period-style {
+        color: white !important;
+        -webkit-text-fill-color: white !important;
+    }
+    #period input[type="text"]{
+        color: white!important;
+        -webkit-text-fill-color: white !important;
     }
 </style>

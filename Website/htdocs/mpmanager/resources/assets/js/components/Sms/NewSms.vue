@@ -68,11 +68,13 @@
                                 :md-options="resultList"
                                 @md-changed="searchForPerson"
                                 @md-opened="searchForPerson"
-                                @md-selected="selectCustomer"
+                                @md-selected="[resultList.id !== -1 ? selectCustomer : null]"
                             >
                                 <label for="receiver">Receiver</label>
 
-                                <template slot="md-autocomplete-item" slot-scope="{ item }">{{ item.name }}</template>
+                                <template slot="md-autocomplete-item" slot-scope="{ item }">{{ item.name}}
+                                    {{item.surname}}
+                                </template>
                             </md-autocomplete>
                         </div>
 
@@ -112,26 +114,26 @@
 </template>
 
 <script>
-    import {resources} from '../../resources'
+    import { resources } from '../../resources'
     import Widget from '../../shared/widget'
-    import {MiniGridService} from "../../services/MiniGridService";
-    import {SmsService} from "../../services/SmsService";
+    import { MiniGridService } from '../../services/MiniGridService'
+    import { SmsService } from '../../services/SmsService'
 
-    const debounce = require('debounce');
+    const debounce = require('debounce')
     export default {
         name: 'NewSms',
-        components: {Widget},
+        components: { Widget },
         props: {
             show: {
                 type: Boolean,
                 default: false,
             }
         },
-        mounted() {
-            this.senderId = this.$store.state.admin.id;
+        mounted () {
+            this.senderId = this.$store.state.admin.id
             this.getMiniGrids()
         },
-        data() {
+        data () {
             return {
                 smsService: new SmsService(),
                 miniGridService: new MiniGridService(),
@@ -150,15 +152,15 @@
 
         watch: {
             tab: function () {
-                this.receiverList = [];
-                this.receiver = '';
-                this.resultList = [];
+                this.receiverList = []
+                this.receiver = ''
+                this.resultList = []
                 this.search()
             },
             receiver: debounce(function (e) {
 
                 if (this.receiver.length >= 3) {
-                    this.searching = true;
+                    this.searching = true
                     this.search()
                 } else {
                     this.searching = false
@@ -169,74 +171,94 @@
             }, 250),
         },
         methods: {
-            async getMiniGrids() {
+            async getMiniGrids () {
                 try {
-                    this.miniGridList = await this.miniGridService.getMiniGrids();
+                    this.miniGridList = await this.miniGridService.getMiniGrids()
 
                 } catch (e) {
                     this.alertNotify('error', e.message)
                 }
             },
-            search() {
+            search () {
                 if (this.tab === 'group') {
                     this.searchForConnectionGroup()
                 } else if (this.tab === 'type') {
                     this.searchForConnectionType()
                 }
             },
-            selectCustomer(c) {
-                this.customerSearchTerm = c.name;
+            selectCustomer (c) {
+
+                this.customerSearchTerm = c.name
                 this.addReceiver(c)
+
             },
-            async searchForPerson(term) {
+
+            async searchForPerson (term) {
                 if (term !== undefined && term.length > 2) {
                     try {
-                        this.resultList = await this.smsService.searchPerson(term);
-                        this.resultList.map(x => ({
-                            'id': x.id,
-                            'name': x.name,
-                            'toLowerCase': () => x.name.toLowerCase(),
-                            'toString': () => x.name
-                        }))
+                        this.resultList = this.smsService.searchPerson(term).then(r => {
+                            return r.map(x => ({
+                                'id': x.id,
+                                'name': x.name,
+                                'surname': x.surname,
+                                'toLowerCase': () => x.name.toLowerCase(),
+                                'toString': () => x.name
+                            }))
+                        })
+
                     } catch (e) {
                         this.alertNotify('error', e.message)
                     }
                 } else {
-                    this.alertNotify('warn', 'Message should contain more than 2 letters');
+                    this.resultList = new Promise(resolve => {
+                        window.setTimeout(() => {
+
+                            resolve([
+                                {
+                                    'id': -1,
+                                    'name': '--- Entered at Least 3 letters ---',
+                                    'surname': '',
+                                    'toLowerCase': () => '',
+                                    'toString': () => ''
+                                }
+                            ])
+
+                        }, 500)
+                    })
                 }
 
             },
-            async searchForConnectionGroup() {
+            async searchForConnectionGroup () {
                 try {
-                    this.resultList = await this.smsService.getGroups();
+                    this.resultList = await this.smsService.getGroups()
                 } catch (e) {
                     this.alertNotify('error', e.message)
                 }
 
             },
-            async searchForConnectionType() {
+            async searchForConnectionType () {
                 try {
-                    this.resultList = await this.smsService.getTypes();
+                    this.resultList = await this.smsService.getTypes()
                 } catch (e) {
                     this.alertNotify('error', e.message)
                 }
             },
 
-            addReceiver(receiver) {
-                this.receiverList = this.smsService.addReceiver(receiver);
+            addReceiver (receiver) {
+                this.receiverList = this.smsService.addReceiver(receiver)
             },
-            removeReceiver(receiver) {
-                this.receiverList = this.smsService.removeReceiver(receiver);
+            removeReceiver (receiver) {
+                this.receiverList = this.smsService.removeReceiver(receiver)
             },
-            closeSearch() {
-                this.searching = false;
-                this.resultList = [];
+            closeSearch () {
+                this.searching = false
+                this.resultList = []
                 this.receiver = ''
             },
-            closeModal() {
+            closeModal () {
                 this.$emit('closeModal')
             },
-            sendConfirm() {
+            sendConfirm () {
                 this.$swal({
                     type: 'question',
                     allowOutsideClick: false,
@@ -249,8 +271,8 @@
                         this.send()
                 })
             },
-            async send() {
-                let receivers = null;
+            async send () {
+                let receivers = null
                 if (this.tab === 'person') {
                     receivers = this.receiverList.map(x => x.stored ? x.receiver.addresses[0].phone : x.receiver)
                 } else {
@@ -261,22 +283,23 @@
                     receivers = this.receiver
                 }
                 try {
-                    await this.smsService.sendBulk(this.tab, this.miniGrid, receivers, this.message, this.senderId);
-                    this.alertNotify('success', 'The Sms(es) are send out');
+                    await this.smsService.sendBulk(this.tab, this.miniGrid, receivers, this.message, this.senderId)
+                    this.alertNotify('success', 'The Sms(es) are send out')
                     this.$emit('smsSent')
                     this.message = ''
+                    this.customerSearchTerm = ''
                     this.tab = 'person'
                 } catch (e) {
                     this.alertNotify('error', e.message)
                 }
             },
-            alertNotify(type, message) {
+            alertNotify (type, message) {
                 this.$notify({
-                    group: "notify",
+                    group: 'notify',
                     type: type,
-                    title: type + " !",
+                    title: type + ' !',
                     text: message
-                });
+                })
             },
         }
     }

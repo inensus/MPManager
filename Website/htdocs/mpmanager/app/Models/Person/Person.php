@@ -14,7 +14,6 @@ use App\Models\PaymentHistory;
 use App\Models\Role\RoleInterface;
 use App\Models\Role\Roles;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -39,18 +38,10 @@ class Person extends BaseModel implements HasAddressesInterface, RoleInterface
 {
     use SoftDeletes;
 
+    protected $guarded = [];
+
     protected $dispatchesEvents = [
         'deleting' => PersonDeleting::class,
-    ];
-
-    protected $fillable = [
-        'title',
-        'education',
-        'name',
-        'surname',
-        'birth_date',
-        'sex',
-        'is_customer',
     ];
 
 

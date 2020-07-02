@@ -2,10 +2,6 @@
 
 namespace App\Models;
 
-use App\Models\Address\Address;
-use App\Models\City;
-use App\Models\Cluster;
-use App\Models\GeographicalInformation;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -24,6 +20,8 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
  */
 class MiniGrid extends Model
 {
+
+    protected $guarded = [];
 
 
     public function cities(): HasMany

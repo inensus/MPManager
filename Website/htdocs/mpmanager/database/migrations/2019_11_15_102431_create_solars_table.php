@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateSolarsTable extends Migration
 {
@@ -18,7 +18,14 @@ class CreateSolarsTable extends Migration
             $table->integer('mini_grid_id');
             $table->integer('node_id');
             $table->string('device_id');
-            $table->double('solar_reading');
+            $table->timestamp('time_stamp');
+            $table->bigInteger('starting_time');
+            $table->bigInteger('ending_time');
+            $table->integer('min');
+            $table->integer('max');
+            $table->integer('average');
+            $table->integer('duration');
+            $table->integer('readings');
             $table->timestamps();
         });
     }

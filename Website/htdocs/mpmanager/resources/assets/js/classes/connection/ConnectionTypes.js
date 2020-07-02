@@ -1,15 +1,13 @@
-import {resources} from "../../resources";
-import {ConnectionsType} from "./ConnectionsType";
-import {Paginator} from "../paginator";
-import {Target} from "../target/Target";
-import {City} from "../Cities/city";
+import { resources } from '../../resources'
+import { ConnectionsType } from './ConnectionsType'
+import { Paginator } from '../paginator'
 
 export class ConnectionTypes {
 
-    constructor() {
-        this.list = [];
-        this.connection = new ConnectionsType();
-        this.paginator = new Paginator(resources.connections.list);
+    constructor () {
+        this.list = []
+        this.connection = new ConnectionsType()
+        this.paginator = new Paginator(resources.connections.list)
     }
 
 
@@ -17,21 +15,30 @@ export class ConnectionTypes {
         this.connection = new ConnectionsType();
     }
 
-    getConnectionTypes() {
+    getConnectionTypes () {
         axios.get(resources.connections.list + '?paginate=1').then(
             (response) => {
-                this.fromJson(response.data.data);
-                return this.list;
+                this.fromJson(response.data.data)
+                return this.list
             }
-        );
+        )
     }
 
-    fromJson(jsonData) {
+    getSubConnectionTypes () {
+        axios.get(resources.connections.sublist + '?paginate=1').then(
+            (response) => {
+                this.fromJson(response.data.data)
+                return this.list
+            }
+        )
+    }
+
+    fromJson (jsonData) {
         for (let c in jsonData) {
-            this.reSetConnection();
+            this.reSetConnection()
             this.list.push(
                 this.connection.fromJson(jsonData[c])
-            );
+            )
 
         }
     }

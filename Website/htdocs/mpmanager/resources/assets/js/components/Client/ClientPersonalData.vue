@@ -114,6 +114,7 @@
 <script>
     import Datepicker from 'vuejs-datepicker'
     import Widget from '../../shared/widget'
+    import { PersonService } from '../../services/PersonService'
 
     export default {
         name: 'ClientPersonalData',
@@ -129,6 +130,7 @@
         mounted () {},
         data () {
             return {
+                personService: new PersonService(),
                 editPerson: false
             }
         },

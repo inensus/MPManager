@@ -1,5 +1,7 @@
 <template>
-    <widget>
+     <div>
+
+
     <div class="md-layout">
         <div class="md-layout-item md-subheader">
             Mobile Provider
@@ -36,7 +38,7 @@
             {{ot.business_number}}
         </div>
     </div>
-    </widget>
+     </div>
 
 </template>
 
