@@ -14,7 +14,7 @@
                         <font-awesome-icon icon="user" class="fa-4x"/>
                     </div>
                     <div class="md-layout-item md-size-65">
-                        <h3>{{person.title }} {{ personService.getFullName()}}</h3>
+                        <h3>{{person.title }} {{ person.name}} {{person.surname}}</h3>
                     </div>
                     <div class="md-layout-item md-large-size-20 md-medium-size-15 md-small-size-10">
                         <md-button @click="editPerson=true" class="md-icon-button" style="float: right">
