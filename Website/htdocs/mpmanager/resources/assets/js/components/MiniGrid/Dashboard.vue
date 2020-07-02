@@ -5,10 +5,11 @@
 
                 <md-toolbar class="md-primary">
                     <div class="md-layout-item md-size-60">
-                        <md-tabs class="md-primary" md-alignment="left">
-                            <md-tab id="tab-home" md-label="Weekly" @click="tab = 'weekly'"></md-tab>
-                            <md-tab id="tab-pages" md-label="Monthly" @click="tab = 'monthly'"></md-tab>
-                            <md-tab id="tab-posts" md-label="Anual" @click="tab = 'anual'"></md-tab>
+                        <md-tabs class="md-primary" md-alignment="left" md-active-tab="tab-monthly" >
+                            <md-tab id="tab-weekly" md-label="Weekly" @click="tab = 'weekly'"></md-tab>
+                            <md-tab id="tab-monthly" md-label="Monthly" @click="tab = 'monthly'" ></md-tab>
+                            <md-tab id="tab-anual" md-label="Anual" @click="tab = 'anual'"></md-tab>
+
                         </md-tabs>
                     </div>
 
@@ -113,9 +114,9 @@
                         <div class="md-toolbar-section-end">
 
                         <span style="float: left">
-                    Period : {{highlighted.base.from}} - {{highlighted.compared.to}}
+                    Period : {{this.startDate}} - {{this.endDate}}
                 </span>
-                            <md-button class="md-raised" @click="expanded = false">
+                            <md-button class="md-raised" @click="openDatePicker">
                                 <font-awesome-icon icon="calendar"/>
                                 Select Period
                             </md-button>
@@ -541,6 +542,9 @@
                 displayedTargetPercetinles: [0, 5],
                 miniGridData: null,
                 miniGridId: null,
+                activeDateTab: 'tab-monthly',
+                startDate:null,
+                endDate:null,
                 chartEvents:
                     {
                         select: () => {
@@ -588,7 +592,7 @@
                     tmpBase: {},
                     tmpCompared: {},
                 },
-                tab: 'weekly',
+                tab: 'monthly',
                 expanded: true, // is the determinator whether the period picker should be displayed or not
 
                 revenues: [],
@@ -649,6 +653,11 @@
         methods: {
             closeDatePicker () {
                 this.expanded = true
+            },
+            openDatePicker(){
+              this.expanded = false;
+              this.tab = 'monthly'
+
             },
             editMiniGrid () {
                 this.showModal = true
@@ -744,9 +753,19 @@
                 this.expanded = true
                 this.highlighted.base = this.highlighted.tmpBase
                 this.highlighted.compared = this.highlighted.tmpCompared
+                this.checkBatchData()
                 this.fillRevenueTrends()
                 this.getSoldEnergy()
                 this.getTransactionsOverview()
+            },
+            checkBatchData(){
+                if (this.highlighted.base.to <= this.highlighted.compared.to){
+                    this.startDate = this.highlighted.base.from
+                    this.endDate = this.highlighted.compared.to
+                }else{
+                    this.startDate = this.highlighted.compared.from
+                    this.endDate = this.highlighted.base.to
+                }
             },
             revenueData (from, to, batchRevenues) {
                 return batchRevenues.revenueForPeriod(
@@ -760,8 +779,8 @@
             },
             getTransactionsOverview () {
                 axios.post('/api/mini-grids/' + this.miniGridId + '/transactions', {
-                    startDate: this.highlighted.base.from,
-                    endDate: this.highlighted.compared.to
+                    startDate: this.startDate,
+                    endDate: this.endDate
                 }).then(
                     (response) => {
                         this.currentTransaction = response.data.data
@@ -770,8 +789,8 @@
             },
             getSoldEnergy () {
                 axios.post('/api/mini-grids/' + this.miniGridId + '/energy', {
-                    startDate: this.highlighted.base.from,
-                    endDate: this.highlighted.compared.to
+                    startDate: this.startDate,
+                    endDate: this.endDate
                 }).then(
                     (response) => {
                         this.soldEnergy = response.data.data
@@ -842,7 +861,7 @@
                         }
                     } else {
                         this.highlighted.tmpCompared = {
-                            from: val,
+                            from: starting,
                             to: nextSunday,
                             includeDisabled: true // Highlight disabled dates
                         }
@@ -904,8 +923,8 @@
                 this.trendChartData.base = [['Date']]
                 this.trendChartData.compare = [['Date']]
                 axios.post(resources.revenues.trends + '/' + this.miniGridId, {
-                    startDate: this.highlighted.base.from,
-                    endDate: this.highlighted.base.to
+                    startDate: this.startDate,
+                    endDate: this.endDate
                 }).then(
                     (response) => {
                         let data = response.data.data
@@ -934,8 +953,8 @@
                         }
                         if (Object.keys(this.highlighted.compared).length > 0) { //compare data is also available.
                             axios.post(resources.revenues.trends + '/' + this.miniGridId, {
-                                startDate: this.highlighted.compared.from,
-                                endDate: this.highlighted.compared.to
+                                startDate: this.startDate,
+                                endDate: this.endDate
                             }).then(
                                 (response) => {
                                     let data = response.data.data
@@ -948,6 +967,7 @@
                                         }
                                         tmpChartData.push(totalRev)
                                         this.trendChartData.compare.push(tmpChartData)
+
                                     }
                                 })
                         }
