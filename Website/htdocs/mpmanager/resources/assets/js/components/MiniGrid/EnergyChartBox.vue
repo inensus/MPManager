@@ -20,7 +20,7 @@
         </div>
         <div class="md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-33">
             <chart-box
-                v-if="pvService.chartData"
+                v-if="pvService.chartData.length>0"
                 title="Pv Generation"
                 :data="pvService.chartData"
                 chart-type="LineChart"
@@ -35,20 +35,20 @@
 </template>
 
 <script>
-    import {BatteryService} from '../../services/BatteryService'
+    import { BatteryService } from '../../services/BatteryService'
     import ChartBox from '../ChartBox'
-    import {PVService} from '../../services/PVService'
+    import { PVService } from '../../services/PVService'
 
     export default {
         name: 'EnergyChartBox',
-        components: {ChartBox},
+        components: { ChartBox },
         props: {
             miniGridId: {
                 type: String,
                 required: true
             }
         },
-        created() {
+        created () {
             this.initBatteryChart()
             this.initPVChart()
         },
@@ -59,7 +59,7 @@
             }
         ),
         methods: {
-            initBatteryChart() {
+            initBatteryChart () {
                 this.batteryService.getBatteryUsageList(this.miniGridId).then((result) => {
                     if (!result) {
                         console.log('Battery chart data failed to load')
@@ -68,7 +68,7 @@
                     this.batteryService.prepareChartData()
                 })
             },
-            initPVChart() {
+            initPVChart () {
                 this.pvService.getList(this.miniGridId).then((result) => {
                     if (!result) {
                         console.log('PV chart data failed to load')
