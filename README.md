@@ -38,7 +38,7 @@ To Install additional php dependencies enter the Docker-Container named `laravel
   ```php
   $u = new App\Models\User();
   $u->email = 'admin@admin.com';
-  $u->password = Hash::make('your-password');
+  $u->password = 'your-password';
   $u->name = 'Admin';
   $u->save();
   ```
