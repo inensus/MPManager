@@ -1,6 +1,6 @@
 <template>
     <widget
-        :title="'Finance Overview Period (' + finance_period+')'"
+        :title="'Finance Overview  (Period : ' +periodText + ')'"
         :id="'clusters-finance-overview'"
         button
         button-text="Set Period"
@@ -8,30 +8,29 @@
         :callback="showPeriod"
 
     >
-        <div v-if="setPeriod"
-             style="position: absolute; top: 0; right: 0; z-index: 9999; padding: 15px; background-color: white; border:1px solid #ccc;">
+        <div v-if="setPeriod" class="period-selector">
             <p>Select a period for income data</p>
-            <h5>From</h5>
-            <datepicker
-                class="datepicker-right"
-                monday-first
-                minimum-view="day"
-                :disabledDates="disabled"
-                @selected="dateSelectedFrom"
-                maximum-view="year"/>
-            <h5> To</h5>
-            <datepicker
-                class="datepicker-right"
-                monday-first
-                minimum-view="day"
-                @selected="dateSelectedTo"
-                :disabledDates="disabled"
-                maximum-view="year"/>
+            <div class="md-layout md-gutter">
+                <div class="md-layout-item md-size-100">
+                    <md-datepicker v-model="period.from" md-immediately>
+                        <label>From Date</label>
+                    </md-datepicker>
+                </div>
+                <div class="md-layout-item md-size-100">
+                    <md-datepicker v-model="period.to" md-immediately>
+                        <label>To Date</label>
+                    </md-datepicker>
+                </div>
+            </div>
+
+
             <div style="margin-top: 5px;">
-                <button style="width:100%;" class="btn btn-primary" @click="getClusterFinancialData">Send</button>
+                <md-progress-bar md-mode="indeterminate" v-if="loading"/>
+                <button style="width:100%;" v-if="!loading" class="btn btn-primary" @click="getClusterFinancialData">
+                    Send
+                </button>
             </div>
         </div>
-
         <div v-if="loaded">
             <div class="md-layout md-gutter" style="padding: 10px">
                 <!-- donut chart-->
@@ -138,6 +137,7 @@
     import { resources } from '../../resources'
     import Datepicker from 'vuejs-datepicker'
     import moment from 'moment'
+    import { ClusterService } from '../../services/ClusterService'
 
     export default {
         name: 'FinancialOverview',
@@ -150,15 +150,20 @@
         },
         data () {
             return {
+                clusterService: new ClusterService(),
                 lineChartFullScreen: false,
                 barChartFullScreen: false,
                 donutChartFullScreen: false,
-                period: {},
+                period: {
+                    from: null,
+                    to: null,
+                },
                 loaded: false,
+                loading: false,
                 setPeriod: false,
                 clicks: 0, //to detect a double click on a chart
                 financialData: [],
-                finance_period: 'From 2019.01.01 - Today',
+                periodText: '2019.01.01 - Today',
                 chartOptions: {
                     chart: {
                         title: 'Customer Payment Flow',
@@ -202,18 +207,29 @@
             showPeriod () {
                 this.setPeriod = true
             },
-            getClusterFinancialData () {
-                axios.post(resources.clusters.revenue.overview, {
-                    'period': 'monthly',
-                    'startDate': this.period.from,
-                    'endDate': this.period.to
-                }).then((response) => {
-                    this.financialData = response.data.data
+            async getClusterFinancialData () {
+
+                try {
+                    this.loading = true
+                    let from = this.period.from !== null ? moment(this.period.from).format('YYYY-MM-DD') : null
+                    let to = this.period.to !== null ? moment(this.period.to).format('YYYY-MM-DD') : null
+
+                    this.financialData = await this.clusterService.getAllRevenues('monthly', from, to)
+
                     this.loaded = true
-                    if (this.period.from)
-                        this.finance_period = this.period.from + ' - ' + this.period.to
+                    this.loading = false
+
+                    if (from !== null) {
+
+                        this.periodText = from + ' - ' + to
+                    }
+
                     this.setPeriod = false
-                })
+                } catch (e) {
+                    this.alertNotify('error', e.message)
+
+                }
+
             },
             financialDataChart (type, summary = false) {
                 let data = []
@@ -324,6 +340,14 @@
                     this.donutChartFullScreen = !this.donutChartFullScreen
                 }
                 window.dispatchEvent(new Event('resize'))
+            },
+            alertNotify (type, message) {
+                this.$notify({
+                    group: 'notify',
+                    type: type,
+                    title: type + ' !',
+                    text: message
+                })
             },
         }
     }

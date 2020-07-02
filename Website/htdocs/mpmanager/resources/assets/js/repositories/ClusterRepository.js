@@ -12,5 +12,12 @@ export default {
     },
     get(clusterId){
         return axios.get(`${resource}/${clusterId}`)
+    },
+    getClusterRevenues(clusterId,terms){
+        return axios.post(`${resource}/${clusterId}/revenue`,terms)
+    },
+    getAllRevenues(terms){
+        return axios.post(`${resource}/revenue`,terms)
     }
+
 }
