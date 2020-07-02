@@ -1,15 +1,14 @@
 import RepositoryFactory from '../repositories/RepositoryFactory'
-import {ErrorHandler} from '../Helpers/ErrorHander'
-
+import { ErrorHandler } from '../Helpers/ErrorHander'
 
 export class ClusterService {
-    constructor() {
+    constructor () {
         this.repository = RepositoryFactory.get('cluster')
         this.clusters = []
 
     }
 
-    async createCluster(geoType, location, name, managerId) {
+    async createCluster (geoType, location, name, managerId) {
         try {
             let cluster_PM = {
                 geo_type: geoType,
@@ -17,7 +16,6 @@ export class ClusterService {
                 name: name,
                 manager_id: managerId
             }
-
 
             let response = await this.repository.create(cluster_PM)
 
@@ -33,7 +31,7 @@ export class ClusterService {
         }
     }
 
-    async getClusters() {
+    async getClusters () {
         try {
 
             let response = await this.repository.list()
@@ -49,7 +47,7 @@ export class ClusterService {
         }
     }
 
-    async getClusterGeoLocation(clusterId) {
+    async getClusterGeoLocation (clusterId) {
         try {
 
             let response = await this.repository.getGeoLocation(clusterId)
@@ -64,7 +62,7 @@ export class ClusterService {
         }
     }
 
-    async getDetails(clusterId) {
+    async getDetails (clusterId) {
         try {
 
             let response = await this.repository.get(clusterId)
@@ -74,6 +72,47 @@ export class ClusterService {
                 return new ErrorHandler(response.error, 'http', response.status)
             }
         } catch (e) {
+            let erorMessage = e.response.data.data.message
+            return new ErrorHandler(erorMessage, 'http')
+        }
+    }
+
+    async getClusterRevenues (clusterId, period, startDate, endDate) {
+        try {
+            let revenuePM = {
+                'period': period,
+                'startDate': startDate,
+                'endDate': endDate
+            }
+
+            let response = await this.repository.getClusterRevenues(clusterId, revenuePM)
+            if (response.status === 201 || response.status === 200) {
+                return response.data.data
+            } else {
+                return new ErrorHandler(response.error, 'http', response.status)
+            }
+        } catch (e) {
+            let erorMessage = e.response.data.data.message
+            return new ErrorHandler(erorMessage, 'http')
+        }
+    }
+
+    async getAllRevenues (period, startDate, endDate) {
+        try {
+            let revenuePM = {
+                'period': period,
+                'startDate': startDate,
+                'endDate': endDate
+            }
+
+            let response = await this.repository.getAllRevenues(revenuePM)
+            if (response.status === 201 || response.status === 200) {
+                return response.data.data
+            } else {
+                return new ErrorHandler(response.error, 'http', response.status)
+            }
+        } catch (e) {
+
             let erorMessage = e.response.data.data.message
             return new ErrorHandler(erorMessage, 'http')
         }
