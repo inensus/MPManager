@@ -25,23 +25,22 @@ services:
       context: Docker/
       dockerfile: DockerfileComposer
     restart: 'no'
-
     command: install
     volumes:
       - ./Website/htdocs/mpmanager:/app
 
   'node':
     container_name: mpmanager_node
-    image: "node:14.3"
-    working_dir: /home/node/app
+    build:
+      context: Docker/
+      dockerfile: DockerfileNpm
     volumes:
       - ./Website/htdocs/mpmanager:/home/node/app
-    command:
-      npm install
+    command:  /bin/sh -c "/tmp/start.sh"
 
 
   'redis':
-    image: redis:4
+    image: redis:5
     volumes:
       - ./redis/:/data
 
