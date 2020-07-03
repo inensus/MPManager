@@ -255,7 +255,6 @@
                 this.$router.push({ path: '/transactions/' + id })
             },
 
-            //////////
             async getTransactions () {
                 try {
                     await this.transactionService.getTransactions()
