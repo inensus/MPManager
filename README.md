@@ -5,7 +5,7 @@
 
 PHP ^7.3
 
-Node ^v13.8.0
+Node ^v14.3
 
 
 
@@ -27,7 +27,7 @@ c:\windows\system32\drivers\etc\hosts
 127.0.0.1       db.mpmanager.local
 ```
 ## 2. Install Dependencies 
-All the dependencies will be automatically installed on step **1.2**. However, if you need additional dependencies, install them in the `laravel` container.
+All  dependencies will be automatically installed on step **1.2**. However, if you need additional dependencies, install them in the `laravel` container.
 To Install additional php dependencies enter the Docker-Container named `laravel`  navigate to `mpmanager`  & run `php ../composer.phar install XXX`
 
 ## 3. Migrate the database changes ; 
@@ -43,8 +43,7 @@ username : laravel
 password: laravel
 ```
 ## 4. Build Frontend
-To build the project navigate to `./Website/htdocs/mpmanager` and run `npm run watch`  
-Note: `node` is not available in the container. Please run that command on your own system.
+The project  will automatically build in **production** mode. If you want to  build the project in **development** mode, change `NMP_MODE` variable in the `.env` file.
 
 ## 5. Essential Configuration
 There are bound services like the Payment Services (Vodacom Tanzania and Airtel Tanzania), Ticketing Service(Trello API), Critical Logging notification(Slack Channel), WebSocket(Pusher), etc. if you plan to get your payments through these services you need to change/edit following files/configurations
