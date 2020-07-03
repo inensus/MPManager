@@ -15,3 +15,4 @@ yarn-error.log
 resources
 composer.lock
 package-lock.json
+/start.sh
