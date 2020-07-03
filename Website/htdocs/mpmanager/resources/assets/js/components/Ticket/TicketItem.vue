@@ -82,15 +82,18 @@
                             <div class="clearfix"></div>
                         </div>
                         <div v-if="allowComment">
-                            <md-field>
+                            <md-field style="float: left">
+                                <label for="comment">Comment</label>
                                 <md-textarea v-model="newComment"></md-textarea>
-                                <md-button
-                                    @click="sendComment"
-                                    class="md-primary btn-save"
-                                    type="submit"
-                                >Send
-                                </md-button>
+
                             </md-field>
+                            <md-button
+                                @click="sendComment"
+                                class="md-primary md-raised"
+                                type="submit"
+                                style="float:right"
+                            >Send
+                            </md-button>
                             <div class="clearfix"></div>
                         </div>
 
@@ -104,6 +107,7 @@
 <script>
     import {UserTickets} from "../../classes/person/ticket";
     import {resources} from "../../resources";
+    import { EventBus } from '../../shared/eventbus'
 
     export default {
         name: "TicketItem",
@@ -111,7 +115,8 @@
         data() {
             return {
                 showComments: false,
-                newComment: ""
+                newComment:""
+
             };
         },
         methods: {
@@ -120,6 +125,7 @@
             },
             lockTicket(ticket) {
                 ticket.close();
+
             },
 
             sendComment() {
@@ -139,6 +145,9 @@
                             senderId: this.$store.getters.admin.id
                         });
                     }
+                    this.showComments = !this.showComments
+                    this.newComment = ""
+                    this.ticket.comments.push(comment)
                 });
             }
         }
