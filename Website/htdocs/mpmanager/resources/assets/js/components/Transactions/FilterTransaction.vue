@@ -8,7 +8,7 @@
                     <md-input
                         type="text"
                         placeholder="Meter Serial Number"
-                        v-model="filter.serialNumber"
+                        v-model="filter.serial_number"
                         v-on:keyup.enter="submitFilter"
                     ></md-input>
                 </md-field>
@@ -100,7 +100,7 @@
                 transaction_: 'All Transactions',
                 filter: {
                     status: null,
-                    serialNumber: null,
+                    serial_number: null,
                     tariff: null,
                     provider: null,
                     from: null,
@@ -165,9 +165,9 @@
             },
             submitFilter () {
                  this.loading = true
-                if (this.filter.serialNumber === '') {
+                if (this.filter.serial_number === '') {
 
-                    this.filter.serialNumber = null
+                    this.filter.serial_number = null
                 }
                 if (this.filter.provider === -1 || this.filter.provider === '-1') {
                     this.filter.provider = null

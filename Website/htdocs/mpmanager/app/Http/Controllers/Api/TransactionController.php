@@ -6,15 +6,15 @@ use App\Http\Resources\ApiResource;
 use App\Jobs\ProcessPayment;
 use App\Lib\ITransactionProvider;
 use App\Misc\TransactionDataContainer;
+use App\Models\Transaction\AirtelTransaction;
 use App\Models\Transaction\Transaction;
+use App\Models\Transaction\VodacomTransaction;
 use App\Sms\SmsTypes;
 use DateInterval;
 use DateTime;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\DB;
 use function count;
 use function is_array;
 
@@ -117,7 +117,7 @@ class TransactionController extends Controller
 
         $terms = request('terms');
         $whereApplied = false;
-        $per_page = request('per_page') ?? 15;
+        $per_page = (int)(request('per_page') ?? '15');
 
         if (!is_array($terms)) {
             return null;
@@ -126,8 +126,9 @@ class TransactionController extends Controller
         $search = Transaction::with('originalTransaction');
 
         if (array_key_exists('serial_number', $terms)) {
+
             $search->where('message', 'LIKE', '%' . $terms['serial_number'] . '%');
-            //$whereApplied = true;
+            $whereApplied = true;
         }
         if (array_key_exists('tariff', $terms)) {
             $tariff = $terms['tariff'];
@@ -142,7 +143,7 @@ class TransactionController extends Controller
                     });
                 });
             } else {
-                //$whereApplied = true;
+                $whereApplied = true;
                 $search->whereHas('token', function ($q) use ($tariff) {
                     $q->whereHas('meter', function ($q) use ($tariff) {
                         $q->whereHas('meterParameter', function ($q) use ($tariff) {
@@ -176,18 +177,12 @@ class TransactionController extends Controller
                     });
                 }
             } else {
-                $search->where(function ($q) use ($status) {
-                    $q->where('original_transaction_type', 'airtel_transaction');
-                    $q->whereHas('originalAirtel', function ($q) use ($status) {
+                $search->whereHasMorph('originalTransaction',
+                    [VodacomTransaction::class, AirtelTransaction::class],
+                    static function ($q) use ($status) {
                         $q->where('status', $status);
                     });
-                })
-                    ->orWhere(function ($q) use ($status) {
-                        $q->where('original_transaction_type', 'vodacom_transaction');
-                        $q->whereHas('originalVodacom', function ($q) use ($status) {
-                            $q->where('status', $status);
-                        });
-                    });
+
             }
 
         }
@@ -212,51 +207,16 @@ class TransactionController extends Controller
      */
     public function confirmed(): ApiResource
     {
+
         $transactions = Transaction::with('originalAirtel', 'originalVodacom')
-            ->where(function ($q) {
-                $q->where('original_transaction_type', 'airtel_transaction');
-                $q->whereHas('originalAirtel', function ($q) {
+            ->whereHasMorph('originalTransaction', [VodacomTransaction::class, AirtelTransaction::class],
+                static function ($q) {
                     $q->where('status', 1);
-                });
-            })
-            ->orWhere(function ($q) {
-                $q->where('original_transaction_type', 'vodacom_transaction');
-                $q->whereHas('originalVodacom', function ($q) {
-                    $q->where('status', 1);
-                });
-            })
-            ->latest()->get();
-
-
-        return new ApiResource($this->paginateCollection($transactions, 15));
-
+                })->latest()->paginate();
+        return new ApiResource($transactions);
     }
 
-    private function paginateCollection(
-        $collection,
-        $perPage,
-        $pageName = 'page',
-        $fragment = null
-    ): LengthAwarePaginator {
-        $currentPage = LengthAwarePaginator::resolveCurrentPage($pageName);
-        $currentPageItems = $collection->slice(($currentPage - 1) * $perPage, $perPage);
-        parse_str(request()->getQueryString(), $query);
-        unset($query[$pageName]);
-        $paginator = new LengthAwarePaginator(
-            $currentPageItems,
-            $collection->count(),
-            $perPage,
-            $currentPage,
-            [
-                'pageName' => $pageName,
-                'path' => LengthAwarePaginator::resolveCurrentPath(),
-                'query' => $query,
-                'fragment' => $fragment,
 
-            ]
-        );
-        return $paginator;
-    }
 
 
     /**
@@ -268,22 +228,11 @@ class TransactionController extends Controller
     public function cancelled(): ApiResource
     {
         $transactions = Transaction::with('originalAirtel', 'originalVodacom')
-            ->where(function ($q) {
-                $q->where('original_transaction_type', 'airtel_transaction');
-                $q->whereHas('originalAirtel', function ($q) {
+            ->whereHasMorph('originalTransaction', [VodacomTransaction::class, AirtelTransaction::class],
+                static function ($q) {
                     $q->where('status', -1);
-                });
-            })
-            ->orWhere(function ($q) {
-                $q->where('original_transaction_type', 'vodacom_transaction');
-                $q->whereHas('originalVodacom', function ($q) {
-                    $q->where('status', -1);
-                });
-            })
-            ->latest()->get();
-
-
-        return new ApiResource($this->paginateCollection($transactions, 15));
+                })->latest()->paginate();
+        return new ApiResource($transactions);
     }
 
 
@@ -370,22 +319,9 @@ class TransactionController extends Controller
 
 
         // get data for the current period
-        $currentTransactions = $this->_getTransactionAnalysis($transactions['current']);
+        $currentTransactions = $this->_getTransactionAnalysis($transactions['current']) ?? $this->emptyCompareResult();
         // get data for the previous period
-        $pastTransactions = $this->_getTransactionAnalysis($transactions['past']);
-
-        //there is no enough data for comparision
-        if ($currentTransactions === null || $pastTransactions === null) {
-            return [
-                'success' => false,
-                'lastPeriod' => $pastTransactions,
-                'currentPeriod' => $currentTransactions,
-                'totalPercentage' => null,
-                'confirmationPercentage' => null,
-                'cancelationPercentage' => null,
-                'amountPercentage' => null,
-            ];
-        }
+        $pastTransactions = $this->_getTransactionAnalysis($transactions['past']) ?? $this->emptyCompareResult();
 
 
         //compare current period with the previous period
@@ -396,6 +332,18 @@ class TransactionController extends Controller
             'analytics' => $this->_comparePeriods($currentTransactions, $pastTransactions),
         ];
 
+    }
+
+    private function emptyCompareResult()
+    {
+        return [
+            'total' => 0,
+            'amount' => 0,
+            'confirmed' => 0,
+            'confirmedPercentage' => 0,
+            'cancelled' => 0,
+            'cancelledPercentage' => 0,
+        ];
     }
 
     /**
@@ -594,11 +542,17 @@ class TransactionController extends Controller
      */
     private function _getPercentage($base, $wanted, bool $baseShouldGreater = true): float
     {
+
+        if ($base === 0 || $wanted === 0) {
+            return 0;
+        }
+
         $percentage = (float)$wanted * 100 / (float)$base;
 
         if ($baseShouldGreater) {
             return round(100 - $percentage, 2);
         }
+
         return round($percentage - 100, 2);
     }
 
