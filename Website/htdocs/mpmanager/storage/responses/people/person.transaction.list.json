@@ -7,7 +7,7 @@
             "payment_service": "xyt_transaction",
             "sender": "255769644521",
             "payment_type": "loan rate",
-            "paid_for_type": "asset_loan",
+            "paid_for_type": "appliance_loan",
             "paid_for_id": 1,
             "payer_type": "person",
             "payer_id": 1,

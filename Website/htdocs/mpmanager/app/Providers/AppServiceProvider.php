@@ -47,7 +47,7 @@ class AppServiceProvider extends ServiceProvider
                 'vodacom_transaction' => VodacomTransaction::class,
                 'airtel_transaction' => \App\Models\Transaction\AirtelTransaction::class,
                 'access_rate' => AccessRate::class,
-                'asset_loan' => ApplianceRate::class,
+                'appliance_loan' => ApplianceRate::class,
                 'cluster' => Cluster::class,
                 'mini-grid' => MiniGrid::class,
             ]
