@@ -1,4 +1,4 @@
-import AssetRepository from './AssetRepository'
+import ApplianceRepository from './ApplianceRepository'
 import TariffRepository from './TariffRepository'
 import TicketRepository from './TicketRepository'
 import MaintenanceRepository from './MaintenanceRepository'
@@ -18,7 +18,7 @@ import AuthenticationRepository from './AuthenticationRepository'
 import TransactionRepository from './TransactionRepository'
 
 const repositories = {
-    'asset': AssetRepository,
+    'appliance': ApplianceRepository,
     'tariff': TariffRepository,
     'ticket': TicketRepository,
     'maintenance': MaintenanceRepository,

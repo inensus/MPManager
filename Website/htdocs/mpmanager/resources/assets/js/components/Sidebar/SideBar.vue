@@ -154,8 +154,8 @@
                         ]
                     },
                     {
-                        name: 'Asset Types',
-                        route: '/assets/types/page/1',
+                        name: 'Appliance Types',
+                        route: '/appliance/types/page/1',
                         icon: 'toolbox',
                     },
                     {

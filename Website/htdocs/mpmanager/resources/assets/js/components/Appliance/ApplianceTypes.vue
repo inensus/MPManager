@@ -1,16 +1,16 @@
 <template>
     <widget
-        :id="'asset_type_list'"
-        :title="'List of Asset Types'"
+        :id="'appliance_type_list'"
+        :title="'List of Appliance Types'"
         :button="true"
         :buttonText="'New Type'"
-        :paginator="assets.paginator"
+        :paginator="appliances.paginator"
         :subscriber="subscriber"
-        :callback="newAsset"
-        :route_name="'/assets/types'"
+        :callback="newAppliance"
+        :route_name="'/appliance/types'"
     >
         <md-table id="dt-basic" class="table table-striped table-bordered table-hover no-footer">
-            <md-table-row>
+            <md-table-row
 
                 <md-table-head>ID
                 </md-table-head>
@@ -29,14 +29,14 @@
 
             </md-table-row>
 
-            <md-table-row v-for="asset in assets.list" style="cursor:pointer;">
-                <md-table-cell> {{ asset.id}}</md-table-cell>
+            <md-table-row v-for="appliance in appliances.list" style="cursor:pointer;">
+                <md-table-cell> {{ appliance.id}}</md-table-cell>
 
-                <md-table-cell> {{asset.type}}
+                <md-table-cell> {{appliance.type}}
 
                 </md-table-cell>
 
-                <md-table-cell class="hidden-xs">{{asset.created_at}}</md-table-cell>
+                <md-table-cell class="hidden-xs">{{appliance.created_at}}</md-table-cell>
 
             </md-table-row>
 
@@ -46,17 +46,17 @@
 
 <script>
 
-    import {AssetTypes} from '../../classes/asset/AssetTypes'
+    import {ApplianceTypes} from '../../classes/appliance/ApplianceTypes'
     import {EventBus} from '../../shared/eventbus'
     import Widget from '../../shared/widget'
 
     export default {
-        name: 'AssetTypes',
+        name: 'ApplianceTypes',
         components: {Widget},
         data() {
             return {
-                assets: new AssetTypes(),
-                subscriber: 'asset-list',
+                appliances: new ApplianceTypes(),
+                subscriber: 'appliance-list',
                 bcd: {
                     'Home': {
                         'href': '/'
@@ -86,10 +86,10 @@
         methods: {
             reloadList(subscriber, data) {
                 if (subscriber !== this.subscriber) return
-                this.assets.updateList(data)
+                this.appliances.updateList(data)
 
             },
-            newAsset() {
+            newAppliance() {
             }
         }
     }

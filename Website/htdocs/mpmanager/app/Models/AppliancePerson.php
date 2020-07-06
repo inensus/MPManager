@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use App\Events\AssetPersonCreated;
+use App\Events\AppliancePersonCreated;
 use App\Models\Person\Person;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,25 +11,25 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 
 /**
- * Class AssetPerson
+ * Class AppliancePerson
  * @package App\Models
  *
  *
- * @property int $asset_type_id
+ * @property int $appliance_type_id
  * @property int $person_id
  * @property int $total_cost
  * @property int $rate_count
  */
-class AssetPerson extends Model
+class AppliancePerson extends Model
 {
 
     protected $dispatchesEvents = [
-        'created' => AssetPersonCreated::class,
+        'created' => AppliancePersonCreated::class,
     ];
     //
     protected $fillable = [
         'person_id',
-        'asset_type_id',
+        'appliance_type_id',
         'total_cost',
         'rate_count',
     ];
@@ -45,13 +45,13 @@ class AssetPerson extends Model
     }
 
 
-    public function assetType(): BelongsTo
+    public function applianceType(): BelongsTo
     {
-        return $this->belongsTo(AssetType::class, 'asset_type_id');
+        return $this->belongsTo(ApplianceType::class, 'appliance_type_id');
     }
 
     public function rates(): HasMany
     {
-        return $this->hasMany(AssetRate::class);
+        return $this->hasMany(ApplianceRate::class);
     }
 }
