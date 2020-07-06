@@ -61,13 +61,11 @@
 
 <script>
     import Box from '../Box'
-    import ChartistBox from '../ChartistBox'
-    import { currency } from '../../mixins/currency'
 
     export default {
+
         name: 'BoxGroup',
-        components: { Box, ChartistBox },
-        mixins: [currency],
+        components: { Box },
         props: {
             clusters: {
                 type: Array,
