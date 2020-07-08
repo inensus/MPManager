@@ -42,7 +42,7 @@
                         <md-card-header-text>
                             Revenue Line
                         </md-card-header-text>
-                        <md-menu class="md-medium-hide"  md-size="big" md-direction="bottom-end">
+                        <md-menu class="md-medium-hide" md-size="big" md-direction="bottom-end">
                             <md-button class="md-icon-button" md-menu-trigger
                                        @click="maximize('lineChartFullScreen')">
                                 <md-icon>fullscreen</md-icon>
@@ -100,7 +100,7 @@
                         <md-card-header-text>
                             Percentiles of the Revenue
                         </md-card-header-text>
-                        <md-menu class="md-medium-hide"  md-size="big" md-direction="bottom-end">
+                        <md-menu class="md-medium-hide" md-size="big" md-direction="bottom-end">
                             <md-button class="md-icon-button" md-menu-trigger
                                        @click="maximize('donutChartFullScreen')">
                                 <md-icon>fullscreen</md-icon>
@@ -207,19 +207,18 @@
                     let from = this.period.from !== null ? moment(this.period.from).format('YYYY-MM-DD') : null
                     let to = this.period.to !== null ? moment(this.period.to).format('YYYY-MM-DD') : null
                     this.financialData = await this.clusterService.getClusterRevenues(this.clusterId, 'monthly', from, to)
-                    this.loading = false
 
                     if (from !== null) {
 
                         this.periodText = from + ' - ' + to
                     }
 
-                    this.setPeriod = false
                 } catch (e) {
                     this.alertNotify('error', e.message)
 
                 }
-
+                this.setPeriod = false
+                this.loading = false
             },
             financialDataChart (type) {
                 let data = []
@@ -359,8 +358,9 @@
     .md-datepicker-dialog {
         z-index: 1000 !important;
     }
-    .chart-card{
-       margin-bottom: 1vh;
+
+    .chart-card {
+        margin-bottom: 1vh;
     }
 
 
