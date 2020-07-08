@@ -30,9 +30,8 @@ class CityService
         $this->person = $person;
     }
 
-    public function getCityPopulation(City $city, $onlyCustomers = true)
+    public function getCityPopulation($cityId, $onlyCustomers = true)
     {
-        $cityId = $city->id;
         if ($onlyCustomers) {
 
             $population = $this->person
@@ -46,8 +45,28 @@ class CityService
             })->count();
         }
 
+        return $population;
+    }
 
-        $city['population'] = $population;
-        return $city;
+    public function getClusteropulation($clusterId, $onlyCustomers = true)
+    {
+        if ($onlyCustomers) {
+            $population = $this->person
+                ->where('is_customer', 1)
+                ->whereHas('addresses', function ($q) use ($clusterId) {
+                    $q->where('is_primary', 1)->whereHas('city', function ($q) use ($clusterId) {
+                        $q->where('cluster_id', $clusterId);
+                    });
+                })->count();
+        } else {
+            $population = $this->person->whereHas('addresses', function ($q) use ($clusterId) {
+                $q->where('is_primary', 1)->whereHas('city', function ($q) use ($clusterId) {
+                    $q->where('cluster_id', $clusterId);
+                });
+            })->count();
+        }
+
+
+        return $population;
     }
 }
