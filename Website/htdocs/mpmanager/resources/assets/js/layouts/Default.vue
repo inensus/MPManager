@@ -89,4 +89,18 @@
     .container {
         padding: 1rem;
     }
+
+    @media screen and (min-width: 991px) {
+        .sidebar {
+            width: 15%;
+            min-width: 260px;
+
+        }
+        .main-panel{
+            width: 85%;
+            max-width: calc(100% - 260px);
+        }
+    }
+
+
 </style>
