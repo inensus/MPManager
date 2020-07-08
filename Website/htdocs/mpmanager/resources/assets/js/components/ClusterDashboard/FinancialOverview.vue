@@ -53,7 +53,7 @@
                     <md-card-content>
                         <GChart
                             type="LineChart"
-                            :data="financialDataChart('line')"
+                            :data="financialDataChart('line', false)"
                             :options="chartOptions"
                             :resizeDebounce="500"
                             ref="gChart"
@@ -131,7 +131,6 @@
 
 <script>
     import Widget from '../../shared/widget'
-    import { resources } from '../../resources'
     import Datepicker from 'vuejs-datepicker'
     import moment from 'moment'
     import { ClusterService } from '../../services/ClusterService'
@@ -206,7 +205,10 @@
                     this.loading = true
                     let from = this.period.from !== null ? moment(this.period.from).format('YYYY-MM-DD') : null
                     let to = this.period.to !== null ? moment(this.period.to).format('YYYY-MM-DD') : null
-                    this.financialData = await this.clusterService.getClusterRevenues(this.clusterId, 'monthly', from, to)
+
+                    this.financialData = await this.clusterService.getClusterCitiesRevenue(this.clusterId, 'monthly',
+                        from, to)
+
                     this.loading = false
 
                     if (from !== null) {
@@ -221,59 +223,60 @@
                 }
 
             },
-            financialDataChart (type) {
+            financialDataChart (type, summary = false) {
                 let data = []
                 if (type === 'column') {
                     return this.columnChartData()
                 } else if (type === 'line') {
-                    return this.lineChartData()
+                    return this.lineChartData(summary)
                 }
                 return data
             },
             /**
              * Generates data array for line chart
              */
-            lineChartData () {
+            lineChartData (summary) {
                 let data = []
                 data.push(['Period'])
 
-                let citiesCount = this.financialData.cities.length
-                if (citiesCount === 0) {
+                let miniGridsCount = this.financialData.length
+                if (miniGridsCount === 0) {
                     return
                 }
-                data[0] = this.insertCityNames(citiesCount, data[0])
 
-                let periods = this.financialData.cities[0].revenue
+                data[0] = data[0].concat(this.financialData.map(f => {return f.name}))
+                if (summary) {
+                    data[0].push('Total')
+                }
+                let periods = this.financialData[0].period
                 for (let p in periods) {
-                    data.push(this.getPeriodicData(citiesCount, p))
+
+                    data.push(this.getPeriodicData(miniGridsCount, p, summary))
                 }
                 return data
             },
             /**
              * Generates data array for column and donut chart
              */
-            columnChartData () {
+
+
+            columnChartData (summary) {
                 let data = []
-                data.push(['Mini Grid Name', 'Revenue'])
-
-                for (let i in this.financialData.cities) {
-                    let cD = this.financialData.cities[i]
-                    let totalRevenue = 0
-                    for (let revenue in cD.revenue) {
-                        totalRevenue += cD.revenue[revenue].revenue
+                let summaryRevenue = 0
+                data.push(['MiniGrid Name', 'Revenue'])
+                for (let i in this.financialData) {
+                    let cD = this.financialData[i]
+                    if (summary) {
+                        summaryRevenue += cD.totalRevenue
                     }
-                    data.push([cD.name, totalRevenue])
-
+                    data.push([cD.name, cD.totalRevenue])
                 }
-
-                let total = data.slice(1, data.length)
-                let sum = total.reduce((prev, total) => { return prev + total[1]}, 0)
-                let data_for_box = {
-                    'sum': sum, 'period': this.periodText
+                if (summary) {
+                    data.push(['Sum', summaryRevenue])
                 }
-                this.$emit('complete', data_for_box)
                 return data
             },
+
             /**
              * Inserts the cluster names to the given data array and returns it
              * @param count
@@ -292,13 +295,19 @@
              * @param periodName current selected Period
              * @returns array
              */
-            getPeriodicData (count, periodName) {
+            getPeriodicData (count, periodName, summary) {
                 let data = []
-
+                let sum = 0
                 data.push(periodName)
                 for (let i = 0; i < count; i++) {
-                    data.push(this.financialData.cities[i].revenue[periodName].revenue)
+                    if (summary) {
+                        sum += this.financialData[i].period[periodName].revenue
+                    }
+                    data.push(this.financialData[i].period[periodName].revenue)
                     //data.push(this.financialData[i].period[periodName].revenue)
+                }
+                if (summary) {
+                    data.push(sum)
                 }
                 return data
             },

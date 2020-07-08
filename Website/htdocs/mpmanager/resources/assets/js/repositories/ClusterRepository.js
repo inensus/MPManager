@@ -4,20 +4,23 @@ export default {
     create(cluster){
         return axios.post(`${resource}`,cluster)
     },
-    list(){
+    list () {
         return axios.get(`${resource}/geo`)
     },
-    getGeoLocation(clusterId){
+    getGeoLocation (clusterId) {
         return axios.get(`${resource}/${clusterId}/geo`)
     },
-    get(clusterId){
+    get (clusterId) {
         return axios.get(`${resource}/${clusterId}`)
     },
-    getClusterRevenues(clusterId,terms){
-        return axios.post(`${resource}/${clusterId}/revenue`,terms)
+    getClusterRevenues (clusterId) {
+        return axios.get(`${resource}/${clusterId}/revenue`)
     },
-    getAllRevenues(terms){
-        return axios.post(`${resource}/revenue`,terms)
-    }
+    getClusterCitiesRevenue (clusterId, terms) {
+        return axios.get(`${resource}/${clusterId}/cities-revenue/${terms}`)
+    },
+    getAllRevenues (terms) {
+        return axios.get(`${resource}/revenue/${terms}`)
+    },
 
 }

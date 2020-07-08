@@ -8,7 +8,7 @@
                 :color="[ '#26c6da','#00acc1']"
                 header-text="Mini-Grids"
                 :header-text-color="'#dddddd'"
-                :sub-text="this.miniGrids.mini_grids.length.toString()"
+                :sub-text="cluster.mini_grids.length.toString()"
                 :sub-text-color="'#e3e3e3'"
                 :box-icon="'sitemap'"
                 :box-icon-color="'#578839'"
@@ -16,11 +16,11 @@
         </div>
         <div class="md-layout-item md-medium-size-50 md-xsmall-size-100 md-size-25 small-size-style">
             <box
-                v-if="'people' in boxData"
+                v-if="'population' in clusterData"
 
                 :center-text="true"
                 :color="[ '#ffa726','#fb8c00']"
-                :sub-text="boxData['people'].toString()"
+                :sub-text="clusterData['population'].toString()"
                 :header-text-color="'#dddddd'"
                 header-text="People"
                 :sub-text-color="'#e3e3e3'"
@@ -31,11 +31,11 @@
         </div>
         <div class="md-layout-item md-medium-size-50 md-xsmall-size-100 md-size-25 small-size-style">
             <box
-                v-if="'meters' in boxData"
+                v-if="'meterCount' in clusterData"
 
                 :center-text="true"
                 :color="[ '#ef5350','#e53935']"
-                :sub-text="boxData['meters'].toString()"
+                :sub-text="clusterData['meterCount'].toString()"
                 :header-text-color="'#dddddd'"
                 header-text="Connected Meters"
                 :sub-text-color="'#e3e3e3'"
@@ -45,13 +45,12 @@
         </div>
         <div class="md-layout-item md-medium-size-50 md-xsmall-size-100 md-size-25 small-size-style">
             <box
-                v-if=" 'revenue' in boxData"
-
+                v-if=" 'revenue' in clusterData"
                 :center-text="true"
                 :color="[ '#6eaa44','#578839']"
-                :sub-text="readable(boxData['revenue']['total'])"
+                :sub-text="readable(clusterData['revenue']) + appConfig.currency"
                 :header-text-color="'#dddddd'"
-                :header-text="'Revenue' +  boxData['revenue']['period'] "
+                :header-text="'Revenue last 30 days' "
                 :sub-text-color="'#e3e3e3'"
                 :box-icon="'money-bill'"
                 :box-icon-color="'#5c5837'"
@@ -63,24 +62,36 @@
 
 <script>
     import Box from '../Box'
-    import {currency} from '../../mixins/currency'
+    import { currency } from '../../mixins/currency'
+    import { ClusterService } from '../../services/ClusterService'
 
     export default {
         name: 'BoxGroup',
-        components: {Box},
+        components: { Box },
         mixins: [currency],
         props: {
-            miniGrids: {
+            cluster: {
                 type: Object,
                 required: true,
             },
-            boxData: {
-                type: Object,
-                required: true,
-            }
+
+        },
+        mounted () {
+            this.getClusterData()
+        },
+        data: () => ({
+            boxData: [],
+            clusterService: new ClusterService(),
+            clusterData: [],
+        }),
+        methods: {
+            async getClusterData () {
+                this.clusterData = await this.clusterService.getClusterRevenues(this.cluster.id, 'monthly')
+
+            },
         },
         computed: {
-            population() {
+            population () {
                 return 0
                 let population = 0
                 for (let c in this.clusters) {
@@ -111,11 +122,7 @@
                 return revenue
             },
         },
-        methods: {
-            newCluster() {
-                this.$router.push('/clusters/add')
-            }
-        }
+
     }
 </script>
 
