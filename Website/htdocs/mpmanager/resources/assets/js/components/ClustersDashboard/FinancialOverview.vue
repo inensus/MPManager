@@ -205,7 +205,7 @@
         },
         methods: {
             showPeriod () {
-                this.setPeriod = true
+                this.setPeriod = !this.setPeriod
             },
             async getClusterFinancialData () {
 
