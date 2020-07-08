@@ -31,6 +31,7 @@ class PeriodService
         $begin = date_create($startDate);
         $end = date_create($endDate);
         $end->add(new DateInterval('P1D'));
+        $end->setTime(0, 0, 1);
         if ($interval === 'weekly') {
             $i = new DateInterval('P1W');
         } else {
