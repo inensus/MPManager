@@ -17,16 +17,8 @@ use App\Http\Services\ClusterService;
 use App\Http\Services\MeterService;
 use App\Http\Services\TransactionService;
 use App\Models\Cluster;
-use App\Models\Meter\Meter;
-use App\Models\Meter\MeterParameter;
-use App\Models\Person\Person;
-use Carbon\Carbon;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
-use Inensus\Ticket\Trello\Api;
 use function json_decode;
 
 class ClusterController
@@ -77,10 +69,6 @@ class ClusterController
 
     public function index()
     {
-        if (Cache::store('redis')->has('cluster-list-data')) {
-            return new ApiResource(Cache::store('redis')->get('cluster-list-data'));
-        }
-        $expiresAt = Carbon::now()->addMinutes(15);
         $startDate = request('start_date');
         $endDate = request('end_date');
         $dateRange = [];
@@ -94,7 +82,6 @@ class ClusterController
         }
         $clusters = $this->clusterService->getClusterList();
 
-        Cache::store('redis')->put('cluster-list-data', $this->fetchClusterData($clusters, $dateRange), $expiresAt);
         return new ApiResource($this->fetchClusterData($clusters, $dateRange));
     }
 
@@ -107,11 +94,10 @@ class ClusterController
     }
     public function showGeo(Cluster $cluster)
     {
-
-
         try {
             $clusterData = Storage::disk('local')->get($cluster->name . '.json');
         } catch (FileNotFoundException $e) {
+            return new ApiResource([]);
         }
 
         $cluster['geo'] = json_decode($clusterData);
@@ -138,23 +124,15 @@ class ClusterController
     private function fetchClusterData($clusters, $range = [])
     {
         foreach ($clusters as $index => $cluster) {
-            $cities = $this->clusterService->getClusterCities($cluster);
-            foreach ($cities as $cityIndex => $city) {
-                $city = $this->cityService->getCityPopulation($city);
-                $city = $this->meterService->getMetersInCity($city);
-                $city->revenue = $this->transactionService->totalMeterTransactions($city->meters, $range);
-                //unset meter list, coz its not needed
-                unset($city->meters);
-
-                $cities[$cityIndex] = $city;
-            }
-            $clusters[$index]->cities = $cities;
+            $clusters[$index]->meterCount = $this->meterService->getMeterCountInCluster($cluster->id);
+            $clusters[$index]->revenue = $this->transactionService->totalClusterTransactions($cluster->id, $range);
+            $clusters[$index]->population = $this->cityService->getClusteropulation($cluster->id);
         }
         return $clusters;
     }
 
 
-    public function store(ClusterRequest $request, Response $response)
+    public function store(ClusterRequest $request)
     {
         //type of geo data its either remote or manual
         $geoType = $request->get('geo_type');
@@ -174,10 +152,7 @@ class ClusterController
         //fire the create geo-json event. It creates a json file with coordinates
         event(new ClusterEvent($this->cluster, $geoType, $geoData));
 
-
-        return new ApiResource(
-            $this->cluster
-        );
+        return new ApiResource($this->cluster);
 
     }
 }
