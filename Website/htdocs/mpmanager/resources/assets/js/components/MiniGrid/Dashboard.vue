@@ -300,6 +300,7 @@
                                 :resizeDebounce="500"
                             />
 
+
                         </div>
 
 
@@ -694,17 +695,32 @@
                             ticketChartDataClosed.push(ticketData.closed)
                         }
 
-                            openedTicketChartData.push(ticketChartDataOpened)
-                            openedTicketChartData.push(ticketChartDataClosed)
-                            closedTicketChartData.push(ticketChartDataClosed)
 
+                        openedTicketChartData.push(ticketChartDataOpened)
+                        openedTicketChartData.push(ticketChartDataClosed)
+                        closedTicketChartData.push(ticketChartDataClosed)
 
                     }
 
-
                     this.openedTicketChartData = openedTicketChartData
-                    console.log(openedTicketChartData)
                     this.closedTicketChartData = closedTicketChartData
+                    for (let i = 0; i < this.openedTicketChartData.length; i++) {
+
+                        let ticketItem = this.openedTicketChartData[i]
+                        let columnNumber = this.openedTicketChartData[0].length
+                        if (i !== 0) {
+                            if (ticketItem.length > columnNumber) {
+
+                                ticketItem.splice(ticketItem.length - 1, ticketItem.length - columnNumber)
+                            } else if (columnNumber > ticketItem.length) {
+
+                                for (let j = 0; j < columnNumber - ticketItem.length; j++) {
+                                    ticketItem.push(0)
+                                }
+                            }
+                        }
+
+                    }
 
                 } catch (e) {
 
@@ -734,6 +750,7 @@
                     }
 
                     for (let x in this.revenueTrends) {
+
                         let tmpChartData = [x]
                         let totalRev = 0
                         for (let d in this.revenueTrends[x]) {
@@ -744,26 +761,23 @@
                         this.trendChartData.base.push(tmpChartData)
                     }
 
-                    /*  if (Object.keys(this.highlighted.compared).length > 0) { //compare data is also available.
-                          axios.post(resources.revenues.trends + '/' + this.miniGridId, {
-                              startDate: this.startDate,
-                              endDate: this.endDate
-                          }).then(
-                              (response) => {
-                                  let data = response.data.data
-                                  for (let x in data) {
-                                      let tmpChartData = [x]
-                                      let totalRev = 0
-                                      for (let d in data[x]) {
-                                          tmpChartData.push(data[x][d].revenue)
-                                          totalRev += data[x][d].revenue
-                                      }
-                                      tmpChartData.push(totalRev)
-                                      this.trendChartData.compare.push(tmpChartData)
 
-                                  }
-                              })
-                      }*/
+                    if (Object.keys(this.highlighted.compared).length > 0) { //compare data is also available.
+                        let compareData = await this.revenueService.getMiniGridRevenueTrends(this.miniGridId, this.startDate, this.endDate)
+
+                        for (let x in compareData) {
+                            let tmpChartData = [x]
+                            let totalRev = 0
+                            for (let d in compareData[x]) {
+                                tmpChartData.push(compareData[x][d].revenue)
+                                totalRev += compareData[x][d].revenue
+                            }
+                            tmpChartData.push(totalRev)
+                            this.trendChartData.compare.push(tmpChartData)
+
+                        }
+                    }
+
                 } catch (e) {
                     this.alertNotify('error', e.message)
                 }
@@ -1016,10 +1030,12 @@
                     ])
                 }
                 return donutData
+
             },
             dateSelectedBase (val) {
                 this.dateSelected(val)
             },
+
             dateSelectedCompared (val) {
                 this.dateSelected(val, false)
             },
@@ -1469,4 +1485,5 @@
         background: #90CAF9 !important;
     }
 </style>
+
 
