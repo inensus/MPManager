@@ -34,15 +34,15 @@
 
         <div class="md-layout md-gutter" style="padding: 10px">
             <!-- donut chart-->
-            <div class="md-layout-item "
+            <div class="md-layout-item md-size-35 md-medium-size-100"
                  :class="lineChartFullScreen? 'md-size-100' : 'md-size-35' "
                  v-if="financialData">
-                <md-card>
+                <md-card class="chart-card">
                     <md-card-header>
                         <md-card-header-text>
                             Revenue Line
                         </md-card-header-text>
-                        <md-menu md-size="big" md-direction="bottom-end">
+                        <md-menu class="md-medium-hide"  md-size="big" md-direction="bottom-end">
                             <md-button class="md-icon-button" md-menu-trigger
                                        @click="maximize('lineChartFullScreen')">
                                 <md-icon>fullscreen</md-icon>
@@ -63,15 +63,15 @@
                 </md-card>
             </div>
             <!-- Column Chart -->
-            <div class="md-layout-item"
+            <div class="md-layout-item md-size-35 md-medium-size-100"
                  v-if="financialData"
                  :class="barChartFullScreen? 'md-size-100' : 'md-size-35' ">
-                <md-card>
+                <md-card class="chart-card">
                     <md-card-header>
                         <md-card-header-text>
                             Bar Chart
                         </md-card-header-text>
-                        <md-menu md-size="big" md-direction="bottom-end">
+                        <md-menu class="md-medium-hide" md-size="big" md-direction="bottom-end">
                             <md-button class="md-icon-button" md-menu-trigger
                                        @click="maximize('barChartFullScreen')">
                                 <md-icon>fullscreen</md-icon>
@@ -92,15 +92,15 @@
                 </md-card>
             </div>
 
-            <div class="md-layout-item md-size-30"
+            <div class="md-layout-item md-size-30 md-medium-size-100"
                  v-if="financialData"
                  :class="donutChartFullScreen? 'md-size-100' : 'md-size-30' ">
-                <md-card>
+                <md-card class="chart-card">
                     <md-card-header>
                         <md-card-header-text>
                             Percentiles of the Revenue
                         </md-card-header-text>
-                        <md-menu md-size="big" md-direction="bottom-end">
+                        <md-menu class="md-medium-hide"  md-size="big" md-direction="bottom-end">
                             <md-button class="md-icon-button" md-menu-trigger
                                        @click="maximize('donutChartFullScreen')">
                                 <md-icon>fullscreen</md-icon>
@@ -358,6 +358,9 @@
 
     .md-datepicker-dialog {
         z-index: 1000 !important;
+    }
+    .chart-card{
+       margin-bottom: 1vh;
     }
 
 

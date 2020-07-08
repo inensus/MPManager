@@ -7,9 +7,9 @@
             </md-card-header>
         </md-card>
 
-        <div class="md-layout md-gutter">
+        <div class="md-layout md-gutter md-size-100">
             <div v-if="clusterData" class="md-layout-item
-       md-large-size-100 md-medium-size-50 md-small-size-50 ">
+       md-size-100">
                 <box-group
                     :mini-grids="clusterData"
                     :box-data="boxData"
@@ -17,7 +17,7 @@
 
             </div>
             <div v-if="clusterId" class="md-layout-item
-       md-large-size-100 md-medium-size-50 md-small-size-50  ">
+       md-size-100">
                 <financial-overview
                     :cluster-id="this.clusterId"
                     @complete="addRevenue"
@@ -25,19 +25,25 @@
 
             </div>
             <div v-if="clusterData" class="md-layout-item
-       md-large-size-100 md-medium-size-50 md-small-size-50">
-                <Map
-                    :geoData="geoData"
-                    :constantLocations="constantLocations"
-                    :constantMarkerUrl="miniGridIcon"
-                    :center="center"
-                    :markingInfos="markingInfos"
+       md-size-100" style="margin-top: 2vh;">
+                <md-card>
+                    <md-card-content>
+                        <Map
+                            :geoData="geoData"
+                            :constantLocations="constantLocations"
+                            :constantMarkerUrl="miniGridIcon"
+                            :center="center"
+                            :markingInfos="markingInfos"
 
-                />
+                        />
+                    </md-card-content>
+
+                </md-card>
+
 
             </div>
             <div v-if="clusterData" class="md-layout-item
-       md-large-size-100 md-medium-size-50 md-small-size-50">
+       md-size-100">
                 <target-list
                     :target-id="clusterId"
                     target-type="cluster"
@@ -47,7 +53,7 @@
                 />
             </div>
             <div v-if="clusterData" class="md-layout-item
-       md-large-size-100 md-medium-size-50 md-small-size-50">
+       md-size-100">
                 <revenue-trends :cluster-id="clusterId"/>
 
             </div>
@@ -176,6 +182,7 @@
 </script>
 
 <style>
+
 
 </style>
 
