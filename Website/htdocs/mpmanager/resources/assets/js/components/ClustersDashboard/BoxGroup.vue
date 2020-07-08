@@ -54,14 +54,6 @@
             </div>
 
 
-            <md-speed-dial md-direction="bottom" style="position: fixed; right: 1rem; bottom: 1rem; z-index: 999">
-                <md-speed-dial-target @click="newCluster">
-                    <md-tooltip md-direction="top">Add a new Cluster</md-tooltip>
-                    <md-icon>add</md-icon>
-                </md-speed-dial-target>
-
-            </md-speed-dial>
-
         </div>
 
     </div>
@@ -69,13 +61,11 @@
 
 <script>
     import Box from '../Box'
-    import ChartistBox from '../ChartistBox'
-    import {currency} from '../../mixins/currency'
 
     export default {
+
         name: 'BoxGroup',
-        components: {Box, ChartistBox},
-        mixins: [currency],
+        components: { Box },
         props: {
             clusters: {
                 type: Array,
@@ -83,7 +73,7 @@
             }
         },
         computed: {
-            population() {
+            population () {
                 let population = 0
                 for (let c in this.clusters) {
                     for (let city in this.clusters[c].cities) {
@@ -92,7 +82,7 @@
                 }
                 return population
             },
-            connections() {
+            connections () {
                 let connections = 0
                 for (let c in this.clusters) {
                     for (let city in this.clusters[c].cities) {
@@ -101,7 +91,7 @@
                 }
                 return connections
             },
-            revenue() {
+            revenue () {
                 let revenue = 0
                 for (let c in this.clusters) {
                     for (let city in this.clusters[c].cities) {
@@ -111,11 +101,7 @@
                 return revenue
             },
         },
-        methods: {
-            newCluster() {
-                this.$router.push('/clusters/add')
-            }
-        }
+
     }
 </script>
 
