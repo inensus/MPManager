@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="md-layout md-gutter ">
-            <div class="md-layout-item md-medium-size-50 md-xsmall-size-100 md-size-25">
+            <div class="md-layout-item md-medium-size-50 md-xsmall-size-100 md-size-25 small-size-style">
                 <box
                     :centerText="true"
                     :color="[ '#26c6da','#00acc1']"
@@ -14,7 +14,7 @@
 
                 />
             </div>
-            <div class="md-layout-item md-medium-size-50 md-xsmall-size-100 md-size-25">
+            <div class="md-layout-item md-medium-size-50 md-xsmall-size-100 md-size-25 small-size-style">
 
                 <box
                     :centerText="true"
@@ -28,7 +28,7 @@
 
                 />
             </div>
-            <div class="md-layout-item md-medium-size-50 md-xsmall-size-100 md-size-25">
+            <div class="md-layout-item md-medium-size-50 md-xsmall-size-100 md-size-25 small-size-style">
                 <box
                     :centerText="true"
                     :color="[ '#ef5350','#e53935']"
@@ -40,7 +40,7 @@
                     :boxIconColor="'#604058'"
                 />
             </div>
-            <div class="md-layout-item md-medium-size-50 md-xsmall-size-100 md-size-25">
+            <div class="md-layout-item md-medium-size-50 md-xsmall-size-100 md-size-25 small-size-style">
                 <box
                     :centerText="true"
                     :color="[ '#6eaa44','#578839']"
@@ -131,4 +131,5 @@
         color: white !important;
         width: 100%;
     }
+
 </style>

@@ -2,7 +2,7 @@
 
     <div class="md-layout md-gutter">
 
-        <div class="md-layout-item md-medium-size-50 md-xsmall-size-100 md-size-25">
+        <div class="md-layout-item md-medium-size-50 md-xsmall-size-100 md-size-25 small-size-style">
             <box
                 :center-text="true"
                 :color="[ '#26c6da','#00acc1']"
@@ -14,7 +14,7 @@
                 :box-icon-color="'#578839'"
             />
         </div>
-        <div class="md-layout-item md-medium-size-50 md-xsmall-size-100 md-size-25">
+        <div class="md-layout-item md-medium-size-50 md-xsmall-size-100 md-size-25 small-size-style">
             <box
                 v-if="'people' in boxData"
 
@@ -29,7 +29,7 @@
 
             />
         </div>
-        <div class="md-layout-item md-medium-size-50 md-xsmall-size-100 md-size-25">
+        <div class="md-layout-item md-medium-size-50 md-xsmall-size-100 md-size-25 small-size-style">
             <box
                 v-if="'meters' in boxData"
 
@@ -43,7 +43,7 @@
                 :box-icon-color="'#604058'"
             />
         </div>
-        <div class="md-layout-item md-medium-size-50 md-xsmall-size-100 md-size-25">
+        <div class="md-layout-item md-medium-size-50 md-xsmall-size-100 md-size-25 small-size-style">
             <box
                 v-if=" 'revenue' in boxData"
 
@@ -120,5 +120,11 @@
 </script>
 
 <style>
+    @media screen and (max-width: 1280px) {
+        .small-size-style{
+            margin-bottom: 1rem !important;
+            min-height: unset;
+        }
+    }
 
 </style>
