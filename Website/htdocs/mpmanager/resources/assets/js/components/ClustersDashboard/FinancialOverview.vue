@@ -42,7 +42,7 @@
                             <md-card-header-text>
                                 Revenue Line
                             </md-card-header-text>
-                            <md-menu class="md-medium-hide"  md-size="big" md-direction="bottom-end">
+                            <md-menu class="md-medium-hide" md-size="big" md-direction="bottom-end">
                                 <md-button class="md-icon-button" md-menu-trigger
                                            @click="maximize('lineChartFullScreen')">
                                     <md-icon>fullscreen</md-icon>
@@ -71,7 +71,7 @@
                             <md-card-header-text>
                                 Revenue Columns
                             </md-card-header-text>
-                            <md-menu class="md-medium-hide"  md-size="big" md-direction="bottom-end">
+                            <md-menu class="md-medium-hide" md-size="big" md-direction="bottom-end">
                                 <md-button class="md-icon-button" md-menu-trigger
                                            @click="maximize('barChartFullScreen')">
                                     <md-icon>fullscreen</md-icon>
@@ -205,7 +205,7 @@
         },
         methods: {
             showPeriod () {
-                this.setPeriod = true
+                this.setPeriod = !this.setPeriod
             },
             async getClusterFinancialData () {
 
@@ -217,19 +217,18 @@
                     this.financialData = await this.clusterService.getAllRevenues('monthly', from, to)
 
                     this.loaded = true
-                    this.loading = false
 
                     if (from !== null) {
 
                         this.periodText = from + ' - ' + to
                     }
 
-                    this.setPeriod = false
                 } catch (e) {
                     this.alertNotify('error', e.message)
 
                 }
-
+                this.setPeriod = false
+                this.loading = false
             },
             financialDataChart (type, summary = false) {
                 let data = []
@@ -357,7 +356,8 @@
     .datepicker-right .vdp-datepicker__calendar {
         right: 0;
     }
-    .chart-card{
+
+    .chart-card {
         margin-bottom: 1vh;
     }
 </style>
