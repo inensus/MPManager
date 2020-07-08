@@ -11,6 +11,8 @@ namespace App\Http\Services;
 
 use App\Http\Middleware\Transaction;
 use App\Models\Meter\Meter;
+use App\Models\Transaction\AirtelTransaction;
+use App\Models\Transaction\VodacomTransaction;
 use Illuminate\Database\Eloquent\Collection;
 
 class TransactionService
@@ -47,6 +49,61 @@ class TransactionService
     {
         $total = $this->meter->sumOfTransactions($meters->pluck('serial_number')->toArray(), $range);
         return $total[0]['total'] ?? 0;
+    }
+
+    public function totalClusterTransactions($clusterId, $range)
+    {
+        return
+            \App\Models\Transaction\Transaction::query()->whereHas('meter', function ($q) use ($clusterId) {
+                $q->whereHas('meterParameter', function ($q) use ($clusterId) {
+                    $q->whereHas('address', function ($q) use ($clusterId) {
+                        $q->whereHas('city', function ($q) use ($clusterId) {
+                            $q->where('cluster_id', $clusterId);
+                        });
+                    });
+                });
+            })->whereHasMorph('originalTransaction', [VodacomTransaction::class, AirtelTransaction::class],
+                static function ($q) {
+                    $q->where('status', 1);
+                })
+                ->whereBetween('created_at', $range)
+                ->sum('amount');
+    }
+
+    public function totalMiniGridTransactions($miniGridId, $range)
+    {
+        return
+            \App\Models\Transaction\Transaction::query()->whereHas('meter', function ($q) use ($miniGridId) {
+                $q->whereHas('meterParameter', function ($q) use ($miniGridId) {
+                    $q->whereHas('address', function ($q) use ($miniGridId) {
+                        $q->whereHas('city', function ($q) use ($miniGridId) {
+                            $q->where('mini_grid_id', $miniGridId);
+                        });
+                    });
+                });
+            })->whereHasMorph('originalTransaction', [VodacomTransaction::class, AirtelTransaction::class],
+                static function ($q) {
+                    $q->where('status', 1);
+                })
+                ->whereBetween('created_at', $range)
+                ->sum('amount');
+    }
+
+    public function totalCityTransactions($cityId, $range)
+    {
+        return
+            \App\Models\Transaction\Transaction::query()->whereHas('meter', function ($q) use ($cityId) {
+                $q->whereHas('meterParameter', function ($q) use ($cityId) {
+                    $q->whereHas('address', function ($q) use ($cityId) {
+                        $q->where('city_id', $cityId);
+                    });
+                });
+            })->whereHasMorph('originalTransaction', [VodacomTransaction::class, AirtelTransaction::class],
+                static function ($q) {
+                    $q->where('status', 1);
+                })
+                ->whereBetween('created_at', $range)
+                ->sum('amount');
     }
 
 }

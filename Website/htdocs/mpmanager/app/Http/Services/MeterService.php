@@ -30,6 +30,56 @@ class MeterService
         $this->meter = $meter;
     }
 
+    public function getClusterRevenue($clusterId)
+    {
+
+    }
+
+    public function getMeterCountInCluster($clusterId)
+    {
+        return $this->meter::whereHas('meterParameter', function ($q) use ($clusterId) {
+            $q->whereHas('address', function ($q) use ($clusterId) {
+                $q->whereHas('city', function ($q) use ($clusterId) {
+                    $q->where('cluster_id', $clusterId);
+                });
+            });
+        })->count();
+    }
+
+    public function getMeterCountInMiniGrid($miniGridId)
+    {
+        return $this->meter::whereHas('meterParameter', function ($q) use ($miniGridId) {
+            $q->whereHas('address', function ($q) use ($miniGridId) {
+                $q->whereHas('city', function ($q) use ($miniGridId) {
+                    $q->where('mini_grid_id', $miniGridId);
+                });
+            });
+        })->count();
+    }
+
+    public function getMeterCountInCity($cityId)
+    {
+        return $this->meter::whereHas('meterParameter', function ($q) use ($cityId) {
+            $q->whereHas('address', function ($q) use ($cityId) {
+                $q->where('city_id', $cityId);
+            });
+        })->count();
+    }
+
+
+    public function meterTransactions(City $city)
+    {
+        $cityId = $city->id;
+        $meters = $this->meter::whereHas('meterParameter', function ($q) use ($cityId) {
+            $q->whereHas('address', function ($q) use ($cityId) {
+                $q->where('city_id', $cityId);
+            });
+        })->count();
+
+        $city['metersCount'] = $meters;
+        return $city;
+    }
+
     public function getMetersInCity(City $city): City
     {
         $cityId = $city->id;

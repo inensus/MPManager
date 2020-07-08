@@ -11,7 +11,6 @@ namespace App\Http\Services;
 
 use App\Models\City;
 use App\Models\Cluster;
-use Illuminate\Database\Eloquent\Collection;
 
 class ClusterService
 {
@@ -38,14 +37,15 @@ class ClusterService
         $this->city = $city;
     }
 
-    public function getClusterCities(Cluster $cluster): Collection
+    public function getClusterCities($clusterId)
     {
-        return $cluster->cities()->get();
+        return Cluster::query()->with('cities')->find($clusterId);
     }
 
-    public function getClusterMiniGrids(Cluster $cluster): Collection
+    public function getClusterMiniGrids($clusterId)
     {
-        return $cluster->miniGrids()->get();
+        return Cluster::query()->with('miniGrids')->find($clusterId);
+
     }
 
 

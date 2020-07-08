@@ -77,16 +77,31 @@ export class ClusterService {
         }
     }
 
-    async getClusterRevenues (clusterId, period, startDate, endDate) {
+    async getClusterCitiesRevenue (clusterId, period, startDate, endDate) {
         try {
-            let revenuePM = {
-                'period': period,
-                'startDate': startDate,
-                'endDate': endDate
-            }
 
-            let response = await this.repository.getClusterRevenues(clusterId, revenuePM)
-            if (response.status === 201 || response.status === 200) {
+            const queryString = `?period=${period}&startDate=${startDate ??
+            ''}&endDate=${endDate ?? ''}`
+
+            let response = await this.repository.getClusterCitiesRevenue(
+                clusterId,
+                queryString)
+            if (response.status === 200) {
+                return response.data.data
+            } else {
+                return new ErrorHandler(response.error, 'http', response.status)
+            }
+        } catch (e) {
+            let erorMessage = e.response.data.data.message
+            return new ErrorHandler(erorMessage, 'http')
+        }
+    }
+
+    async getClusterRevenues (clusterId) {
+        try {
+
+            let response = await this.repository.getClusterRevenues(clusterId)
+            if (response.status === 200) {
                 return response.data.data
             } else {
                 return new ErrorHandler(response.error, 'http', response.status)
@@ -99,13 +114,11 @@ export class ClusterService {
 
     async getAllRevenues (period, startDate, endDate) {
         try {
-            let revenuePM = {
-                'period': period,
-                'startDate': startDate,
-                'endDate': endDate
-            }
 
-            let response = await this.repository.getAllRevenues(revenuePM)
+            const queryString = `?period=${period}&startDate=${startDate ??
+            ''}&endDate=${endDate ?? ''}`
+
+            let response = await this.repository.getAllRevenues(queryString)
             if (response.status === 201 || response.status === 200) {
                 return response.data.data
             } else {

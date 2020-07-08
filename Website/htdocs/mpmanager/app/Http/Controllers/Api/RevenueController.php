@@ -3,35 +3,29 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\ApiResource;
+use App\Http\Services\CityService;
 use App\Http\Services\ClusterService;
 use App\Http\Services\MeterService;
 use App\Http\Services\PeriodService;
 use App\Http\Services\RevenueService;
+use App\Http\Services\TransactionService;
 use App\Models\City;
-use App\Models\MiniGrid;
 use App\Models\Cluster;
 use App\Models\ConnectionGroup;
 use App\Models\ConnectionType;
 use App\Models\Meter\Meter;
 use App\Models\Meter\MeterTariff;
 use App\Models\Meter\MeterToken;
+use App\Models\MiniGrid;
 use App\Models\Revenue;
 use App\Models\Target;
 use App\Models\Transaction\Transaction;
-use Carbon\Carbon;
 use DateInterval;
 use DatePeriod;
 use DateTime;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Inensus\Ticket\Models\Label;
 use Inensus\Ticket\Models\Ticket;
-use Inensus\Ticket\Trello\Api;
-use Mockery\Exception;
 use stdClass;
 use function count;
 
@@ -101,6 +95,14 @@ class RevenueController extends Controller
      * @var City
      */
     private $city;
+    /**
+     * @var TransactionService
+     */
+    private $transactionService;
+    /**
+     * @var CityService
+     */
+    private $cityService;
 
 
     /**
@@ -122,6 +124,8 @@ class RevenueController extends Controller
      * @param ConnectionGroup $connectionGroup
      * @param MiniGrid $miniGrid
      * @param City $city
+     * @param TransactionService $transactionService
+     * @param CityService $cityService
      */
     public function __construct(
         Revenue $revenue,
@@ -139,25 +143,26 @@ class RevenueController extends Controller
         PeriodService $periodService,
         ConnectionGroup $connectionGroup,
         MiniGrid $miniGrid,
-        City $city
+        City $city,
+        TransactionService $transactionService,
+        CityService $cityService
     ) {
 
         $this->revenue = $revenue;
-        $this->connectionType = $connectionType;
         $this->target = $target;
         $this->meterToken = $meterToken;
         $this->transaction = $transaction;
         $this->ticket = $ticket;
         $this->label = $label;
-        $this->meter = $meter;
         $this->clusterService = $clusterService;
         $this->meterService = $meterService;
         $this->revenueService = $revenueService;
         $this->periodService = $periodService;
         $this->cluster = $cluster;
         $this->connectionGroup = $connectionGroup;
-        $this->miniGrid = $miniGrid;
         $this->city = $city;
+        $this->transactionService = $transactionService;
+        $this->cityService = $cityService;
     }
 
 
@@ -630,6 +635,43 @@ class RevenueController extends Controller
         }, $names);
     }
 
+    public function getPeriodicMiniGridsRevenue($id, Request $request): ApiResource
+    {
+        $startDate = $request->input('startDate') ?? date('Y-01-01');
+        $endDate = $request->input('endDate') ?? date('Y-m-t');
+        $period = $request->input('period') ?? 'monthly';
+
+        //get meters in clusters
+        $clusterMiniGrids = $this->clusterService->getClusterMiniGrids($id);
+        $miniGrids = $clusterMiniGrids->miniGrids;
+        //generate initial dataset for revenue
+        $periods = $this->periodService->generatePeriodicList($startDate, $endDate, $period, ['revenue' => 0]);
+
+        foreach ($miniGrids as $miniGridIndex => $miniGrid) {
+            $totalRevenue = 0;
+            $p = $periods;
+            $revenues = $this->revenueService->getMiniGridsRevenueByPeriod($miniGrid->id,
+                [$startDate, $endDate],
+                $period);
+
+            foreach ($revenues as $rIndex => $revenue) {
+                if ($period === 'weekMonth') {
+                    $p[$revenue->period][$revenue->week]['revenue'] = $revenue->revenue;
+                } elseif ($period = "monthly") {
+                    $p[$revenue->period]['revenue'] += $revenue->revenue;
+                }
+                $totalRevenue += $revenue->revenue;
+
+            }
+
+            $miniGrids[$miniGridIndex]['period'] = $p;
+            $miniGrids[$miniGridIndex]['totalRevenue'] = $totalRevenue;
+
+        }
+        return new ApiResource($miniGrids);
+        //get revenues by cities and summarise it
+    }
+
 
     /**
      * Revenue
@@ -703,29 +745,21 @@ class RevenueController extends Controller
         foreach ($clusters as $clusterIndex => $cluster) {
             $totalRevenue = 0;
             $p = $periods;
+            $revenues = $this->revenueService->getClustersRevenueByPeriod($cluster->id,
+                [$startDate, $endDate],
+                $period);
 
 
-            foreach ($cluster->cities as $cityIndex => $city) {
-
-                $cityMeters = $this->meterService->getMetersInCity($city);
-
-                $revenues = $this->revenueService->getMetersRevenueByPeriod($cityMeters->meters,
-                    [$startDate, $endDate],
-                    $period);
-
-
-                foreach ($revenues as $rIndex => $revenue) {
-                    if ($period === 'weekMonth') {
-                        $p[$revenue->period][$revenue->week]['revenue'] = $revenue->revenue;
-                    } elseif ($period = "monthly") {
-                        $p[$revenue->period]['revenue'] += $revenue->revenue;
-                    }
-                    $totalRevenue += $revenue->revenue;
-
+            foreach ($revenues as $rIndex => $revenue) {
+                if ($period === 'weekMonth') {
+                    $p[$revenue->period][$revenue->week]['revenue'] = $revenue->revenue;
+                } elseif ($period = "monthly") {
+                    $p[$revenue->period]['revenue'] += $revenue->revenue;
                 }
-                $clusters[$clusterIndex]->cities[$cityIndex]['revenue'] = $periods;
+                $totalRevenue += $revenue->revenue;
+
             }
-            unset($clusters[$clusterIndex]['cities']);
+
             $clusters[$clusterIndex]['period'] = $p;
             $clusters[$clusterIndex]['totalRevenue'] = $totalRevenue;
 
@@ -736,36 +770,25 @@ class RevenueController extends Controller
 
     public function getClusterRevenue($id, Request $request): ApiResource
     {
-
         $clusterId = $id;
-        $startDate = $request->get('startDate') ?? date('Y-01-01');
-        $endDate = $request->get('endDate') ?? date('Y-m-t');
-        $period = $request->get('period') ?? 'monthly';
-        $periods = $this->periodService->generatePeriodicList($startDate, $endDate, $period, ['revenue' => 0]);
-
-        //get minigrids in clusters
-        $cluster = $this->cluster::with('cities')->find($clusterId);
-
-        foreach ($cluster->cities as $cityIndex => $city) {
-            $p = $periods;
-            $cityMeters = $this->meterService->getMetersInCity($city);
-
-            $revenues = $this->revenueService->getMetersRevenueByPeriod($cityMeters->meters, [$startDate, $endDate],
-                $period);
-
-            foreach ($revenues as $rIndex => $revenue) {
-                if ($period === 'weekMonth') {
-                    $p[$revenue->period][$revenue->week]['revenue'] = $revenue->revenue;
-                } elseif ($period = "monthly") {
-                    $p[$revenue->period]['revenue'] += $revenue->revenue;
-                }
-
-
-            }
-            #  $cluster['period'] = $periods;
-            $cluster->cities[$cityIndex]['revenue'] = $p;
-            unset($cluster->cities[$cityIndex]['meters']);
+        $startDate = $request->get('startDate');
+        $endDate = $request->get('endDate');
+        $dateRange = [];
+        if ($startDate !== null && $endDate !== null) {
+            $dateRange[0] = $startDate;
+            $dateRange[1] = $endDate;
+        } else {
+            $dateRange[0] = date('Y-m-d', strtotime('today - 31 days'));
+            $dateRange[1] = date('Y-m-d', strtotime('today - 1 days'));
         }
+
+
+        $cluster = $this->cluster->find($clusterId);
+
+
+        $cluster->meterCount = $this->meterService->getMeterCountInCluster($cluster->id);
+        $cluster->revenue = $this->transactionService->totalClusterTransactions($cluster->id, $dateRange);
+        $cluster->population = $this->cityService->getClusteropulation($cluster->id);
 
         return new ApiResource($cluster);
 
@@ -791,38 +814,38 @@ class RevenueController extends Controller
         //get connection types
         $connectionTypes = ConnectionType::get();
         // get meters in mini-grids
-        foreach ($cluster->cities as $cityIndex => $city) {
 
-            foreach ($connectionTypes as $connectionType) {
-                if (!isset($revenueAnalysis[$connectionType->name])) {
-                    $revenueAnalysis[$connectionType->name] = $periods;
-                }
-                if (!isset($revenueAnalysis['Total'])) {
-                    $revenueAnalysis['Total'] = $periods;
-                }
 
-                //get meters in city with connection type
-                $miniGridMeters = $this->meterService->getMetersInCityWithConnectionType($city, $connectionType->id);
-                $revenues = $this->revenueService->getMetersRevenueByPeriod(
-                    $miniGridMeters->meters,
-                    [$startDate, $endDate],
-                    $period
-                );
+        foreach ($connectionTypes as $connectionType) {
+            if (!isset($revenueAnalysis[$connectionType->name])) {
+                $revenueAnalysis[$connectionType->name] = $periods;
+            }
+            if (!isset($revenueAnalysis['Total'])) {
+                $revenueAnalysis['Total'] = $periods;
+            }
 
-                foreach ($revenues as $revenue) {
-                    if ($period === 'monthly') {
-                        $revenueAnalysis[$connectionType->name][$revenue->period] += $revenue->revenue;
-                        $revenueAnalysis['Total'][$revenue->period] += $revenue->revenue;
-                    } elseif ($period === 'weekly') {
-                        $revenueAnalysis[$connectionType->name][$revenue->week] += $revenue->revenue;
-                        $revenueAnalysis['Total'][$revenue->week] += $revenue->revenue;
-                    } elseif ($period === 'weekMonth') {
-                        $revenueAnalysis[$connectionType->name][$revenue->period][$revenue->week] += $revenue->revenue;
-                        $revenueAnalysis['Total'][$revenue->period][$revenue->week] += $revenue->revenue;
-                    }
+            //get meters in city with connection type
+            $revenues = $this->revenueService->getClustersRevenueByPeriod(
+                $clusterId,
+                [$startDate, $endDate],
+                $period,
+                $connectionType->id
+            );
+
+            foreach ($revenues as $revenue) {
+                if ($period === 'monthly') {
+                    $revenueAnalysis[$connectionType->name][$revenue->period] += $revenue->revenue;
+                    $revenueAnalysis['Total'][$revenue->period] += $revenue->revenue;
+                } elseif ($period === 'weekly') {
+                    $revenueAnalysis[$connectionType->name][$revenue->week] += $revenue->revenue;
+                    $revenueAnalysis['Total'][$revenue->week] += $revenue->revenue;
+                } elseif ($period === 'weekMonth') {
+                    $revenueAnalysis[$connectionType->name][$revenue->period][$revenue->week] += $revenue->revenue;
+                    $revenueAnalysis['Total'][$revenue->period][$revenue->week] += $revenue->revenue;
                 }
             }
         }
+
         asort($revenueAnalysis);
         return new ApiResource($revenueAnalysis);
     }

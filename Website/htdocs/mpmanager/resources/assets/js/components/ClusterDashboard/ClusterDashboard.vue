@@ -11,15 +11,14 @@
             <div v-if="clusterData" class="md-layout-item
        md-size-100">
                 <box-group
-                    :mini-grids="clusterData"
-                    :box-data="boxData"
+                    :cluster="clusterData"
                 />
 
             </div>
             <div v-if="clusterId" class="md-layout-item
        md-size-100">
                 <financial-overview
-                    :cluster-id="this.clusterId"
+                    :cluster-id="clusterId"
                     @complete="addRevenue"
                 />
 
@@ -42,7 +41,7 @@
 
 
             </div>
-            <div v-if="clusterData" class="md-layout-item
+            <div v-if="clusterData && 1===-1" class="md-layout-item
        md-size-100">
                 <target-list
                     :target-id="clusterId"
@@ -139,6 +138,7 @@
             },
             async getMiniGridList () {
                 this.clusterData = await this.clusterService.getDetails(this.clusterId)
+
                 let clusterGeoData = await this.clusterService.getClusterGeoLocation(this.clusterId)
                 this.center = [clusterGeoData.lat, clusterGeoData.lon]
                 this.geoData = this.mappingService.focusLocation(clusterGeoData)

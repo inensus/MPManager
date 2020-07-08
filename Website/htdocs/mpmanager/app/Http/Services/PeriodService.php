@@ -30,7 +30,13 @@ class PeriodService
         $result = [];
         $begin = date_create($startDate);
         $end = date_create($endDate);
-        $end->add(new DateInterval('P1D'));
+
+
+        if ($end->diff($begin)->days % 365 === 0) {
+            $end->add(new DateInterval('P1D'));
+        }
+        $end->setTime(0, 0, 1);
+
         if ($interval === 'weekly') {
             $i = new DateInterval('P1W');
         } else {
@@ -38,13 +44,14 @@ class PeriodService
         }
         $period = new DatePeriod($begin, $i, $end);
 
-        foreach ($period as $p) {
 
+        foreach ($period as $p) {
             if ($interval === 'weekMonth') {
+
                 $mPeriod = new DatePeriod(
                     date_create($p->format('o-m-1')),
                     new DateInterval('P1W'),
-                    date_create(date("Y-m-t", strtotime($p->format('o-m-1'))))
+                    date_create(date("Y-m-t", strtotime($p->format('o-m-1')))),
                 );
                 foreach ($mPeriod as $mP) {
                     $result    [$p->format('o-m')][$mP->format('o-W')] = $initialData;

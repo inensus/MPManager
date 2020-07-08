@@ -695,6 +695,7 @@
                             ticketChartDataClosed.push(ticketData.closed)
                         }
 
+
                         openedTicketChartData.push(ticketChartDataOpened)
                         openedTicketChartData.push(ticketChartDataClosed)
                         closedTicketChartData.push(ticketChartDataClosed)
@@ -760,6 +761,7 @@
                         this.trendChartData.base.push(tmpChartData)
                     }
 
+
                     if (Object.keys(this.highlighted.compared).length > 0) { //compare data is also available.
                         let compareData = await this.revenueService.getMiniGridRevenueTrends(this.miniGridId, this.startDate, this.endDate)
 
@@ -775,6 +777,7 @@
 
                         }
                     }
+
                 } catch (e) {
                     this.alertNotify('error', e.message)
                 }
@@ -1027,10 +1030,12 @@
                     ])
                 }
                 return donutData
+
             },
             dateSelectedBase (val) {
                 this.dateSelected(val)
             },
+
             dateSelectedCompared (val) {
                 this.dateSelected(val, false)
             },

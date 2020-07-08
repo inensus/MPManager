@@ -286,11 +286,12 @@ Route::group(['prefix' => '/clusters'], function () {
     Route::post('/{id}/revenue/analysis', 'RevenueController@getRevenueAnalysisForCluster');
     Route::get('/', 'ClusterController@index');
     Route::get('/geo', 'ClusterController@geo');
-    Route::post('/revenue', 'RevenueController@getPeriodicClustersRevenue');
-    Route::post('/{id}/revenue', 'RevenueController@getClusterRevenue');
+    Route::get('/revenue', 'RevenueController@getPeriodicClustersRevenue');
+    Route::get('/{id}/revenue', 'RevenueController@getClusterRevenue');
     Route::post('/', 'ClusterController@store');
     Route::get('/{id}', 'ClusterController@show');
     Route::get('/{cluster}/geo', 'ClusterController@showGeo');
+    Route::get('/{id}/cities-revenue', 'RevenueController@getPeriodicMiniGridsRevenue');
 });
 
 Route::get('/clusterlist', 'ClusterController@index');

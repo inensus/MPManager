@@ -37,6 +37,11 @@ class City extends BaseModel
         return $this->belongsTo(MiniGrid::class);
     }
 
+    public function cluster(): BelongsTo
+    {
+        return $this->belongsTo(Cluster::class);
+    }
+
     public function location(): MorphOne
     {
         return $this->morphOne(GeographicalInformation::class, 'owner');
