@@ -110,9 +110,6 @@ export class Tickets {
       if (type === 'ticketListOpened')
         if (ticketData !== null)
           this.openedList.push(ticketData)
-        else {
-
-        }
       else {
         if (ticketData !== null) {
           this.closedList.push(ticketData)

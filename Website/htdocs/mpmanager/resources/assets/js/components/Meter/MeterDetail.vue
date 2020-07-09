@@ -199,9 +199,6 @@
                         <h2>NO DATA for {{dates.dateOne}} - {{dates.dateTwo}}</h2>
                     </div>
 
-                    <div v-if="loading === true" class="text-center">
-
-                    </div>
                 </md-card-content>
             </md-card>
         </widget>
