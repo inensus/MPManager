@@ -66,17 +66,17 @@ export class AuthenticationService {
         }
     }
 
-
     startTimer () {
 
         if (this.authenticateUser.remaining_time <= 0) return
         let interval = setInterval(() => {
             this.authenticateUser.remaining_time--
+
             if (this.authenticateUser.remaining_time <= 300 && this.authenticateUser.remaining_time > 0) {
 
                 EventBus.$emit('ask.for.extend', this.authenticateUser.remaining_time)
             } else if (this.authenticateUser.remaining_time === 0) {
-                this.$store.dispatch('auth/logOut')
+
                 EventBus.$emit('session.end', true)
                 clearInterval(interval)
             }
