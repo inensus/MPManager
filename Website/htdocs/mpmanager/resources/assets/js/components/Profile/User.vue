@@ -191,7 +191,7 @@
                             .map(x => x.id)[0]
                     }
                 } catch (error) {
-                    console.log(error)
+
                 }
             },
 
@@ -220,9 +220,6 @@
                 this.$validator.validateAll('password').then(result => {
                     if (result) {
                         this.changePassword()
-                    }
-                    if (!result) {
-                        console.log('Validation failed for change password')
                     }
                 })
             },

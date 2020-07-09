@@ -56,7 +56,7 @@ export class Tariffs {
                 for (let i in data) {
                     let t = data[i]
 
-                    console.log(t)
+
 
                     let a = t.access_rate
                     let accessRate = null

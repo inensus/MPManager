@@ -97,7 +97,7 @@
 
                 let marker = this.markers.filter(x => x.id === data)
                 if (marker.length > 0) {
-                    console.log(marker[0])
+
                     this.map.setView(marker[0].coords, 22)
                     this.center = this.makePosition(marker[0])
                     this.zoom = 14

@@ -132,7 +132,7 @@
             async nextStep (id, index) {
                 this[id] = true
                 this.loadingNextStep = true
-                console.log('start')
+
                 if (id === 'firstStep' && index === 'secondStep') {
                     if (this.purchasingType === 'logger') {
                         window.open('https://micropowermanager.com/logger', '_blank')
@@ -156,7 +156,7 @@
                             this.PaymentProcess = true
                         }
                     } catch (e) {
-                        console.log(e)
+
                         this.PaymentProcess = false
 
                     }
@@ -164,7 +164,7 @@
                         this.activeStep = index
                     }
                 }
-                console.log('stop')
+
                 this.loadingNextStep = false
 
             },

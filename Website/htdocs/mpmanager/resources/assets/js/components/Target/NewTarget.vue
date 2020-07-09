@@ -15,7 +15,7 @@
                                 name="assigned_for"
                                 v-model="targetAssignType"
                                 @md-selected="onTargetTypeChange"
-                                v-validate.initial="'required'"
+                                v-validate="'required'"
                             >
                                 <md-option selected disabled> -- Select destination for target --</md-option>
                                 <md-option value="cluster">Cluster</md-option>
@@ -30,7 +30,7 @@
                             <label> Assigned to</label>
                             <md-select :disabled="targetDestinations.length===0 || dataIsLoading === true"
                                        v-model="targetAssignId"
-                                       v-validate.initial="'required'"
+                                       v-validate="'required'"
                                        name="assigned_to"
                             >
                                 <md-option selected disabled> -- Select destination for target --</md-option>
@@ -212,7 +212,7 @@
                 connectionTypes: new ConnectionTypes(),
                 numberOfCustomers: new NumberOfCustomers(),
                 targets: new Targets(),
-                targetValidUntil: '',
+                targetValidUntil: new Date(),
             }
         },
         methods: {
