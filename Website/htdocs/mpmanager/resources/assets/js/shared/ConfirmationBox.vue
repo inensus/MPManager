@@ -32,8 +32,6 @@
 
           if (result.value) {
             this.$emit('confirmed', data)
-          } else {
-
           }
 
         })

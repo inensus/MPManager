@@ -300,8 +300,6 @@
             }
             parent.polygon.setLatLngs(parent.polygonCoordinates)
 
-          } else {
-
           }
         })
         this.$emit('mapInitialized', this.map)
