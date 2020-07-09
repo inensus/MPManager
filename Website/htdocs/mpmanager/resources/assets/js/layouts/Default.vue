@@ -36,7 +36,7 @@
 <script>
     import NavBar from '../layouts/NavBar.vue'
     import FooterBar from '../layouts/FooterBar.vue'
-    import {EventBus} from '../shared/eventbus'
+    import { EventBus } from '../shared/eventbus'
     import TopNavbar from './TopNavbar.vue'
     import SideBar from '../components/Sidebar/SideBar'
 
@@ -48,7 +48,7 @@
             FooterBar,
             SideBar
         },
-        mounted() {
+        mounted () {
             //register the time extender
             EventBus.$on('ask.for.extend', this.showExtender)
             EventBus.$on('session.end', this.logout)
@@ -64,7 +64,7 @@
             sidebarBackgroundImage: null
         }),
         methods: {
-            showExtender(val) {
+            showExtender (val) {
                 this.expires_in = val
                 if (this.showed === true) {
                     return
@@ -72,13 +72,15 @@
                 this.showed = true
                 this.active = true
             },
-            extendToken() {
+            extendToken () {
                 this.confirmed = true
                 location.reload()
             },
-            logout() {
+            logout () {
+                this.$store.dispatch('auth/logOut').then(() => {
+                    this.$router.replace('/login')
+                })
 
-                this.$router.replace('/login')
             }
         }
     }
@@ -96,7 +98,8 @@
             min-width: 260px;
 
         }
-        .main-panel{
+
+        .main-panel {
             width: 85%;
             max-width: calc(100% - 260px);
         }
