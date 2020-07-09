@@ -38,12 +38,13 @@ export class TariffService {
             if (response.status === 200 || response.status === 201) {
                 this.list = []
                 let data = response.data.data
+
                 for (let i in data) {
 
                     let tariffData = data[i]
                     let tariffDataAccessRate = tariffData.access_rate
                     let accessRate = null
-                    if (tariffDataAccessRate !== undefined) {
+                    if (tariffDataAccessRate !== undefined && tariffDataAccessRate !== null) {
                         accessRate = new AccessRate(
                             tariffDataAccessRate.id,
                             tariffDataAccessRate.amount,

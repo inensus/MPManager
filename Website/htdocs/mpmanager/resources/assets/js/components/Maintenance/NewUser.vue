@@ -192,7 +192,7 @@
                     }
                     this.onClose()
                 }).catch((e) => {
-                    console.log(e)
+
                     if (e.status_code === 409) {
                         this.alertNotify('warn', e.message)
                         this.ModalVisibility = true

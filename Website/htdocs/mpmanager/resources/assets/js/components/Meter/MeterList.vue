@@ -163,7 +163,7 @@ export default {
       });
     },
     searching(searchTerm) {
-      console.log("find search term", searchTerm);
+
       this.meters.search(searchTerm);
     },
     endSearching() {

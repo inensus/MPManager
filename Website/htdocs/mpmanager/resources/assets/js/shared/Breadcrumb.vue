@@ -22,7 +22,7 @@
         },
         created() {
             EventBus.$on('bread', data => {
-                console.log("breadcrumb.vue", data);
+
                 this.items = data;
             });
         },

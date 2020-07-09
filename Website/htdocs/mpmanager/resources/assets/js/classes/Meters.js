@@ -60,7 +60,7 @@ export class Meters {
           meter.tariff = data[m].meter_parameter.tariff.name + ' ' + (data[m].meter_parameter.tariff.price / 100)
         }
       } else {
-        console.log('meter parameter not found ', data[m])
+
       }
       this.list.push(meter)
     }

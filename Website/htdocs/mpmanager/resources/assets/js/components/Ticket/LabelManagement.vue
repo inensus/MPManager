@@ -23,17 +23,11 @@
                             <md-field>
                                 <label>Select Color</label>
                                 <md-select v-model="currentColor">
-                                    <md-option disabled selected>-- Select --</md-option>
-                                    <md-option v-for="(color,colorName) in colors" :value="colorName" :key="colorName">
-                                        <div class="md-layout md-gutter">
-                                            <div class="md-layout-item">
-                                                {{colorName}}
-                                            </div>
-                                            <div class="md-layout-item">
-                                               <span class="colored-box"
-                                                     :style="{ backgroundColor: colors[colorName]}"></span>
-                                            </div>
-                                        </div>
+
+                                    <md-option v-for="(index,colorName) in colors" :value="colorName" :key="colorName">
+                                        {{colorName}}
+                                        <span class="colored-box" style="margin-left: 1rem;max-width: 100px"
+                                              :style="{ backgroundColor: colors[colorName]}"> </span>
 
 
                                     </md-option>
@@ -111,108 +105,112 @@
 </template>
 
 <script>
-  import { EventBus } from '../../shared/eventbus'
-  import Widget from '../../shared/widget'
+    import { EventBus } from '../../shared/eventbus'
+    import Widget from '../../shared/widget'
 
-  export default {
-    name: 'LabelManagement',
-    components: { Widget },
-    data () {
-      return {
-        labels: [],
-        newLabel: false,
-        newLabelName: '',
-        currentColor: null,
-        outSourcing: false,
-        colors: {
-          nocolor: 'null',
-          yellow: '#ffff00',
-          purple: '#cc00ff',
-          blue: '#0000cc',
-          red: '#ff0000',
-          green: '#00ff00',
-          orange: '#ffb700',
-          black: '#000000',
-          sky: '#00b7cc',
-          pink: '#cc0555',
-          lime: '#bfe61f',
+    export default {
+        name: 'LabelManagement',
+        components: { Widget },
+        data () {
+            return {
+                labels: [],
+                newLabel: false,
+                newLabelName: '',
+                currentColor: null,
+                outSourcing: false,
+                colors: {
+                    nocolor: 'null',
+                    yellow: '#ffff00',
+                    purple: '#cc00ff',
+                    blue: '#0000cc',
+                    red: '#ff0000',
+                    green: '#00ff00',
+                    orange: '#ffb700',
+                    black: '#000000',
+                    sky: '#00b7cc',
+                    pink: '#cc0555',
+                    lime: '#bfe61f',
+                },
+                bcd: {
+                    'Home': {
+                        'href': '/'
+                    },
+                    'Tickets': {
+                        'href': null
+                    },
+                    'Settings': {
+                        'href': null
+                    },
+                    'Category Management': {
+                        'href': null
+                    },
+                },
+            }
+
         },
-        bcd: {
-          'Home': {
-            'href': '/'
-          },
-          'Tickets': {
-            'href': null
-          },
-          'Settings': {
-            'href': null
-          },
-          'Category Management': {
-            'href': null
-          },
+
+        created () {
+            this.getLabels()
+
         },
-      }
 
-    },
+        mounted () {
+            EventBus.$emit('bread', this.bcd)
+        },
+        methods: {
+            getLabels () {
+                axios.get(resources.ticket.labels)
+                    .then(response => {
+                        this.labels = response.data.data
+                    })
+            },
+            saveLabel () {
+                if (this.currentColor === null) {
+                    this.$swal({
+                        type: 'error',
+                        title: 'No color selected',
+                        text: 'Please select a category color.',
+                        timer: 5000
+                    })
+                    return
+                }
+                if (this.newLabelName === '') {
+                    this.$swal({
+                        type: 'error',
+                        title: 'No name entered',
+                        text: 'Please enter a category name.',
+                        timer: 5000
+                    })
+                    return
+                }
 
-    created () {
-      this.getLabels()
+                axios.post(resources.ticket.labels, {
+                    'labelName': this.newLabelName,
+                    'labelColor': this.currentColor,
+                    'outSourcing': this.outSourcing,
+                })
+                    .then(response => {
+                        let labelData = response.data.data
+                        this.labels.push({
+                            'id': labelData.id,
+                            'label_name': labelData.label_name,
+                            'label_color': labelData.label_color,
+                            'outSourcing': labelData.outSourcing,
+                        })
+                    })
 
-    },
+                this.newLabel = false
 
-    mounted () {
-      EventBus.$emit('bread', this.bcd)
-    },
-    methods: {
-      getLabels () {
-        axios.get(resources.ticket.labels)
-          .then(response => {
-            this.labels = response.data.data
-          })
-      },
-      saveLabel () {
-        if (this.currentColor === null) {
-          this.$swal({
-            type: 'error',
-            title: 'No color selected',
-            text: 'Please select a category color.',
-            timer: 5000
-          })
-          return
-        }
-        if (this.newLabelName === '') {
-          this.$swal({
-            type: 'error',
-            title: 'No name entered',
-            text: 'Please enter a category name.',
-            timer: 5000
-          })
-          return
-        }
-
-        axios.post(resources.ticket.labels, {
-          'labelName': this.newLabelName,
-          'labelColor': this.currentColor,
-          'outSourcing': this.outSourcing,
-        })
-          .then(response => {
-            let labelData = response.data.data
-            this.labels.push({
-              'id': labelData.id,
-              'label_name': labelData.label_name,
-              'label_color': labelData.label_color,
-              'outSourcing': labelData.outSourcing,
-            })
-          })
-
-        this.newLabel = false
-
-      },
-    },
-  }
+            },
+        },
+    }
 </script>
 
-<style scoped>
+<style lang="scss">
+    .md-list-item-text {
+        display: contents !important;
+    }
+
     .colored-box {
         width: 22px;
         height: 22px;

@@ -175,7 +175,7 @@
                         let t = new Ticket()
 
                         t.getDetail(data.target.ticket_id).then(response => {
-                            console.log()
+
                             let x = t.fromJson(response.data)
                             if (typeof x['owner'] === 'undefined') {
                                 x['owner'] = {id: data.target.owner_id, name: 'X'}
@@ -196,7 +196,7 @@
         },
         methods: {
             reloadList(subscriber, data) {
-                console.log('ticket list reload list with ', subscriber, data)
+
                 if (
                     subscriber !== 'ticketListOpened' &&
                     subscriber !== 'ticketListClosed'

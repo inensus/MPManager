@@ -17,7 +17,7 @@
             </div>
             <div v-if="loading === true"
                  class="md-layout-item  md-xlarge-size-100  md-large-size-100 md-medium-size-100 md-small-size-100 md-xsmall-size-100 ">
-                <img src="https://loading.io/spinners/dash-ring/index.dash-ring-loading-icon.svg"/>
+
             </div>
             <div v-if="analyticsData"
                  class="md-layout-item md-xlarge-size-25 md-large-size-25 md-medium-size-50 md-small-size-100 md-xsmall-size-100 ">

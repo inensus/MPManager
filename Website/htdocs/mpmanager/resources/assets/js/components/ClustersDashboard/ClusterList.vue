@@ -18,11 +18,7 @@
 
             </div>
         </div>
-        <div v-else>
-            <div style="margin-left: 40vw; margin-top: 20vh;">
-                <img src="https://loading.io/spinners/curve-bars/lg.curved-bar-spinner.gif" alt="">
-            </div>
-        </div>
+
     </div>
 
 </template>

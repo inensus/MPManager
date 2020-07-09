@@ -82,7 +82,7 @@ Vue.use(VueSweetalert2)
 
 window.audio = new Audio('../notification/to-the-point.mp3')
 window.onclick = function (e) {
-    console.log(e.target.localName)
+
     let target = e.target
     if (target.localName === 'a' || target.localName === 'i') {
         let className = target.getAttribute('class')
