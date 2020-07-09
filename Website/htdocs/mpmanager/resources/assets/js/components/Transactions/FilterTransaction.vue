@@ -51,14 +51,21 @@
 
             <div
                 class="md-layout-item  md-xlarge-size-100  md-large-size-100 md-medium-size-100  md-small-size-100 md-xsmall-size-100">
-                <md-datepicker v-model="filter.from">
+                <md-datepicker
+                    v-model="filter.from"
+                    md-immediately
+                    :md-model-type="String"
+                >
                     <label>From date</label>
                 </md-datepicker>
             </div>
 
             <div
                 class="md-layout-item  md-xlarge-size-100  md-large-size-100 md-medium-size-100  md-small-size-100 md-xsmall-size-100">
-                <md-datepicker v-model="filter.to">
+                <md-datepicker
+                    v-model="filter.to"
+                    md-immediately
+                    :md-model-type="String">
                     <label>To date</label>
                 </md-datepicker>
             </div>
@@ -73,7 +80,6 @@
 
 <script>
     import Datepicker from 'vuejs-datepicker'
-    import moment from 'moment'
     import { TransactionService } from '../../services/TransactionService'
     import { TariffService } from '../../services/TariffService'
     import { EventBus } from '../../shared/eventbus'
@@ -110,12 +116,6 @@
         },
 
         methods: {
-            setStartDate (val) {
-                this.filter.from = moment(val).format('Y-MM-DD 00:00:01')
-            },
-            setEndDate (val) {
-                this.filter.to = moment(val).format('Y-MM-DD 23:59:59')
-            },
             async getTariffs () {
                 let tariffs = await this.tariffService.getTariffs()
                 tariffs.forEach((e) => {
@@ -166,7 +166,6 @@
             submitFilter () {
                  this.loading = true
                 if (this.filter.serial_number === '') {
-
                     this.filter.serial_number = null
                 }
                 if (this.filter.provider === -1 || this.filter.provider === '-1') {
@@ -178,7 +177,12 @@
                 if (this.filter.status === 'all') {
                     this.filter.status = null
                 }
-
+                if (this.filter.from !== null) {
+                    this.filter.from += ' 00:00:00'
+                }
+                if (this.filter.to !== null) {
+                    this.filter.to += ' 23:59:59'
+                }
                 this.$emit('searchSubmit', this.filter)
             },
 
