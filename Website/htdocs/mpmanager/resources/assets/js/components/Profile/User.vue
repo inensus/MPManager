@@ -221,9 +221,6 @@
                     if (result) {
                         this.changePassword()
                     }
-                    if (!result) {
-
-                    }
                 })
             },
 
