@@ -703,23 +703,6 @@
 
                     this.openedTicketChartData = openedTicketChartData
                     this.closedTicketChartData = closedTicketChartData
-                    for (let i = 0; i < this.openedTicketChartData.length; i++) {
-
-                        let ticketItem = this.openedTicketChartData[i]
-                        let columnNumber = this.openedTicketChartData[0].length
-                        if (i !== 0) {
-                            if (ticketItem.length > columnNumber) {
-
-                                ticketItem.splice(ticketItem.length - 1, ticketItem.length - columnNumber)
-                            } else if (columnNumber > ticketItem.length) {
-                                let counter = columnNumber - ticketItem.length
-                                for (let j = 0; j < counter; j++) {
-                                    ticketItem.push(0)
-                                }
-                            }
-                        }
-
-                    }
 
                 } catch (e) {
 
@@ -760,23 +743,7 @@
                         this.trendChartData.base.push(tmpChartData)
 
                     }
-                    for (let i = 0; i < this.trendChartData.base.length; i++) {
 
-                        let trendChartData = this.trendChartData.base[i]
-                        let columnNumber = this.trendChartData.base[0].length
-                        if (i !== 0) {
-                            if (trendChartData.length > columnNumber) {
-
-                                trendChartData.splice(trendChartData.length - 1, trendChartData.length - columnNumber)
-                            } else if (columnNumber > trendChartData.length) {
-                                let counter = columnNumber - trendChartData.length
-                                for (let j = 0; j < counter; j++) {
-                                    trendChartData.push(0)
-                                }
-                            }
-                        }
-
-                    }
                     if (Object.keys(this.highlighted.compared).length > 0) { //compare data is also available.
                         let compareData = await this.revenueService.getMiniGridRevenueTrends(this.miniGridId, this.startDate, this.endDate)
 
@@ -789,24 +756,6 @@
                             }
                             tmpChartData.push(totalRev)
                             this.trendChartData.compare.push(tmpChartData)
-
-                        }
-                        for (let i = 0; i < this.trendChartData.compare.length; i++) {
-
-                            let trendChartData = this.trendChartData.compare[i]
-                            let columnNumber = this.trendChartData.compare[0].length
-                            if (i !== 0) {
-                                if (trendChartData.length > columnNumber) {
-
-                                    trendChartData.splice(trendChartData.length - 1, trendChartData.length - columnNumber)
-                                } else if (columnNumber > trendChartData.length) {
-
-                                    let counter = columnNumber - trendChartData.length
-                                    for (let j = 0; j < counter; j++) {
-                                        trendChartData.push(0)
-                                    }
-                                }
-                            }
 
                         }
 
