@@ -17,6 +17,10 @@ import PersonRepository from './PersonRepository'
 import AuthenticationRepository from './AuthenticationRepository'
 import TransactionRepository from './TransactionRepository'
 import RevenueRepository from './RevenueRepository'
+import TicketCommentRepository from './TicketCommentRepository'
+import TicketTrelloRepository from './TicketTrelloRepository'
+import TicketUserRepository from './TicketUserRepository'
+import TicketLabelRepository from './TicketLabelRepository'
 
 const repositories = {
     'asset': AssetRepository,
@@ -36,7 +40,11 @@ const repositories = {
     'person': PersonRepository,
     'authentication': AuthenticationRepository,
     'transaction': TransactionRepository,
-    'revenue':RevenueRepository
+    'revenue': RevenueRepository,
+    'ticketComment': TicketCommentRepository,
+    'ticketTrello': TicketTrelloRepository,
+    'ticketUser': TicketUserRepository,
+    'ticketLabel': TicketLabelRepository,
 }
 
 export default {
