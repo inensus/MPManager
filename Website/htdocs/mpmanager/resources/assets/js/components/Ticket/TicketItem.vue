@@ -10,13 +10,14 @@
                         <span class="semi-bold" v-text="ticket.name"></span>
 
                     </h2>
-                    <div class="md-layout-item md-size-10" @click="lockTicket(ticket)" style="float: right; cursor: pointer;" v-if="!ticket.closed">
+                    <div class="md-layout-item md-size-10" @click="lockTicket(ticket.id)"
+                         style="float: right; cursor: pointer;" v-if="!ticket.closed">
                         <md-icon style="color: #9a0325">lock</md-icon>
                     </div>
                 </div>
-                <div class="md-layout md-size-100" >
+                <div class="md-layout md-size-100">
 
-                    <div class="md-layout md-gutter md-size-60" >
+                    <div class="md-layout md-gutter md-size-60">
                         <div class="md-layout-item md-size-30" style="cursor:pointer;" v-if="ticket.assignedTo">
                             <small>
                                 <md-icon>attach_file</md-icon>
@@ -61,13 +62,12 @@
                 </div>
 
 
+                <em class="pull-right-label-primary" style="cursor:pointer">
+                    <small @click="showComments=!showComments">Comments</small>
+                    {{ticket.comments.length}}
+                </em>
 
-                    <em class="pull-right-label-primary" style="cursor:pointer">
-                        <small @click="showComments=!showComments">Comments</small>
-                        {{ticket.commentCount()}}
-                    </em>
-
-                <div class="md-layout md-size-100"  style="min-width: 100%!important;" >
+                <div class="md-layout md-size-100" style="min-width: 100%!important;">
                     <div v-if="showComments" style="min-width: inherit;">
 
                         <div
@@ -75,7 +75,8 @@
                             class="comment-box"
                             v-for="comment in ticket.comments"
                         >
-                           <md-icon>person</md-icon> {{comment.comment}}
+                            <md-icon>person</md-icon>
+                            {{comment.comment}}
                             <br/>
                             <md-icon>access_time</md-icon>
                             <small>{{comment.date}}</small>
@@ -102,47 +103,76 @@
 </template>
 
 <script>
-    import {UserTickets} from "../../classes/person/ticket";
-    import {resources} from "../../resources";
+    import { UserTickets } from '../../classes/person/ticket'
+    import { resources } from '../../resources'
+    import { TicketCommentService } from '../../services/TicketCommentService'
+    import { EventBus } from '../../shared/eventbus'
+    import { SmsService } from '../../services/SmsService'
+    import { TicketService } from '../../services/TicketService'
 
     export default {
-        name: "TicketItem",
-        props: ["ticket", "allowComment"],
-        data() {
+        name: 'TicketItem',
+        props: {
+
+            ticket: {},
+            allowComment: {
+                type: Boolean
+            }
+        },
+        data () {
             return {
+                ticketCommentService: new TicketCommentService(),
+                ticketService: new TicketService(),
+                smsService: new SmsService(),
                 showComments: false,
-                newComment: ""
-            };
+                senderId: this.$store.getters['auth/authenticationService'].authenticateUser.id,
+                newComment: ''
+            }
         },
         methods: {
-            navigateToOwner(id) {
-                this.$router.push({path: "/people/" + id});
+            navigateToOwner (id) {
+                this.$router.push({ path: '/people/' + id })
             },
-            lockTicket(ticket) {
-                ticket.close();
+            async lockTicket (id) {
+                try {
+                    await this.ticketService.closeTicket(id)
+                    EventBus.$emit('listChanged')
+                    this.alertNotify('success', 'Ticket closed successfully.')
+
+                } catch (e) {
+
+                }
+
             },
 
-            sendComment() {
-                let comment = {
-                    comment: this.newComment,
-                    date: new Date(),
-                    fullName: this.$store.getters.admin.name,
-                    username: this.$store.getters.admin.email,
-                    cardId: this.ticket.id
-                };
+            async sendComment () {
 
-                axios.post(resources.ticket.comments, comment).then(response => {
+                try {
+                    let name = this.$store.getters['auth/authenticationService'].authenticateUser.name
+                    let username = this.$store.getters['auth/authenticationService'].authenticateUser.email
+                    await this.ticketCommentService.createComment(this.newComment, this.ticket.id, name, username)
                     if (this.ticket.category.out_source) {
-                        axios.post(resources.sms.send, {
-                            message: this.newComment,
-                            person_id: this.ticket.owner.id,
-                            senderId: this.$store.getters.admin.id
-                        });
+                        await this.smsService.sendToPerson(this.newComment, this.ticket.owner.id, this.senderId)
+
                     }
-                });
-            }
+                    this.showComments = false
+                    EventBus.$emit('listChanged')
+                    this.alertNotify('success', 'Comment send successfully.')
+
+                } catch (e) {
+                    this.alertNotify('error', e.message)
+                }
+            },
+            alertNotify (type, message) {
+                this.$notify({
+                    group: 'notify',
+                    type: type,
+                    title: type + ' !',
+                    text: message
+                })
+            },
         }
-    };
+    }
 </script>
 
 <style scoped>
@@ -154,7 +184,8 @@
     .ticket-area:hover {
         background-color: #f3f3f3;
     }
-    .comment-box{
+
+    .comment-box {
         background-color: #f4fff0;
         border-width: 1px;
         border-style: dotted;
@@ -201,8 +232,9 @@
         border-style: dotted;
         border-width: 1px;
     }
-    .t-text{
-       min-width: 90%;
+
+    .t-text {
+        min-width: 90%;
         white-space: initial;
     }
 
