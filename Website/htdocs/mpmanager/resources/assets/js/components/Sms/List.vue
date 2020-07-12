@@ -166,7 +166,7 @@
                     return
                 }
                 try {
-                    await this.smsService.sendToPerson('person', this.message, this.selectedNumber, this.senderId);
+                    await this.smsService.sendToNumber('person', this.message, this.selectedNumber, this.senderId);
                     this.alertNotify('success', 'The Sms is send out');
                     this.message = '';
                     this.smsDetail(this.selectedNumber)
