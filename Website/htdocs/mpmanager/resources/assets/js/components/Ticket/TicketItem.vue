@@ -8,7 +8,6 @@
                             <md-icon>money</md-icon>
                         </div>
                         <span class="semi-bold" v-text="ticket.name"></span>
-
                     </h2>
                     <div class="md-layout-item md-size-10" @click="lockTicket(ticket.id)"
                          style="float: right; cursor: pointer;" v-if="!ticket.closed">
@@ -23,7 +22,6 @@
                                 <md-icon>attach_file</md-icon>
                                 Assigned To:<b>{{ticket.assignedTo.user_name}}</b> </small>
 
-
                         </div>
                         <div class="md-layout-item md-size-30" style="float: right;">
                             <small v-if="ticket.category">
@@ -34,7 +32,6 @@
                         </div>
                     </div>
                     <div class="md-layout t-text-area">
-
                         <div
                             @click="navigateToOwner(ticket.owner.id)"
                             class="md-subheader md-size-100"
@@ -47,17 +44,11 @@
 
                         </div>
 
-
-                        <p class="t-text" v-text="ticket.description">
-
-                        </p>
-
-
+                        <p class="t-text" v-text="ticket.description"></p>
                         <div class="t-date">
                             <md-icon>access_time</md-icon>
                             {{ticket.created}}
                         </div>
-
                     </div>
                 </div>
 
@@ -68,8 +59,8 @@
                 </em>
 
                 <div class="md-layout md-size-100" style="min-width: 100%!important;">
-                    <div v-if="showComments" style="min-width: inherit;">
 
+                    <div v-if="showComments" style="min-width: inherit;">
                         <div
                             :key="comment.id"
                             class="comment-box"
@@ -83,18 +74,19 @@
                             <div class="clearfix"></div>
                         </div>
                         <div v-if="allowComment">
-                            <md-field>
+                            <md-field style="float: left">
+                                <label for="comment">Comment</label>
                                 <md-textarea v-model="newComment"></md-textarea>
-                                <md-button
-                                    @click="sendComment"
-                                    class="md-primary btn-save"
-                                    type="submit"
-                                >Send
-                                </md-button>
                             </md-field>
+                            <md-button
+                                @click="sendComment"
+                                class="md-primary md-raised"
+                                type="submit"
+                                style="float:right"
+                            >Send
+                            </md-button>
                             <div class="clearfix"></div>
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -103,6 +95,7 @@
 </template>
 
 <script>
+
     import { UserTickets } from '../../classes/person/ticket'
     import { resources } from '../../resources'
     import { TicketCommentService } from '../../services/TicketCommentService'
@@ -171,6 +164,7 @@
                     text: message
                 })
             },
+
         }
     }
 </script>
@@ -190,8 +184,6 @@
         border-width: 1px;
         border-style: dotted;
         padding: 10px;
-
-
     }
 
     .pull-right-label-primary {
@@ -220,7 +212,7 @@
         max-width: 100%;
     }
 
-    .new-ticet-modal-container {
+    .new-ticket-modal-container {
         padding: 2rem;
         overflow-y: scroll;
     }
@@ -242,6 +234,5 @@
         font-size: x-small;
         color: #2a2a2a;
         float: right;
-
     }
 </style>
