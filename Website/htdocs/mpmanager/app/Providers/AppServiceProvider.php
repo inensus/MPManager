@@ -8,6 +8,7 @@ use App\ManufacturerApi\CalinApi;
 use App\Misc\LoanDataContainer;
 use App\Models\AccessRate\AccessRate;
 
+use App\Models\Agent;
 use App\Models\AssetRate;
 use App\Models\Cluster;
 use App\Models\Manufacturer;
@@ -52,6 +53,7 @@ class AppServiceProvider extends ServiceProvider
                 'asset_loan' => AssetRate::class,
                 'cluster' => Cluster::class,
                 'mini-grid' => MiniGrid::class,
+                'agent' => Agent::class,
             ]
         );
     }
