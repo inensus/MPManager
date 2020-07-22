@@ -8,6 +8,7 @@ use App\Models\Transaction\Transaction;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Hash;
+use Inensus\Ticket\Models\Ticket;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
 class Agent extends Authenticatable implements JWTSubject
@@ -86,5 +87,10 @@ class Agent extends Authenticatable implements JWTSubject
     public function person()
     {
         return $this->belongsTo(Person::class);
+    }
+
+    public function tickets()
+    {
+        return $this->hasMany(Ticket::class, 'id', 'creator_id');
     }
 }
