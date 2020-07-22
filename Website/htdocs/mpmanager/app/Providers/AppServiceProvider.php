@@ -7,6 +7,7 @@ use App\Helpers\MailHelper;
 use App\ManufacturerApi\CalinApi;
 use App\Misc\LoanDataContainer;
 use App\Models\AccessRate\AccessRate;
+
 use App\Models\AssetRate;
 use App\Models\Cluster;
 use App\Models\Manufacturer;
@@ -17,6 +18,7 @@ use App\Models\Person\Person;
 use App\Models\Transaction\Transaction;
 use App\Models\Transaction\VodacomTransaction;
 use App\Sms\AndroidGateway;
+use App\Transaction\AgentTransaction;
 use App\Transaction\AirtelTransaction;
 use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -89,6 +91,12 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton('AirtelPaymentProvider', static function () {
             return new AirtelTransaction(
                 new \App\Models\Transaction\AirtelTransaction(),
+                new Transaction()
+            );
+        });
+        $this->app->singleton('AgentPaymentProvider', static function () {
+            return new AgentTransaction(
+                new \App\Models\Transaction\AgentTransaction(),
                 new Transaction()
             );
         });

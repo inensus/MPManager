@@ -18,7 +18,7 @@ interface ITransactionProvider
     public function saveTransaction();
 
     //accepts the payment or cancel the payment
-    public function sendResult(bool $resultType, Transaction $transaction);
+    public function sendResult(bool $requestType, Transaction $transaction);
 
     //validates incoming request
     public function validateRequest($request);

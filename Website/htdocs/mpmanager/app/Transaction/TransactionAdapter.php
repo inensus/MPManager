@@ -32,6 +32,11 @@ class TransactionAdapter
             $baseTransaction->init($transactionProvider);
             return $baseTransaction;
         }
+        if ($transactionProvider instanceof AgentTransaction) {
+            $baseTransaction = resolve('AgentPaymentProvider');
+            $baseTransaction->init($transactionProvider);
+            return $baseTransaction;
+        }
         return null;
     }
 }
