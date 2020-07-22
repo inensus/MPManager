@@ -26,8 +26,9 @@ class AgentCustomerController extends Controller
      * @param Request $request
      * @return void
      */
-    public function index(Agent $agent, Request $request)
+    public function index(Request $request)
     {
+        $agent = Agent::find(auth('agent_api')->user()->id);
        return new ApiResource($this->agentCustomerService->list($agent));
     }
 

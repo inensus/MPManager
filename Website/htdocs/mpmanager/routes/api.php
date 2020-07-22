@@ -123,25 +123,31 @@ Route::group([
     Route::post('/', 'AgentController@store');
     Route::post('/reset-password', 'AgentController@resetPassword');
     Route::put('/{agent}', 'AgentController@update');
-    Route::get('/{agent}', 'AgentController@show');
+
     Route::get('/', 'AgentController@index');
 
+    Route::group(['prefix' => 'customers'], function () {
+        Route::get('/', 'AgentCustomerController@index');
 
-    Route::get('/{agent}/customers', 'AgentCustomerController@index');
+    });
+    Route::group(['prefix' => 'transactions'], function () {
+        Route::get('/', 'AgentTransactionsController@index');
+        Route::get('/{customerId}', 'AgentTransactionsController@agentCustomerTransactions');
 
-    Route::get('/{agent}/transactions', 'AgentTransactionsController@index');
-    Route::get('/{agent}/transactions/{customerId}', 'AgentTransactionsController@agentCustomerTransactions');
-
-
+    });
     Route::group(['prefix' => 'assigned'], function () {
-        Route::get('/{agent}/appliances', 'AgentAssignedAppliancesController@index');
+        Route::get('/appliances', 'AgentAssignedAppliancesController@index');
         Route::post('/appliances', 'AgentAssignedAppliancesController@store');
     });
     Route::group(['prefix' => 'sold'], function () {
-        Route::get('/{agent}/appliances', 'AgentSoldApplianceController@index');
+        Route::get('/appliances', 'AgentSoldApplianceController@index');
         Route::post('/appliances', 'AgentSoldApplianceController@store');
     });
-
+    Route::group(['prefix' => 'ticket'], function () {
+        Route::get('/', 'AgentTicketController@index');
+        Route::get('/customer/{customerId}', 'AgentTicketController@agentCustomerTickets');
+        Route::post('/', 'AgentTicketController@store');
+    });
 
 });
 

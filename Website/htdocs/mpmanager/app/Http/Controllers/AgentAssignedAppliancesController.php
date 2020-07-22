@@ -24,20 +24,11 @@ class AgentAssignedAppliancesController extends Controller
      * @param Request $request
      * @return void
      */
-    public function index(Agent $agent, Request $request)
+    public function index(Request $request)
     {
+        $agent = Agent::find(auth('agent_api')->user()->id);
         $assignedAppliances = $this->agentAssignedApplianceService->list($agent->id);
         return new ApiResource($assignedAppliances);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
     }
 
     /**
@@ -59,27 +50,8 @@ class AgentAssignedAppliancesController extends Controller
         return new ApiResource($appliance);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param \App\agent_assigned_appliances $agent_assigned_appliances
-     * @return \Illuminate\Http\Response
-     */
-    public function show(agent_assigned_appliances $agent_assigned_appliances)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param \App\agent_assigned_appliances $agent_assigned_appliances
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(agent_assigned_appliances $agent_assigned_appliances)
-    {
-        //
-    }
+
 
     /**
      * Update the specified resource in storage.

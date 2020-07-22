@@ -29,32 +29,25 @@ class AgentTransactionsController extends Controller
      * @param Request $request
      * @return ApiResource
      */
-    public function index(Agent $agent, Request $request)
+    public function index(Request $request)
     {
-
-        $transactions  = $this->agentTransactionService->list($agent->id);
+        $agent = Agent::find(auth('agent_api')->user()->id);
+        $transactions = $this->agentTransactionService->list($agent->id);
         return new ApiResource($transactions);
     }
-    public function agentCustomerTransactions(Agent $agent,$customerId, Request $request)
-    {
 
-        $transactions  = $this->agentTransactionService->listByCustomer($agent->id,$customerId);
+    public function agentCustomerTransactions($customerId, Request $request)
+    {
+        $agent = Agent::find(auth('agent_api')->user()->id);
+        $transactions = $this->agentTransactionService->listByCustomer($agent->id, $customerId);
         return new ApiResource($transactions);
     }
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
+
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -65,7 +58,7 @@ class AgentTransactionsController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Agent_Transactions  $agent_Transactions
+     * @param \App\Agent_Transactions $agent_Transactions
      * @return \Illuminate\Http\Response
      */
     public function show(Agent_Transactions $agent_Transactions)
@@ -76,7 +69,7 @@ class AgentTransactionsController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Agent_Transactions  $agent_Transactions
+     * @param \App\Agent_Transactions $agent_Transactions
      * @return \Illuminate\Http\Response
      */
     public function edit(Agent_Transactions $agent_Transactions)
@@ -87,8 +80,8 @@ class AgentTransactionsController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Agent_Transactions  $agent_Transactions
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Agent_Transactions $agent_Transactions
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Agent_Transactions $agent_Transactions)
@@ -99,7 +92,7 @@ class AgentTransactionsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Agent_Transactions  $agent_Transactions
+     * @param \App\Agent_Transactions $agent_Transactions
      * @return \Illuminate\Http\Response
      */
     public function destroy(Agent_Transactions $agent_Transactions)
