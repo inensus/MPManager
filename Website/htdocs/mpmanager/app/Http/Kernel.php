@@ -64,6 +64,9 @@ class Kernel extends HttpKernel
         'api' => [
             'bindings',
         ],
+        'agent_api' => [
+            'bindings',
+        ],
     ];
 
     /**
@@ -88,5 +91,6 @@ class Kernel extends HttpKernel
         'jwt.verify' => JwtMiddleware::class,
         'restriction' => RestrictionMiddleware::class,
         'data.controller' => DataControllerMiddleware::class,
+
     ];
 }
