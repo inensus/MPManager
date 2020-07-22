@@ -30,6 +30,8 @@ class TicketServiceProvider extends ServiceProvider
                 __DIR__ . '/../database/migrations/create_ticketing_tables_outsource.php.stub' => $this->app->databasePath() . "/migrations/{$timestamp}_add_outsourcing.php",
                 __DIR__ . '/../database/migrations/add_assigned_person_to_ticket.php.stub' => $this->app->databasePath() . "/migrations/{$timestamp}_add_assigned_person_to_ticket.php",
                 __DIR__ . '/../database/migrations/create_outsource_report.php.stub' => $this->app->databasePath() . "/migrations/{$timestamp}_create_outsource_report.php",
+                __DIR__ . '/../database/migrations/add_creator_type_to_ticket.php.stub' => $this->app->databasePath() . "/migrations/{$timestamp}_add_creator_type_to_ticket.php",
+
             ], 'migrations');
         }
 

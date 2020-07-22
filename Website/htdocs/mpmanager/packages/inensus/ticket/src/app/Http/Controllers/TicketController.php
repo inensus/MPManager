@@ -144,6 +144,7 @@ class TicketController extends Controller
 
     public function create(Request $request): TicketResource
     {
+
         $ownerId = (int)$request->get('owner_id');
         $ownerType = $request->get('owner_type');
         $assignedId = $request->get('assignedPerson');
@@ -152,6 +153,8 @@ class TicketController extends Controller
         $board = $this->boardService->initializeBoard();
         $card = $this->cardService->initalizeList($board);
         $creatorId = $request->get('creator');
+        $creatorType = $request->get('creator_type');
+
         //reformat due date if it is set
         $dueDate = $request->get('dueDate') !== null ? date('Y-m-d H:i:00', strtotime($request->get('dueDate'))) : null;
         $category = $request->get('label');
@@ -169,6 +172,7 @@ class TicketController extends Controller
         $assignedUser = $assignedId ? $this->userService->getByExternId($assignedId)->id : null;
         $ticket = $this->ticketService->create(
             $creatorId,
+            $creatorType,
             $ownerId,
             $ownerType,
             $category,

@@ -8,6 +8,7 @@
 
 namespace Inensus\Ticket\Models;
 
+use App\Models\Agent;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -20,6 +21,7 @@ use PDO;
  * @package Inensus\Ticket\Models
  * @property int $id
  * @property int $creator_id
+ * @property int $creator_type
  * @property int $owner_id
  * @property int $owner_type
  * @property string ticket_id
@@ -73,6 +75,12 @@ class Ticket extends BaseModel
             ->where('status', 1)
             ->whereBetween('updated_at', [$startDate, $endDate])
             ->groupBy(DB::raw('YEARWEEK(updated_at,3)'));
+    }
+
+    public function agent()
+    {
+        return $this->belongsTo(Agent::class,'creator_id','id');
+
     }
 
     public function ticketsOpenedWithCategories($miniGridId)
