@@ -97,7 +97,7 @@ Route::group(['middleware' => 'jwt.verify', 'prefix' => 'tariffs'], function () 
 //JWT authentication
 Route::group([
     'middleware' => 'api',
-    'prefix'     => 'auth'
+    'prefix' => 'auth'
 
 ], static function ($router) {
 
@@ -108,9 +108,48 @@ Route::group([
 
 });
 
+//JWT authentication for agent
+Route::group([
+    'middleware' => 'agent_api',
+    'prefix' => 'agents'
+
+], static function ($router) {
+
+    Route::post('login', 'AgentAuthController@login');
+    Route::post('logout', 'AgentAuthController@logout');
+    Route::post('refresh', 'AgentAuthController@refresh');
+    Route::get('me', 'AgentAuthController@me');
+
+    Route::post('/', 'AgentController@store');
+    Route::post('/reset-password', 'AgentController@resetPassword');
+    Route::put('/{agent}', 'AgentController@update');
+    Route::get('/{agent}', 'AgentController@show');
+    Route::get('/', 'AgentController@index');
+
+
+    Route::get('/{agent}/customers', 'AgentCustomerController@index');
+
+    Route::get('/{agent}/transactions', 'AgentTransactionsController@index');
+    Route::get('/{agent}/transactions/{customerId}', 'AgentTransactionsController@agentCustomerTransactions');
+
+
+    Route::group(['prefix' => 'assigned'], function () {
+        Route::get('/{agent}/appliances', 'AgentAssignedAppliancesController@index');
+        Route::post('/appliances', 'AgentAssignedAppliancesController@store');
+    });
+    Route::group(['prefix' => 'sold'], function () {
+        Route::get('/{agent}/appliances', 'AgentSoldApplianceController@index');
+        Route::post('/appliances', 'AgentSoldApplianceController@store');
+    });
+
+
+});
+
+
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
 
 Route::group(['prefix' => 'assets'], function () {
     Route::group(['prefix' => 'types'], function () {
@@ -161,6 +200,7 @@ Route::group(['prefix' => 'transactions', 'middleware' => ['transaction.auth', '
     function () {
         Route::post('/airtel', 'TransactionController@store');
         Route::post('/vodacom', ['as' => 'vodacomTransaction', 'uses' => 'TransactionController@store']);
+        Route::post('/agent', ['as' => 'agentTransaction', 'uses' => 'TransactionController@store']);
 
     });
 
@@ -183,16 +223,16 @@ Route::post('androidApp', function (AndroidAppRequest $r) {
         DB::beginTransaction();
 
         //check if the meter id or the phone already exists
-        $meter  = Meter::where('serial_number', $r->get('serial_number'))->first();
+        $meter = Meter::where('serial_number', $r->get('serial_number'))->first();
         $person = null;
 
         if ($meter === null) {
-            $meter          = new Meter();
+            $meter = new Meter();
             $meterParameter = new MeterParameter();
-            $geoLocation    = new GeographicalInformation();
+            $geoLocation = new GeographicalInformation();
         } else {
             $meterParameter = MeterParameter::where('meter_id', $meter->id)->first();
-            $geoLocation    = $meterParameter->geo()->first();
+            $geoLocation = $meterParameter->geo()->first();
             if ($geoLocation === null) {
                 $geoLocation = new GeographicalInformation();
             }
@@ -205,7 +245,7 @@ Route::post('androidApp', function (AndroidAppRequest $r) {
 
         if ($person === null) {
             $personService = new PersonService(new App\Models\Person\Person());
-            $person        = $personService->createFromRequest($r);
+            $person = $personService->createFromRequest($r);
         }
 
         $meter->serial_number = $r->get('serial_number');
