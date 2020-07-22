@@ -9,4 +9,8 @@ use Inensus\Ticket\Models\Ticket;
 class AssetType extends Model
 {
     protected $fillable = ['name'];
+
+    public function agentAssignedAppliance(){
+        return $this->hasMany(AgentAssignedAppliances::class,'id','appliance_type_id');
+    }
 }
