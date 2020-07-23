@@ -4,13 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class agentBalanceHistory extends Model
+class AgentBalanceHistory extends Model
 {
+    protected $guarded = [];
+
     public function agent()
     {
         $this->belongsTo(Agent::class);
     }
-    public function  user(){
-        $this->belongsTo(User::class);
-    }
+
 }

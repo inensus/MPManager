@@ -150,7 +150,13 @@ Route::group([
         Route::get('/customer/{customerId}', 'AgentTicketController@agentCustomerTickets');
         Route::post('/', 'AgentTicketController@store');
     });
+    Route::group(['prefix' => 'balance'], function () {
+        Route::group(['prefix' => 'history'], function () {
+            Route::get('/', 'AgentBalanceHistoryController@index');
+            Route::post('/{agent}', 'AgentBalanceHistoryController@store');
+        });
 
+    });
 });
 
 
