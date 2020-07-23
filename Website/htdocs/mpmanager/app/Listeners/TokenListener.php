@@ -68,8 +68,7 @@ class TokenListener
         $messageSent = event('sms.send.token',
             [
                 'sender' => $transactionContainer->transaction->sender,
-                'type' => SmsTypes::ENERGY_CONFIRMATION,
-                'data' => $transactionContainer,
+                'data' => $transactionContainer->transaction,
                 'trigger' => $transactionContainer->transaction,
             ]);
 

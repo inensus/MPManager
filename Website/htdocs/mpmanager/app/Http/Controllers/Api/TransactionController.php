@@ -652,8 +652,7 @@ class TransactionController extends Controller
         $messageSent = event('sms.send.token',
             [
                 'sender' => $number ?? $transactionContainer->transaction->sender,
-                'type' => SmsTypes::RESEND_INFORMATION,
-                'data' => $transactionContainer,
+                'data' => $transactionContainer->transaction,
                 'trigger' => $transactionContainer->transaction,
             ]);
         if (!$messageSent) {

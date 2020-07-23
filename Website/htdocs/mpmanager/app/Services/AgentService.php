@@ -67,4 +67,11 @@ class AgentService implements IUserService
         }
         return $agent->paginate();
     }
+
+    public function setFirebaseToken($agent,$firebaseToken){
+        $agent->fire_base_token = $firebaseToken;
+        $agent->update();
+        $agent->fresh();
+    }
+
 }

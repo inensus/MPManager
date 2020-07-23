@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Misc\TransactionDataContainer;
 use App\Models\Sms;
+use App\Models\Transaction\Transaction;
 use App\Sms\SmsTypes;
 use Exception;
 use Illuminate\Bus\Queueable;
@@ -27,12 +28,12 @@ class SmsProcessor implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param TransactionDataContainer $container
+     * @param Transaction $transaction
      * @param int $smsType
      */
-    public function __construct(TransactionDataContainer $container, int $smsType)
+    public function __construct(Transaction $transaction, int $smsType)
     {
-        $this->transactionContainer = $container;
+        $this->transactionContainer = TransactionDataContainer::initialize($transaction);
         $this->smsType = $smsType;
     }
 
@@ -48,7 +49,7 @@ class SmsProcessor implements ShouldQueue
         if (config('app.debug')) {
             //store sent sms
 
-            $sms->body = SmsTypes::generateSmsBody($this->smsType, $this->transactionContainer);
+            $sms->body = SmsTypes::generateSmsBody($this->transactionContainer->transaction);
             $sms->receiver = $this->transactionContainer->transaction->sender;
             $sms->trigger()->associate($this->transactionContainer->transaction);
             $sms->save();
@@ -63,7 +64,7 @@ class SmsProcessor implements ShouldQueue
             resolve('SmsProvider')
                 ->sendSms(
                     $this->transactionContainer->transaction->sender,
-                    SmsTypes::generateSmsBody($this->smsType, $this->transactionContainer),
+                    SmsTypes::generateSmsBody($this->transactionContainer->transaction),
                     sprintf(config()->get('services.sms.callback'), $sms->uuid)
                 );
         } catch (Exception $e) {
@@ -73,7 +74,7 @@ class SmsProcessor implements ShouldQueue
             return;
         }
         $phone = $this->transactionContainer->transaction->sender;
-        $sms->body = SmsTypes::generateSmsBody($this->smsType, $this->transactionContainer);
+        $sms->body = SmsTypes::generateSmsBody($this->transactionContainer->transaction);
         $sms->receiver = strpos($phone, '+') === 0 ? $phone : '+' . $phone;
         $sms->trigger()->associate($this->transactionContainer->transaction);
         $sms->save();

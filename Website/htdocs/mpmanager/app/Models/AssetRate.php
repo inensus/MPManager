@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
@@ -41,5 +42,10 @@ class AssetRate extends Model
     public function paymentHistory(): MorphOne
     {
         return $this->morphOne(PaymentHistory::class, 'paid_for');
+    }
+
+    public function asset(): HasOneThrough
+    {
+        return $this->HasOneThrough(AssetType::class, AssetPerson::class, 'asset_type_id', 'id');
     }
 }

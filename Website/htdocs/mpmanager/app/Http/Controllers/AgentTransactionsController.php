@@ -8,6 +8,7 @@ use App\Models\Agent;
 use App\Models\Transaction\Transaction;
 use App\Services\AgentService;
 use App\Services\AgentTransactionService;
+use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 
 class AgentTransactionsController extends Controller
@@ -56,28 +57,6 @@ class AgentTransactionsController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param \App\Agent_Transactions $agent_Transactions
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Agent_Transactions $agent_Transactions)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param \App\Agent_Transactions $agent_Transactions
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Agent_Transactions $agent_Transactions)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param \Illuminate\Http\Request $request
@@ -99,4 +78,6 @@ class AgentTransactionsController extends Controller
     {
         //
     }
+
+
 }

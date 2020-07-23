@@ -8,6 +8,7 @@ use App\Lib\ITransactionProvider;
 use App\Models\Agent;
 use App\Models\Transaction\Transaction;
 use App\Models\Transaction\TransactionConflicts;
+use App\Services\FirebaseService;
 use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\Log;
 
 class AgentTransaction implements ITransactionProvider
 {
+    private $fireBaseService;
     /**
      * @var \App\Models\Transaction\AgentTransaction
      */
@@ -31,10 +33,11 @@ class AgentTransaction implements ITransactionProvider
      */
     private $validData;
 
-    public function __construct(\App\Models\Transaction\AgentTransaction $agentTransaction, Transaction $transaction)
+    public function __construct(\App\Models\Transaction\AgentTransaction $agentTransaction, Transaction $transaction,FirebaseService $firebaseService)
     {
         $this->agentTransaction = $agentTransaction;
         $this->transaction = $transaction;
+        $this->fireBaseService=$firebaseService;
     }
 
     public function saveTransaction()
@@ -77,9 +80,9 @@ class AgentTransaction implements ITransactionProvider
         $agent = $this->agentTransaction->agent();
         $body = $this->prepareRequest($transaction);
 
-        /*
-        firebaseService->sendNotify(agent->fire_base_key,agent->fire_base_token,body)
-        */
+        $agent = Agent::find(auth('agent_api')->user()->id);
+        $this->fireBaseService->sendNotify($agent->fire_base_token, json_encode(strval($body)));
+
 
 
     }

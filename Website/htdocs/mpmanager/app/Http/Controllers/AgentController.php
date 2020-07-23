@@ -63,5 +63,12 @@ class AgentController extends Controller
         ]);
     }
 
+    public function setFirebaseToken(Request $request): ApiResource
+    {
+        $agent = Agent::find(auth('agent_api')->user()->id);
+        $this->agentService->setFirebaseToken($agent, $request->input('fire_base_token'));
+
+        return new ApiResource($agent->fresh());
+    }
 
 }
