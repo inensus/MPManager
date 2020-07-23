@@ -18,6 +18,7 @@ use App\Models\MiniGrid;
 use App\Models\Person\Person;
 use App\Models\Transaction\Transaction;
 use App\Models\Transaction\VodacomTransaction;
+use App\Services\FirebaseService;
 use App\Sms\AndroidGateway;
 use App\Transaction\AgentTransaction;
 use App\Transaction\AirtelTransaction;
@@ -99,7 +100,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton('AgentPaymentProvider', static function () {
             return new AgentTransaction(
                 new \App\Models\Transaction\AgentTransaction(),
-                new Transaction()
+                new Transaction(),new FirebaseService()
             );
         });
 
