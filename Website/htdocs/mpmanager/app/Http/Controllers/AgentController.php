@@ -30,7 +30,13 @@ class AgentController extends Controller
     public function store(CreateAgentRequest $request)
     {
 
-        $agent = $this->agentService->create($request->only(['person_id', 'name', 'password', 'email', 'mini_grid_id']));
+        $agent = $this->agentService->create($request->only([
+            'person_id',
+            'name',
+            'password',
+            'email',
+            'mini_grid_id'
+        ]));
 
         return new ApiResource($agent);
     }
@@ -71,4 +77,15 @@ class AgentController extends Controller
         return new ApiResource($agent->fresh());
     }
 
+    public function showBalance(Request $request, Response $response): Response
+    {
+        $agent = Agent::find(auth('agent_api')->user()->id);
+        $balance = $this->agentService->getAgentBalance($agent);
+        return $response->setStatusCode(200)->setContent([
+            'data' => [
+                'balance' => $balance,
+                'status_code' => 200
+            ]
+        ]);
+    }
 }

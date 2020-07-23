@@ -74,4 +74,8 @@ class AgentService implements IUserService
         $agent->fresh();
     }
 
+    public function getAgentBalance($agent)
+    {
+        return $agent->balance;
+    }
 }

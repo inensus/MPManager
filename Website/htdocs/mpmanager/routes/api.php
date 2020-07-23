@@ -126,6 +126,7 @@ Route::group([
 
     Route::get('/', 'AgentController@index');
     Route::post('/firebase', 'AgentController@setFirebaseToken');
+    Route::get('/balance', 'AgentController@showBalance');
     Route::group(['prefix' => 'customers'], function () {
         Route::get('/', 'AgentCustomerController@index');
 
