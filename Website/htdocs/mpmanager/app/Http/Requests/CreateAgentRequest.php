@@ -31,7 +31,7 @@ class CreateAgentRequest extends FormRequest
     public function rules()
     {
         return [
-            'person_id' => 'required|exists:people,id',
+            'person_id' => 'required|exists:people,id|unique:agent',
             'email' => 'required|unique:agents,email',
             'name' => 'required|min:3',
             'password' => 'required|min:6',
