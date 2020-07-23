@@ -7,6 +7,7 @@ use App\Http\Services\CountryService;
 use App\Http\Services\PersonService;
 use App\Http\Services\RolesService;
 use App\Models\Address\Address;
+use App\Models\AgentBalanceHistory;
 use App\Models\AssetPerson;
 use App\Models\Battery;
 use App\Models\Country;
@@ -18,7 +19,11 @@ use App\Models\PV;
 use App\Models\Role\RoleDefinition;
 use App\Models\Role\Roles;
 use App\Models\Solar;
+use App\Models\Transaction\AgentTransaction;
+use App\Models\Transaction\Transaction;
 use App\Observers\AddressesObserver;
+use App\Observers\AgentBalanceHistoryObserver;
+use App\Observers\AgentTransactionObserver;
 use App\Observers\AssetPersonObserver;
 use App\Observers\BatteryObserver;
 use App\Observers\MeterParameterObserver;
@@ -28,6 +33,7 @@ use App\Observers\MiniGridObserver;
 use App\Observers\PersonObserver;
 use App\Observers\PVObserver;
 use App\Observers\SolarObserver;
+use App\Observers\TransactionObserver;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Horizon\Horizon;
 
@@ -54,7 +60,10 @@ class ServicesProvider extends ServiceProvider
 
 
         MeterTariff::observe(MeterTariffObserver::class);
-        MiniGrid::observe(MiniGridObserver::class);    }
+        MiniGrid::observe(MiniGridObserver::class);
+        AgentBalanceHistory::observe(AgentBalanceHistoryObserver::class);
+        Transaction::observe(TransactionObserver::class);
+    }
 
 
     /**
