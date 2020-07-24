@@ -16,6 +16,7 @@ class CreateAgentBalanceHistoriesTable extends Migration
         Schema::create('agent_balance_histories', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('agent_id');
+            $table->string('type');
             $table->decimal('amount', 12, 4);
             $table->timestamps();
 
