@@ -27,6 +27,7 @@ class TransactionObserver
             AgentBalanceHistory::query()->create([
                 'agent_id' => $agentTransaction->agent_id,
                 'amount' => (-1 * floatval($transaction->amount)),
+                'type' =>'Transaction'
 
             ]);
         }

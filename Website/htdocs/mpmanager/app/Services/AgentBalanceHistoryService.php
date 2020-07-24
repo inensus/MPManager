@@ -15,7 +15,7 @@ class AgentBalanceHistoryService
 
             'agent_id' => $agentId,
             'amount' => $data['amount'],
-
+            'type'=>'Charge'
         ]);
     }
 }
