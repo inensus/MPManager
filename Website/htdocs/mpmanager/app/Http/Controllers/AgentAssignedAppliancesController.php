@@ -20,9 +20,8 @@ class AgentAssignedAppliancesController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param Agent $agent
      * @param Request $request
-     * @return void
+     * @return ApiResource
      */
     public function index(Request $request)
     {
@@ -34,8 +33,8 @@ class AgentAssignedAppliancesController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @param CreateAgentAssignedApplianceRequest $request
+     * @return ApiResource
      */
     public function store(CreateAgentAssignedApplianceRequest $request)
     {
@@ -51,16 +50,13 @@ class AgentAssignedAppliancesController extends Controller
     }
 
 
-
-
     /**
      * Update the specified resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @param \App\agent_assigned_appliances $agent_assigned_appliances
-     * @return \Illuminate\Http\Response
+     * @return void
      */
-    public function update(Request $request, agent_assigned_appliances $agent_assigned_appliances)
+    public function update(Request $request)
     {
         //
     }
@@ -68,10 +64,10 @@ class AgentAssignedAppliancesController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\agent_assigned_appliances $agent_assigned_appliances
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return void
      */
-    public function destroy(agent_assigned_appliances $agent_assigned_appliances)
+    public function destroy(Request $request)
     {
         //
     }
