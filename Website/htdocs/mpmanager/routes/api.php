@@ -110,7 +110,7 @@ Route::group([
 
 //JWT authentication for agent
 Route::group([
-    'middleware' => 'agent_api',
+    'middleware' => ['agent_api','jwt.verify'],
     'prefix' => 'agents'
 
 ], static function ($router) {
