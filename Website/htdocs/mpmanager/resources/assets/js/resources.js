@@ -160,5 +160,10 @@ export let resources = {
     },
     pv: {
         list: '/api/pv/'
+    },
+
+    agents: {
+        list: '/api/agents',
+        search: '/api/agents/search',
     }
 }
