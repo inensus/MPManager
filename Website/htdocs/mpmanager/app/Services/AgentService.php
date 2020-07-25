@@ -21,7 +21,8 @@ class AgentService implements IUserService
             'name' => $agentData['name'],
             'password' => $agentData['password'],
             'email' => $agentData['email'],
-            'mini_grid_id' => $agentData['mini_grid_id']
+            'mini_grid_id' => $agentData['mini_grid_id'],
+            'agent_commission_id' => $agentData['agent_commission_id']
         ]);
     }
 
@@ -60,15 +61,11 @@ class AgentService implements IUserService
 
     public function list($relations): LengthAwarePaginator
     {
-        $agent = Agent::query()->select('id', 'name', 'email');
-        // the only supported filter is currently address
-        if (array_key_exists('address', $relations)) {
-            $agent->with('address');
-        }
-        return $agent->paginate();
+        return Agent::with(['address', 'miniGrid'])->paginate(config('settings.paginate'));
     }
 
-    public function setFirebaseToken($agent,$firebaseToken){
+    public function setFirebaseToken($agent, $firebaseToken)
+    {
         $agent->fire_base_token = $firebaseToken;
         $agent->update();
         $agent->fresh();
@@ -77,5 +74,21 @@ class AgentService implements IUserService
     public function getAgentBalance($agent)
     {
         return $agent->balance;
+    }
+
+    public function searchAgent($searchTerm, $paginate)
+    {
+        if ($paginate === 1) {
+            return Agent::with('miniGrid')->WhereHas('miniGrid', function ($q) use ($searchTerm) {
+                $q->where('name', 'LIKE', '%' . $searchTerm . '%');
+            })->orWhere('name', 'LIKE', '%' . $searchTerm . '%')
+                ->orWhere('email', 'LIKE', '%' . $searchTerm . '%')->paginate(15);
+        }
+
+        return Agent::with('miniGrid')->WhereHas('miniGrid', function ($q) use ($searchTerm) {
+            $q->where('name', 'LIKE', '%' . $searchTerm . '%');
+        })->orWhere('name', 'LIKE', '%' . $searchTerm . '%')
+            ->orWhere('email', 'LIKE', '%' . $searchTerm . '%')->get();
+
     }
 }

@@ -20,6 +20,22 @@ class AgentSoldApplianceService implements IAgentRelatedService
                 $q->whereHas('agent', function ($q) use ($agentId) {
                     $q->where('agent_id', $agentId);
                 });
+
+            })->latest()->paginate();
+
+    }
+
+    public function customerSoldList($customerId, $agentId)
+    {
+
+        return AgentSoldAppliance::with([
+            'assignedAppliance',
+             
+        ])->where('person_id', $customerId)
+            ->whereHas('assignedAppliance', function ($q) use ($agentId) {
+                $q->whereHas('agent', function ($q) use ($agentId) {
+                    $q->where('agent_id', $agentId);
+                });
             })->latest()->paginate();
 
     }
