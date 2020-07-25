@@ -10,6 +10,7 @@ use App\Models\AccessRate\AccessRate;
 use App\Models\AgentAssignedAppliances;
 use App\Models\AgentCommission;
 use App\Models\AssetRate;
+use App\Models\AssetType;
 use App\Models\Cluster;
 use App\Models\Manufacturer;
 use App\Models\Meter\MeterParameter;
@@ -57,6 +58,8 @@ class AppServiceProvider extends ServiceProvider
                 'mini-grid' => MiniGrid::class,
                 'agent_commission' => AgentCommission::class,
                 'agent_appliance' => AgentAssignedAppliances::class,
+                'appliance' => AssetType::class,
+                'agent_receipt'=>AgentReceipt::class
             ]
         );
     }
@@ -102,7 +105,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton('AgentPaymentProvider', static function () {
             return new AgentTransaction(
                 new \App\Models\Transaction\AgentTransaction(),
-                new Transaction(),new FirebaseService()
+                new Transaction(), new FirebaseService()
             );
         });
 
