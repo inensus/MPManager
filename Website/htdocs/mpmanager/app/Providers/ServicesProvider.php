@@ -66,7 +66,6 @@ class ServicesProvider extends ServiceProvider
         MeterTariff::observe(MeterTariffObserver::class);
         MiniGrid::observe(MiniGridObserver::class);
         AgentBalanceHistory::observe(AgentBalanceHistoryObserver::class);
-        Transaction::observe(TransactionObserver::class);
         AgentSoldAppliance::observe(AgentSoldApplianceObserver::class);
     }
 

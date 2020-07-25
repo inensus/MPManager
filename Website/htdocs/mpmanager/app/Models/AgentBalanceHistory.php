@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Transaction\Transaction;
 use Illuminate\Database\Eloquent\Model;
 
 class AgentBalanceHistory extends Model
@@ -13,4 +14,14 @@ class AgentBalanceHistory extends Model
         $this->belongsTo(Agent::class);
     }
 
+
+    public function trigger()
+    {
+        return $this->morphTo();
+    }
+
+    public function transaction()
+    {
+        return $this->belongsTo(Transaction::class);
+    }
 }

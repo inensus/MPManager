@@ -5,13 +5,28 @@ namespace App\Models;
 use App\Models\Address\Address;
 use App\Models\Person\Person;
 use App\Models\Transaction\Transaction;
-use App\Services\AgentCustomerService;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Hash;
 use Inensus\Ticket\Models\Ticket;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 
+/**
+ * Class Agent
+ * @package App\Models
+ *
+ * @property int $id
+ * @property int $person_id
+ * @property int $mini_grid_id
+ * @property int $agent_commission_id
+ * @property string $device_id
+ * @property string $name
+ * @property string $email
+ * @property string $password
+ * @property string $fire_base_token
+ * @property double $balance
+ * @property double $available_balance
+ * @property string $remember_token
+ */
 class Agent extends Authenticatable implements JWTSubject
 {
     public function setPasswordAttribute($password): void
@@ -97,6 +112,6 @@ class Agent extends Authenticatable implements JWTSubject
 
     public function commission()
     {
-        return $this->hasMany(AgentCommission::class);
+        return $this->belongsTo(AgentCommission::class, 'agent_commission_id', 'id');
     }
 }
