@@ -28,7 +28,8 @@ class CreateAgentSoldApplianceRequest extends FormRequest
     {
         return [
             'person_id' => 'required|exists:people,id',
-            'agent_assigned_appliance_id' => 'required|unique:agent_sold_appliances|exists:agent_assigned_appliances,id',
+            'down_payment'=>'required|numeric',
+            'agent_assigned_appliance_id' => 'required|exists:agent_assigned_appliances,id',
         ];
     }
 }
