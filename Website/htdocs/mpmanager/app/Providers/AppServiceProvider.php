@@ -54,7 +54,7 @@ class AppServiceProvider extends ServiceProvider
                 'asset_loan' => AssetRate::class,
                 'cluster' => Cluster::class,
                 'mini-grid' => MiniGrid::class,
-                'agent' => Agent::class,
+                'agent' => \App\Models\Transaction\AgentTransaction::class,
             ]
         );
     }

@@ -9,6 +9,7 @@ use App\Http\Services\RolesService;
 use App\Models\Address\Address;
 use App\Models\AgentAssignedAppliances;
 use App\Models\AgentBalanceHistory;
+use App\Models\AgentSoldAppliance;
 use App\Models\AssetPerson;
 use App\Models\Battery;
 use App\Models\Country;
@@ -25,6 +26,7 @@ use App\Models\Transaction\Transaction;
 use App\Observers\AddressesObserver;
 use App\Observers\AgentAssignedApplianceObserver;
 use App\Observers\AgentBalanceHistoryObserver;
+use App\Observers\AgentSoldApplianceObserver;
 use App\Observers\AgentTransactionObserver;
 use App\Observers\AssetPersonObserver;
 use App\Observers\BatteryObserver;
@@ -65,7 +67,7 @@ class ServicesProvider extends ServiceProvider
         MiniGrid::observe(MiniGridObserver::class);
         AgentBalanceHistory::observe(AgentBalanceHistoryObserver::class);
         Transaction::observe(TransactionObserver::class);
-        AgentAssignedAppliances::observe(AgentAssignedApplianceObserver::class);
+        AgentSoldAppliance::observe(AgentSoldApplianceObserver::class);
     }
 
 
