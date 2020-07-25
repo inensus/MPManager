@@ -69,6 +69,7 @@
 <script>
 
     import store from '../../store/store'
+
     export default {
 
         data: () => (
@@ -94,6 +95,11 @@
                         name: 'Customers',
                         route: '/people/page/1',
                         icon: 'user-friends',
+                    },
+                    {
+                        name: 'Agents',
+                        route: '/agents/page/1',
+                        icon: 'user',
                     },
                     {
                         name: 'Meters',
