@@ -33,11 +33,14 @@ class AgentTransaction implements ITransactionProvider
      */
     private $validData;
 
-    public function __construct(\App\Models\Transaction\AgentTransaction $agentTransaction, Transaction $transaction,FirebaseService $firebaseService)
-    {
+    public function __construct(
+        \App\Models\Transaction\AgentTransaction $agentTransaction,
+        Transaction $transaction,
+        FirebaseService $firebaseService
+    ) {
         $this->agentTransaction = $agentTransaction;
         $this->transaction = $transaction;
-        $this->fireBaseService=$firebaseService;
+        $this->fireBaseService = $firebaseService;
     }
 
     public function saveTransaction()
@@ -54,6 +57,7 @@ class AgentTransaction implements ITransactionProvider
 
     private function assignData($data): void
     {
+
         //provider specific data
         $this->agentTransaction->agent_id = (int)$data['agent_id'];
         $this->agentTransaction->device_id = (int)$data['device_id'];
@@ -84,7 +88,6 @@ class AgentTransaction implements ITransactionProvider
         $this->fireBaseService->sendNotify($agent->fire_base_token, json_encode(strval($body)));
 
 
-
     }
 
     private function prepareRequest(Transaction $transaction)
@@ -100,8 +103,11 @@ class AgentTransaction implements ITransactionProvider
      */
     public function validateRequest($request)
     {
+
         $deviceId = request()->header('device-id');
-        $agentId = (int)(request()->input('agent_id') ?? -1);
+        $agent = Agent::find(auth('agent_api')->user()->id);
+        $agentId = $agent->id;
+
         $agent = auth('agent_api')->user();
         try {
             $existingAgent = Agent::where('device_id', $deviceId)->where('id', $agentId)->firstOrFail();
@@ -113,9 +119,9 @@ class AgentTransaction implements ITransactionProvider
         if ($agentId !== $agent->id) {
             throw new \Exception('Agent authorization failed.');
         }
-        $this->validData = request()->only(['meter_serial_number', 'amount', 'agent_id']);
+        $this->validData = request()->only(['meter_serial_number', 'amount']);
         $this->validData['device_id'] = $deviceId;
-
+        $this->validData['agent_id'] = $agentId;
     }
 
     public function confirm(): void
