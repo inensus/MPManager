@@ -25,6 +25,6 @@ class AgentAssignedAppliances extends Model
 
     public function soldAppliance()
     {
-        return $this->hasOne(AgentSoldAppliance::class);
+        return $this->hasMany(AgentSoldAppliance::class);
     }
 }

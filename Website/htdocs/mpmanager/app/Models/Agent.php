@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Address\Address;
 use App\Models\Person\Person;
 use App\Models\Transaction\Transaction;
+use App\Services\AgentCustomerService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Hash;
@@ -92,5 +93,10 @@ class Agent extends Authenticatable implements JWTSubject
     public function tickets()
     {
         return $this->hasMany(Ticket::class, 'id', 'creator_id');
+    }
+
+    public function commission()
+    {
+        return $this->hasMany(AgentCommission::class);
     }
 }
