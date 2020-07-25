@@ -11,11 +11,11 @@ use Illuminate\Http\Request;
 class AgentSoldApplianceController extends Controller
 {
 
-    private  $agentSoldApplianceService;
+    private $agentSoldApplianceService;
 
     public function __construct(AgentSoldApplianceService $agentSoldApplianceService)
     {
-        $this->agentSoldApplianceService =$agentSoldApplianceService;
+        $this->agentSoldApplianceService = $agentSoldApplianceService;
     }
 
 
@@ -34,11 +34,18 @@ class AgentSoldApplianceController extends Controller
         return new ApiResource($soldAppliances);
     }
 
+    public function customerSoldAppliances($customerId, Request $request)
+    {
+        $agent = Agent::find(auth('agent_api')->user()->id);
+        $soldAppliances = $this->agentSoldApplianceService->customerSoldList($customerId, $agent->id);
+
+        return new ApiResource($soldAppliances);
+    }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(CreateAgentSoldApplianceRequest $request)
@@ -54,13 +61,11 @@ class AgentSoldApplianceController extends Controller
     }
 
 
-
-
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\agentSoldAppliance  $agent_sold_appliance
+     * @param \Illuminate\Http\Request $request
+     * @param \App\agentSoldAppliance $agent_sold_appliance
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, agentSoldAppliance $agent_sold_appliance)
@@ -71,7 +76,7 @@ class AgentSoldApplianceController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\agentSoldAppliance  $agent_sold_appliance
+     * @param \App\agentSoldAppliance $agent_sold_appliance
      * @return \Illuminate\Http\Response
      */
     public function destroy(agentSoldAppliance $agent_sold_appliance)

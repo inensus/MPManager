@@ -26,6 +26,13 @@ class AgentController extends Controller
         return new ApiResource($users);
     }
 
+    public function show(): ApiResource
+    {
+
+        $agent = Agent::find(auth('agent_api')->user()->id);
+        DD($agent);
+        return new ApiResource($agent);
+    }
 
     public function store(CreateAgentRequest $request)
     {
@@ -35,7 +42,8 @@ class AgentController extends Controller
             'name',
             'password',
             'email',
-            'mini_grid_id'
+            'mini_grid_id',
+            'agent_commission_id'
         ]));
 
         return new ApiResource($agent);
@@ -46,6 +54,24 @@ class AgentController extends Controller
         $this->agentService->update($agent, $request->all());
 
         return new ApiResource($agent->fresh());
+    }
+
+    public function destroy(Agent $agent): ApiResource
+    {
+        $agent->delete();
+        return new ApiResource($agent);
+    }
+
+
+    public function search()
+    {
+
+        $term = request('term');
+        $paginate = request('paginate') ?? 1;
+
+        return new ApiResource($this->agentService->searchAgent($term, $paginate));
+
+
     }
 
     public function resetPassword(Request $request, Response $response): Response
@@ -88,4 +114,6 @@ class AgentController extends Controller
             ]
         ]);
     }
+
+
 }
