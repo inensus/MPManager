@@ -3,7 +3,6 @@
 
 namespace App\Http\Requests;
 
-
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateAgentSoldApplianceRequest extends FormRequest
@@ -28,7 +27,9 @@ class CreateAgentSoldApplianceRequest extends FormRequest
     {
         return [
             'person_id' => 'required|exists:people,id',
-            'down_payment'=>'required|numeric',
+            'down_payment' => 'required|numeric',
+            'tenure' => 'required|numeric|min:0',
+            'first_payment_date' => 'required',
             'agent_assigned_appliance_id' => 'required|exists:agent_assigned_appliances,id',
         ];
     }
