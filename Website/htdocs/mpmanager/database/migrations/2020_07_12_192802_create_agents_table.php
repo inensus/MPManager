@@ -23,7 +23,8 @@ class CreateAgentsTable extends Migration
             $table->string('email')->unique();
             $table->string('password');
             $table->string('fire_base_token');
-            $table->decimal('balance', 12, 4)->default(0);
+            $table->double('balance')->default(0);
+            $table->double('revenue')->default(0);
             $table->rememberToken();
             $table->timestamps();
 
