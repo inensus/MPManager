@@ -5,7 +5,6 @@ namespace App\Http\Middleware;
 use App\Exceptions\AgentRiskBalanceExceeded;
 use App\Exceptions\DownPaymentNotFoundException;
 use App\Exceptions\TransactionAmountNotFoundException;
-use App\Models\AgentAssignedAppliances;
 use Closure;
 
 class AgentBalanceMiddleware
@@ -19,8 +18,6 @@ class AgentBalanceMiddleware
      */
     public function handle($request, Closure $next)
     {
-        echo "hayvan5";
-        die;
         $routeName = request()->route()->getName();
         $agent = auth('agent_api')->user();
         $commission = $agent->commission()->first();
