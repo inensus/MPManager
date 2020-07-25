@@ -6,8 +6,9 @@ namespace App\Observers;
 
 use App\Models\AgentAssignedAppliances;
 use App\Models\AgentBalanceHistory;
+use App\Models\AgentSoldAppliance;
 
-class AgentAssignedApplianceObserver
+class AgentSoldApplianceObserver
 {
     private $agentBalanceHistory;
 
@@ -17,11 +18,14 @@ class AgentAssignedApplianceObserver
 
     }
 
-    public function created(AgentAssignedAppliances $appliances)
+    public function created(AgentSoldAppliance $appliances)
     {
+         $assignedApplianceId= $appliances->agent_assigned_appliance_id;
+         $assignedAppliance = AgentAssignedAppliances::find($assignedApplianceId);
+
         AgentBalanceHistory::query()->create([
-            'agent_id' => $appliances->agent_id,
-            'amount' => (-1 * $appliances->cost),
+            'agent_id' => $assignedAppliance->agent_id,
+            'amount' => (-1 * $assignedAppliance->cost),
             'type' => 'Appliance'
         ]);
     }
