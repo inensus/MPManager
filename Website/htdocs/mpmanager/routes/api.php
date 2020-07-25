@@ -109,56 +109,84 @@ Route::group([
 });
 
 //JWT authentication for agent
+
 Route::group([
-    'middleware' => ['agent_api','jwt.verify'],
-    'prefix' => 'agents'
+    'middleware' => 'agent_api',
+    'prefix' => 'app'
 
 ], static function ($router) {
-
     Route::post('login', 'AgentAuthController@login');
     Route::post('logout', 'AgentAuthController@logout');
     Route::post('refresh', 'AgentAuthController@refresh');
     Route::get('me', 'AgentAuthController@me');
 
+});
+// Web panel  services
+Route::group([
+    'middleware' => ['api', 'jwt.verify'],
+    'prefix' => 'agents'
+
+], static function ($router) {
     Route::post('/', 'AgentController@store');
     Route::post('/reset-password', 'AgentController@resetPassword');
     Route::put('/{agent}', 'AgentController@update');
-
     Route::get('/', 'AgentController@index');
-    Route::post('/firebase', 'AgentController@setFirebaseToken');
-    Route::get('/balance', 'AgentController@showBalance');
-    Route::group(['prefix' => 'customers'], function () {
-        Route::get('/', 'AgentCustomerController@index');
-
-    });
-    Route::group(['prefix' => 'transactions'], function () {
-        Route::get('/', 'AgentTransactionsController@index');
-        Route::get('/{customerId}', 'AgentTransactionsController@agentCustomerTransactions');
-
-
-    });
+    Route::get('/{agent}', 'AgentController@show')->where('agent', '[0-9]+');
+    Route::get('/search', 'AgentController@search');
+    Route::delete('/{agent}', 'AgentController@destroy');
     Route::group(['prefix' => 'assigned'], function () {
-        Route::get('/appliances', 'AgentAssignedAppliancesController@index');
         Route::post('/appliances', 'AgentAssignedAppliancesController@store');
     });
-    Route::group(['prefix' => 'sold'], function () {
-        Route::get('/appliances', 'AgentSoldApplianceController@index');
-        Route::post('/appliances', 'AgentSoldApplianceController@store');
-    });
-    Route::group(['prefix' => 'ticket'], function () {
-        Route::get('/', 'AgentTicketController@index');
-        Route::get('/customer/{customerId}', 'AgentTicketController@agentCustomerTickets');
-        Route::post('/', 'AgentTicketController@store');
-    });
-    Route::group(['prefix' => 'balance'], function () {
-        Route::group(['prefix' => 'history'], function () {
-            Route::get('/', 'AgentBalanceHistoryController@index');
-            Route::post('/{agent}', 'AgentBalanceHistoryController@store');
-        });
-
+    Route::group(['prefix' => 'agent-commissions'], function () {
+        Route::get('/', 'AgentCommissionController@index');
+        Route::get('/{commission}', 'AgentCommissionController@show');
+        Route::post('/', 'AgentCommissionController@store');
+        Route::put('/{commission}', 'AgentCommissionController@update');
     });
 });
 
+
+// Android App Services
+Route::group([
+    'middleware' => ['agent_api', 'jwt.verify'],
+    'prefix' => 'app'
+], function () {
+    Route::group(['prefix' => 'agents'], function () {
+        Route::post('/firebase', 'AgentController@setFirebaseToken');
+        Route::get('/balance', 'AgentController@showBalance');
+
+        Route::group(['prefix' => 'customers'], function () {
+            Route::get('/', 'AgentCustomerController@index');
+            Route::get('/search', 'AgentCustomerController@search');
+        });
+        Route::group(['prefix' => 'transactions'], function () {
+            Route::get('/', 'AgentTransactionsController@index');
+            Route::get('/{customerId}', 'AgentTransactionsController@agentCustomerTransactions');
+
+        });
+        Route::group(['prefix' => 'appliances'], function () {
+            Route::get('/', 'AgentAssignedAppliancesController@index');
+            Route::get('/{customer}', 'AgentSoldApplianceController@customerSoldAppliances');
+            Route::post('/', [
+                'middleware' => 'agent.balance',
+                'uses' => 'AgentSoldApplianceController@store'
+            ])->name('agent-sell-appliance');
+        });
+
+        Route::group(['prefix' => 'ticket'], function () {
+            Route::get('/', 'AgentTicketController@index');
+            Route::get('/customer/{customerId}', 'AgentTicketController@agentCustomerTickets');
+            Route::post('/', 'AgentTicketController@store');
+        });
+        Route::group(['prefix' => 'balance'], function () {
+            Route::group(['prefix' => 'history'], function () {
+                Route::post('/{agent}', 'AgentBalanceHistoryController@store');
+            });
+
+        });
+    });
+
+});
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
