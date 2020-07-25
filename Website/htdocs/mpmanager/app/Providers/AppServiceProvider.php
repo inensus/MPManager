@@ -7,8 +7,8 @@ use App\Helpers\MailHelper;
 use App\ManufacturerApi\CalinApi;
 use App\Misc\LoanDataContainer;
 use App\Models\AccessRate\AccessRate;
-
-use App\Models\Agent;
+use App\Models\AgentAssignedAppliances;
+use App\Models\AgentCommission;
 use App\Models\AssetRate;
 use App\Models\Cluster;
 use App\Models\Manufacturer;
@@ -48,13 +48,15 @@ class AppServiceProvider extends ServiceProvider
                 'meter_parameter' => MeterParameter::class,
                 'token' => MeterToken::class,
                 'transaction' => Transaction::class,
-                'vodacom_transaction' => VodacomTransaction::class,
+                'agent_transaction' => \App\Models\Transaction\AgentTransaction::class,
                 'airtel_transaction' => \App\Models\Transaction\AirtelTransaction::class,
+                'vodacom_transaction' => VodacomTransaction::class,
                 'access_rate' => AccessRate::class,
                 'asset_loan' => AssetRate::class,
                 'cluster' => Cluster::class,
                 'mini-grid' => MiniGrid::class,
-                'agent' => \App\Models\Transaction\AgentTransaction::class,
+                'agent_commission' => AgentCommission::class,
+                'agent_appliance' => AgentAssignedAppliances::class,
             ]
         );
     }
