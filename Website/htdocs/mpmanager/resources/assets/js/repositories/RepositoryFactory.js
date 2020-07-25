@@ -17,6 +17,7 @@ import PersonRepository from './PersonRepository'
 import AuthenticationRepository from './AuthenticationRepository'
 import TransactionRepository from './TransactionRepository'
 import RevenueRepository from './RevenueRepository'
+import AgentRepository from './AgentRepository'
 
 const repositories = {
     'asset': AssetRepository,
@@ -36,7 +37,8 @@ const repositories = {
     'person': PersonRepository,
     'authentication': AuthenticationRepository,
     'transaction': TransactionRepository,
-    'revenue':RevenueRepository
+    'revenue':RevenueRepository,
+    'agent':AgentRepository
 }
 
 export default {
