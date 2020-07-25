@@ -9,6 +9,7 @@ use App\Models\AgentAssignedAppliances;
 use App\Models\AgentBalanceHistory;
 use App\Models\AgentCommission;
 use App\Models\AgentSoldAppliance;
+use App\Models\AssetRate;
 use App\Models\Person\Person;
 use App\Models\Transaction\AgentTransaction;
 use App\Models\Transaction\Transaction;
@@ -79,5 +80,33 @@ class AgentSoldApplianceObserver
         $history->save();
 
 
+        $tenure = request()->input('tenure');
+        $downPayment = request()->input('down_payment');
+        $remainingCost = $assignedAppliance->cost - $downPayment;
+        $firstPaymentDate = request()->input('first_payment_date');
+        $base_time = time();
+        AssetRate::query()->create([
+            'asset_person_id' => $buyer->id,
+            'rate_cost' => $downPayment,
+            'remaining' => 0,
+            'due_date' =>date("Y-m-d H:i:s")
+        ]);
+
+
+        foreach (range(1, $tenure) as $rate) {
+            if ((int)$rate === (int)$tenure) {
+                //last rate
+                $rate_cost = $remainingCost - (($rate - 1) * floor($remainingCost / $tenure));
+            } else {
+                $rate_cost = floor($remainingCost / $tenure);
+            }
+            $rate_date = date('Y-m-d', strtotime('+' . $rate-1 . ' month', strtotime($firstPaymentDate)));
+            AssetRate::query()->create([
+                'asset_person_id' => $buyer->id,
+                'rate_cost' => $rate_cost,
+                'remaining' => $rate_cost,
+                'due_date' => $rate_date
+            ]);
+        }
     }
 }
