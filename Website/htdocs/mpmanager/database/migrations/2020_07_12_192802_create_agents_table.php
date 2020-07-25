@@ -17,6 +17,7 @@ class CreateAgentsTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('person_id');
             $table->unsignedInteger('mini_grid_id');
+            $table->unsignedInteger('agent_commission_id');
             $table->string('device_id');
             $table->string('name');
             $table->string('email')->unique();
