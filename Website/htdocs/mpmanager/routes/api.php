@@ -172,14 +172,17 @@ Route::group([
 
         });
         Route::group(['prefix' => 'appliances'], function () {
-            Route::get('/', 'AgentAssignedAppliancesController@index');
+
+            Route::get('/', 'AgentSoldApplianceController@index');
             Route::get('/{customer}', 'AgentSoldApplianceController@customerSoldAppliances');
             Route::post('/', [
                 'middleware' => 'agent.balance',
                 'uses' => 'AgentSoldApplianceController@store'
             ])->name('agent-sell-appliance');
         });
-
+        Route::group(['prefix' => 'applianceTypes'], function () {
+            Route::get('/', 'AgentAssignedAppliancesController@index');
+        });
         Route::group(['prefix' => 'ticket'], function () {
             Route::get('/', 'AgentTicketController@index');
             Route::get('/customer/{customerId}', 'AgentTicketController@agentCustomerTickets');
