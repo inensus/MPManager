@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Address\Address;
 use App\Models\Person\Person;
 use App\Models\Transaction\Transaction;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Hash;
 use Inensus\Ticket\Models\Ticket;
@@ -48,7 +49,7 @@ class Agent extends Authenticatable implements JWTSubject
     ];
 
 
-    public function miniGrid()
+    public function miniGrid(): HasOne
     {
         return $this->hasOne(MiniGrid::Class, 'id', 'mini_grid_id');
     }
@@ -80,6 +81,11 @@ class Agent extends Authenticatable implements JWTSubject
         return $this->morphOne(Address::class, 'owner');
     }
 
+    public function tickets()
+    {
+        return $this->morphMany(Ticket::class, 'creator');
+    }
+
     public function transaction()
     {
         return $this->hasMany(Transaction::class);
@@ -105,10 +111,6 @@ class Agent extends Authenticatable implements JWTSubject
         return $this->belongsTo(Person::class);
     }
 
-    public function tickets()
-    {
-        return $this->hasMany(Ticket::class, 'id', 'creator_id');
-    }
 
     public function commission()
     {
