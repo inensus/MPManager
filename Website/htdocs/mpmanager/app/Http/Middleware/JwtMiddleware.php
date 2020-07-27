@@ -2,13 +2,15 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Agent;
+use App\Models\User;
 use Closure;
-
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
-use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
+use Tymon\JWTAuth\Exceptions\UserNotDefinedException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Http\Middleware\BaseMiddleware;
 
@@ -20,14 +22,30 @@ class JwtMiddleware extends BaseMiddleware
      *
      * @param Request $request
      * @param Closure $next
+     * @param string $type
      * @return mixed
-     * @throws JWTException
      */
-    public function handle($request, Closure $next)
+    public function handle($request, Closure $next, $type = 'user')
     {
+
         try {
-            $user = JWTAuth::parseToken()->authenticate();
+            $id = JWTAuth::parseToken()->getPayload()->get('sub');
+            if ($type === 'agent') {
+                $user = Agent::query()->findOrFail($id);
+            } elseif ($type === 'user') {
+                $user = User::query()->findOrFail($id);
+            } else {
+                throw new UserNotDefinedException('Authentication failed');
+            }
         } catch (Exception $e) {
+
+            if ($e instanceof ModelNotFoundException) {
+                return response()->json(['status' => 'No user found for authentication']);
+            }
+            if ($e instanceof UserNotDefinedException) {
+                return response()->json(['status' => $e->getMessage()]);
+            }
+
             if ($e instanceof TokenInvalidException) {
                 return response()->json(['status' => 'Token is Invalid']);
             }
@@ -38,6 +56,7 @@ class JwtMiddleware extends BaseMiddleware
 
             return response()->json(['status' => 'Authorization Token not found']);
         }
+        $request->attributes->add(['user' => $user]);
         return $next($request);
     }
 }

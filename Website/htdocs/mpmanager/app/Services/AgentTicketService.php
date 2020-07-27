@@ -5,92 +5,122 @@ namespace App\Services;
 
 
 use App\Models\Agent;
+use App\Models\Person\Person;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Collection;
 use Inensus\Ticket\Models\Ticket;
 use Inensus\Ticket\Services\BoardService;
 use Inensus\Ticket\Services\CardService;
-use Inensus\Ticket\Services\UserService;
+use Inensus\Ticket\Services\TicketService;
 use Inensus\Ticket\Trello\Tickets;
 
 class AgentTicketService implements IAgentRelatedService
 {
     private $boardService;
     private $cardService;
-    private $userService;
     private $tickets;
+    /**
+     * @var TicketService
+     */
+    private $ticketsService;
+
     /**
      * AgentTicketService constructor.
      * @param BoardService $boardService
      * @param CardService $cardService
-     * @param UserService $userService
      */
     public function __construct(
         BoardService $boardService,
         CardService $cardService,
-        UserService $userService,
+        TicketService $ticketsService,
         Tickets $tickets
     ) {
         $this->boardService = $boardService;
         $this->cardService = $cardService;
-        $this->userService = $userService;
         $this->tickets = $tickets;
+        $this->ticketsService = $ticketsService;
     }
 
     public function list($agentId)
     {
-        return Ticket::with(['agent',])
-            ->where('creator_type', 'agent')
-            ->whereHas('agent', function ($q) use ($agentId) {
+        $tickets = Ticket::query()->whereHasMorph('creator', [Agent::class],
+            static function ($q) use ($agentId) {
                 $q->where('id', $agentId);
             })
-            ->latest()->paginate();
+            ->latest()
+            ->paginate(5);
+
+
+        return $this->getTicketDetailsFromSource($tickets);
+
     }
 
     public function listByCustomer($agentId, $customerId)
     {
-        return Ticket::with(['agent',])
-            ->where('owner_id', $customerId)
-            ->where('creator_type', 'agent')
-            ->whereHas('agent', function ($q) use ($agentId) {
+
+        return Ticket::query()->whereHasMorph('creator', [Agent::class],
+            static function ($q) use ($agentId) {
                 $q->where('id', $agentId);
             })
-            ->latest()->paginate();
+            ->where('owner_id', $customerId)
+            ->latest()
+            ->paginate();
+
+
     }
+
+
+    protected function getTicketDetailsFromSource(LengthAwarePaginator $ticketList): LengthAwarePaginator
+    {
+        $ticket_ids = $ticketList->getCollection();
+        if ($tickets->count()) {
+            //get ticket details from trello
+            $ticketData = $this->ticketsService->getBatch($ticket_ids);
+            $ticketList->setCollection(Collection::make($ticketData));
+        }
+
+        return $ticketList;
+
+    }
+
     public function create($ticketData)
     {
         $board = $this->boardService->initializeBoard();
         $card = $this->cardService->initalizeList($board);
 
-        $ownerId =  (int)$ticketData['owner_id'];
-        $ownerType = 'person';
-        $assignedId = $ticketData['assignedPerson'];
+        $ownerId = (int)$ticketData['owner_id'];
+        try {
+            $owner = Person::query()->findOrFail($ownerId);
+        } catch (ModelNotFoundException $e) {
+            throw new TicketOwnerNotFoundException("Owner (person) with following id not found " . $ownerId);
+        }
 
 
+        $creator = auth('agent_api')->user();
 
-        $creatorId = Agent::find(auth('agent_api')->user()->id)->id;
-        $creatorType = 'agent';
 
         //reformat due date if it is set
-        $dueDate =  $ticketData['dueDate']!== null ? date('Y-m-d H:i:00', strtotime($ticketData['dueDate'])) : null;
-        $category = $ticketData['label'];
+        $dueDate = $ticketData['due_date'] !== null ? date('Y-m-d H:i:00', strtotime($ticketData['due_date'])) : null;
+        $categoryId = $ticketData['label'];
 
 
         $trelloParams = [
             'idList' => $card->card_id,
-            'name' =>  $ticketData['title'],
-            'desc' =>  $ticketData['description'],
+            'name' => $ticketData['title'],
+            'desc' => $ticketData['description'],
             'due' => $dueDate === '1970-01-01' ? null : $dueDate,
-            'idMembers' => $assignedId,
         ];
-        $assignedUser = $assignedId ? $this->userService->getByExternId($assignedId)->id : null;
+
         $ticketId = $this->tickets->createTicket($trelloParams)->id;
-        $ticket = new Ticket();
-        $ticket->ticket_id = $ticketId;
-        $ticket->owner_type = $ownerType;
-        $ticket->owner_id = $ownerId;
-        $ticket->creator_id = $creatorId;
-        $ticket->creator_type =$creatorType;
-        $ticket->category_id = $category;
-        $ticket->assigned_id = $assignedId;
+
+        $ticket = Ticket::make([
+            'ticket_id' => $ticketId,
+            'category_id' => $categoryId,
+
+        ]);
+        $ticket->creator()->associate($creator);
+        $ticket->owner()->associate($owner);
         $ticket->save();
         return $ticket;
 

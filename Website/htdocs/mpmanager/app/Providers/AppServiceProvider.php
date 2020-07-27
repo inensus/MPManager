@@ -7,6 +7,7 @@ use App\Helpers\MailHelper;
 use App\ManufacturerApi\CalinApi;
 use App\Misc\LoanDataContainer;
 use App\Models\AccessRate\AccessRate;
+use App\Models\Agent;
 use App\Models\AgentAssignedAppliances;
 use App\Models\AgentCommission;
 use App\Models\AssetRate;
@@ -19,6 +20,7 @@ use App\Models\MiniGrid;
 use App\Models\Person\Person;
 use App\Models\Transaction\Transaction;
 use App\Models\Transaction\VodacomTransaction;
+use App\Models\User;
 use App\Services\FirebaseService;
 use App\Sms\AndroidGateway;
 use App\Transaction\AgentTransaction;
@@ -58,8 +60,11 @@ class AppServiceProvider extends ServiceProvider
                 'mini-grid' => MiniGrid::class,
                 'agent_commission' => AgentCommission::class,
                 'agent_appliance' => AgentAssignedAppliances::class,
+                'agent' => Agent::class,
+                'admin' => User::class,
                 'appliance' => AssetType::class,
                 'agent_receipt'=>AgentReceipt::class
+
             ]
         );
     }
