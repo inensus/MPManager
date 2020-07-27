@@ -11,6 +11,7 @@ use App\Models\Agent;
 use App\Models\AgentAssignedAppliances;
 use App\Models\AgentCommission;
 use App\Models\AssetRate;
+use App\Models\AssetType;
 use App\Models\Cluster;
 use App\Models\Manufacturer;
 use App\Models\Meter\MeterParameter;
@@ -61,6 +62,9 @@ class AppServiceProvider extends ServiceProvider
                 'agent_appliance' => AgentAssignedAppliances::class,
                 'agent' => Agent::class,
                 'admin' => User::class,
+                'appliance' => AssetType::class,
+                'agent_receipt'=>AgentReceipt::class
+
             ]
         );
     }
@@ -106,7 +110,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton('AgentPaymentProvider', static function () {
             return new AgentTransaction(
                 new \App\Models\Transaction\AgentTransaction(),
-                new Transaction(),new FirebaseService()
+                new Transaction(), new FirebaseService()
             );
         });
 
