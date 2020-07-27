@@ -28,7 +28,8 @@ class CreateAgentTicketRequest extends FormRequest
     {
         return [
             'owner_id' => 'required|exists:people,id',
-            'assignedPerson' => 'required',
+            'title' => 'required',
+            'description' => 'required'
 
         ];
     }
