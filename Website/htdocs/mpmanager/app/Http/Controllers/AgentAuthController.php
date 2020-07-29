@@ -4,11 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Agent;
 use App\Services\AgentService;
-use Illuminate\Foundation\Auth\ResetsPasswords;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Auth;
-
-use Illuminate\Http\Request;
 
 class AgentAuthController extends Controller
 {
@@ -37,7 +33,7 @@ class AgentAuthController extends Controller
 
         $credentials = request(['email', 'password']);
         if (!$token = auth('agent_api')->setTTL(525600)->attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+            return response()->json(['data' => ['message' => 'Unauthorized', 'status' => 401]], 401);
         }
         $agent = Agent::find(auth('agent_api')->user()->id);
         $deviceId = request()->header('device-id');
