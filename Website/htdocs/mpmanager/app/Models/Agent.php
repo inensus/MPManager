@@ -3,8 +3,10 @@
 namespace App\Models;
 
 use App\Models\Address\Address;
+use App\Models\Address\HasAddressesInterface;
 use App\Models\Person\Person;
 use App\Models\Transaction\Transaction;
+use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Hash;
 use Inensus\Ticket\Models\Ticket;
@@ -27,7 +29,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property double $available_balance
  * @property string $remember_token
  */
-class Agent extends Authenticatable implements JWTSubject
+class Agent extends Authenticatable implements HasAddressesInterface,JWTSubject
 {
     public function setPasswordAttribute($password): void
     {
@@ -75,10 +77,7 @@ class Agent extends Authenticatable implements JWTSubject
     }
 
 
-    public function address()
-    {
-        return $this->morphOne(Address::class, 'owner');
-    }
+
 
     public function transaction()
     {
@@ -97,7 +96,7 @@ class Agent extends Authenticatable implements JWTSubject
 
     public function addressDetails()
     {
-        return $this->address()->with('city');
+        return $this->addresses()->with('city');
     }
 
     public function person()
@@ -113,5 +112,10 @@ class Agent extends Authenticatable implements JWTSubject
     public function commission()
     {
         return $this->belongsTo(AgentCommission::class, 'agent_commission_id', 'id');
+    }
+
+    public function addresses(): HasOneOrMany
+    {
+        return $this->morphMany(Address::class, 'owner');
     }
 }
