@@ -127,6 +127,7 @@ Route::group([
     'prefix' => 'agents'
 
 ], static function ($router) {
+    Route::post('/', 'PersonController@store');
     Route::post('/', 'AgentController@store');
     Route::post('/reset-password', 'AgentController@resetPassword');
     Route::put('/{agent}', 'AgentController@update');
@@ -135,7 +136,11 @@ Route::group([
     Route::get('/search', 'AgentController@search');
     Route::delete('/{agent}', 'AgentController@destroy');
     Route::group(['prefix' => 'assigned'], function () {
-        Route::post('/appliances', 'AgentAssignedAppliancesController@store');
+        Route::post('/', 'AgentAssignedAppliancesController@store');
+        Route::get('/{agent}', 'AgentAssignedAppliancesController@indexWeb');
+    });
+    Route::group(['prefix' => 'commissions'], function () {
+        Route::get('/', 'AgentCommissionController@index');
     });
     Route::group(['prefix' => 'agent-commissions'], function () {
         Route::get('/', 'AgentCommissionController@index');
