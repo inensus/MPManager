@@ -7,6 +7,7 @@ use App\Http\Services\CountryService;
 use App\Http\Services\PersonService;
 use App\Http\Services\RolesService;
 use App\Models\Address\Address;
+use App\Models\Agent;
 use App\Models\AgentAssignedAppliances;
 use App\Models\AgentBalanceHistory;
 use App\Models\AgentReceipt;
@@ -27,6 +28,7 @@ use App\Models\Transaction\Transaction;
 use App\Observers\AddressesObserver;
 use App\Observers\AgentAssignedApplianceObserver;
 use App\Observers\AgentBalanceHistoryObserver;
+use App\Observers\AgentObserver;
 use App\Observers\AgentReceiptObserver;
 use App\Observers\AgentSoldApplianceObserver;
 use App\Observers\AgentTransactionObserver;
@@ -70,6 +72,7 @@ class ServicesProvider extends ServiceProvider
         AgentBalanceHistory::observe(AgentBalanceHistoryObserver::class);
         AgentSoldAppliance::observe(AgentSoldApplianceObserver::class);
         AgentReceipt::observe(AgentReceiptObserver::class);
+        Agent::observe(AgentObserver::class);
     }
 
 

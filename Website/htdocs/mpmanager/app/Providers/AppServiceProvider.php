@@ -7,6 +7,7 @@ use App\Helpers\MailHelper;
 use App\ManufacturerApi\CalinApi;
 use App\Misc\LoanDataContainer;
 use App\Models\AccessRate\AccessRate;
+use App\Models\Agent;
 use App\Models\AgentAssignedAppliances;
 use App\Models\AgentCommission;
 use App\Models\AssetRate;
@@ -59,7 +60,8 @@ class AppServiceProvider extends ServiceProvider
                 'agent_commission' => AgentCommission::class,
                 'agent_appliance' => AgentAssignedAppliances::class,
                 'appliance' => AssetType::class,
-                'agent_receipt'=>AgentReceipt::class
+                'agent_receipt' => AgentReceipt::class,
+                'agent' => Agent::class
             ]
         );
     }
