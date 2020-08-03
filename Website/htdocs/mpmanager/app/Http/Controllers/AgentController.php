@@ -26,40 +26,33 @@ class AgentController extends Controller
         return new ApiResource($users);
     }
 
-    public function show(): ApiResource
+    public function show(Agent $agent, Request $request): ApiResource
     {
 
-        $agent = Agent::find(auth('agent_api')->user()->id);
-        DD($agent);
+        $agent = $this->agentService->getAgentDetail($agent);
         return new ApiResource($agent);
     }
 
     public function store(CreateAgentRequest $request)
     {
+        $agent = $this->agentService->createFromRequest($request);
 
-        $agent = $this->agentService->create($request->only([
-            'person_id',
-            'name',
-            'password',
-            'email',
-            'mini_grid_id',
-            'agent_commission_id'
-        ]));
 
         return new ApiResource($agent);
     }
 
     public function update(Agent $agent, Request $request): ApiResource
     {
-        $this->agentService->update($agent, $request->all());
 
-        return new ApiResource($agent->fresh());
+        $updatedAgent = $this->agentService->update($agent, $request->all());
+
+        return new ApiResource($updatedAgent);
     }
 
     public function destroy(Agent $agent): ApiResource
     {
-        $agent->delete();
-        return new ApiResource($agent);
+
+        return new ApiResource($this->agentService->deleteAgent($agent));
     }
 
 
@@ -70,8 +63,6 @@ class AgentController extends Controller
         $paginate = request('paginate') ?? 1;
 
         return new ApiResource($this->agentService->searchAgent($term, $paginate));
-
-
     }
 
     public function resetPassword(Request $request, Response $response): Response
