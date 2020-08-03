@@ -16,7 +16,8 @@ class AgentCommissionController extends Controller
      */
     public function index()
     {
-        //
+        $commissions = AgentCommission::query()->paginate(config('settings.paginate'));
+        return new ApiResource($commissions);
     }
 
     /**
