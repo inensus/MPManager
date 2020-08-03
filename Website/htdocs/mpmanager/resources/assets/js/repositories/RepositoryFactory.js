@@ -18,6 +18,9 @@ import AuthenticationRepository from './AuthenticationRepository'
 import TransactionRepository from './TransactionRepository'
 import RevenueRepository from './RevenueRepository'
 import AgentRepository from './AgentRepository'
+import CountryRespository from './CountryRespository'
+import AgentCommissionRepository from './AgentCommissionRepository'
+import AgentAssignedApplianceRepository from './AgentAssignedApplianceRepository'
 
 const repositories = {
     'asset': AssetRepository,
@@ -38,7 +41,10 @@ const repositories = {
     'authentication': AuthenticationRepository,
     'transaction': TransactionRepository,
     'revenue':RevenueRepository,
-    'agent':AgentRepository
+    'agent':AgentRepository,
+    'country':CountryRespository,
+    'commission':AgentCommissionRepository,
+    'assignedAppliance':AgentAssignedApplianceRepository
 }
 
 export default {
