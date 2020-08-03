@@ -31,11 +31,12 @@ class CreateAgentRequest extends FormRequest
     public function rules()
     {
         return [
-            'person_id' => 'required|exists:people,id|unique:agents',
+
             'email' => 'required|unique:agents,email',
             'name' => 'required|min:3',
+            'surname' => 'required|min:3',
             'password' => 'required|min:6',
-            'mini_grid_id' => 'required',
+            'city_id' => 'required',
             'agent_commission_id' => 'required|exists:agent_commissions,id'
         ];
     }
