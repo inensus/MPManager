@@ -71,4 +71,18 @@ class AgentAssignedAppliancesController extends Controller
     {
         //
     }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @param Agent $agent
+     * @param Request $request
+     * @return ApiResource
+     */
+    public function indexWeb(Agent $agent, Request $request)
+    {
+
+        $assignedAppliances = $this->agentAssignedApplianceService->list($agent->id);
+        return new ApiResource($assignedAppliances);
+    }
 }
