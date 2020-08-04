@@ -65,8 +65,8 @@ class AgentBalanceHistoryController extends Controller
      * Update the specified resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @param \App\agentBalanceHistory $agent_balance_history
-     * @return \Illuminate\Http\Response
+     * @param AgentBalanceHistory $agent_balance_history
+     * @return void
      */
     public function update(Request $request, agentBalanceHistory $agent_balance_history)
     {
@@ -76,11 +76,27 @@ class AgentBalanceHistoryController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\agentBalanceHistory $agent_balance_history
-     * @return \Illuminate\Http\Response
+     * @param AgentBalanceHistory $agent_balance_history
+     * @return void
      */
     public function destroy(agentBalanceHistory $agent_balance_history)
     {
         //
     }
+
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @param Agent $agent
+     * @param Request $request
+     * @return ApiResource
+     */
+    public function indexWeb(Agent $agent, Request $request)
+    {
+
+        $balanceHistories = $this->agentBalanceHistoryService->agentBalanceHistories($agent->id);
+        return new ApiResource($balanceHistories);
+    }
+
 }
