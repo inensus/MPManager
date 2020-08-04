@@ -2,18 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\AssetTypeRequest;
+use App\Http\Requests\AssetTypeCreateRequest;
+use App\Http\Requests\AssetTypeUpdateRequest;
 use App\Http\Resources\ApiResource;
 use App\Models\AssetType;
 use Exception;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Http\Request;
-use Inensus\Ticket\Trello\Api;
 
 class AssetTypeController extends Controller
 {
 
     use SoftDeletes;
+
     /**
      * @var AssetType
      */
@@ -32,7 +32,7 @@ class AssetTypeController extends Controller
     public function index(): ApiResource
     {
         return new ApiResource(
-            $this->assetType->paginate(15)
+            $this->assetType->newQuery()->paginate(15)
         );
     }
 
@@ -40,16 +40,15 @@ class AssetTypeController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param AssetTypeRequest $request
+     * @param AssetTypeCreateRequest $request
      * @return ApiResource
      */
-    public function store(AssetTypeRequest $request): ApiResource
+    public function store(AssetTypeCreateRequest $request): ApiResource
     {
-        $name = $request->get('asset_type_name');
-        $asset = $this->assetType::create([
-            'name' => $name
-        ]);
-
+        $asset = $this->assetType::query()
+            ->create(
+                $request->only(['name', 'price'])
+            );
         return new ApiResource($asset);
     }
 
@@ -57,14 +56,13 @@ class AssetTypeController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
+     * @param AssetTypeUpdateRequest $request
      * @param AssetType $assetType
      * @return ApiResource
      */
-    public function update(AssetTypeRequest $request, AssetType $assetType)
+    public function update(AssetTypeUpdateRequest $request, AssetType $assetType): ApiResource
     {
-        $assetType->name = $request->get('asset_type_name');
-        $assetType->save();
+        $assetType->update($request->only(['name', 'price']));
         return new ApiResource($assetType);
     }
 
