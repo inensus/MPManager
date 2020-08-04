@@ -1,12 +1,10 @@
 <?php
 
-
 namespace App\Http\Requests;
-
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateAgentTicketRequest extends FormRequest
+class AssetTypeCreateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,16 +19,13 @@ class CreateAgentTicketRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     *
      * @return array
      */
     public function rules()
     {
         return [
-            'owner_id' => 'required|exists:people,id',
-            'title' => 'required',
-            'description' => 'required'
-
+            'name' => 'required|min:3',
+            'price' => 'required|numeric|min:1',
         ];
     }
 }

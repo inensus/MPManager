@@ -6,43 +6,41 @@ namespace App\Services;
 
 use App\Models\Meter\Meter;
 use App\Models\Meter\MeterParameter;
-use App\Models\Person\Person;
 use App\Models\Transaction\AgentTransaction;
-use App\Models\Transaction\AirtelTransaction;
 use App\Models\Transaction\Transaction;
-use App\Models\Transaction\VodacomTransaction;
 
 class AgentTransactionService implements IAgentRelatedService
 {
 
     public function list($agentId)
     {
-        $transactions = Transaction::with('originalAgent')
+        return Transaction::with('originalAgent')
             ->whereHasMorph('originalTransaction', [AgentTransaction::class],
-                function ($q) use ($agentId) {
+                static function ($q) use ($agentId) {
                     $q->where('agent_id', $agentId);
                 })
             ->latest()->paginate();
-
-
-        return $transactions;
-
     }
 
     public function listByCustomer($agentId, $customerId)
     {
-        $customerMeters = MeterParameter::where('owner_id', $customerId)->firstOrFail();
+        $customerMeters = MeterParameter::query()->select('meter_id')->where('owner_id', $customerId)->get();
+        if ($customerMeters->count() === 0) {
+            // customer has no meters
+            return null;
+        }
 
-        $cutomerMeterId = $customerMeters->id;
-        $customerMeterSerialNumbers = Meter::has('meterParameter')
-            ->whereHas('meterParameter', static function ($q) use ($cutomerMeterId) {
-                $q->where('id', $cutomerMeterId);
 
+        $customerMeterId = $customerMeters->id;
+        $customerMeterSerialNumbers = Meter::query()
+            ->has('meterParameter')
+            ->whereHas('meterParameter', static function ($q) use ($customerMeterId) {
+                $q->where('id', $customerMeterId);
             })->get('serial_number');
 
-        $customerTransactions = Transaction::with('originalAgent')
+        return Transaction::with('originalAgent')
             ->whereHasMorph('originalTransaction', [AgentTransaction::class],
-                function ($q) use ($agentId) {
+                static function ($q) use ($agentId) {
                     $q->where('agent_id', $agentId);
                 })
             ->whereHas('meter', static function ($q) use ($customerMeterSerialNumbers) {
@@ -50,7 +48,6 @@ class AgentTransactionService implements IAgentRelatedService
 
             })
             ->latest()->paginate();
-        return $customerTransactions;
     }
 
 

@@ -8,7 +8,6 @@
 
 namespace Inensus\Ticket\Models;
 
-use App\Models\Agent;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -77,10 +76,9 @@ class Ticket extends BaseModel
             ->groupBy(DB::raw('YEARWEEK(updated_at,3)'));
     }
 
-    public function agent()
+    public function creator()
     {
-        return $this->belongsTo(Agent::class,'creator_id','id');
-
+        return $this->morphTo('creator');
     }
 
     public function ticketsOpenedWithCategories($miniGridId)

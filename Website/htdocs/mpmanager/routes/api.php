@@ -26,10 +26,10 @@ require_once 'resources/Countries.php';
 require_once 'resources/Meters.php';
 //Routes for Addresses resource
 require_once 'resources/Addresses.php';
-
-
+// Transaction routes
 require_once 'api_paths/transactions.php';
-
+// Agent routes
+require_once 'resources/AgentApp.php';
 
 Route::group(['prefix' => 'energies'], static function () {
     Route::post('/', 'EnergyController@store');
@@ -108,19 +108,7 @@ Route::group([
 
 });
 
-//JWT authentication for agent
 
-Route::group([
-    'middleware' => 'agent_api',
-    'prefix' => 'app'
-
-], static function ($router) {
-    Route::post('login', 'AgentAuthController@login');
-    Route::post('logout', 'AgentAuthController@logout');
-    Route::post('refresh', 'AgentAuthController@refresh');
-    Route::get('me', 'AgentAuthController@me');
-
-});
 // Web panel  services
 Route::group([
     'middleware' => ['api', 'jwt.verify'],

@@ -10,8 +10,9 @@ namespace App\Transaction;
 
 
 use App\Lib\ITransactionProvider;
-use App\Models\Transaction\VodacomTransaction;
+use App\Models\Transaction\AgentTransaction;
 use App\Models\Transaction\AirtelTransaction;
+use App\Models\Transaction\VodacomTransaction;
 
 class TransactionAdapter
 {

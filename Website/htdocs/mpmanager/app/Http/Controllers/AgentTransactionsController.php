@@ -21,20 +21,18 @@ class AgentTransactionsController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param Agent $agent
-     * @param Request $request
      * @return ApiResource
      */
-    public function index(Request $request)
+    public function index(): ApiResource
     {
-        $agent = Agent::find(auth('agent_api')->user()->id);
+        $agent = request()->attributes->get('user');
         $transactions = $this->agentTransactionService->list($agent->id);
         return new ApiResource($transactions);
     }
 
-    public function agentCustomerTransactions($customerId, Request $request)
+    public function show($customerId): ApiResource
     {
-        $agent = Agent::find(auth('agent_api')->user()->id);
+        $agent = request()->attributes->get('user');
         $transactions = $this->agentTransactionService->listByCustomer($agent->id, $customerId);
         return new ApiResource($transactions);
     }

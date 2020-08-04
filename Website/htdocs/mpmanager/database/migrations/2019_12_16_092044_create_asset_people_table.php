@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateAssetPeopleTable extends Migration
 {
@@ -19,6 +19,7 @@ class CreateAssetPeopleTable extends Migration
             $table->integer('person_id');
             $table->integer('total_cost');
             $table->integer('rate_count');
+            $table->morphs('creator');
             $table->timestamps();
         });
     }
