@@ -9,6 +9,7 @@ use App\Models\Person\Person;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
+use Inensus\Ticket\Exceptions\TicketOwnerNotFoundException;
 use Inensus\Ticket\Models\Ticket;
 use Inensus\Ticket\Services\BoardService;
 use Inensus\Ticket\Services\CardService;
@@ -44,10 +45,11 @@ class AgentTicketService implements IAgentRelatedService
 
     public function list($agentId)
     {
-        $tickets = Ticket::query()->whereHasMorph('creator', [Agent::class],
-            static function ($q) use ($agentId) {
-                $q->where('id', $agentId);
-            })
+        $tickets = Ticket::with('category', 'owner')
+            ->whereHasMorph('creator', [Agent::class],
+                static function ($q) use ($agentId) {
+                    $q->where('id', $agentId);
+                })
             ->latest()
             ->paginate(5);
 
@@ -58,23 +60,21 @@ class AgentTicketService implements IAgentRelatedService
 
     public function listByCustomer($agentId, $customerId)
     {
-
-        return Ticket::query()->whereHasMorph('creator', [Agent::class],
-            static function ($q) use ($agentId) {
-                $q->where('id', $agentId);
-            })
+        return Ticket::with('category')
+            ->whereHasMorph('creator', [Agent::class],
+                static function ($q) use ($agentId) {
+                    $q->where('id', $agentId);
+                })
             ->where('owner_id', $customerId)
             ->latest()
             ->paginate();
-
-
     }
 
 
     protected function getTicketDetailsFromSource(LengthAwarePaginator $ticketList): LengthAwarePaginator
     {
         $ticket_ids = $ticketList->getCollection();
-        if ($tickets->count()) {
+        if ($ticketList->count()) {
             //get ticket details from trello
             $ticketData = $this->ticketsService->getBatch($ticket_ids);
             $ticketList->setCollection(Collection::make($ticketData));
@@ -84,6 +84,11 @@ class AgentTicketService implements IAgentRelatedService
 
     }
 
+    /**
+     * @param $ticketData
+     * @return mixed
+     * @throws TicketOwnerNotFoundException
+     */
     public function create($ticketData)
     {
         $board = $this->boardService->initializeBoard();
@@ -93,15 +98,13 @@ class AgentTicketService implements IAgentRelatedService
         try {
             $owner = Person::query()->findOrFail($ownerId);
         } catch (ModelNotFoundException $e) {
-            throw new TicketOwnerNotFoundException("Owner (person) with following id not found " . $ownerId);
+            throw new TicketOwnerNotFoundException("Ticket owner with following id not found " . $ownerId);
         }
 
-
-        $creator = auth('agent_api')->user();
-
+        $creator = request()->attributes->get('user');
 
         //reformat due date if it is set
-        $dueDate = $ticketData['due_date'] !== null ? date('Y-m-d H:i:00', strtotime($ticketData['due_date'])) : null;
+        $dueDate = isset($ticketData['due_date']) ? date('Y-m-d H:i:00', strtotime($ticketData['due_date'])) : null;
         $categoryId = $ticketData['label'];
 
 
@@ -144,7 +147,10 @@ class AgentTicketService implements IAgentRelatedService
     }
     public function getTicket($ticketId)
     {
-        return $this->tickets->get($ticketId);
+        $ticket = Ticket::with('category', 'owner')->where('ticket_id', $ticketId)->first();
+        $ticket['ticket'] = $this->ticketsService->getTicket($ticketId);
+        $ticket['actions'] = $this->ticketsService->getActions($ticketId);
+        return $ticket;
     }
 
     public function getActions($ticketId)

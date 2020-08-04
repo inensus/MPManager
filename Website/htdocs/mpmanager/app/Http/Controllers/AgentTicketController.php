@@ -6,8 +6,9 @@ use App\AgentTicket;
 use App\Http\Requests\CreateAgentTicketRequest;
 use App\Http\Resources\ApiResource;
 use App\Services\AgentTicketService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Inensus\Ticket\Exceptions\TicketOwenerNotFoundException;
+use Inensus\Ticket\Exceptions\TicketOwnerNotFoundException;
 use Inensus\Ticket\Http\Resources\TicketResource;
 
 
@@ -46,10 +47,10 @@ class AgentTicketController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @param CreateAgentTicketRequest $request
+     * @return JsonResponse|TicketResource
      */
-    public function store(CreateAgentTicketRequest $request): TicketResource
+    public function store(CreateAgentTicketRequest $request)
     {
         try {
             $ticket = $this->agentTicketService->create($request->only([
@@ -59,11 +60,15 @@ class AgentTicketController extends Controller
                 'title',
                 'description'
             ]));
-        } catch (TicketOwenerNotFoundException $e) {
+        } catch (TicketOwnerNotFoundException $e) {
             return response()->setStatusCode(409)->json(['success' => 0, 'message' => $e->getMessage()]);
         }
-
         return new TicketResource($this->agentTicketService->getBatch([$ticket]));
+    }
 
+    public function show($ticketId): ApiResource
+    {
+        $ticket = $this->agentTicketService->getTicket($ticketId);
+        return new ApiResource($ticket);
     }
 }
