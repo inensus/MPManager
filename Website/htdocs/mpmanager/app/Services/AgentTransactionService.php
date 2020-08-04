@@ -54,4 +54,18 @@ class AgentTransactionService implements IAgentRelatedService
     }
 
 
+    public function listForWeb($agentId)
+    {
+        $transactions = Transaction::with( 'meter.meterParameter.owner')
+            ->where('type', 'energy')
+            ->whereHasMorph('originalTransaction', [AgentTransaction::class],
+                function ($q) use ($agentId) {
+                    $q->where('agent_id', $agentId);
+                })
+            ->latest()->paginate();
+
+
+        return $transactions;
+
+    }
 }
