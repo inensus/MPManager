@@ -6,6 +6,7 @@ use App\Models\Address\Address;
 use App\Models\Person\Person;
 use App\Models\Transaction\Transaction;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Hash;
 use Inensus\Ticket\Models\Ticket;
@@ -115,5 +116,10 @@ class Agent extends Authenticatable implements JWTSubject
     public function commission()
     {
         return $this->belongsTo(AgentCommission::class, 'agent_commission_id', 'id');
+    }
+
+    public function soldAppliances(): MorphMany
+    {
+        return $this->morphMany(AssetPerson::class, 'creator');
     }
 }
