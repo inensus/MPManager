@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateAgentSoldApplianceRequest;
 use App\Http\Resources\ApiResource;
 use App\Models\Agent;
+use App\Models\AgentSoldAppliance;
 use App\Services\AgentSoldApplianceService;
 use Illuminate\Http\Request;
 
@@ -45,8 +46,8 @@ class AgentSoldApplianceController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @param CreateAgentSoldApplianceRequest $request
+     * @return ApiResource
      */
     public function store(CreateAgentSoldApplianceRequest $request)
     {
@@ -65,8 +66,8 @@ class AgentSoldApplianceController extends Controller
      * Update the specified resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @param \App\agentSoldAppliance $agent_sold_appliance
-     * @return \Illuminate\Http\Response
+     * @param agentSoldAppliance $agent_sold_appliance
+     * @return void
      */
     public function update(Request $request, agentSoldAppliance $agent_sold_appliance)
     {
@@ -82,5 +83,13 @@ class AgentSoldApplianceController extends Controller
     public function destroy(agentSoldAppliance $agent_sold_appliance)
     {
         //
+    }
+
+    public function indexWeb(Agent $agent, Request $request)
+    {
+
+        $soldAppliances = $this->agentSoldApplianceService->listForWeb($agent->id);
+
+        return new ApiResource($soldAppliances);
     }
 }
