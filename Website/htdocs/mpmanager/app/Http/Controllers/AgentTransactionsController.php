@@ -2,13 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Agent_Transactions;
 use App\Http\Resources\ApiResource;
 use App\Models\Agent;
-use App\Models\Transaction\Transaction;
-use App\Services\AgentService;
+use App\Models\Transaction\AgentTransaction;
 use App\Services\AgentTransactionService;
-use GuzzleHttp\Client;
 use Illuminate\Http\Request;
 
 class AgentTransactionsController extends Controller
@@ -19,8 +16,6 @@ class AgentTransactionsController extends Controller
     public function __construct(AgentTransactionService $agentTransactionService)
     {
         $this->agentTransactionService = $agentTransactionService;
-        $this->middleware('auth:agent_api', ['except' => ['login']]);
-
     }
 
     /**
@@ -49,7 +44,7 @@ class AgentTransactionsController extends Controller
      * Store a newly created resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
+     * @return void
      */
     public function store(Request $request)
     {
@@ -60,10 +55,10 @@ class AgentTransactionsController extends Controller
      * Update the specified resource in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @param \App\Agent_Transactions $agent_Transactions
-     * @return \Illuminate\Http\Response
+     * @param AgentTransaction $agent_Transactions
+     * @return void
      */
-    public function update(Request $request, Agent_Transactions $agent_Transactions)
+    public function update(Request $request, AgentTransaction $agent_Transactions)
     {
         //
     }
@@ -71,13 +66,17 @@ class AgentTransactionsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\Agent_Transactions $agent_Transactions
-     * @return \Illuminate\Http\Response
+     * @param AgentTransaction $agent_Transactions
+     * @return void
      */
-    public function destroy(Agent_Transactions $agent_Transactions)
+    public function destroy(AgentTransaction $agent_Transactions)
     {
         //
     }
 
-
+    public function indexWeb(Agent $agent)
+    {
+        $transactions = $this->agentTransactionService->listForWeb($agent->id);
+        return new ApiResource($transactions);
+    }
 }
