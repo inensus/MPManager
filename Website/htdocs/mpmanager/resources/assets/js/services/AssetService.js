@@ -10,82 +10,97 @@ export class AssetService {
         this.asset = {
             id: null,
             name: null,
-            price: null,
             updated_at: null,
             edit: false,
+            asset_type_name: null
         }
         this.paginator = new Paginator(resources.assets.list)
 
     }
 
-    fromJson(data) {
+    fromJson (data) {
         this.id = data.id
         this.name = data.name
-        this.price = data.price
         this.updated_at = data.updated_at
         return this
     }
 
+    updateList (data) {
+        this.list = []
 
-    updateList(data) {
-        console.log('update lists')
-        this.list = data.map(a => {
-            return {
-                id: a.id,
-                name: a.name,
-                price: a.price,
-                updated_at: a.updated_at,
+        for (let a in data) {
+
+            let assetType = {
+                id: data[a].id,
+                name: data[a].name,
+                updated_at: data[a].updated_at,
                 edit: false,
             }
-        })
-
-
+            this.list.push(assetType)
+        }
+        return this.list
     }
 
-    async createAsset() {
+    async createAsset () {
+        this.asset.asset_type_name = this.asset.name
         try {
-            let response = await this.repository.create(this.asset);
+            let response = await this.repository.create(this.asset)
             if (response.status === 200 || response.status === 201) {
-                this.asset.id = response.data.data.id;
-                this.asset.name = response.data.data.name;
-                this.asset.updated_at = response.data.data.updated_at;
-                EventBus.$emit('assetTypeAdded', this.asset);
+                this.asset.id = response.data.data.id
+                this.asset.name = response.data.data.name
+                this.asset.updated_at = response.data.data.updated_at
+                EventBus.$emit('assetTypeAdded', this.asset)
             } else {
-                return new ErrorHandler(response.error, 'http', response.status);
+                return new ErrorHandler(response.error, 'http', response.status)
             }
         } catch (e) {
-            return new ErrorHandler(e, 'http');
+            return new ErrorHandler(e, 'http')
         }
 
     }
 
-    async updateAsset(asset) {
+    async updateAsset (asset) {
         try {
-            let response = await this.repository.update(asset.id, asset);
+            let response = await this.repository.update(asset.id, asset)
             if (response.status === 200 || response.status === 201) {
-                return response;
+                return response
             } else {
-                new ErrorHandler(response.error, 'http', response.status);
+                new ErrorHandler(response.error, 'http', response.status)
             }
 
         } catch (e) {
-            return new ErrorHandler(e, 'http');
+            return new ErrorHandler(e, 'http')
         }
 
     }
 
-    async deleteAsset(asset) {
+    async deleteAsset (asset) {
         try {
-            let response = await this.repository.delete(asset.id);
+            let response = await this.repository.delete(asset.id)
             if (response.status === 200 || response.status === 201) {
-                return response;
+                return response
             } else {
-                new ErrorHandler(response.error, 'http', response.status);
+                new ErrorHandler(response.error, 'http', response.status)
             }
-            return response;
+            return response
         } catch (e) {
-            return new ErrorHandler(e, 'http');
+            return new ErrorHandler(e, 'http')
         }
 
+    }
+
+    async getAssets () {
+        try {
+            let response = await this.repository.list()
+            if (response.status === 200) {
+                let list = response.data.data
+                this.list = this.updateList(list)
+                return this.list
+            } else {
+                return new ErrorHandler(response.error, 'http', response.status)
+            }
+        } catch (e) {
+            return new ErrorHandler(e, 'http')
+        }
     }
 }

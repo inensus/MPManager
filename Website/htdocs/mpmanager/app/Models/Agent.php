@@ -114,11 +114,6 @@ class Agent extends Authenticatable implements JWTSubject
         return $this->belongsTo(Person::class);
     }
 
-    public function tickets()
-    {
-        return $this->hasMany(Ticket::class, 'id', 'creator_id');
-    }
-
     public function commission()
     {
         return $this->belongsTo(AgentCommission::class, 'agent_commission_id', 'id');
