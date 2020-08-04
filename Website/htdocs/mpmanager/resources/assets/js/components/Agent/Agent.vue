@@ -8,20 +8,29 @@
 
             <div
                 class="md-layout-item md-large-size-50 md-medium-size-50 md-xlarge-size-50 md-small-size-100 md-small-size-100">
-                <assigned-appliance-list :agent-id="agentId"/>
+                <agent-balance-history-list :agent-id="agentId"/>
             </div>
-            <div
-                class="md-layout-item md-large-size-100 md-medium-size-100 md-xlarge-size-100 md-small-size-100 md-small-size-100">
-                <agent-receipt-list/>
-            </div>
+            <!-- <div
+                 class="md-layout-item md-large-size-100 md-medium-size-100 md-xlarge-size-100 md-small-size-100 md-small-size-100">
+                 <agent-receipt-list/>
+             </div>-->
             <div
                 class="md-layout-item md-large-size-50 md-medium-size-50 md-xlarge-size-50 md-small-size-100 md-small-size-100">
-                <sold-appliance-list/>
+                <sold-appliance-list :agent-id="agentId"/>
             </div>
 
             <div
                 class="md-layout-item md-large-size-50 md-medium-size-50 md-xlarge-size-50 md-small-size-100 md-small-size-100">
-                <agent-transaction-list/>
+                <assigned-appliance-list :agent-id="agentId"/>
+            </div>
+            <div
+                class="md-layout-item md-large-size-100 md-medium-size-100 md-xlarge-size-100 md-small-size-100 md-small-size-100">
+
+
+            </div>
+            <div
+                class="md-layout-item md-large-size-100 md-medium-size-100 md-xlarge-size-100 md-small-size-100 md-small-size-100">
+                <agent-transaction-list :agent-id="agentId"/>
             </div>
             <div
                 class="md-layout-item md-large-size-100 md-medium-size-100 md-xlarge-size-100 md-small-size-100 md-small-size-100">
@@ -38,6 +47,7 @@
     import SoldApplianceList from './Appliances/SoldApplianceList'
     import AgentTransactionList from './AgentTransactionList'
     import AgentTicketList from './AgentTicketList'
+    import AgentBalanceHistoryList from './Balance/AgentBalanceHistory'
 
     export default {
         name: 'Agent',
@@ -47,6 +57,7 @@
             }
         },
         components: {
+            AgentBalanceHistoryList,
             AgentTicketList,
             AgentTransactionList,
             SoldApplianceList,
