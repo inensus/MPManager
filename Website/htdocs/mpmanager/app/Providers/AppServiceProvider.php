@@ -9,6 +9,7 @@ use App\Misc\LoanDataContainer;
 use App\Models\AccessRate\AccessRate;
 use App\Models\Agent;
 use App\Models\AgentAssignedAppliances;
+use App\Models\AgentCharge;
 use App\Models\AgentCommission;
 use App\Models\AssetRate;
 use App\Models\AssetType;
@@ -61,7 +62,8 @@ class AppServiceProvider extends ServiceProvider
                 'agent_appliance' => AgentAssignedAppliances::class,
                 'appliance' => AssetType::class,
                 'agent_receipt' => AgentReceipt::class,
-                'agent' => Agent::class
+                'agent' => Agent::class,
+                'agent_charge' => AgentCharge::class
             ]
         );
     }
