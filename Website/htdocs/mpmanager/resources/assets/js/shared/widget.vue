@@ -59,6 +59,7 @@
                 :show_per_page="show_per_page"
                 :subscriber="subscriber"
                 v-if="paginator"
+                :key="resetKey"
             ></paginate>
         </md-toolbar>
     </div>
@@ -95,6 +96,9 @@
             show_per_page: {
                 type: Boolean,
                 default: false
+            },
+            resetKey:{
+                default:0
             }
         },
         mounted() {
