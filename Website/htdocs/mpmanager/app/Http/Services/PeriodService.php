@@ -32,6 +32,12 @@ class PeriodService
         $end = date_create($endDate);
 
 
+        $daysDifference = $end->diff($begin)->days;
+
+        if ($interval === 'weekly' && $daysDifference % 7 !== 0) {
+            $end->add(new DateInterval('P' . ($daysDifference % 7) . 'D'));
+        }
+
         if ($end->diff($begin)->days % 365 === 0) {
             $end->add(new DateInterval('P1D'));
         }

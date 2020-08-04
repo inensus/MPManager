@@ -25,6 +25,10 @@ import AgentBalanceHistoryRepository from './AgentBalanceHistoryRepository'
 import AgentChargeRepository from './AgentChargeRepository'
 import AgentSoldApplianceRepository from './AgentSoldApplianceRepository'
 import AgentTransactionRepository from './AgentTransactionRepository'
+import TicketCommentRepository from './TicketCommentRepository'
+import TicketTrelloRepository from './TicketTrelloRepository'
+import TicketUserRepository from './TicketUserRepository'
+import TicketLabelRepository from './TicketLabelRepository'
 
 const repositories = {
     'asset': AssetRepository,
@@ -45,6 +49,10 @@ const repositories = {
     'authentication': AuthenticationRepository,
     'transaction': TransactionRepository,
     'revenue': RevenueRepository,
+    'ticketComment': TicketCommentRepository,
+    'ticketTrello': TicketTrelloRepository,
+    'ticketUser': TicketUserRepository,
+    'ticketLabel': TicketLabelRepository,
     'agent': AgentRepository,
     'country': CountryRespository,
     'commission': AgentCommissionRepository,
@@ -52,8 +60,7 @@ const repositories = {
     'balanceHistory': AgentBalanceHistoryRepository,
     'balanceCharge': AgentChargeRepository,
     'soldAppliance': AgentSoldApplianceRepository,
-    'agentTransactions':AgentTransactionRepository
-
+    'agentTransactions': AgentTransactionRepository
 }
 
 export default {

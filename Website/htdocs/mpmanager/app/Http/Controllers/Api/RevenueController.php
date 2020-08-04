@@ -309,8 +309,8 @@ class RevenueController extends Controller
     public function trending($id, Request $request): ApiResource
     {
         // the array which holds the final response
-        $startDate = $request->get('startDate') ?? '2018-01-01';
-        $endDate = $request->get('endDate') ?? '2018-12-31';
+        $startDate = $request->input('startDate') ?? date('Y-01-01');
+        $endDate = $request->input('endDate') ?? date('Y-m-d');
 
 
         $cities = $this->city::where('mini_grid_id', $id)->get();
@@ -319,8 +319,14 @@ class RevenueController extends Controller
 
         //get list of tariffs
         $connections = ConnectionType::get();
+        $connectionNames = $connections->pluck('name')->toArray();
+        $initialData = array_fill_keys($connectionNames, ['revenue' => 0]);
+
+
         $tmpDate = null;
-        $response = $this->fillForTariff($startDate, $endDate, $connections);
+        $response = $this->periodService->generatePeriodicList($startDate, $endDate, 'weekly',
+            $initialData);
+
 
         //return $response;
         foreach ($connections as $connection) {
@@ -344,34 +350,6 @@ class RevenueController extends Controller
     private function reformatPeriod($period)
     {
         return substr_replace($period, '-', 4, 0);
-    }
-
-    /**
-     * @param $startDate
-     * @param $endDate
-     * @param $tariffs
-     *
-     * @return array
-     * @throws \Exception
-     */
-    private function fillForTariff($startDate, $endDate, $tariffs): array
-    {
-        $result = [];
-        $begin = date_create($startDate);
-        $end = date_create($endDate);
-        $end->add(new DateInterval('P1D')); //
-        $i = new DateInterval('P1W');
-        $period = new DatePeriod($begin, $i, $end);
-
-        foreach ($period as $d) {
-            $day = $d->format('o-W');
-            foreach ($tariffs as $tariff) {
-                $result[$day][$tariff->name] = ['revenue' => 0];
-            }
-
-        }
-
-        return $result;
     }
 
 

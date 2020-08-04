@@ -11,7 +11,7 @@
             :subscriber="subscriber"
         >
             <md-table style="width:100%" v-model="addresses.list" md-card md-fixed-header>
-                <md-table-row @click="editAddress(item)" slot="md-table-row" slot-scope="{ item }">
+                <md-table-row @click="editAddress(item, index)" slot="md-table-row" slot-scope="{ item, index }">
                     <md-table-cell md-label="Id" md-sort-by="id" md-numeric>{{ item.id }}</md-table-cell>
                     <md-table-cell md-label="Street" md-sort-by="street">{{ item.street }}</md-table-cell>
                     <md-table-cell md-label="City" md-sort-by="city">{{ item.city }}</md-table-cell>
@@ -22,11 +22,7 @@
                 </md-table-row>
             </md-table>
         </widget>
-
-
-        <md-dialog :md-active.sync="modalVisibility"
-
-        >
+        <md-dialog :md-active.sync="modalVisibility">
             <md-dialog-title v-if="editFlag">Update Address</md-dialog-title>
             <md-dialog-title v-if="!editFlag">Register New Address</md-dialog-title>
 
@@ -69,7 +65,8 @@
                                 <div class="md-layout-item md-small-size-100">
                                     <md-field name="email">
                                         <label for="email">Email</label>
-                                        <md-input type="email" name="email"/>
+                                        <md-input type="email" name="email"
+                                        v-model = "newAddress.email"/>
                                     </md-field>
                                 </div>
 
@@ -133,8 +130,10 @@
                 modalVisibility: false,
                 newAddress: {},
                 cities: [],
-                editFlag: false
+                editFlag: false,
+                addressIndex: 0,
             }
+
         },
         mounted () {
             EventBus.$on('pageLoaded', this.reloadList)
@@ -157,8 +156,9 @@
                 }
                 this.modalVisibility = true
             },
-            editAddress (address) {
+            editAddress (address, index) {
                 this.editFlag = true
+                this.addressIndex = index
                 this.newAddress = {
                     id: address.id,
                     email: address.email,
@@ -179,11 +179,12 @@
                     this.modalVisibility = false
 
                     if (this.editFlag) {
+
                         axios.put(
                             resources.person.addresses + this.personId + '/' + 'addresses',
                             this.newAddress
-                        ).then(response => {
-                            this.addresses.numberList = this.addresses.list.map(function (
+                        ).then((response) => {
+                            this.addresses.list = this.addresses.list.map(function (
                                 item
                             ) {
                                 if (response.data.data.is_primary === 1) {
@@ -195,9 +196,9 @@
                                 }
                                 return item
                             })
-                            this.addresses.list.push(1)
-                            this.addresses.list.pop()
+
                         })
+
                     } else {
                         axios
                             .post(

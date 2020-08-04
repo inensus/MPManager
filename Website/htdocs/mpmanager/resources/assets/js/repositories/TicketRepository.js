@@ -1,24 +1,18 @@
+const resource = '/tickets/api'
+import Client from './Client/AxiosClient'
 
-const resource = {
-    'list': '/tickets',
-    'detail': '/tickets/',
-    'close': '/tickets/api/ticket',
-    'create': '/tickets/api/ticket',
-    'createMaintenance': '/tickets/api/ticket',
-    'getUser': '/tickets/api/tickets/user/',
-    'users': '/tickets/api/users/',
-    'createUserTicket': '/tickets/api/tickets/users',
-    'labels': '/tickets/api/labels',
-    'comments': '/tickets/api/tickets/comments',
-};
+export default {
+    listCategory () {
 
-export default  {
-     listCategory() {
-
-        return  axios.get(`${resource.labels}` + '/?outsource=1')
+        return Client.get(`${resource}/labels` + '/?outsource=1')
     },
 
-    create(maintenanceData){
-         return  axios.post(`${resource.create}`,maintenanceData);
+    create (maintenanceData) {
+        return Client.post(`${resource}/ticket`, maintenanceData)
+    },
+    close (id) {
+
+        return Client.delete(`${resource}/ticket`, { data: { 'ticketId': id } })
     }
+
 }
