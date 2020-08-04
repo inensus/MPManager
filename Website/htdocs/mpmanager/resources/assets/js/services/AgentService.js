@@ -42,7 +42,7 @@ export class AgentService {
         this.agent.email = data.email
         this.agent.balance = data.balance
         this.agent.gender = data.person.sex
-        this.agent.phone = data.addresses[0].phone
+        this.agent.phone = data.person.addresses[0].phone
         this.agent.birthday = data.person.birth_date
         this.agent.commissionType = data.commission.name
         this.agent.commissionTypeId = data.commission.id

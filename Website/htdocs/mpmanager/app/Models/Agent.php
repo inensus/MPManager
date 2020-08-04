@@ -29,7 +29,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
  * @property double $available_balance
  * @property string $remember_token
  */
-class Agent extends Authenticatable implements HasAddressesInterface,JWTSubject
+class Agent extends Authenticatable implements JWTSubject
 {
     public function setPasswordAttribute($password): void
     {
@@ -75,8 +75,6 @@ class Agent extends Authenticatable implements HasAddressesInterface,JWTSubject
     {
         return [];
     }
-
-
 
 
     public function transaction()

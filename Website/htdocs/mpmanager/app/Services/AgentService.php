@@ -71,7 +71,7 @@ class AgentService implements IUserService
             'agent_commission_id' => $request['agent_commission_id']
         ]);
 
-        $this->addressService->assignAddressToOwner($agent, $address);
+        $this->addressService->assignAddressToOwner($agent->person, $address);
 
 
         return $agent;
@@ -89,7 +89,7 @@ class AgentService implements IUserService
         $person->birth_date = $data['birthday'];
         $person->update();
 
-        $address = Address::query()->where('owner_type', 'agent')->where('owner_id', $data['id'])->firstOrFail();
+        $address = Address::query()->where('owner_type', 'person')->where('owner_id', $data['personId'])->firstOrFail();
 
         $address->phone = $data['phone'];
         $address->update();
@@ -99,7 +99,7 @@ class AgentService implements IUserService
 
         $agent->update();
 
-        return Agent::with(['person', 'addresses', 'miniGrid', 'commission'])
+        return Agent::with(['person', 'person.addresses', 'miniGrid', 'commission'])
             ->where('id', $agent->id)->firstOrFail();
 
 
@@ -135,7 +135,7 @@ class AgentService implements IUserService
 
     public function list($relations): LengthAwarePaginator
     {
-        return Agent::with(['addresses', 'miniGrid'])->paginate(config('settings.paginate'));
+        return Agent::with(['person.addresses', 'miniGrid'])->paginate(config('settings.paginate'));
     }
 
     public function setFirebaseToken($agent, $firebaseToken)
@@ -179,7 +179,8 @@ class AgentService implements IUserService
 
     public function getAgentDetail($agent)
     {
-        return Agent::with(['person', 'addresses', 'miniGrid', 'commission'])
+
+        return Agent::with(['person', 'person.addresses', 'miniGrid', 'commission'])
             ->where('id', $agent->id)->firstOrFail();
     }
 
