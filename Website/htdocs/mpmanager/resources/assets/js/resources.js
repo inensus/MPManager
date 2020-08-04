@@ -161,9 +161,11 @@ export let resources = {
     pv: {
         list: '/api/pv/'
     },
-
     agents: {
         list: '/api/agents',
         search: '/api/agents/search',
+        balance_histories:'/api/agents/balance/history/',
+        sold_appliances:'api/agents/sold/',
+        transactions:'api/agents/transactions/'
     }
 }
