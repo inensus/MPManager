@@ -40,23 +40,27 @@ class JwtMiddleware extends BaseMiddleware
         } catch (Exception $e) {
 
             if ($e instanceof ModelNotFoundException) {
-                return response()->json(['status' => 'No user found for authentication']);
+                return $this->generateResponse('No user found for authentication');
             }
             if ($e instanceof UserNotDefinedException) {
-                return response()->json(['status' => $e->getMessage()]);
+                return $this->generateResponse($e->getMessage());
             }
 
             if ($e instanceof TokenInvalidException) {
-                return response()->json(['status' => 'Token is Invalid']);
+                return $this->generateResponse('Token is Invalid');
             }
 
             if ($e instanceof TokenExpiredException) {
-                return response()->json(['status' => 'Token is Expired']);
+                return $this->generateResponse('Token is Expired');
             }
-
-            return response()->json(['status' => 'Authorization Token not found']);
+            return $this->generateResponse('Authorization Token not found');
         }
         $request->attributes->add(['user' => $user]);
         return $next($request);
+    }
+
+    private function generateResponse($message, $status = 400): \Illuminate\Http\JsonResponse
+    {
+        return response()->json(['data' => ['message' => $message, 'status' => $status]]);
     }
 }

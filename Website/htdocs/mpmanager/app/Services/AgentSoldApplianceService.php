@@ -3,37 +3,35 @@
 
 namespace App\Services;
 
+use App\Models\Agent;
 use App\Models\AgentSoldAppliance;
+use App\Models\AssetPerson;
 
 class AgentSoldApplianceService implements IAgentRelatedService
 {
 
     public function list($agentId)
     {
+        return AssetPerson::with('person', 'assetType', 'rates')
+            ->whereHasMorph('creator', [Agent::class],
+                function ($q) use ($agentId) {
+                    $q->where('id', $agentId);
+                })->latest()
+            ->paginate();
 
-        return AgentSoldAppliance::with([
-            'assignedAppliance',
-            'person'
-        ])
-            ->whereHas('assignedAppliance', function ($q) use ($agentId) {
-                $q->whereHas('agent', function ($q) use ($agentId) {
-                    $q->where('agent_id', $agentId);
-                });
-
-            })->latest()->paginate();
 
     }
 
     public function customerSoldList($customerId, $agentId)
     {
-        return AgentSoldAppliance::with([
-            'assignedAppliance',
-        ])->where('person_id', $customerId)
-            ->whereHas('assignedAppliance', function ($q) use ($agentId) {
-                $q->whereHas('agent', function ($q) use ($agentId) {
-                    $q->where('agent_id', $agentId);
-                });
-            })->latest()->paginate();
+        return AssetPerson::with('person', 'assetType', 'rates')
+            ->whereHasMorph('creator', [Agent::class],
+                function ($q) use ($agentId) {
+                    $q->where('id', $agentId);
+                })
+            ->where('person_id', $customerId)
+            ->latest()
+            ->paginate();
     }
 
     public function create($applianceData)

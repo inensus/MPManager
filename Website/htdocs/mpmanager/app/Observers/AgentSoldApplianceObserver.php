@@ -9,6 +9,7 @@ use App\Models\AgentAssignedAppliances;
 use App\Models\AgentBalanceHistory;
 use App\Models\AgentCommission;
 use App\Models\AgentSoldAppliance;
+use App\Models\AssetPerson;
 use App\Models\AssetRate;
 use App\Models\Person\Person;
 use App\Models\Transaction\AgentTransaction;
@@ -28,7 +29,7 @@ class AgentSoldApplianceObserver
     {
 
         $assignedApplianceId = $appliances->agent_assigned_appliance_id;
-        $assignedAppliance = AgentAssignedAppliances::query()->find($assignedApplianceId);
+        $assignedAppliance = AgentAssignedAppliances::with('applianceType')->find($assignedApplianceId);
 
         $appliance = $assignedAppliance->applianceType()->first();
         $agent = Agent::query()->find($assignedAppliance->agent_id);
@@ -78,35 +79,15 @@ class AgentSoldApplianceObserver
         ]);
         $history->trigger()->associate($commission);
         $history->save();
-
-
-        $tenure = request()->input('tenure');
-        $downPayment = request()->input('down_payment');
-        $remainingCost = $assignedAppliance->cost - $downPayment;
-        $firstPaymentDate = request()->input('first_payment_date');
-        $base_time = time();
-        AssetRate::query()->create([
-            'asset_person_id' => $buyer->id,
-            'rate_cost' => $downPayment,
-            'remaining' => 0,
-            'due_date' =>date("Y-m-d H:i:s")
+        $assetPerson = AssetPerson::make([
+            'person_id' => $buyer->id,
+            'first_payment_date' => request()->input('first_payment_date'),
+            'rate_count' => request()->input('tenure'),
+            'total_cost' => $assignedAppliance->cost,
+            'down_payment' => request()->input('down_payment'),
+            'asset_type_id' => $assignedAppliance->applianceType->id,
         ]);
-
-
-        foreach (range(1, $tenure) as $rate) {
-            if ((int)$rate === (int)$tenure) {
-                //last rate
-                $rate_cost = $remainingCost - (($rate - 1) * floor($remainingCost / $tenure));
-            } else {
-                $rate_cost = floor($remainingCost / $tenure);
-            }
-            $rate_date = date('Y-m-d', strtotime('+' . $rate-1 . ' month', strtotime($firstPaymentDate)));
-            AssetRate::query()->create([
-                'asset_person_id' => $buyer->id,
-                'rate_cost' => $rate_cost,
-                'remaining' => $rate_cost,
-                'due_date' => $rate_date
-            ]);
-        }
+        $assetPerson->creator()->associate($agent);
+        $assetPerson->save();
     }
 }

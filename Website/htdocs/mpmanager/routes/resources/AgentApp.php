@@ -21,22 +21,26 @@ Route::group([
         });
         Route::group(['prefix' => 'transactions'], function () {
             Route::get('/', 'AgentTransactionsController@index');
-            Route::get('/{customerId}', 'AgentTransactionsController@agentCustomerTransactions');
+            Route::get('/{customerId}', 'AgentTransactionsController@show');
 
         });
         Route::group(['prefix' => 'appliances'], function () {
-            Route::get('/', 'AgentAssignedAppliancesController@index');
+            Route::get('/', 'AgentSoldApplianceController@index');
             Route::get('/{customer}', 'AgentSoldApplianceController@customerSoldAppliances');
             Route::post('/', [
                 'middleware' => 'agent.balance',
                 'uses' => 'AgentSoldApplianceController@store'
             ])->name('agent-sell-appliance');
         });
+        Route::group(['prefix' => 'appliance_types'], function () {
+            Route::get('/', 'AgentAssignedAppliancesController@index');
+        });
 
         Route::group(['prefix' => 'ticket'], function () {
             Route::get('/', 'AgentTicketController@index');
             Route::get('/customer/{customerId}', 'AgentTicketController@agentCustomerTickets');
             Route::post('/', 'AgentTicketController@store');
+            Route::get('/{ticketId}', 'AgentTicketController@show');
         });
         Route::group(['prefix' => 'balance'], function () {
             Route::group(['prefix' => 'history'], function () {

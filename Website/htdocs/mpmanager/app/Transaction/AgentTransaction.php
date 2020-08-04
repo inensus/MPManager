@@ -9,10 +9,8 @@ use App\Models\Agent;
 use App\Models\Transaction\Transaction;
 use App\Models\Transaction\TransactionConflicts;
 use App\Services\FirebaseService;
-use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Facades\Log;
 
 class AgentTransaction implements ITransactionProvider
 {
@@ -43,7 +41,7 @@ class AgentTransaction implements ITransactionProvider
         $this->fireBaseService = $firebaseService;
     }
 
-    public function saveTransaction()
+    public function saveTransaction(): void
     {
 
         $this->agentTransaction = new \App\Models\Transaction\AgentTransaction();
@@ -76,18 +74,15 @@ class AgentTransaction implements ITransactionProvider
         $agentTransaction->save();
     }
 
-    public function sendResult(bool $requestType, Transaction $transaction)
+    public function sendResult(bool $requestType, Transaction $transaction): void
     {
         if (!app()->environment('production')) {
             return;
         }
-        $agent = $this->agentTransaction->agent();
         $body = $this->prepareRequest($transaction);
 
-        $agent = Agent::find(auth('agent_api')->user()->id);
-        $this->fireBaseService->sendNotify($agent->fire_base_token, json_encode(strval($body)));
-
-
+        $agent = Agent::query()->find(auth('agent_api')->user()->id);
+        $this->fireBaseService->sendNotify($agent->fire_base_token, json_encode((string)$body));
     }
 
     private function prepareRequest(Transaction $transaction)
@@ -101,19 +96,21 @@ class AgentTransaction implements ITransactionProvider
      * @param $request
      * @throws \Exception
      */
-    public function validateRequest($request)
+    public function validateRequest($request): void
     {
 
         $deviceId = request()->header('device-id');
-        $agent = Agent::find(auth('agent_api')->user()->id);
+        $agent = Agent::query()->find(auth('agent_api')->user()->id);
         $agentId = $agent->id;
 
         $agent = auth('agent_api')->user();
         try {
-            $existingAgent = Agent::where('device_id', $deviceId)->where('id', $agentId)->firstOrFail();
+            Agent::query()
+                ->where('device_id', $deviceId)
+                ->where('id', $agentId)
+                ->firstOrFail();
 
         } catch (ModelNotFoundException $e) {
-
             throw new \Exception($e->getMessage());
         }
         if ($agentId !== $agent->id) {
