@@ -139,6 +139,9 @@ Route::group([
         Route::post('/', 'AgentAssignedAppliancesController@store');
         Route::get('/{agent}', 'AgentAssignedAppliancesController@indexWeb');
     });
+    Route::group(['prefix' => 'sold'], function () {
+        Route::get('/{agent}', 'AgentSoldApplianceController@indexWeb');
+    });
     Route::group(['prefix' => 'commissions'], function () {
         Route::get('/', 'AgentCommissionController@index');
     });
@@ -155,6 +158,19 @@ Route::group([
         Route::post('/', 'AgentReceiptController@store');
 
     });
+    Route::group(['prefix' => 'transactions'], function () {
+        Route::get('/{agent}', 'AgentTransactionsController@indexWeb')->where('agent', '[0-9]+');
+
+    });
+    Route::group(['prefix' => 'balance'], function () {
+        Route::group(['prefix' => 'history'], function () {
+            Route::get('/{agent}', 'AgentBalanceHistoryController@indexWeb');
+        });
+    });
+    Route::group(['prefix' => 'charge'], function () {
+        Route::post('/{agent}', 'AgentChargeController@store');
+    });
+
 });
 
 
@@ -193,12 +209,7 @@ Route::group([
             Route::get('/customer/{customerId}', 'AgentTicketController@agentCustomerTickets');
             Route::post('/', 'AgentTicketController@store');
         });
-        Route::group(['prefix' => 'balance'], function () {
-            Route::group(['prefix' => 'history'], function () {
-                Route::post('/{agent}', 'AgentBalanceHistoryController@store');
-            });
 
-        });
     });
 
 });
