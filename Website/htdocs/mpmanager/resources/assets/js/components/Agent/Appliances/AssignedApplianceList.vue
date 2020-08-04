@@ -9,47 +9,9 @@
         :callback="()=>{showNewAppliance = true}"
     >
 
-        <!-- assing new appliance -->
-        <form v-if="showNewAppliance" novalidate class="md-layout" @submit.prevent="saveAsset"
-              data-vv-scope="Appliance-Form">
-            <md-card class="md-layout-item">
-                <md-card-header>
-                    <div style="float:right; cursor:pointer" @click="()=>{showNewAppliance = false}">
-                        <md-icon>close</md-icon>&nbsp;Close
-                    </div>
-                </md-card-header>
-                <md-card-content>
-                    <md-field :class="{'md-invalid': errors.has('Appliance-Form.applianceTypes')}">
-                        <label for="applianceTypes">Appliance </label>
-                        <md-select name="applianceTypes" id="applianceTypes" v-model="newAppliance.id"
-                                   v-validate="'required'">
-                            <md-option disabled value>&#45;&#45;Select&#45;&#45;</md-option>
-                            <md-option
-                                v-for="(applianceType,index) in applianceTypes"
-                                :value="applianceType.id" :key="applianceType.id"
-                            >{{applianceType.name}}
-                            </md-option>
-                        </md-select>
-                        <span class="md-error">{{ errors.first('Appliance-Form.applianceTypes') }}</span>
-                    </md-field>
 
-                    <md-field :class="{'md-invalid': errors.has('Appliance-Form.cost')}">
-                        <label for="cost">Cost </label>
-                        <md-input type="text" name="cost" id="cost" v-model="newAppliance.cost"
-                                  v-validate="'required'"/>
-                        <span class="md-error">{{ errors.first('Appliance-Form.cost') }}</span>
-                    </md-field>
-                    <md-progress-bar md-mode="indeterminate" v-if="loading"/>
-                </md-card-content>
-                <md-card-actions>
-                    <md-button role="button" class="md-raised md-primary" :disabled="loading" @click="assignAppliance">
-                        Assign Appliance
-                    </md-button>
-
-                </md-card-actions>
-            </md-card>
-        </form>
         <div>
+            <assign-appliance :assignNewAppliance="showNewAppliance" :agent-id="agentId"/>
             <!-- ana tablo  -->
             <md-table>
                 <md-table-row>
@@ -72,6 +34,8 @@
     import { AgentAssignedApplianceService } from '../../../services/AgentAssignedApplianceService'
     import { AgentService } from '../../../services/AgentService'
     import { AssetService } from '../../../services/AssetService'
+    import AssignAppliance from './AssignAppliance'
+    import { EventBus } from '../../../shared/eventbus'
 
     export default {
         name: 'AssignedApplianceList',
@@ -79,7 +43,7 @@
             return {
                 assignedApplianceService: new AgentAssignedApplianceService(),
                 agentService: new AgentService(),
-                assetService: new AssetService(),
+
                 showNewAppliance: false,
                 agent: {},
                 newAppliance: {
@@ -98,61 +62,50 @@
             }
         },
         mounted () {
-            this.getApplianceTypes()
-            this.getAgentDetail()
 
+            this.getAgentDetail()
+            this.getAssignedAppliances(this.agentId)
+
+            EventBus.$on('applianceAssigned', this.closeAssignAppliance)
+            EventBus.$on('assignApplianceClosed', () => {
+                this.showNewAppliance = false
+            })
+        },
+        destroyed () {
+            EventBus.$off('applianceAssigned', this.closeAssignAppliance)
         },
         components: {
+            AssignAppliance,
             Widget
         },
         methods: {
-            saveAsset () {
+            async closeAssignAppliance () {
+                this.showNewAppliance = false
+
+                if (this.agent.id !== undefined) {
+
+                    await this.getAssignedAppliances(this.agent.id)
+                }
 
             },
             async getAgentDetail () {
                 try {
-
                     this.agent = await this.agentService.getAgent(Number(this.agentId))
-                    await this.getAssignedAppliances(this.agent)
+
                 } catch (e) {
                     this.alertNotify('error', e.message)
                 }
 
             },
-            async getAssignedAppliances (agent) {
+            async getAssignedAppliances (agentId) {
                 try {
-
-                    this.assignedApplianceTypes = await this.assignedApplianceService.getAssignedAppliances(agent)
-
+                    this.assignedApplianceTypes = await this.assignedApplianceService.getAssignedAppliances(agentId)
                 } catch (e) {
                     this.alertNotify('error', e.message)
                 }
 
             },
-            async getApplianceTypes () {
-                try {
-                    this.applianceTypes = await this.assetService.getAssets()
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-            },
-            async assignAppliance () {
-                let validator = await this.$validator.validateAll('Appliance-Form')
 
-                if (validator) {
-                    this.loading = true
-                    try {
-                        let userId = this.$store.getters['auth/authenticationService'].authenticateUser.id
-                        await this.assignedApplianceService.assignAppliance(this.newAppliance, userId, this.agent.id)
-                        this.loading = false
-                        await this.hide()
-                        this.alertNotify('success', 'Agent added successfully')
-                    } catch (e) {
-                        this.loading = false
-                        this.alertNotify('error', e.message)
-                    }
-                }
-            },
             async hide () {
                 this.showNewAppliance = false
                 await this.getAssignedAppliances(this.agent)

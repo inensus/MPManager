@@ -1,127 +1,127 @@
 <template>
 
-    <widget
-        :class="'col-sm-6 col-md-5'"
-        :button-text="'Assign new Appliance'"
-        :button="true"
-        title="Assigned Appliances"
-        :button-color="'red'"
-        :callback="()=>{showNewAsset = true}"
-    >
-
+    <div v-if="assignNewAppliance">
         <!-- assing new appliance -->
-        <form v-if="showNewAsset" novalidate class="md-layout" @submit.prevent="saveAsset">
+        <form novalidate class="md-layout" @submit.prevent="saveAppliance"
+              data-vv-scope="Appliance-Form">
             <md-card class="md-layout-item">
                 <md-card-header>
-                    <div style="float:right; cursor:pointer" @click="()=>{showNewAsset = false}">
+                    <div style="float:right; cursor:pointer" @click="hide()">
                         <md-icon>close</md-icon>&nbsp;Close
                     </div>
                 </md-card-header>
                 <md-card-content>
-                    <md-field>
-                        <label for="appliance_types">Appliance </label>
-                        <md-select name="appliance_types" id="appliance_types" v-model="newAppliance.id">
-                            <md-option disabled value>--Select--</md-option>
+                    <md-field :class="{'md-invalid': errors.has('Appliance-Form.applianceTypes')}">
+                        <label for="applianceTypes">Appliance </label>
+                        <md-select name="applianceTypes" id="applianceTypes" v-model="newAppliance.id"
+                                   v-validate="'required'">
+                            <md-option disabled value>&#45;&#45;Select&#45;&#45;</md-option>
                             <md-option
                                 v-for="(applianceType,index) in applianceTypes"
                                 :value="applianceType.id" :key="applianceType.id"
                             >{{applianceType.name}}
                             </md-option>
                         </md-select>
+                        <span class="md-error">{{ errors.first('Appliance-Form.applianceTypes') }}</span>
                     </md-field>
 
-                    <md-field>
-                        <label for="Cost">Cost </label>
-                        <md-input type="text" name="Cost" v-model="newAppliance.cost"/>
+                    <md-field :class="{'md-invalid': errors.has('Appliance-Form.cost')}">
+                        <label for="cost">Cost </label>
+                        <md-input type="text" name="cost" id="cost" v-model="newAppliance.cost"
+                                  v-validate="'required'"/>
+                        <span class="md-error">{{ errors.first('Appliance-Form.cost') }}</span>
                     </md-field>
-
+                    <md-progress-bar md-mode="indeterminate" v-if="loading"/>
                 </md-card-content>
                 <md-card-actions>
-                    <md-button type="submit" class="md-primary btn-sell">Assign Appliance</md-button>
+                    <md-button role="button" type="submit" class="md-raised md-primary" :disabled="loading">
+                        Assign Appliance
+                    </md-button>
+
                 </md-card-actions>
             </md-card>
         </form>
-
-        <div>
-            <!-- ana tablo  -->
-            <md-table>
-                <md-table-row>
-                    <md-table-head>Name</md-table-head>
-                    <md-table-head>Cost</md-table-head>
-                </md-table-row>
-                <md-table-row v-for="(item, index) in applianceTypes" :key="index">
-                    <md-table-cell md-label="Name" md-sort-by="name">{{item.name}}</md-table-cell>
-                    <md-table-cell md-label="Cost" md-sort-by="total_cost">{{item.cost}}</md-table-cell>
-
-                </md-table-row>
-            </md-table>
-        </div>
-    </widget>
-
+    </div>
 
 </template>
 <script>
     import Widget from '../../../shared/widget'
     import { AgentAssignedApplianceService } from '../../../services/AgentAssignedApplianceService'
-    import { AgentService } from '../../../services/AgentService'
+    import { EventBus } from '../../../shared/eventbus'
+    import { AssetService } from '../../../services/AssetService'
 
     export default {
         name: 'AssignAppliance',
         data () {
             return {
                 assignedApplianceService: new AgentAssignedApplianceService(),
-                showNewAsset: false,
+                assetService: new AssetService(),
+                loading: false,
                 agent: {},
                 newAppliance: {
                     id: null,
                     name: null,
                     cost: null
                 },
-                props: {
-                    agentId: {
-                        default: null
-                    }
-                },
+
                 applianceTypes: []
             }
         },
-        mounted () {
-            this.getAgentDetail()
-            this.getAssignedAppliances()
+        props: {
+            agentId: {
+                default: null
+            },
+            assignNewAppliance: {
+                type: Boolean,
+                default: false
+            }
         },
         components: {
             Widget
         },
+        mounted () {
+            this.getApplianceTypes()
+        },
         methods: {
-            saveAsset () {
-
-            },
-            async getAgentDetail () {
+            async getApplianceTypes () {
                 try {
-                    this.agent = await this.agentService.getAgent(Number(this.agentId))
+                    this.applianceTypes = await this.assetService.getAssets()
                 } catch (e) {
                     this.alertNotify('error', e.message)
                 }
-
             },
-            async getAssignedAppliances () {
-                try {
-                    this.applianceTypes = await this.assignedApplianceService.getAssignedAppliances(this.agent)
+            async saveAppliance () {
+                let validator = await this.$validator.validateAll('Appliance-Form')
 
-                } catch (e) {
-                    this.alertNotify('error', e.message)
+                if (validator) {
+                    this.loading = true
+                    try {
+                        let userId = this.$store.getters['auth/authenticationService'].authenticateUser.id
+                        await this.assignedApplianceService.assignAppliance(this.newAppliance, userId, this.agentId)
+                        this.loading = false
+                        this.applianceAssigned()
+                        this.alertNotify('success', 'Agent added successfully')
+                    } catch (e) {
+                        this.loading = false
+                        this.alertNotify('error', e.message)
+                    }
                 }
-
+            },
+            hide () {
+                EventBus.$emit('assignApplianceClosed')
+            },
+            applianceAssigned () {
+                EventBus.$emit('applianceAssigned')
+            },
+            alertNotify (type, message) {
+                this.$notify({
+                    group: 'notify',
+                    type: type,
+                    title: type + ' !',
+                    text: message
+                })
             }
-        },
-        alertNotify (type, message) {
-            this.$notify({
-                group: 'notify',
-                type: type,
-                title: type + ' !',
-                text: message
-            })
-        },
+        }
     }
 
 </script>

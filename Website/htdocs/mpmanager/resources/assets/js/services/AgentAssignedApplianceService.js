@@ -37,9 +37,9 @@ export class AgentAssignedApplianceService {
         return this.list
     }
 
-    async getAssignedAppliances (agent) {
+    async getAssignedAppliances (agentId) {
         try {
-            let response = await this.repository.list(agent)
+            let response = await this.repository.list(agentId)
             if (response.status === 200) {
                 let list = response.data.data
 
