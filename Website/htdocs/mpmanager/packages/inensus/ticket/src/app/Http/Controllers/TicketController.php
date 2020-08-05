@@ -9,6 +9,7 @@
 namespace Inensus\Ticket\Http\Controllers;
 
 
+use App\Models\Agent;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Inensus\Ticket\Http\Resources\TicketResource;
@@ -231,6 +232,18 @@ class TicketController extends Controller
         );
 
         return $paginator;
+    }
+
+    public function indexAgentTickets($agent_id): TicketResource
+    {
+
+        $tickets = Ticket::with('category', 'owner', 'assignedTo')
+            ->where('creator_type', 'agent')
+            ->where('creator_id', $agent_id)
+            ->latest()
+            ->paginate(5);
+
+        return new TicketResource($tickets);
     }
 
 }
