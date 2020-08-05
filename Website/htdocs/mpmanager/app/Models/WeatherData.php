@@ -3,13 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class WeatherData extends Model
+class WeatherData extends BaseModel
 {
-    protected $fillable = [
-        'solar_id',
-        'current_weather_data',
-        'forecast_weather_data',
-        'record_time',
-    ];
+
+    public function solar(): BelongsTo
+    {
+        return $this->belongsTo(Solar::class);
+    }
 }
