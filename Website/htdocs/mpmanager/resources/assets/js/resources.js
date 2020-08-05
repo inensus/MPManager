@@ -167,6 +167,7 @@ export let resources = {
         balance_histories:'/api/agents/balance/history/',
         sold_appliances:'api/agents/sold/',
         transactions:'api/agents/transactions/',
-        tickets:'tickets/api/agents'
+        tickets:'tickets/api/agents',
+        receipts:'api/agents/receipt'
     }
 }
