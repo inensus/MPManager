@@ -2,7 +2,11 @@
 
 namespace App\Models\Transaction;
 
+use App\Models\Agent;
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 /**
  * @property int agent_id
@@ -12,12 +16,17 @@ use App\Models\BaseModel;
  */
 class AgentTransaction extends BaseModel implements RawTransaction
 {
-    public function transaction()
+    public function transaction(): MorphOne
     {
         return $this->morphOne(Transaction::class, 'original_transaction');
     }
 
-    public function conflicts()
+    public function agent(): BelongsTo
+    {
+        return $this->belongsTo(Agent::class);
+    }
+
+    public function conflicts(): MorphMany
     {
         return $this->morphMany(TransactionConflicts::class, 'transaction');
     }
