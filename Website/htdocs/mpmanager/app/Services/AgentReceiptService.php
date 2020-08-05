@@ -38,13 +38,13 @@ class AgentReceiptService implements IAgentRelatedService
 
     }
 
-    public function create($userId, $receiptData)
+    public function create($userId, $agentId,$receiptData)
     {
 
-        $lastBalanceHistoryId = AgentBalanceHistory::where('agent_id', $receiptData['agent_id'])->get()->last();
+        $lastBalanceHistoryId = AgentBalanceHistory::where('agent_id', $agentId)->get()->last();
 
         return AgentReceipt::query()->create([
-            'agent_id' => $receiptData['agent_id'],
+            'agent_id' => $agentId,
             'user_id' => $userId,
             'amount' => $receiptData['amount'],
             'last_controlled_balance_history_id' => $lastBalanceHistoryId->id

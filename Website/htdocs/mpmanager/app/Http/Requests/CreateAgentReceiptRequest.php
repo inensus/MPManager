@@ -27,7 +27,6 @@ class CreateAgentReceiptRequest extends FormRequest
     public function rules()
     {
         return [
-            'agent_id' => 'required|exists:agents,id',
             'amount' => 'required|numeric',
 
         ];

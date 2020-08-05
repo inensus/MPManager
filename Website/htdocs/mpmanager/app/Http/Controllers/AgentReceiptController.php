@@ -64,15 +64,15 @@ class AgentReceiptController extends Controller
     /**
      * Store a newly created resource in storage.
      *
+     * @param Agent $agent
      * @param CreateAgentReceiptRequest $request
      * @return ApiResource
      */
-    public function store(CreateAgentReceiptRequest $request)
+    public function store(Agent $agent,CreateAgentReceiptRequest $request)
     {
 
         $user = User::find(auth('api')->user()->id);
-        $appliance = $this->agentReceiptService->create($user->id, $request->only([
-            'agent_id',
+        $appliance = $this->agentReceiptService->create($user->id, $agent->id,$request->only([
             'amount',
         ]));
 
