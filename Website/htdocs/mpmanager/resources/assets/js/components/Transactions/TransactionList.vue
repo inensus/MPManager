@@ -147,12 +147,26 @@
                             </md-table-cell>
 
                             <md-table-cell>
-                                <img
-                                    :src="transaction.service.startsWith('vodacom') ? 'https://vodacom.co.tz/media/logo/stores/1/logo.png':
-                        'https://upload.wikimedia.org/wikipedia/en/thumb/8/8d/Bharti_Airtel_Limited_logo.svg/361px-Bharti_Airtel_Limited_logo.svg.png'"
-                                    alt
-                                    style="max-height:18px;"
+
+
+                                <img v-if="transaction.service==='vodacom_transaction'"
+                                     src="https://vodacom.co.tz/media/logo/stores/1/logo.png"
+                                     style="max-height:18px;"
                                 />
+                                <img v-if="transaction.service==='airtel_transaction'"
+                                     src="https://upload.wikimedia.org/wikipedia/en/thumb/8/8d/Bharti_Airtel_Limited_logo.svg/361px-Bharti_Airtel_Limited_logo.svg.png"
+                                     style="max-height:18px;"
+                                />
+                                <img v-if="transaction.service==='agent_transaction'"
+                                     src="https://image.flaticon.com/icons/svg/99/99395.svg"
+                                     style="max-height:18px;"
+                                />
+                                <img v-else="transaction.service==='vodacom_transaction'"
+                                     src="https://cdn1.iconfinder.com/data/icons/rounded-flat-country-flag-collection-1/2000/_Unknown.png"
+                                     style="max-height:18px;"
+                                />
+
+
                             </md-table-cell>
                             <md-table-cell>{{transaction.sender}}</md-table-cell>
                             <md-table-cell>{{readable(transaction.amount) + appConfig.currency}}

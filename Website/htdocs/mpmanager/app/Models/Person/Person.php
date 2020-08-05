@@ -6,6 +6,8 @@ use App\Events\PersonDeleting;
 use App\Events\PersonEvent;
 use App\Models\Address\Address;
 use App\Models\Address\HasAddressesInterface;
+use App\Models\Agent;
+use App\Models\AgentSoldAppliance;
 use App\Models\BaseModel;
 use App\Models\Country;
 use App\Models\CustomerGroup;
@@ -80,15 +82,20 @@ class Person extends BaseModel implements HasAddressesInterface, RoleInterface
     {
         return $this->morphMany(PaymentHistory::class, 'payer');
     }
-
     public function customerGroup(): BelongsTo
     {
         return $this->belongsTo(CustomerGroup::class);
     }
-
+   public function agent(){
+        return $this->hasOne(Agent::Class);
+   }
+    public function agentSoldAppliance(){
+        return $this->hasOne(AgentSoldAppliance::Class);
+    }
     public function __toString()
     {
         return sprintf('%s %s', $this->name, $this->surname);
+
     }
 
 

@@ -26,10 +26,10 @@ require_once 'resources/Countries.php';
 require_once 'resources/Meters.php';
 //Routes for Addresses resource
 require_once 'resources/Addresses.php';
-
-
+// Transaction routes
 require_once 'api_paths/transactions.php';
-
+// Agent routes
+require_once 'resources/AgentApp.php';
 
 Route::group(['prefix' => 'energies'], static function () {
     Route::post('/', 'EnergyController@store');
@@ -97,7 +97,7 @@ Route::group(['middleware' => 'jwt.verify', 'prefix' => 'tariffs'], function () 
 //JWT authentication
 Route::group([
     'middleware' => 'api',
-    'prefix'     => 'auth'
+    'prefix' => 'auth'
 
 ], static function ($router) {
 
@@ -108,9 +108,104 @@ Route::group([
 
 });
 
+
+// Web panel  services
+Route::group([
+    'middleware' => ['api', 'jwt.verify'],
+    'prefix' => 'agents'
+
+], static function ($router) {
+    Route::post('/', 'PersonController@store');
+    Route::post('/', 'AgentController@store');
+    Route::post('/reset-password', 'AgentController@resetPassword');
+    Route::put('/{agent}', 'AgentController@update');
+    Route::get('/', 'AgentController@index');
+    Route::get('/{agent}', 'AgentController@show')->where('agent', '[0-9]+');
+    Route::get('/search', 'AgentController@search');
+    Route::delete('/{agent}', 'AgentController@destroy');
+    Route::group(['prefix' => 'assigned'], function () {
+        Route::post('/', 'AgentAssignedAppliancesController@store');
+        Route::get('/{agent}', 'AgentAssignedAppliancesController@indexWeb');
+    });
+    Route::group(['prefix' => 'sold'], function () {
+        Route::get('/{agent}', 'AgentSoldApplianceController@indexWeb');
+    });
+    Route::group(['prefix' => 'commissions'], function () {
+        Route::get('/', 'AgentCommissionController@index');
+    });
+    Route::group(['prefix' => 'agent-commissions'], function () {
+        Route::get('/', 'AgentCommissionController@index');
+        Route::get('/{commission}', 'AgentCommissionController@show');
+        Route::post('/', 'AgentCommissionController@store');
+        Route::put('/{commission}', 'AgentCommissionController@update');
+    });
+    Route::group(['prefix' => 'receipt'], function () {
+        Route::get('/', 'AgentReceiptController@listByUsers');
+        Route::get('/{agent}', 'AgentReceiptController@index');
+        Route::get('/listAll', 'AgentReceiptController@listAllReceipts');
+        Route::post('/{agent}', 'AgentReceiptController@store');
+
+    });
+    Route::group(['prefix' => 'transactions'], function () {
+        Route::get('/{agent}', 'AgentTransactionsController@indexWeb')->where('agent', '[0-9]+');
+
+    });
+    Route::group(['prefix' => 'balance'], function () {
+        Route::group(['prefix' => 'history'], function () {
+            Route::get('/{agent}', 'AgentBalanceHistoryController@indexWeb');
+        });
+    });
+    Route::group(['prefix' => 'charge'], function () {
+        Route::post('/{agent}', 'AgentChargeController@store');
+    });
+
+});
+
+
+// Android App Services
+Route::group([
+    'middleware' => ['agent_api', 'jwt.verify'],
+    'prefix' => 'app'
+], function () {
+    Route::group(['prefix' => 'agents'], function () {
+        Route::post('/firebase', 'AgentController@setFirebaseToken');
+        Route::get('/balance', 'AgentController@showBalance');
+
+        Route::group(['prefix' => 'customers'], function () {
+            Route::get('/', 'AgentCustomerController@index');
+            Route::get('/search', 'AgentCustomerController@search');
+        });
+        Route::group(['prefix' => 'transactions'], function () {
+            Route::get('/', 'AgentTransactionsController@index');
+            Route::get('/{customerId}', 'AgentTransactionsController@agentCustomerTransactions');
+
+        });
+        Route::group(['prefix' => 'appliances'], function () {
+
+            Route::get('/', 'AgentSoldApplianceController@index');
+            Route::get('/{customer}', 'AgentSoldApplianceController@customerSoldAppliances');
+            Route::post('/', [
+                'middleware' => 'agent.balance',
+                'uses' => 'AgentSoldApplianceController@store'
+            ])->name('agent-sell-appliance');
+        });
+        Route::group(['prefix' => 'applianceTypes'], function () {
+            Route::get('/', 'AgentAssignedAppliancesController@index');
+        });
+        Route::group(['prefix' => 'ticket'], function () {
+            Route::get('/', 'AgentTicketController@index');
+            Route::get('/customer/{customerId}', 'AgentTicketController@agentCustomerTickets');
+            Route::post('/', 'AgentTicketController@store');
+        });
+
+    });
+
+});
+
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
 
 Route::group(['prefix' => 'assets'], function () {
     Route::group(['prefix' => 'types'], function () {
@@ -161,6 +256,7 @@ Route::group(['prefix' => 'transactions', 'middleware' => ['transaction.auth', '
     function () {
         Route::post('/airtel', 'TransactionController@store');
         Route::post('/vodacom', ['as' => 'vodacomTransaction', 'uses' => 'TransactionController@store']);
+        Route::post('/agent', ['as' => 'agentTransaction', 'uses' => 'TransactionController@store']);
 
     });
 
@@ -183,16 +279,16 @@ Route::post('androidApp', function (AndroidAppRequest $r) {
         DB::beginTransaction();
 
         //check if the meter id or the phone already exists
-        $meter  = Meter::where('serial_number', $r->get('serial_number'))->first();
+        $meter = Meter::where('serial_number', $r->get('serial_number'))->first();
         $person = null;
 
         if ($meter === null) {
-            $meter          = new Meter();
+            $meter = new Meter();
             $meterParameter = new MeterParameter();
-            $geoLocation    = new GeographicalInformation();
+            $geoLocation = new GeographicalInformation();
         } else {
             $meterParameter = MeterParameter::where('meter_id', $meter->id)->first();
-            $geoLocation    = $meterParameter->geo()->first();
+            $geoLocation = $meterParameter->geo()->first();
             if ($geoLocation === null) {
                 $geoLocation = new GeographicalInformation();
             }
@@ -205,7 +301,7 @@ Route::post('androidApp', function (AndroidAppRequest $r) {
 
         if ($person === null) {
             $personService = new PersonService(new App\Models\Person\Person());
-            $person        = $personService->createFromRequest($r);
+            $person = $personService->createFromRequest($r);
         }
 
         $meter->serial_number = $r->get('serial_number');

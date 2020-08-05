@@ -10,8 +10,9 @@ namespace App\Transaction;
 
 
 use App\Lib\ITransactionProvider;
-use App\Models\Transaction\VodacomTransaction;
+use App\Models\Transaction\AgentTransaction;
 use App\Models\Transaction\AirtelTransaction;
+use App\Models\Transaction\VodacomTransaction;
 
 class TransactionAdapter
 {
@@ -29,6 +30,11 @@ class TransactionAdapter
 
         if ($transactionProvider instanceof AirtelTransaction) {
             $baseTransaction = resolve('AirtelPaymentProvider');
+            $baseTransaction->init($transactionProvider);
+            return $baseTransaction;
+        }
+        if ($transactionProvider instanceof AgentTransaction) {
+            $baseTransaction = resolve('AgentPaymentProvider');
             $baseTransaction->init($transactionProvider);
             return $baseTransaction;
         }

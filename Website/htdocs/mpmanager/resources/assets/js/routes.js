@@ -245,7 +245,17 @@ let routes = [
         path: '/profile/management',
         component: require('./components/Profile/UserManagement').default,
         meta: { layout: 'default' },
-    }
+    },
+    {
+        path: '/agents/page/:page_number',
+        component: require('./components/Agent/AgentList').default,
+        meta: { layout: 'default' },
+    },
+    {
+        path: '/agents/:id',
+        component: require('./components/Agent/Agent').default,
+        meta: { layout: 'default' },
+    },
 
 ]
 
