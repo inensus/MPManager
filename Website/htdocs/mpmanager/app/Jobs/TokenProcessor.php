@@ -80,10 +80,18 @@ class TokenProcessor implements ShouldQueue
         if ($token === null) {
             try {
                 Log::critical('ENERGY TO BE CHARGED float ' . (float)$this->transactionContainer->chargedEnergy);
-                $tokenData = $api->generateToken(
-                    $this->transactionContainer->meter,
-                    (float)$this->transactionContainer->chargedEnergy
-                );
+
+                if (config('app.debug')) {
+                    $tokenData = [
+                        'token' => 'debug-token',
+                        'energy' => (float)$this->transactionContainer->chargedEnergy,
+                    ];
+                } else {
+                    $tokenData = $api->generateToken(
+                        $this->transactionContainer->meter,
+                        (float)$this->transactionContainer->chargedEnergy
+                    );
+                }
 
             } catch (Exception $e) {
                 if (self::maxTries > $this->counter) {
@@ -130,7 +138,7 @@ class TokenProcessor implements ShouldQueue
         event('transaction.successful', [$this->transactionContainer->transaction]);
 
 
-        SmsProcessor::dispatch($this->transactionContainer,
+        SmsProcessor::dispatch($this->transactionContainer->transaction,
             SmsTypes::ENERGY_CONFIRMATION)->allOnConnection('redis')->onQueue('sms');
     }
 
