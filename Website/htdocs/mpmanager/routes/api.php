@@ -1,6 +1,5 @@
 <?php
 
-use App\Events\Kemal;
 use App\Http\Requests\AndroidAppRequest;
 use App\Http\Resources\ApiResource;
 use App\Http\Services\PersonService;
@@ -42,7 +41,7 @@ Route::group(['prefix' => 'solar'], static function () {
 });
 
 Route::group(['prefix' => 'batteries'], static function () {
-    Route::post('/{miniGridId}', 'BatteryController@store');
+    Route::post('/', 'BatteryController@store');
 });
 
 Route::group(['prefix' => 'mini-grids'], static function () {
@@ -85,7 +84,7 @@ Route::group(['prefix' => 'pv',], static function () {
 );
 
 /* Tariff */
-Route::group(['middleware' => 'jwt.verify', 'prefix' => 'tariffs'], function () {
+Route::group(['middleware' => 'jwt.verify', 'prefix' => 'tariffs'], static function () {
     Route::get('/', 'TariffController@index');
     Route::post('/', 'TariffController@store');
     Route::get('/{tariff}', 'TariffController@show');
@@ -97,9 +96,9 @@ Route::group(['middleware' => 'jwt.verify', 'prefix' => 'tariffs'], function () 
 //JWT authentication
 Route::group([
     'middleware' => 'api',
-    'prefix'     => 'auth'
+    'prefix' => 'auth'
 
-], static function ($router) {
+], static function () {
 
     Route::post('login', 'AuthController@login');
     Route::post('logout', 'AuthController@logout');
@@ -108,12 +107,12 @@ Route::group([
 
 });
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
+Route::middleware('auth:api')->get('/user', static function (Request $request) {
     return $request->user();
 });
 
-Route::group(['prefix' => 'assets'], function () {
-    Route::group(['prefix' => 'types'], function () {
+Route::group(['prefix' => 'assets'], static function () {
+    Route::group(['prefix' => 'types'], static function () {
         Route::get('/', 'AssetTypeController@index');
         Route::post('/', 'AssetTypeController@store');
         Route::put('/{asset_type}', 'AssetTypeController@update');
@@ -129,7 +128,7 @@ Route::group(['prefix' => 'assets'], function () {
 
 });
 
-Route::group(['prefix' => 'people'], function () {
+Route::group(['prefix' => 'people'], static function () {
     Route::get('/{person}/transactions', 'PersonController@transactions');
     Route::get('/{person}/addresses', 'PersonController@addresses');
     Route::get('/{person}/meters', 'MeterController@personMeters');
@@ -158,19 +157,13 @@ Route::group(['prefix' => 'admin'], static function () {
     Route::get('{user}/addresses', 'AddressController@adminAddress');
 });
 Route::group(['prefix' => 'transactions', 'middleware' => ['transaction.auth', 'transaction.request']],
-    function () {
+    static function () {
         Route::post('/airtel', 'TransactionController@store');
-        Route::post('/vodacom', ['as' => 'vodacomTransaction', 'uses' => 'TransactionController@store']);
+        Route::post('/vodacom',
+            ['middleware' => '', 'as' => 'vodacomTransaction', 'uses' => 'TransactionController@store']);
 
     });
 
-
-Route::get('hearthBeat', function () {
-
-    event(new Kemal());
-    broadcast(new Kemal());
-
-});
 
 Route::get('paymenthistories/{personId}/payments/{period}/{limit?}/{order?}',
     'PaymentHistoryController@show')->where('personId', '[0-9]+');
@@ -178,26 +171,25 @@ Route::get('paymenthistories/{personId}/flow/{year?}', 'PaymentHistoryController
 Route::get('paymenthistories/{personId}/period', 'PaymentHistoryController@getPaymentPeriod')->where('personId',
     '[0-9]+');
 Route::get('paymenthistories/debt/{personId}', 'PaymentHistoryController@debts')->where('personId', '[0-9]+');
-Route::post('androidApp', function (AndroidAppRequest $r) {
+Route::post('androidApp', static function (AndroidAppRequest $r) {
     try {
         DB::beginTransaction();
-
         //check if the meter id or the phone already exists
-        $meter  = Meter::where('serial_number', $r->get('serial_number'))->first();
+        $meter = Meter::query()->where('serial_number', $r->get('serial_number'))->first();
         $person = null;
 
         if ($meter === null) {
-            $meter          = new Meter();
+            $meter = new Meter();
             $meterParameter = new MeterParameter();
-            $geoLocation    = new GeographicalInformation();
+            $geoLocation = new GeographicalInformation();
         } else {
-            $meterParameter = MeterParameter::where('meter_id', $meter->id)->first();
-            $geoLocation    = $meterParameter->geo()->first();
+            $meterParameter = MeterParameter::query()->where('meter_id', $meter->id)->first();
+            $geoLocation = $meterParameter->geo()->first();
             if ($geoLocation === null) {
                 $geoLocation = new GeographicalInformation();
             }
 
-            $person = Person::whereHas('meters', function ($q) use ($meterParameter) {
+            $person = Person::query()->whereHas('meters', static function ($q) use ($meterParameter) {
                 return $q->where('id', $meterParameter->id);
             })->first();
 
@@ -205,12 +197,12 @@ Route::post('androidApp', function (AndroidAppRequest $r) {
 
         if ($person === null) {
             $personService = new PersonService(new App\Models\Person\Person());
-            $person        = $personService->createFromRequest($r);
+            $person = $personService->createFromRequest($r);
         }
 
         $meter->serial_number = $r->get('serial_number');
-        $meter->manufacturer()->associate(Manufacturer::findOrFail($r->get('manufacturer')));
-        $meter->meterType()->associate(MeterType::findOrFail($r->get('meter_type')));
+        $meter->manufacturer()->associate(Manufacturer::query()->findOrFail($r->get('manufacturer')));
+        $meter->meterType()->associate(MeterType::query()->findOrFail($r->get('meter_type')));
         $meter->updated_at = date('Y-m-d h:i:s');
         $meter->save();
 
@@ -222,14 +214,14 @@ Route::post('androidApp', function (AndroidAppRequest $r) {
 
 
         $meterParameter->owner()->associate($person);
-        $meterParameter->tariff()->associate(MeterTariff::findOrFail($r->get('tariff_id')));
+        $meterParameter->tariff()->associate(MeterTariff::query()->findOrFail($r->get('tariff_id')));
         $meterParameter->save();
         $meterParameter->geo()->save($geoLocation);
 
 
         $address = new Address();
-        $address = $address->create([
-            'city_id' => request('city_id') ?? 1,
+        $address = $address->newQuery()->create([
+            'city_id' => request()->input('city_id') ?? 1,
         ]);
         $address->owner()->associate($meterParameter);
 
@@ -252,7 +244,7 @@ Route::post('androidApp', function (AndroidAppRequest $r) {
 });
 
 
-Route::group(['prefix' => 'sms'], function () {
+Route::group(['prefix' => 'sms'], static function () {
     Route::get('/{number}', 'SmsController@show');
     Route::get('/phone/{number}', 'SmsController@byPhone');
     Route::get('/{uuid}/confirm', 'SmsController@update');
@@ -268,21 +260,21 @@ Route::group(['prefix' => 'sms'], function () {
 Route::post('paymenthistories/overview', 'PaymentHistoryController@getPaymentRange');
 
 
-Route::group(['prefix' => 'targets'], function () {
+Route::group(['prefix' => 'targets'], static function () {
     Route::get('/', 'TargetController@index');
     Route::post('/', 'TargetController@store');
     Route::get('/{id}', 'TargetController@show');
     Route::post('/slots', 'TargetController@getSlotsForDate');
 });
 
-Route::group(['prefix' => 'connection-types'], function () {
+Route::group(['prefix' => 'connection-types'], static function () {
     Route::get('/', 'ConnectionTypeController@index');
     Route::post('/', 'ConnectionTypeController@store');
 });
 Route::get('/sub-connection-types', 'SubConnectionTypeController@index');
 
 
-Route::group(['prefix' => '/clusters'], function () {
+Route::group(['prefix' => '/clusters'], static function () {
     Route::post('/{id}/revenue/analysis', 'RevenueController@getRevenueAnalysisForCluster');
     Route::get('/', 'ClusterController@index');
     Route::get('/geo', 'ClusterController@geo');
@@ -303,16 +295,20 @@ Route::get('/reports', 'ReportController@index');
 Route::get('/reports/{id}/download', 'ReportController@download');
 
 
-Route::group(['prefix' => 'connection-groups'], function () {
+Route::group(['prefix' => 'connection-groups'], static function () {
     Route::get('/', 'ConnectionGroupController@index');
     Route::post('/', 'ConnectionGroupController@store');
 });
 
 
-Route::group(['prefix' => '/maintenance'], function () {
+Route::group(['prefix' => '/maintenance'], static function () {
     Route::get('/', 'MaintenanceUserController@index');
     Route::post('/user', 'MaintenanceUserController@store')
         ->middleware('restriction:maintenance-user');
 });
 
 Route::post('/restrictions', 'RestrictionController@store');
+
+Route::group(['prefix' => 'generation-assets'], static function () {
+    Route::post('/grid', 'MiniGridFrequencyController@store');
+});
