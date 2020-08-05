@@ -143,7 +143,7 @@ Route::group([
         Route::get('/', 'AgentReceiptController@listByUsers');
         Route::get('/{agent}', 'AgentReceiptController@index');
         Route::get('/listAll', 'AgentReceiptController@listAllReceipts');
-        Route::post('/', 'AgentReceiptController@store');
+        Route::post('/{agent}', 'AgentReceiptController@store');
 
     });
     Route::group(['prefix' => 'transactions'], function () {
