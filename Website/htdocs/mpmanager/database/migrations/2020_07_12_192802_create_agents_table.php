@@ -24,6 +24,9 @@ class CreateAgentsTable extends Migration
             $table->string('password');
             $table->string('fire_base_token');
             $table->double('balance')->default(0);
+            $table->double('commission_revenue')->default(0);
+            $table->double('due_to_energy_supplier')->default(0);
+
             $table->rememberToken();
             $table->timestamps();
 

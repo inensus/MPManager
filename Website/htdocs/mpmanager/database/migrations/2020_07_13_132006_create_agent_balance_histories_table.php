@@ -18,6 +18,7 @@ class CreateAgentBalanceHistoriesTable extends Migration
             $table->unsignedInteger('agent_id');
             $table->morphs('trigger');
             $table->double('amount');
+            $table->double('available_balance');
             $table->integer('transaction_id')->nullable();
             $table->timestamps();
 

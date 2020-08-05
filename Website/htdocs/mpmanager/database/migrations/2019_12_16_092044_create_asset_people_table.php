@@ -19,6 +19,8 @@ class CreateAssetPeopleTable extends Migration
             $table->integer('person_id');
             $table->integer('total_cost');
             $table->integer('rate_count');
+            $table->double('down_payment')->nullable();
+            $table->date('first_payment_date')->nullable();
             $table->morphs('creator');
             $table->timestamps();
         });
