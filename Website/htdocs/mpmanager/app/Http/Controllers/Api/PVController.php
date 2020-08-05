@@ -72,8 +72,9 @@ class PVController extends Controller
             ]);
         }
 
-        $dailyGeneratedEnergy = (double)(str_replace(',', '.', $pv['daily']['energy']));
-        $totalGeneratedEnergy = (double)(str_replace(',', '.', $pv['total']['energy']));
+        $dailyGeneratedEnergy = $this->formatEnergyData($pv['daily']['energy']);
+        $totalGeneratedEnergy = $this->formatEnergyData($pv['total']['energy']);
+
 
         $this->pv
             ->newQuery()
@@ -121,4 +122,13 @@ class PVController extends Controller
         return new ApiResource($miniGridPVs);
 
     }
+
+
+    private function formatEnergyData($val): float
+    {
+        $val = (double)(str_replace('.', '', $val));
+        $val = (double)(str_replace(',', '.', $val));
+        return $val;
+    }
+
 }
