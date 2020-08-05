@@ -11,6 +11,7 @@ use App\Models\Agent;
 use App\Models\AgentAssignedAppliances;
 use App\Models\AgentCharge;
 use App\Models\AgentCommission;
+use App\Models\AgentReceipt;
 use App\Models\AssetRate;
 use App\Models\AssetType;
 use App\Models\Cluster;
@@ -65,7 +66,8 @@ class AppServiceProvider extends ServiceProvider
                 'admin' => User::class,
                 'appliance' => AssetType::class,
                 'agent_receipt' => AgentReceipt::class,
-                'agent_charge' => AgentCharge::class
+                'agent_charge' => AgentCharge::class,
+
             ]
         );
     }
