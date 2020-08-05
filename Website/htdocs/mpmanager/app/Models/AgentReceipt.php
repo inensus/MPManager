@@ -23,4 +23,9 @@ class AgentReceipt extends BaseModel
     {
         return $this->belongsTo(User::class);
     }
+
+    public function detail()
+    {
+        return $this->hasMany(AgentReceiptDetail::class);
+    }
 }
