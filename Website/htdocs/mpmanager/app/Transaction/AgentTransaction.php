@@ -6,6 +6,8 @@ namespace App\Transaction;
 
 use App\Lib\ITransactionProvider;
 use App\Models\Agent;
+use App\Models\AgentBalanceHistory;
+use App\Models\AgentCommission;
 use App\Models\Transaction\Transaction;
 use App\Models\Transaction\TransactionConflicts;
 use App\Services\FirebaseService;
@@ -76,13 +78,37 @@ class AgentTransaction implements ITransactionProvider
 
     public function sendResult(bool $requestType, Transaction $transaction): void
     {
-        if (!app()->environment('production')) {
-            return;
-        }
         $body = $this->prepareRequest($transaction);
 
-        $agent = Agent::query()->find(auth('agent_api')->user()->id);
-        $this->fireBaseService->sendNotify($agent->fire_base_token, json_encode((string)$body));
+        $agent = $this->agentTransaction->agent;
+
+        $this->agentTransaction->update(['status' => $requestType === true ? 1 : -1]);
+
+        $history = AgentBalanceHistory::query()->make([
+            'agent_id' => $agent->id,
+            'amount' => -$transaction->amount,
+            'transaction_id' => $transaction->id,
+
+        ]);
+        $history->trigger()->associate($this->transaction);
+        $history->save();
+
+
+        //create agent commission
+        $commission = AgentCommission::query()->find($agent->agent_commission_id);
+
+        $history = AgentBalanceHistory::query()->make([
+            'agent_id' => $agent->id,
+            'amount' => ($transaction->amount * $commission->energy_commission),
+            'transaction_id' => $transaction->id,
+        ]);
+        $history->trigger()->associate($commission);
+        $history->save();
+
+        if (app()->environment('production')) {
+            $this->fireBaseService->sendNotify($agent->fire_base_token, json_encode((string)$body));
+        }
+
     }
 
     private function prepareRequest(Transaction $transaction)
