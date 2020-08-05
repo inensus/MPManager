@@ -40,7 +40,7 @@ class AgentBalanceHistoryController extends Controller
      */
     public function store(Agent $agent, CreateAgentBalanceHistoryRequest $request): ApiResource
     {
-        $agentBalanceHistory = $this->agentBalanceHistoryService->create($agent->id,
+        $agentBalanceHistory = $this->agentBalanceHistoryService->create($agent,
             $request->only([
                 'amount'
             ]));
