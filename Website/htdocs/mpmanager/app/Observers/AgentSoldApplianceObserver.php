@@ -63,6 +63,7 @@ class AgentSoldApplianceObserver
             'agent_id' => $agent->id,
             'amount' => (-1 * request()->input('down_payment')),
             'transaction_id' => $transaction->id,
+            'available_balance'=>$agent->balance
 
         ]);
         $history->trigger()->associate($assignedAppliance);
@@ -76,6 +77,7 @@ class AgentSoldApplianceObserver
             'agent_id' => $agent->id,
             'amount' => ($assignedAppliance->cost * $commission->appliance_commission),
             'transaction_id' => $transaction->id,
+            'available_balance'=>$agent->commission_revenue
         ]);
         $history->trigger()->associate($commission);
         $history->save();
