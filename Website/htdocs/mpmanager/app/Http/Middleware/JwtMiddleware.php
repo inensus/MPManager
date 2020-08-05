@@ -2,15 +2,13 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Agent;
-use App\Models\User;
 use Closure;
+
 use Exception;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
+use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
-use Tymon\JWTAuth\Exceptions\UserNotDefinedException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Http\Middleware\BaseMiddleware;
 
@@ -22,45 +20,24 @@ class JwtMiddleware extends BaseMiddleware
      *
      * @param Request $request
      * @param Closure $next
-     * @param string $type
      * @return mixed
+     * @throws JWTException
      */
-    public function handle($request, Closure $next, $type = 'user')
+    public function handle($request, Closure $next)
     {
-
         try {
-            $id = JWTAuth::parseToken()->getPayload()->get('sub');
-            if ($type === 'agent') {
-                $user = Agent::query()->findOrFail($id);
-            } elseif ($type === 'user') {
-                $user = User::query()->findOrFail($id);
-            } else {
-                throw new UserNotDefinedException('Authentication failed');
-            }
+            $user = JWTAuth::parseToken()->authenticate();
         } catch (Exception $e) {
-
-            if ($e instanceof ModelNotFoundException) {
-                return $this->generateResponse('No user found for authentication');
-            }
-            if ($e instanceof UserNotDefinedException) {
-                return $this->generateResponse($e->getMessage());
-            }
-
             if ($e instanceof TokenInvalidException) {
-                return $this->generateResponse('Token is Invalid');
+                return response()->json(['status' => 'Token is Invalid']);
             }
 
             if ($e instanceof TokenExpiredException) {
-                return $this->generateResponse('Token is Expired');
+                return response()->json(['status' => 'Token is Expired']);
             }
-            return $this->generateResponse('Authorization Token not found');
-        }
-        $request->attributes->add(['user' => $user]);
-        return $next($request);
-    }
 
-    private function generateResponse($message, $status = 400): \Illuminate\Http\JsonResponse
-    {
-        return response()->json(['data' => ['message' => $message, 'status' => $status]]);
+            return response()->json(['status' => 'Authorization Token not found']);
+        }
+        return $next($request);
     }
 }

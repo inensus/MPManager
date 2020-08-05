@@ -20,7 +20,6 @@ use PDO;
  * @package Inensus\Ticket\Models
  * @property int $id
  * @property int $creator_id
- * @property int $creator_type
  * @property int $owner_id
  * @property int $owner_type
  * @property string ticket_id
@@ -74,11 +73,6 @@ class Ticket extends BaseModel
             ->where('status', 1)
             ->whereBetween('updated_at', [$startDate, $endDate])
             ->groupBy(DB::raw('YEARWEEK(updated_at,3)'));
-    }
-
-    public function creator()
-    {
-        return $this->morphTo('creator');
     }
 
     public function ticketsOpenedWithCategories($miniGridId)

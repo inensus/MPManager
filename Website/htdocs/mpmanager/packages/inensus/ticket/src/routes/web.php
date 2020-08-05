@@ -23,11 +23,7 @@ Route::group(
 
 
     Route::group(['prefix' => 'api'], function () {
-        Route::group(['prefix' => 'agents'], function () {
 
-            Route::get('/{agent}', 'TicketController@indexAgentTickets');
-
-        });
         Route::group(['prefix' => 'users'], function () {
 
             //all registered users

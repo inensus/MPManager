@@ -1,12 +1,10 @@
 <?php
 
-
 namespace App\Http\Requests;
-
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateAgentBalanceHistoryRequest extends FormRequest
+class AssetTypeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,13 +19,12 @@ class CreateAgentBalanceHistoryRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     *
      * @return array
      */
     public function rules()
     {
         return [
-            'amount' => 'required|regex:/^\d*(\.\d{1,2})?$/',
+            'asset_type_name' => 'required|min:3'
         ];
     }
 }

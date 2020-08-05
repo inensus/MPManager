@@ -9,6 +9,7 @@ use App\Misc\TransactionDataContainer;
 use App\Models\Transaction\AirtelTransaction;
 use App\Models\Transaction\Transaction;
 use App\Models\Transaction\VodacomTransaction;
+use App\Sms\SmsTypes;
 use DateInterval;
 use DateTime;
 use Exception;
@@ -259,10 +260,12 @@ class TransactionController extends Controller
 
         if (config('app.env') === 'production') {//production queue
             $queue = 'payment';
-        } elseif (config('app.env') === 'staging') {
-            $queue = 'staging_payment';
-        } else { // local queue‚
-            $queue = 'local_payment';
+        } else {
+            if (config('app.env') === 'staging') { //staging queue
+                $queue = 'staging_payment';
+            } else { // local queue‚
+                $queue = 'local_payment';
+            }
         }
 
         ProcessPayment::dispatch($transaction->id)->allOnConnection('redis')->onQueue($queue);
@@ -649,7 +652,8 @@ class TransactionController extends Controller
         $messageSent = event('sms.send.token',
             [
                 'sender' => $number ?? $transactionContainer->transaction->sender,
-                'data' => $transactionContainer->transaction,
+                'type' => SmsTypes::RESEND_INFORMATION,
+                'data' => $transactionContainer,
                 'trigger' => $transactionContainer->transaction,
             ]);
         if (!$messageSent) {

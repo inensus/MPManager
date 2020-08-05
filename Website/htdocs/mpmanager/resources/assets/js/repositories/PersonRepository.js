@@ -1,5 +1,3 @@
-import Client from './Client/AxiosClient'
-
 const resource = '/api/people'
 
 export default {
@@ -9,8 +7,5 @@ export default {
     },
     update(person){
         return axios.put(`${resource}/${person.id}`,person)
-    },
-    create(agentPm){
-        return Client.post(`${resource}`,agentPm)
-    },
+    }
 }

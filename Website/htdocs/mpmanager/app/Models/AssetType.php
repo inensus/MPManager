@@ -2,18 +2,11 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Inensus\Ticket\Models\Ticket;
 
-class AssetType extends BaseModel
+class AssetType extends Model
 {
-
-    public function agentAssignedAppliance(): HasMany
-    {
-        return $this->hasMany(AgentAssignedAppliances::class, 'id', 'appliance_type_id');
-    }
-
-    public function rates(): HasMany
-    {
-        return $this->hasMany(AssetPerson::class);
-    }
+    protected $fillable = ['name'];
 }

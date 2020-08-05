@@ -23,10 +23,10 @@ class TicketService
         $this->tickets = $tickets;
     }
 
-    public function create($creatorId, $creatorType,$ownerId, $ownerType, $category, $assignedId, array $data)
+    public function create($creatorId, $ownerId, $ownerType, $category, $assignedId, array $data)
     {
         $ticket = $this->tickets->createTicket($data);
-        return $this->saveTicket($ticket, $ownerType, $ownerId, $creatorId, $category, $assignedId,$creatorType);
+        return $this->saveTicket($ticket, $ownerType, $ownerId, $creatorId, $category, $assignedId);
     }
 
     public function close($ticketId)
@@ -41,14 +41,13 @@ class TicketService
         return $closeRequest;
     }
 
-    private function saveTicket($ticketData, $ownerType, $ownerId, $creatorId, $category, $assignedId,$creatorType): Ticket
+    private function saveTicket($ticketData, $ownerType, $ownerId, $creatorId, $category, $assignedId): Ticket
     {
         $ticket = new Ticket();
         $ticket->ticket_id = $ticketData->id;
         $ticket->owner_type = $ownerType;
         $ticket->owner_id = $ownerId;
         $ticket->creator_id = $creatorId;
-        $ticket->creator_type =$creatorType;
         $ticket->category_id = $category;
         $ticket->assigned_id = $assignedId;
         $ticket->save();

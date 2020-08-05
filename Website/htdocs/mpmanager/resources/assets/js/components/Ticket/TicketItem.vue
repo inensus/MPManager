@@ -8,19 +8,20 @@
                             <md-icon>money</md-icon>
                         </div>
                         <span class="semi-bold" v-text="ticket.name"></span>
+
                     </h2>
-                    <div class="md-layout-item md-size-10" @click="lockTicket(ticket.id)"
-                         style="float: right; cursor: pointer;" v-if="!ticket.closed">
+                    <div class="md-layout-item md-size-10" @click="lockTicket(ticket)" style="float: right; cursor: pointer;" v-if="!ticket.closed">
                         <md-icon style="color: #9a0325">lock</md-icon>
                     </div>
                 </div>
-                <div class="md-layout md-size-100">
+                <div class="md-layout md-size-100" >
 
-                    <div class="md-layout md-gutter md-size-60">
+                    <div class="md-layout md-gutter md-size-60" >
                         <div class="md-layout-item md-size-30" style="cursor:pointer;" v-if="ticket.assignedTo">
                             <small>
                                 <md-icon>attach_file</md-icon>
                                 Assigned To:<b>{{ticket.assignedTo.user_name}}</b> </small>
+
 
                         </div>
                         <div class="md-layout-item md-size-30" style="float: right;">
@@ -32,6 +33,7 @@
                         </div>
                     </div>
                     <div class="md-layout t-text-area">
+
                         <div
                             @click="navigateToOwner(ticket.owner.id)"
                             class="md-subheader md-size-100"
@@ -44,49 +46,54 @@
 
                         </div>
 
-                        <p class="t-text" v-text="ticket.description"></p>
+
+                        <p class="t-text" v-text="ticket.description">
+
+                        </p>
+
+
                         <div class="t-date">
                             <md-icon>access_time</md-icon>
                             {{ticket.created}}
                         </div>
+
                     </div>
                 </div>
 
 
-                <em class="pull-right-label-primary" style="cursor:pointer">
-                    <small @click="showComments=!showComments">Comments</small>
-                    {{ticket.comments.length}}
-                </em>
 
-                <div class="md-layout md-size-100" style="min-width: 100%!important;">
+                    <em class="pull-right-label-primary" style="cursor:pointer">
+                        <small @click="showComments=!showComments">Comments</small>
+                        {{ticket.commentCount()}}
+                    </em>
 
+                <div class="md-layout md-size-100"  style="min-width: 100%!important;" >
                     <div v-if="showComments" style="min-width: inherit;">
+
                         <div
                             :key="comment.id"
                             class="comment-box"
                             v-for="comment in ticket.comments"
                         >
-                            <md-icon>person</md-icon>
-                            {{comment.comment}}
+                           <md-icon>person</md-icon> {{comment.comment}}
                             <br/>
                             <md-icon>access_time</md-icon>
                             <small>{{comment.date}}</small>
                             <div class="clearfix"></div>
                         </div>
                         <div v-if="allowComment">
-                            <md-field style="float: left">
-                                <label for="comment">Comment</label>
+                            <md-field>
                                 <md-textarea v-model="newComment"></md-textarea>
+                                <md-button
+                                    @click="sendComment"
+                                    class="md-primary btn-save"
+                                    type="submit"
+                                >Send
+                                </md-button>
                             </md-field>
-                            <md-button
-                                @click="sendComment"
-                                class="md-primary md-raised"
-                                type="submit"
-                                style="float:right"
-                            >Send
-                            </md-button>
                             <div class="clearfix"></div>
                         </div>
+
                     </div>
                 </div>
             </div>
@@ -95,78 +102,47 @@
 </template>
 
 <script>
-
-    import { UserTickets } from '../../classes/person/ticket'
-    import { resources } from '../../resources'
-    import { TicketCommentService } from '../../services/TicketCommentService'
-    import { EventBus } from '../../shared/eventbus'
-    import { SmsService } from '../../services/SmsService'
-    import { TicketService } from '../../services/TicketService'
+    import {UserTickets} from "../../classes/person/ticket";
+    import {resources} from "../../resources";
 
     export default {
-        name: 'TicketItem',
-        props: {
-
-            ticket: {},
-            allowComment: {
-                type: Boolean
-            }
-        },
-        data () {
+        name: "TicketItem",
+        props: ["ticket", "allowComment"],
+        data() {
             return {
-                ticketCommentService: new TicketCommentService(),
-                ticketService: new TicketService(),
-                smsService: new SmsService(),
                 showComments: false,
-                senderId: this.$store.getters['auth/authenticationService'].authenticateUser.id,
-                newComment: ''
-            }
+                newComment: ""
+            };
         },
         methods: {
-            navigateToOwner (id) {
-                this.$router.push({ path: '/people/' + id })
+            navigateToOwner(id) {
+                this.$router.push({path: "/people/" + id});
             },
-            async lockTicket (id) {
-                try {
-                    await this.ticketService.closeTicket(id)
-                    EventBus.$emit('listChanged')
-                    this.alertNotify('success', 'Ticket closed successfully.')
-
-                } catch (e) {
-
-                }
-
+            lockTicket(ticket) {
+                ticket.close();
             },
 
-            async sendComment () {
+            sendComment() {
+                let comment = {
+                    comment: this.newComment,
+                    date: new Date(),
+                    fullName: this.$store.getters.admin.name,
+                    username: this.$store.getters.admin.email,
+                    cardId: this.ticket.id
+                };
 
-                try {
-                    let name = this.$store.getters['auth/authenticationService'].authenticateUser.name
-                    let username = this.$store.getters['auth/authenticationService'].authenticateUser.email
-                    await this.ticketCommentService.createComment(this.newComment, this.ticket.id, name, username)
+                axios.post(resources.ticket.comments, comment).then(response => {
                     if (this.ticket.category.out_source) {
-                        await this.smsService.sendToPerson(this.newComment, this.ticket.owner.id, this.senderId)
-
+                        axios.post(resources.sms.send, {
+                            message: this.newComment,
+                            person_id: this.ticket.owner.id,
+                            senderId: this.$store.getters.admin.id
+                        });
                     }
-                    this.showComments = false
-                    EventBus.$emit('listChanged')
-                    this.alertNotify('success', 'Comment send successfully.')
-
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-            },
-            alertNotify (type, message) {
-                this.$notify({
-                    group: 'notify',
-                    type: type,
-                    title: type + ' !',
-                    text: message
-                })
-            },
-
+                });
+            }
         }
-    }
+    };
 </script>
 
 <style scoped>
@@ -178,12 +154,13 @@
     .ticket-area:hover {
         background-color: #f3f3f3;
     }
-
-    .comment-box {
+    .comment-box{
         background-color: #f4fff0;
         border-width: 1px;
         border-style: dotted;
         padding: 10px;
+
+
     }
 
     .pull-right-label-primary {
@@ -212,7 +189,7 @@
         max-width: 100%;
     }
 
-    .new-ticket-modal-container {
+    .new-ticet-modal-container {
         padding: 2rem;
         overflow-y: scroll;
     }
@@ -224,9 +201,8 @@
         border-style: dotted;
         border-width: 1px;
     }
-
-    .t-text {
-        min-width: 90%;
+    .t-text{
+       min-width: 90%;
         white-space: initial;
     }
 
@@ -234,5 +210,6 @@
         font-size: x-small;
         color: #2a2a2a;
         float: right;
+
     }
 </style>

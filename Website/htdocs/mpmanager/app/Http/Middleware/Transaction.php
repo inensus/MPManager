@@ -45,8 +45,6 @@ class Transaction
                 Config::get('services.airtel.ips'), false)) {
             return resolve('AirtelPaymentProvider');
 
-        } elseif (preg_match('/\/agent/', $request->url())&& auth('agent_api')->user()) {
-            return resolve('AgentPaymentProvider');
         } else {
             Log::critical('Unknown IP Sent Transaction', [
                 'id' => 43326782767462641456,

@@ -15,41 +15,30 @@
                 <md-card-content>
                     <div class="md-layout md-gutter">
                         <div class="md-layout-item">
-                            <md-field :class="{'md-invalid': errors.has('name')}">
-                                <md-input type="text"
-                                          v-model="ticketLabelService.newLabelName"
-                                          placeholder="Name"
-                                          name="name"
-                                          id="name"
-                                          v-validate="'required|min:3'"
-                                ></md-input>
-                                <span class="md-error">{{ errors.first('name') }}</span>
+                            <md-field>
+                                <md-input type="text" v-model="newLabelName" placeholder="Name"></md-input>
                             </md-field>
                         </div>
                         <div class="md-layout-item">
-                            <md-field :class="{'md-invalid': errors.has('color')}">
+                            <md-field>
                                 <label>Select Color</label>
-                                <md-select v-model="ticketLabelService.currentColor"
-                                           name="color"
-                                           id="color"
-                                           v-validate="'required'">
+                                <md-select v-model="currentColor">
 
-                                    <md-option v-for="(index,colorName) in ticketLabelService.colors" :value="colorName"
-                                               :key="colorName">
+                                    <md-option v-for="(index,colorName) in colors" :value="colorName" :key="colorName">
                                         {{colorName}}
                                         <span class="colored-box" style="margin-left: 1rem;max-width: 100px"
-                                              :style="{ backgroundColor: ticketLabelService.colors[colorName]}"> </span>
+                                              :style="{ backgroundColor: colors[colorName]}"> </span>
 
 
                                     </md-option>
                                 </md-select>
-                                <span class="md-error">{{ errors.first('color') }}</span>
+
                             </md-field>
                         </div>
                     </div>
                     <div class="md-layout md-subheader">
 
-                        <md-checkbox v-model="ticketLabelService.outSourcing" class="form-control"
+                        <md-checkbox v-model="outSourcing" class="form-control"
                                      id="outsourcing">Outsourcing
                         </md-checkbox>
 
@@ -87,14 +76,14 @@
                         </md-table-row>
 
 
-                        <md-table-row v-if="ticketLabelService.list.length == 0">
+                        <md-table-row v-if="labels.length == 0">
                             <md-table-cell>No category found</md-table-cell>
                         </md-table-row>
-                        <md-table-row v-for="(label, index) in ticketLabelService.list" :key="index">
+                        <md-table-row v-for="(label, index) in labels" :key="index">
                             <md-table-cell>{{label.id}}</md-table-cell>
                             <md-table-cell>{{label.label_name}}</md-table-cell>
                             <md-table-cell><span class="colored-box"
-                                                 :style="{ backgroundColor: ticketLabelService.colors[label.label_color]}"></span>
+                                                 :style="{ backgroundColor: colors[label.label_color]}"></span>
                                 {{label.label_color}}
                             </md-table-cell>
                             <md-table-cell>
@@ -107,7 +96,8 @@
                 </md-card-content>
 
             </md-card>
-
+            <!-- <notifications group="foo" position="top right"/>
+            <notifications group="error" position="top center"/> -->
         </widget>
 
 
@@ -115,17 +105,46 @@
 </template>
 
 <script>
+    import { EventBus } from '../../shared/eventbus'
     import Widget from '../../shared/widget'
-    import { TicketLabelService } from '../../services/TicketLabelService'
 
     export default {
         name: 'LabelManagement',
         components: { Widget },
         data () {
             return {
-                ticketLabelService: new TicketLabelService(),
+                labels: [],
                 newLabel: false,
-
+                newLabelName: '',
+                currentColor: null,
+                outSourcing: false,
+                colors: {
+                    nocolor: 'null',
+                    yellow: '#ffff00',
+                    purple: '#cc00ff',
+                    blue: '#0000cc',
+                    red: '#ff0000',
+                    green: '#00ff00',
+                    orange: '#ffb700',
+                    black: '#000000',
+                    sky: '#00b7cc',
+                    pink: '#cc0555',
+                    lime: '#bfe61f',
+                },
+                bcd: {
+                    'Home': {
+                        'href': '/'
+                    },
+                    'Tickets': {
+                        'href': null
+                    },
+                    'Settings': {
+                        'href': null
+                    },
+                    'Category Management': {
+                        'href': null
+                    },
+                },
             }
 
         },
@@ -136,57 +155,52 @@
         },
 
         mounted () {
-
+            EventBus.$emit('bread', this.bcd)
         },
         methods: {
-            async getLabels () {
-                try {
-                    await this.ticketLabelService.getLabels()
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
+            getLabels () {
+                axios.get(resources.ticket.labels)
+                    .then(response => {
+                        this.labels = response.data.data
+                    })
             },
-            async saveLabel () {
-
-                let validator = await this.$validator.validateAll()
-                if (validator) {
-                    if (this.currentColor === null) {
-                        this.$swal({
-                            type: 'error',
-                            title: 'No color selected',
-                            text: 'Please select a category color.',
-                            timer: 5000
-                        })
-                        return
-                    }
-                    if (this.newLabelName === '') {
-                        this.$swal({
-                            type: 'error',
-                            title: 'No name entered',
-                            text: 'Please enter a category name.',
-                            timer: 5000
-                        })
-                        return
-                    }
-                    try {
-                        await this.ticketLabelService.createLabel(this.ticketLabelService.newLabelName, this.ticketLabelService.currentColor, this.ticketLabelService.outSourcing)
-                        this.alertNotify('success', 'New category added successfully.')
-                    } catch (e) {
-                        this.alertNotify('error', e.message)
-                    }
-                    this.ticketLabelService.resetLabel()
-                    this.newLabel = false
+            saveLabel () {
+                if (this.currentColor === null) {
+                    this.$swal({
+                        type: 'error',
+                        title: 'No color selected',
+                        text: 'Please select a category color.',
+                        timer: 5000
+                    })
+                    return
+                }
+                if (this.newLabelName === '') {
+                    this.$swal({
+                        type: 'error',
+                        title: 'No name entered',
+                        text: 'Please enter a category name.',
+                        timer: 5000
+                    })
+                    return
                 }
 
-            },
-            alertNotify (type, message) {
-                this.$notify({
-                    group: 'notify',
-                    type: type,
-                    title: type + ' !',
-                    text: message,
-                    speed: 0
+                axios.post(resources.ticket.labels, {
+                    'labelName': this.newLabelName,
+                    'labelColor': this.currentColor,
+                    'outSourcing': this.outSourcing,
                 })
+                    .then(response => {
+                        let labelData = response.data.data
+                        this.labels.push({
+                            'id': labelData.id,
+                            'label_name': labelData.label_name,
+                            'label_color': labelData.label_color,
+                            'outSourcing': labelData.outSourcing,
+                        })
+                    })
+
+                this.newLabel = false
+
             },
         },
     }

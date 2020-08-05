@@ -10,7 +10,6 @@ namespace App\Models\Transaction;
  * @property int id
  */
 
-use App\Models\Agent;
 use App\Models\BaseModel;
 use App\Models\Meter\Meter;
 use App\Models\Meter\MeterToken;
@@ -59,10 +58,7 @@ class Transaction extends BaseModel
 
         return BelongsToMorph::build($this, AirtelTransaction::class, 'originalTransaction');
     }
-    public function originalAgent()
-    {
-        return BelongsToMorph::build($this, AgentTransaction::class, 'originalTransaction');
-    }
+
     public function token()
     {
         return $this->hasOne(MeterToken::class);
