@@ -10,10 +10,7 @@
                 class="md-layout-item md-large-size-50 md-medium-size-50 md-xlarge-size-50 md-small-size-100 md-small-size-100">
                 <agent-balance-history-list :agent-id="agentId"/>
             </div>
-            <!-- <div
-                 class="md-layout-item md-large-size-100 md-medium-size-100 md-xlarge-size-100 md-small-size-100 md-small-size-100">
-                 <agent-receipt-list/>
-             </div>-->
+
             <div
                 class="md-layout-item md-large-size-50 md-medium-size-50 md-xlarge-size-50 md-small-size-100 md-small-size-100">
                 <sold-appliance-list :agent-id="agentId"/>
@@ -33,8 +30,12 @@
                 <agent-transaction-list :agent-id="agentId"/>
             </div>
             <div
-                class="md-layout-item md-large-size-100 md-medium-size-100 md-xlarge-size-100 md-small-size-100 md-small-size-100">
-                <agent-ticket-list/>
+                class="md-layout-item md-large-size-50 md-medium-size-50 md-xlarge-size-50 md-small-size-100 md-small-size-100">
+                <agent-ticket-list :agent-id="agentId"/>
+            </div>
+            <div
+                class="md-layout-item md-large-size-50 md-medium-size-50 md-xlarge-size-50 md-small-size-100 md-small-size-100">
+                <agent-receipt-list :agent-id="agentId"/>
             </div>
         </div>
 
