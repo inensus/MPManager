@@ -78,11 +78,17 @@ class AgentTransaction implements ITransactionProvider
 
     public function sendResult(bool $requestType, Transaction $transaction): void
     {
+        $this->agentTransaction->update(['status' => $requestType === true ? 1 : -1]);
+
+        if (!$requestType) {
+            return;
+        }
+
         $body = $this->prepareRequest($transaction);
 
         $agent = $this->agentTransaction->agent;
 
-        $this->agentTransaction->update(['status' => $requestType === true ? 1 : -1]);
+
 
         $history = AgentBalanceHistory::query()->make([
             'agent_id' => $agent->id,
