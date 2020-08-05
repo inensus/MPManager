@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
 class CreateAssetTypesTable extends Migration
 {
@@ -11,12 +11,11 @@ class CreateAssetTypesTable extends Migration
      *
      * @return void
      */
-    public function up(): void
+    public function up()
     {
-        Schema::create('asset_types', static function (Blueprint $table) {
+        Schema::create('asset_types', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
-            $table->integer('price')->unsigned();
             $table->timestamps();
         });
     }
@@ -26,7 +25,7 @@ class CreateAssetTypesTable extends Migration
      *
      * @return void
      */
-    public function down(): void
+    public function down()
     {
         Schema::dropIfExists('asset_types');
     }

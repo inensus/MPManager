@@ -1,10 +1,7 @@
-const resource = '/api/assets/types'
+const resource = '/api/assets/types';
 
 export default {
 
-    list () {
-        return axios.get(`${resource}`)
-    },
 
     create (asset) {
         return axios.post(`${resource}`, asset)

@@ -39,8 +39,4 @@ class MiniGrid extends Model
     {
         return $this->morphOne(GeographicalInformation::class, 'owner');
     }
-    public function agent(){
-        return $this->hasOne(Agent::Class);
-    }
-
 }

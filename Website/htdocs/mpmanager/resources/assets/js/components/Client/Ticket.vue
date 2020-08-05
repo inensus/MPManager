@@ -98,17 +98,15 @@
         <md-dialog :md-active.sync="showModal">
             <md-dialog-title>New Ticket</md-dialog-title>
 
-            <div class="new-ticket-modal-container">
-                <form @submit.prevent="validateTicket" data-vv-scope="Ticket-Form">
+            <div class="new-ticet-modal-container">
+                <form novalidate class="md-layout">
                     <div class="md-layout md-gutter">
 
 
                         <div class="md-layout-item md-size-100 ">
-                            <md-field name="title" :class="{'md-invalid': errors.has('Ticket-Form.title')}">
+                            <md-field name="title">
                                 <label for="title">Title</label>
-                                <md-input type="text" v-model="newTicket.title" id="title" name="title"
-                                          v-validate="'required'"/>
-                                <span class="md-error">{{errors.first('Ticket-Form.title')}}</span>
+                                <md-input type="text" v-model="newTicket.title" id="title" name="title"/>
                             </md-field>
                         </div>
 
@@ -125,10 +123,9 @@
 
 
                         <div class="md-layout-item md-size-100 ">
-                            <md-field :class="{'md-invalid': errors.has('Ticket-Form.category')}">
-                                <label for="category">Category</label>
-                                <md-select name="category" id="category" v-model="newTicket.label"
-                                           v-validate="'required'">
+                            <md-field name="ticketPriority">
+                                <label for="ticketPriority">Category</label>
+                                <md-select name="ticketPriority" id="ticketPriority" v-model="newTicket.label">
                                     <md-option value="0" disabled>-- Select Category --</md-option>
                                     <md-option
                                         v-for="(label,index) in labels"
@@ -137,46 +134,39 @@
                                     >{{label.label_name}}
                                     </md-option>
                                 </md-select>
-                                <span class="md-error">{{errors.first('Ticket-Form.category')}}</span>
                             </md-field>
                         </div>
 
                         <div class="md-layout-item md-size-100 ">
-                            <md-field name="ticketAssignedTo"
-                                      :class="{'md-invalid': errors.has('Ticket-Form.ticketAssignedTo')}">
+                            <md-field name="ticketAssignedTo">
                                 <label for="ticketAssignedTo">Assign To</label>
                                 <md-select name="ticketAssignedTo" id="ticketAssignedTo"
-                                           v-model="newTicket.assignedPerson" v-validate="'required'">
+                                           v-model="newTicket.assignedPerson">
                                     <md-option disabled selected>No one</md-option>
                                     <md-option v-for="user in users" :value="user.id" :key="user.id">{{user.name}}
                                     </md-option>
                                 </md-select>
-                                <span class="md-error">{{errors.first('Ticket-Form.ticketAssignedTo')}}</span>
                             </md-field>
                         </div>
+
 
 
                         <div class="md-layout-item md-size-100 ">
-                            <md-field :class="{'md-invalid': errors.has('Ticket-Form.description')}">
+                            <md-field>
                                 <label for="description">Description</label>
                                 <md-textarea type="text" id="description" name="description"
-                                             v-model="newTicket.description" v-validate="'required'"/>
-                                <span class="md-error">{{errors.first('Ticket-Form.description')}}</span>
+                                             v-model="newTicket.description"/>
                             </md-field>
                         </div>
-                        <div class="md-layout-item md-size-100">
-                            <md-button type="submit" class="md-primary save-btn">Save</md-button>
-
-                        </div>
-
 
                     </div>
                 </form>
             </div>
 
             <md-dialog-actions>
+                <md-button class="md-accent" @click="closeModal()">Close</md-button>
 
-
+                <md-button class="md-primary btn-lg" @click="saveTicket()">Save</md-button>
             </md-dialog-actions>
         </md-dialog>
     </div>
@@ -216,12 +206,11 @@
                 newTicket: {
                     title: '',
                     description: '',
-                    dueDate: new Date(),
+                    dueDate: '',
                     label: 1,
                     assignedPerson: '',
                     owner_id: this.$store.getters.person.id, //current person id
                     owner_type: 'person',
-                    creator_type: 'admin',
                     creator: this.$store.getters['auth/authenticationService'].authenticateUser.id,
                     outsourcing: 0,
 
@@ -345,13 +334,6 @@
                 })
             },
 
-            async validateTicket () {
-                let validator = await this.$validator.validateAll('Ticket-Form')
-                if (validator) {
-                    this.saveTicket()
-                }
-
-            },
             saveTicket () {
                 //validate ticket
                 if (this.showPriceInput && this.newTicket.outsourcing == 0) {
@@ -364,16 +346,13 @@
                 }
 
                 axios.post(resources.ticket.create, this.newTicket).then(response => {
-                    console.log(response)
                     let data = response.data.data[0]
                     let t = new Ticket()
                     this.tickets.list.unshift(t.fromJson(data))
-                }).catch(e => {
-                    console.log(e)
                 })
 
-                this.showModal = false
-                this.reloadList()
+                this.showModal = false;
+                this.reloadList();
 
             }
         }
@@ -387,13 +366,6 @@
         border-style: dotted;
         padding: 10px;
         white-space: initial;
-    }
-
-    .save-btn {
-        background: green;
-        color: white !important;
-        float: right;
-        margin-top: 0.5rem !important;
     }
 
     .modal-mask {
@@ -505,9 +477,9 @@
         max-width: 100%;
     }
 
-    .new-ticket-modal-container {
+    .new-ticet-modal-container {
         padding: 2rem;
-        overflow-y: scroll !important;
+        overflow-y: scroll;
     }
 
     .t-text-area {

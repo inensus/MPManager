@@ -7,13 +7,7 @@ use App\Helpers\MailHelper;
 use App\ManufacturerApi\CalinApi;
 use App\Misc\LoanDataContainer;
 use App\Models\AccessRate\AccessRate;
-use App\Models\Agent;
-use App\Models\AgentAssignedAppliances;
-use App\Models\AgentCharge;
-use App\Models\AgentCommission;
-use App\Models\AgentReceipt;
 use App\Models\AssetRate;
-use App\Models\AssetType;
 use App\Models\Cluster;
 use App\Models\Manufacturer;
 use App\Models\Meter\MeterParameter;
@@ -22,10 +16,7 @@ use App\Models\MiniGrid;
 use App\Models\Person\Person;
 use App\Models\Transaction\Transaction;
 use App\Models\Transaction\VodacomTransaction;
-use App\Models\User;
-use App\Services\FirebaseService;
 use App\Sms\AndroidGateway;
-use App\Transaction\AgentTransaction;
 use App\Transaction\AirtelTransaction;
 use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -53,21 +44,12 @@ class AppServiceProvider extends ServiceProvider
                 'meter_parameter' => MeterParameter::class,
                 'token' => MeterToken::class,
                 'transaction' => Transaction::class,
-                'agent_transaction' => \App\Models\Transaction\AgentTransaction::class,
-                'airtel_transaction' => \App\Models\Transaction\AirtelTransaction::class,
                 'vodacom_transaction' => VodacomTransaction::class,
+                'airtel_transaction' => \App\Models\Transaction\AirtelTransaction::class,
                 'access_rate' => AccessRate::class,
                 'asset_loan' => AssetRate::class,
                 'cluster' => Cluster::class,
                 'mini-grid' => MiniGrid::class,
-                'agent_commission' => AgentCommission::class,
-                'agent_appliance' => AgentAssignedAppliances::class,
-                'agent' => Agent::class,
-                'admin' => User::class,
-                'appliance' => AssetType::class,
-                'agent_receipt' => AgentReceipt::class,
-                'agent_charge' => AgentCharge::class,
-
             ]
         );
     }
@@ -108,12 +90,6 @@ class AppServiceProvider extends ServiceProvider
             return new AirtelTransaction(
                 new \App\Models\Transaction\AirtelTransaction(),
                 new Transaction()
-            );
-        });
-        $this->app->singleton('AgentPaymentProvider', static function () {
-            return new AgentTransaction(
-                new \App\Models\Transaction\AgentTransaction(),
-                new Transaction(), new FirebaseService()
             );
         });
 

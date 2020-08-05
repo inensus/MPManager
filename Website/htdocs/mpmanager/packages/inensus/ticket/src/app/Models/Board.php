@@ -20,7 +20,6 @@ namespace Inensus\Ticket\Models;
  */
 class Board extends BaseModel
 {
-    protected $table = 'ticket_boards';
 
     public function tickets()
     {

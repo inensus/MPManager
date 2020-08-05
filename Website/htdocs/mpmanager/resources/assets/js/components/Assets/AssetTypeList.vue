@@ -1,7 +1,7 @@
 <template>
     <div>
 
-        <add-asset-type :addNewAssetType="addNewAssetType"/>
+        <AddAssetType :addNewAssetType="addNewAssetType"/>
         <widget
             :title="'Asset Types'"
             :search="true"
@@ -22,13 +22,10 @@
                         Asset Type
                     </md-table-head>
                     <md-table-head>
-                        Price
+
                     </md-table-head>
                     <md-table-head>
                         Last Update
-                    </md-table-head>
-                    <md-table-head>
-                        #
                     </md-table-head>
                 </md-table-row>
 
@@ -41,19 +38,20 @@
                     <md-table-cell>
                         <div class="md-layout" v-if="!asset_type.edit">
                             {{ asset_type.name}}&nbsp;&nbsp;
+                            <div class="md-layout-item" style="display: inline-block; cursor: pointer; color: #2b542c"
+                                 @click="asset_type.edit = true">
+                                <font-awesome-icon icon="pen"/>&nbsp;Edit
+                            </div>
+
                         </div>
                         <div class="md-layout-item" v-else>
                             <md-field>
+
                                 <md-input type="text" v-model="asset_type.name"></md-input>
                             </md-field>
                         </div>
                     </md-table-cell>
 
-                    <md-table-cell>
-                        {{asset_type.price}} {{appConfig.currency}}
-                    </md-table-cell>
-
-                    <md-table-cell class="hidden-xs">{{asset_type.updated_at}}</md-table-cell>
                     <md-table-cell>
                         <div class="md-layout-item" style="display: inline-block; cursor: pointer; color: #2b542c"
                              v-if="asset_type.edit"
@@ -69,6 +67,9 @@
                         </div>
                     </md-table-cell>
 
+                    <md-table-cell class="hidden-xs">{{asset_type.updated_at}}</md-table-cell>
+
+
                 </md-table-row>
             </md-table>
         </widget>
@@ -79,14 +80,14 @@
 <script>
     import Widget from '../../shared/widget'
     import AddAssetType from './AddAssetType'
-    import { EventBus } from '../../shared/eventbus'
-    import { AssetService } from '../../services/AssetService'
+    import {EventBus} from '../../shared/eventbus'
+    import {AssetService} from '../../services/AssetService'
 
     export default {
         name: 'AssetTypeList',
-        components: { Widget, AddAssetType },
+        components: {Widget, AddAssetType},
 
-        data () {
+        data() {
             return {
                 addNewAssetType: false,
                 subscriber: 'asset-list',

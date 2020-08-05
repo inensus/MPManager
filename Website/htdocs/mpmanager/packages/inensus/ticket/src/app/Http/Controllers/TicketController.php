@@ -9,7 +9,6 @@
 namespace Inensus\Ticket\Http\Controllers;
 
 
-use App\Models\Agent;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Inensus\Ticket\Http\Resources\TicketResource;
@@ -145,7 +144,6 @@ class TicketController extends Controller
 
     public function create(Request $request): TicketResource
     {
-
         $ownerId = (int)$request->get('owner_id');
         $ownerType = $request->get('owner_type');
         $assignedId = $request->get('assignedPerson');
@@ -154,8 +152,6 @@ class TicketController extends Controller
         $board = $this->boardService->initializeBoard();
         $card = $this->cardService->initalizeList($board);
         $creatorId = $request->get('creator');
-        $creatorType = $request->get('creator_type');
-
         //reformat due date if it is set
         $dueDate = $request->get('dueDate') !== null ? date('Y-m-d H:i:00', strtotime($request->get('dueDate'))) : null;
         $category = $request->get('label');
@@ -173,7 +169,6 @@ class TicketController extends Controller
         $assignedUser = $assignedId ? $this->userService->getByExternId($assignedId)->id : null;
         $ticket = $this->ticketService->create(
             $creatorId,
-            $creatorType,
             $ownerId,
             $ownerType,
             $category,
@@ -232,18 +227,6 @@ class TicketController extends Controller
         );
 
         return $paginator;
-    }
-
-    public function indexAgentTickets($agent_id): TicketResource
-    {
-
-        $tickets = Ticket::with('category', 'owner', 'assignedTo')
-            ->where('creator_type', 'agent')
-            ->where('creator_id', $agent_id)
-            ->latest()
-            ->paginate(5);
-
-        return new TicketResource($tickets);
     }
 
 }

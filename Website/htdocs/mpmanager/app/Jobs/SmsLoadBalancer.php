@@ -51,7 +51,6 @@ class SmsLoadBalancer implements ShouldQueue
 
     private function sendSms($data): string
     {
-
         $httpClient = new Client();
         $request = $httpClient->post(config()->get('services.sms.android.url'),
             [

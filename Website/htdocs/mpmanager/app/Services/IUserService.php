@@ -9,7 +9,7 @@ interface IUserService
 {
     public function create(array $userData);
 
-    public function update($user, $data);
+    public function update(User $user, $data);
 
     public function resetPassword(string $email);
 

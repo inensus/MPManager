@@ -90,25 +90,13 @@ return [
             ],
         ],
 
-        'development' => [
-            'supervisor-1' => [
-                'connection' => 'redis',
-                'queue' => explode(',', str_replace(' ', '', env('QUEUES'))),
-                'balance' => 'auto',
-                'minProcesses' => 1,
-                'maxProcesses' => 10,
-                'tries' => 3,
-            ],
-        ],
-
         'local' => [
             'supervisor-1' => [
                 'connection' => 'redis',
                 'queue' => explode(',', str_replace(' ', '', env('QUEUES'))),
-                'balance' => 'auto',
-                'minProcesses' => 1,
-                'maxProcesses' => 10,
-                'tries' => 3,
+                'balance' => 'simple',
+                'processes' => 8,
+                'tries' => 1,
             ],
         ],
     ],

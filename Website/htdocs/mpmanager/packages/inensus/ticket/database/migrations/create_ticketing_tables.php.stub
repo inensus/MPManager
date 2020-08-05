@@ -42,11 +42,10 @@ class CreateTicketingTables extends Migration
         Schema::create($tableNames['ticket'], function (Blueprint $table) {
             $table->increments('id');
             $table->string('ticket_id');
-            $table->morphs('creator');
-            $table->integer('assigned_id')->nullable();
+            $table->integer('creator_id');
             $table->morphs('owner');
             $table->integer('status');
-            $table->integer('category_id');
+            $table->integer('category');
             $table->timestamps();
         });
 
@@ -63,7 +62,6 @@ class CreateTicketingTables extends Migration
             $table->increments('id');
             $table->string('label_name');
             $table->string('label_color');
-            $table->boolean('out_source');
             $table->timestamps();
         });
         Schema::create($tableNames['board_categories'], function (Blueprint $table) {
