@@ -8,22 +8,21 @@ use App\Models\Transaction\Transaction;
 use App\Sms\SmsTypes;
 use Exception;
 use Illuminate\Bus\Queueable;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Webpatser\Uuid\Uuid;
 use function config;
 
 
-class SmsProcessor implements ShouldQueue
+class   SmsProcessor implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
 
     private $transactionContainer;
-    private $smsType;
 
     /**
      * Create a new job instance.
@@ -31,10 +30,9 @@ class SmsProcessor implements ShouldQueue
      * @param Transaction $transaction
      * @param int $smsType
      */
-    public function __construct(Transaction $transaction, int $smsType)
+    public function __construct(Transaction $transaction)
     {
         $this->transactionContainer = TransactionDataContainer::initialize($transaction);
-        $this->smsType = $smsType;
     }
 
     /**
