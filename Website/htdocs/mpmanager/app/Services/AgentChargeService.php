@@ -10,18 +10,19 @@ use App\Models\AgentCharge;
 class AgentChargeService
 {
 
-    public function create($agentId, $data)
+    public function create($agent, $data)
     {
 
 
         $agentCharge = AgentCharge::query()->create([
-            'agent_id' => $agentId,
+            'agent_id' => $agent->id,
             'user_id' => $data['user_id'],
         ]);
 
         $history = AgentBalanceHistory::query()->make([
-            'agent_id' => $agentId,
+            'agent_id' => $agent->id,
             'amount' => request()->input('amount'),
+            'available_balance'=>$agent->balance
         ]);
         $history->trigger()->associate($agentCharge);
         $history->save();

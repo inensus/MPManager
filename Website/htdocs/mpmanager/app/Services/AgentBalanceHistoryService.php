@@ -31,13 +31,14 @@ class AgentBalanceHistoryService
 
     }
 
-    public function create($agentId, $data)
+    public function create($agent, $data)
     {
         return AgentBalanceHistory::query()->create([
 
-            'agent_id' => $agentId,
+            'agent_id' => $agent->id,
             'amount' => $data['amount'],
-            'type' => 'Charge'
+            'type' => 'Charge',
+            'available_balance' => $agent->balance
         ]);
     }
 }
