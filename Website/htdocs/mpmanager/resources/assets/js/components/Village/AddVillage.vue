@@ -230,9 +230,11 @@
                     try {
                         this.sending = false
 
-                        await this.cityService.createCity(this.cityName, this.clusterId, this.selectedMiniGridId, this.geoData)
+                        const city = await this.cityService.createCity(this.cityName, this.clusterId,
+                            this.selectedMiniGridId, this.geoData)
 
                         this.alertNotify('success', 'The Village you add is stored successfully.')
+                        await this.$router.replace('/dashboards/mini-grid/' + city.data.data.mini_grid.id)
 
                     } catch (e) {
                         this.alertNotify('error', e.message)
