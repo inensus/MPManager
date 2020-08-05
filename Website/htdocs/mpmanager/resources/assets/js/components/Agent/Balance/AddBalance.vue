@@ -5,7 +5,7 @@
               data-vv-scope="Balance-Form">
             <md-card class="md-layout-item">
                 <md-card-header>
-                    <div style="float:right; cursor:pointer" @click="()=>{addNewBalance = false}">
+                    <div style="float:right; cursor:pointer" @click="hide()">
                         <md-icon>close</md-icon>&nbsp;Close
                     </div>
                 </md-card-header>
