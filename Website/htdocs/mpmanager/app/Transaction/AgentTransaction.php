@@ -89,14 +89,13 @@ class AgentTransaction implements ITransactionProvider
         $agent = $this->agentTransaction->agent;
 
 
-
         $history = AgentBalanceHistory::query()->make([
             'agent_id' => $agent->id,
             'amount' => -$transaction->amount,
             'transaction_id' => $transaction->id,
 
         ]);
-        $history->trigger()->associate($this->transaction);
+        $history->trigger()->associate($this->agentTransaction);
         $history->save();
 
 
