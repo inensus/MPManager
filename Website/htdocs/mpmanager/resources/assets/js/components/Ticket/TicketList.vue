@@ -198,7 +198,6 @@
         },
         methods: {
             reloadList (subscriber, data) {
-                debugger
                 if (
                     subscriber !== 'ticketListOpened' &&
                     subscriber !== 'ticketListClosed'
