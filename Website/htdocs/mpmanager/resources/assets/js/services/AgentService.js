@@ -21,6 +21,8 @@ export class AgentService {
             name: null,
             email: null,
             balance: null,
+            commissionRevenue:null,
+            dueToEnergySupplier:null,
             phone: null,
             gender: null,
             birthday: null,
@@ -32,20 +34,23 @@ export class AgentService {
     }
 
     fromJson (data) {
-
-        this.agent.id = data.id
-        this.agent.personId = data.person_id
-        this.agent.miniGrid = data.mini_grid.name
-        this.agent.deviceId = data.device_id
-        this.agent.name = data.name
-        this.agent.surname = data.person.surname
-        this.agent.email = data.email
-        this.agent.balance = data.balance
-        this.agent.gender = data.person.sex
-        this.agent.phone = data.person.addresses[0].phone
-        this.agent.birthday = data.person.birth_date
-        this.agent.commissionType = data.commission.name
-        this.agent.commissionTypeId = data.commission.id
+        this.agent={
+            id : data.id,
+            personId: data.person_id,
+            miniGrid : data.mini_grid.name,
+            deviceId : data.device_id,
+            name : data.name,
+            surname : data.person.surname,
+            email : data.email,
+            balance : data.balance,
+            gender : data.person.sex,
+            phone : data.person.addresses[0].phone,
+            birthday : data.person.birth_date,
+            commissionType : data.commission.name,
+            commissionRevenue:data.commission_revenue,
+            commissionTypeId : data.commission.id,
+            dueToEnergySupplier:data.due_to_energy_supplier
+        }
 
         return this.agent
     }
@@ -138,7 +143,6 @@ export class AgentService {
             } else {
                 new ErrorHandler(response.error, 'http', response.status)
             }
-
         } catch (e) {
 
             let errorMessage = e.response.data.data
