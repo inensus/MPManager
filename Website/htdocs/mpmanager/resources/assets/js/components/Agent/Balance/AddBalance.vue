@@ -63,22 +63,20 @@
                 let validator = await this.$validator.validateAll('Balance-Form')
 
                 if (validator) {
-                    try {
-                        this.loading = true
-                        try {
-                            this.agentChargeService.newBalance.userId = this.$store.getters['auth/authenticationService'].authenticateUser.id
-                            this.agentChargeService.newBalance.agentId = this.agentId
-                            await this.agentChargeService.addNewBalance()
-                            this.loading = false
-                            this.balanceAdded()
-                            this.alertNotify('success', 'Agent added successfully')
-                        } catch (e) {
-                            this.loading = false
-                            this.alertNotify('error', e.message)
-                        }
-                    } catch (e) {
 
+                    this.loading = true
+                    try {
+                        this.agentChargeService.newBalance.userId = this.$store.getters['auth/authenticationService'].authenticateUser.id
+                        this.agentChargeService.newBalance.agentId = this.agentId
+                        await this.agentChargeService.addNewBalance()
+                        this.loading = false
+                        this.balanceAdded()
+                        this.alertNotify('success', 'Agent added successfully')
+                    } catch (e) {
+                        this.loading = false
+                        this.alertNotify('error', e.message)
                     }
+
                 }
             },
             balanceAdded () {
