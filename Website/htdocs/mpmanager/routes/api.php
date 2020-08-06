@@ -1,6 +1,5 @@
 <?php
 
-use App\Events\Kemal;
 use App\Http\Requests\AndroidAppRequest;
 use App\Http\Resources\ApiResource;
 use App\Http\Services\PersonService;
@@ -256,17 +255,10 @@ Route::group(['prefix' => 'transactions', 'middleware' => ['transaction.auth', '
     function () {
         Route::post('/airtel', 'TransactionController@store');
         Route::post('/vodacom', ['as' => 'vodacomTransaction', 'uses' => 'TransactionController@store']);
-        Route::post('/agent', ['as' => 'agentTransaction', 'uses' => 'TransactionController@store']);
+        Route::post('/agent',
+            ['as' => 'agent-transaction', 'uses' => 'TransactionController@store', 'middleware' => 'agent.balance']);
 
     });
-
-
-Route::get('hearthBeat', function () {
-
-    event(new Kemal());
-    broadcast(new Kemal());
-
-});
 
 Route::get('paymenthistories/{personId}/payments/{period}/{limit?}/{order?}',
     'PaymentHistoryController@show')->where('personId', '[0-9]+');
