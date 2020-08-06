@@ -11,6 +11,8 @@ use App\Models\AgentCharge;
 use App\Models\AgentCommission;
 use App\Models\AgentReceipt;
 use App\Models\AgentSoldAppliance;
+use App\Models\Transaction\AgentTransaction;
+
 
 class AgentBalanceHistoryObserver
 {
@@ -31,7 +33,7 @@ class AgentBalanceHistoryObserver
     {
         $trigger = $agentBalanceHistory->trigger()->first();
         $agent = Agent::query()->find($agentBalanceHistory->agent_id);
-        if ($trigger instanceof AgentAssignedAppliances) {
+        if ($trigger instanceof AgentAssignedAppliances || $trigger instanceof AgentTransaction) {
             if ($agent->balance < 0) {
                 $agent->due_to_energy_supplier += (-1 * $agentBalanceHistory->amount);
                 $agent->balance += $agentBalanceHistory->amount;
