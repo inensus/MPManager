@@ -147,6 +147,7 @@
     import { AgentService } from '../../services/AgentService'
     import Datepicker from 'vuejs-datepicker'
     import { AgentCommissionService } from '../../services/AgentCommissionService'
+    import { EventBus } from '../../shared/eventbus'
 
     export default {
         name: 'AgentDetail',
@@ -168,6 +169,12 @@
         mounted () {
             this.getAgentDetail()
             this.getAgentCommissions()
+            EventBus.$on('balanceAdded', () => {
+                this.getAgentDetail()
+            })
+            EventBus.$on('receiptAdded', () => {
+                this.getAgentDetail()
+            })
         },
 
         methods: {
@@ -249,6 +256,7 @@
                     text: message
                 })
             },
+
         },
         components: {
             Widget,
