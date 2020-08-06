@@ -27,38 +27,46 @@ class EnergyController extends Controller
         $meters = $request->get('meters');
 
         foreach ($meters as $meter) {
-            $last_energy_input = $this->energy::where('meter_id', $meter['id'])
+            $lastEnergyInput = $this->energy::query()->where('meter_id', $meter['id'])
                 ->where('active', 1)
                 ->latest()
                 ->first();
 
-            $total_energy = 0;
+            $totalEnergy = 0;
+            $totalAbsorbedEnergy = 0;
             foreach ($meter['values'] as $value) {
                 if ($value['name'] === 'Total yield') {
-                    $total_energy = str_replace(array('.', ','), '', $value['value']);
+                    $totalEnergy = str_replace(array('.', ','), '', $value['value']);
                     break;
+                }
+                if ($value['name'] === 'Absorbed energy') {
+                    $totalAbsorbedEnergy = str_replace(array('.', ','), '', $value['value']);
                 }
             }
 
-            if ($last_energy_input !== null) {
-
-                $last_total_energy = $last_energy_input->total_energy;
-                $last_energy_input->active = 0;
-                $last_energy_input->save();
+            if ($lastEnergyInput !== null) {
+                $lastTotalEnergy = $lastEnergyInput->total_energy;
+                $lastTotalAbsorbed = $lastEnergyInput->total_absorbed;
+                $lastEnergyInput->active = 0;
+                $lastEnergyInput->save();
             } else {
-                $last_total_energy = $total_energy;
+                $lastTotalEnergy = $totalEnergy;
+                $lastTotalAbsorbed = $totalAbsorbedEnergy;
             }
 
-            $used_energy_since_last_input = $total_energy - $last_total_energy;
-            $this->energy->create([
+            $usedEnergySinceLastInput = $totalEnergy - $lastTotalEnergy;
+            $absorbedEnergySinceLastInput = $totalAbsorbedEnergy - $lastTotalAbsorbed;
+            $this->energy->newQuery()->create([
                 'meter_id' => $meter["id"],
                 'active' => 1,
-                'mini_grid_id' => $request->get('mini_grid_id'),
-                'node_id' => $request->get('node_id'),
-                'device_id' => $request->get('device_id'),
-                'total_energy' => $total_energy,
-                'read_out' => date('Y-m-d H:i:s', $request->get('read_out')),
-                'used_energy_since_last' => $used_energy_since_last_input,
+                'mini_grid_id' => $request->input('mini_grid_id'),
+                'node_id' => $request->input('node_id'),
+                'device_id' => $request->input('device_id'),
+                'total_energy' => $totalEnergy,
+                'read_out' => $request->input('read_out'),
+                'used_energy_since_last' => $usedEnergySinceLastInput,
+                'total_absorbed' => $totalAbsorbedEnergy,
+                'absorbed_energy_since_last' => $absorbedEnergySinceLastInput,
             ]);
 
         }
@@ -66,7 +74,7 @@ class EnergyController extends Controller
     }
 
 
-    public function show(Request $request, $miniGridId)
+    public function show(Request $request, $miniGridId): ApiResource
     {
         $energyReadings = $this->energy->newQuery()
             ->where('mini_grid_id', $miniGridId);
