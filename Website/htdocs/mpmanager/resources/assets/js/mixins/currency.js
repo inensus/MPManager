@@ -1,7 +1,7 @@
 export const currency = {
   methods: {
     readable (amount, seperator = ',') {
-      
+
       if (typeof (amount) === 'undefined' || amount === null) return 0
       if (parseFloat(amount).toString() !== amount.toString()) {
         return amount
@@ -11,7 +11,9 @@ export const currency = {
 
       let commaNumber = ''
       if (amountArr.length > 1) {
-        commaNumber = amountArr[1].slice(0, amountArr[1].length >= 3 ? 2 : amountArr[1].length - 1)
+          commaNumber = amountArr[1].slice(0,
+              amountArr[1].length >= 3 ? 2 : amountArr[1].length)
+
       }
 
       //let commaNum = Math.floor((amountArr.length - 1) / 3)

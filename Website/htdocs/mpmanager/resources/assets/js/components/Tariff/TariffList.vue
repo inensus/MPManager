@@ -27,12 +27,19 @@
                         {{ readable(item.price/100)}} {{item.currency}}
                     </md-table-cell>
                     <md-table-cell md-label="Access Rate" md-numeric md-sort-by="accessRate.amount">
-                        {{ readable(item.accessRate.amount) }} {{item.currency}}
+                        <div v-if="item.accessRate">
+                            {{ readable(item.accessRate.amount) }} {{item.currency}}
+                        </div>
+                        <div v-else>-</div>
                     </md-table-cell>
                     <md-table-cell md-label="Access Rate Period in days"
                                    md-numeric
                     >
-                        {{ item.accessRate.period }} Days
+                        <div v-if="item.accessRate">
+                            {{ item.accessRate.period }} Days
+                        </div>
+                        <div v-else>-</div>
+
                     </md-table-cell>
                 </md-table-row>
             </md-table>
@@ -79,6 +86,7 @@
                 EventBus.$emit('showNewTariff')
             },
             addToList (tariff) {
+                console.log('new tariff', tariff)
                 this.tariffList = this.tariffService.addToList(tariff)
 
             },

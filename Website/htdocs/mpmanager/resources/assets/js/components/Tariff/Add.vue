@@ -27,7 +27,8 @@
                             </div>
                             <div class="md-layout-item md-large-size-50 md-medium-size-50 md-small-size-50 ">
                                 <md-field :class="{'md-invalid': errors.has('Tariff-Form.kwh_price')}">
-                                    <label for="kwh_price">kWh Price </label>
+                                    <label for="kwh_price">kWh Price (last two digits represents two decimals ex: 100 =
+                                        1.00)</label>
                                     <md-input id="kwh_price"
                                               name="kwh_price"
                                               v-model="tariff.price"
@@ -174,7 +175,7 @@
                                         class="social-input"
                                     />
                                     <span class="md-error">{{ errors.first('Social-Form.social_price') }}</span>
-                                    <span class="md-suffix">TZS</span>
+                                    <span class="md-suffix">{{appConfig.currency}}</span>
                                 </md-field>
                             </div>
                             <div class="md-layout-item md-large-size-50 md-medium-size-50 md-small-size-50 "></div>
@@ -249,7 +250,6 @@
 
 <script>
     import { EventBus } from '../../shared/eventbus'
-    import { AccessRate } from '../../classes/AccessRate'
     import PasswordProtection from '../PasswordProtection'
     import Widget from '../../shared/widget'
     import { TariffService } from '../../services/TariffService'
@@ -282,6 +282,7 @@
             },
             show () {
                 this.showAdd = true
+                this.tariffService.tariff = this.tariffService.initTariff()
                 this.tariff = this.tariffService.tariff
                 this.accessRate = this.tariffService.accessRate
             },
@@ -304,7 +305,7 @@
                 if (validatorTariff && validatorAccessRate && validatorComponent && validatorSocial) {
                     try {
                         this.hide()
-
+                        this.tariffService.setCurrency(this.appConfig.currency)
                         this.tariffService.setAccessRate(this.hasAccessRate, this.accessRate)
                         this.tariff = await this.tariffService.createTariff()
                         EventBus.$emit('tariffAdded', this.tariff)
