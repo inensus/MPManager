@@ -9,7 +9,7 @@ export default {
 
     },
     create(newReceipt){
-        return Client.post(`${resource}/${agentId}`,newReceipt)
+        return Client.post(`${resource}/${newReceipt.agentId}`,newReceipt)
 
     }
 }

@@ -43,7 +43,7 @@ export class AgentReceiptService {
 
             let response = await this.repository.create(this.newReceipt)
             if (response.status === 200 || response.status === 201) {
-                this.resetNewBalance()
+                this.resetNewReceipt()
                 return response
             } else {
                 return new ErrorHandler(response.error, 'http', response.status)
@@ -53,5 +53,11 @@ export class AgentReceiptService {
             return new ErrorHandler(errorMessage, 'http')
         }
 
+    }
+    resetNewReceipt(){
+        this.newReceipt={
+            agentId:null,
+            amount:null
+        }
     }
 }
