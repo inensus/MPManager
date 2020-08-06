@@ -71,6 +71,7 @@ return [
             'url' => 'https://fcm.googleapis.com/fcm/send',
             'token' => 'FIREBASE_TOKEN',
             'key' => 'PHONE_KEY',
+
         ],
         'callback' => 'https://mpmanager.local/api/sms/%s/confirm',
     ],
@@ -91,6 +92,11 @@ return [
     'payment' => [
         'data-stream' => 'placeholder-url',
         'maintenance' => 'placeholder-url',
+    ],
+    'agent' => [
+        'key' => 'key=AAAAdSTAIwc:APA91bHl4w-l4QSlHFPbfM-soHzf0hf1rQSgV-ubjzSxALNYjb_lnJigRvyWvp1IybrZTDfM-CaZ7yFBSoZh47V49fdOz5gLCSriN5T1qmLJ40S1WWUCLWNV32g7YPaz-6lcxbunyHcB',
+
+
     ]
 
 ];

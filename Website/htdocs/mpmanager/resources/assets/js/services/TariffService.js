@@ -1,35 +1,37 @@
 import Repository from '../repositories/RepositoryFactory'
 import { AccessRate } from '../classes/AccessRate'
-import { EventBus } from '../shared/eventbus'
 import { ErrorHandler } from '../Helpers/ErrorHander'
 
 export class TariffService {
     constructor () {
         this.repository = Repository.get('tariff')
         this.list = []
-        this.tariff = {
-            id: 0,
-            name: '',
-            price: null,
-            currency: 'TZS',
-            factor: 1,
-            accessRate: null
-
-        }
+        this.tariff = this.initTariff()
         this.accessRate = {
             id: null,
             amount: null,
-            period: null
+            period: null,
         }
         this.socialTariff =
             {
                 dailyAllowance: null,
                 price: null,
                 initialEnergyBudget: null,
-                maximumStackedEnergy: null
+                maximumStackedEnergy: null,
             }
         this.components = []
 
+    }
+
+    initTariff () {
+        return {
+            id: 0,
+            name: '',
+            price: null,
+            currency: null,
+            factor: 1,
+            accessRate: null,
+        }
     }
 
     async getTariffs () {
@@ -73,11 +75,15 @@ export class TariffService {
 
     }
 
+    setCurrency (currency) {
+        this.currency = currency
+    }
+
     async createTariff () {
         let tariffPM = {
             'name': this.tariff.name,
             'price': Number(this.tariff.price),
-            'currency': this.tariff.currency,
+            'currency': this.currency,
             'factor': this.tariff.factor,
 
         }
@@ -111,11 +117,12 @@ export class TariffService {
                 let tariffData = response.data.data
                 let tariffDataAccessRate = tariffData.access_rate
                 let accessRate = null
-                if (tariffDataAccessRate !== undefined) {
+                if (tariffDataAccessRate !== undefined &&
+                    tariffDataAccessRate !== null) {
                     accessRate = new AccessRate(
                         tariffDataAccessRate.id,
                         tariffDataAccessRate.amount,
-                        tariffDataAccessRate.period
+                        tariffDataAccessRate.period,
                     )
                 }
                 this.tariff = {

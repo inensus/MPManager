@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\AssetPerson;
 use App\Models\AssetRate;
+use Carbon\Carbon;
 
 class AssetPersonObserver
 {
@@ -25,7 +26,19 @@ class AssetPersonObserver
      */
     public function created(AssetPerson $assetPerson):void
     {
-        $base_time = time();
+        $base_time = $assetPerson->first_payment_date;
+
+        if ($assetPerson->down_payment > 0) {
+            $this->assetRate::create([
+                'asset_person_id' => $assetPerson->id,
+                'rate_cost' => $assetPerson->down_payment,
+                'remaining' => 0,
+                'due_date' => Carbon::parse(date('Y-m-d'))->toIso8601ZuluString(),
+            ]);
+            $assetPerson->total_cost -= $assetPerson->down_payment;
+        }
+
+
         foreach (range(1, $assetPerson->rate_count) as $rate) {
             if ((int)$rate === (int)$assetPerson->rate_count) {
                 //last rate
@@ -34,7 +47,7 @@ class AssetPersonObserver
             } else {
                 $rate_cost = floor($assetPerson->total_cost / $assetPerson->rate_count);
             }
-            $rate_date = date('Y-m-01', strtotime('+' . $rate . ' month', $base_time));
+            $rate_date = date('Y-m-d', strtotime('+' . $rate . ' month', strtotime($base_time)));
             $this->assetRate::create([
                 'asset_person_id' => $assetPerson->id,
                 'rate_cost' => $rate_cost,

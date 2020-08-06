@@ -155,7 +155,6 @@
             EventBus.$on('markerError', (message) => {
                 this.$swal({
                     type: 'warn',
-
                     text: message,
                 })
 
@@ -197,9 +196,11 @@
                     try {
                         this.sending = false
 
-                        await this.miniGridService.createMiniGrid(this.miniGridName, this.clusterId, this.miniGridLatLng)
+                        const miniGrid = await this.miniGridService.createMiniGrid(this.miniGridName, this.clusterId,
+                            this.miniGridLatLng)
+                        console.log('miniGrid  response', miniGrid)
                         this.alertNotify('success', 'The Mini-Grid you add is stored successfully.')
-
+                        await this.$router.replace('/dashboards/mini-grid/' + miniGrid.data.data.id)
                     } catch (e) {
                         this.alertNotify('error', e.message)
                     }

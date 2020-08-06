@@ -10,9 +10,11 @@ namespace App\Transaction;
 
 
 use App\Exceptions\VodacomHeartBeatException;
+use App\Jobs\SmsProcessor;
 use App\Lib\ITransactionProvider;
 use App\Models\Transaction\Transaction;
 use App\Models\Transaction\TransactionConflicts;
+use App\Sms\SmsTypes;
 use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\Model;
@@ -101,13 +103,9 @@ class VodacomTransaction implements ITransactionProvider
 
                         ]);
                 } else {
-                    Log::critical('Vodacom success response ',
-                        [
-                            'id' => '43get348tzrui43892928ghf02rzpreh',
-                            'response' => $response->getBody(),
-                            'body' => $requestContent,
+                    SmsProcessor::dispatch($transaction,
+                        SmsTypes::ENERGY_CONFIRMATION)->allOnConnection('redis')->onQueue('sms');
 
-                        ]);
                 }
 
                 //make response xml object

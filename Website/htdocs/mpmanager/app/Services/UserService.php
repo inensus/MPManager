@@ -23,7 +23,7 @@ class UserService implements IUserService
         ]);
     }
 
-    public function update(User $user, $data): bool
+    public function update($user, $data): bool
     {
         return $user->update($data);
     }
