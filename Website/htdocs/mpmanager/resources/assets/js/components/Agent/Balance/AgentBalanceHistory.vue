@@ -9,27 +9,31 @@
         :paginator="agentBalanceHistoryService.paginator"
         :subscriber="subscriber"
         :resetKey="resetKey"
+        :show_per_page="true"
     >
 
 
         <div>
             <add-agent-balance :addNewBalance="showNewBalance" :agent-id="agentId"/>
-            <md-table md-sort="id" md-sort-order="asc">
-                <md-table-row>
-                    <md-table-head>ID</md-table-head>
-                    <md-table-head>Type</md-table-head>
-                    <md-table-head>Amount</md-table-head>
-                    <md-table-head>Date</md-table-head>
-                </md-table-row>
-                <md-table-row v-for="(item, index) in agentBalanceHistoryService.list" :key="index">
-                    <md-table-cell md-sort-by="id" md-label="ID">{{item.id}}</md-table-cell>
-                    <md-table-cell md-label="Type">{{item.type}}</md-table-cell>
-                    <md-table-cell md-label="Amount">{{item.amount}}</md-table-cell>
-                    <md-table-cell md-label="Date">{{item.createdAt}}</md-table-cell>
+            <div v-if="agentBalanceHistoryService.list.length>0">
+                <md-table md-sort="id" md-sort-order="asc">
+                    <md-table-row>
+                        <md-table-head v-for="(item, index) in headers" :key="index">{{item}}</md-table-head>
+                    </md-table-row>
+                    <md-table-row v-for="(item, index) in agentBalanceHistoryService.list" :key="index">
+                        <md-table-cell md-sort-by="id" md-label="ID">{{item.id}}</md-table-cell>
+                        <md-table-cell md-label="Type">{{item.type}}</md-table-cell>
+                        <md-table-cell md-label="Amount">{{item.amount}}</md-table-cell>
+                        <md-table-cell md-label="Date">{{item.createdAt}}</md-table-cell>
 
 
-                </md-table-row>
-            </md-table>
+                    </md-table-row>
+                </md-table>
+            </div>
+            <div v-else>
+                <no-table-data :headers="headers" :tableName="tableName"/>
+            </div>
+
         </div>
     </widget>
 
@@ -40,6 +44,7 @@
     import Widget from '../../../shared/widget'
     import { EventBus } from '../../../shared/eventbus'
     import AddAgentBalance from './AddBalance'
+    import NoTableData from '../../../shared/NoTableData'
 
     export default {
         name: 'agentBalanceHistoryList',
@@ -53,6 +58,8 @@
                 newBalance: {},
                 loading: false,
                 resetKey: 0,
+                headers: ['ID', 'Type', 'Amount', 'Date'],
+                tableName: 'Agent Balance History'
             }
         },
         props: {
@@ -71,6 +78,9 @@
                 this.showNewBalance = false
 
             })
+            EventBus.$on('receiptAdded', () => {
+                this.resetKey += 1
+            })
             EventBus.$on('pageLoaded', this.reloadList)
 
         },
@@ -81,6 +91,7 @@
             EventBus.$off('pageLoaded', this.reloadList)
         },
         components: {
+            NoTableData,
             AddAgentBalance,
             Widget
         },

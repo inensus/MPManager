@@ -5,23 +5,17 @@
             :button-text="'Add Receipt'"
             :button="true"
             title="Last Receipts"
-            :button-color="'red'"
-            color="orange"
-            :callback="()=>{showNewReceipt = true}"
+            :callback="()=> newReceipt()"
             :paginator="agentReceiptService.paginator"
             :subscriber="subscriber"
             :resetKey="resetKey"
         >
+            <new-receipt :addNewReceipt="showNewReceipt" :agent="agent"/>
+            <div v-if="agentReceiptService.list.length>0">
 
-
-            <div>
-                <new-receipt :addNewReceipt.sync="showNewReceipt" :agent-id="agentId"/>
                 <md-table md-sort="id" md-sort-order="asc">
                     <md-table-row>
-                        <md-table-head>ID</md-table-head>
-                        <md-table-head>Amount</md-table-head>
-                        <md-table-head>Receiver</md-table-head>
-                        <md-table-head>Date</md-table-head>
+                        <md-table-head v-for="(item, index) in headers" :key="index">{{item}}</md-table-head>
                     </md-table-row>
                     <md-table-row v-for="(item, index) in agentReceiptService.list" :key="index">
                         <md-table-cell md-sort-by="id" md-label="ID">{{item.id}}</md-table-cell>
@@ -33,6 +27,9 @@
                     </md-table-row>
                 </md-table>
             </div>
+            <div v-else>
+                <no-table-data :headers="headers" :tableName="tableName"/>
+            </div>
         </widget>
     </div>
 </template>
@@ -41,6 +38,8 @@
     import NewReceipt from './NewReceipt'
     import { AgentReceiptService } from '../../../services/AgentReceiptService'
     import { EventBus } from '../../../shared/eventbus'
+    import NoTableData from '../../../shared/NoTableData'
+    import { AgentService } from '../../../services/AgentService'
 
     export default {
         name: 'AgentReceiptList',
@@ -48,36 +47,26 @@
             return {
                 subscriber: 'agent-receipts',
                 showNewReceipt: false,
+                agent: {},
                 agentReceiptService: new AgentReceiptService(this.agentId),
+                agentService: new AgentService(),
                 resetKey: 0,
+                headers: ['ID', 'Amount', 'Receiver', 'Date'],
+                tableName: 'Agent Receipt'
             }
         },
         components: {
             NewReceipt,
-            Widget
+            Widget,
+            NoTableData
         },
         props: {
             agentId: {
                 default: null
             }
         },
-        methods: {
-            reloadList (subscriber, data) {
-                if (subscriber !== this.subscriber) return
-                this.agentReceiptService.updateList(data)
-            },
-
-            async closeNewReceipt () {
-
-                this.showNewReceipt = false
-
-                if (this.agent.id !== undefined) {
-
-                }
-
-            }
-        },
         mounted () {
+
             EventBus.$on('pageLoaded', this.reloadList)
             EventBus.$on('receiptAdded', this.closeNewReceipt)
             EventBus.$on('newReceiptClosed', () => {
@@ -85,11 +74,39 @@
             })
         },
         beforeDestroy () {
-
-        },
-        destroyed () {
             EventBus.$off('receiptAdded', this.closeNewReceipt)
+            EventBus.$off('pageLoaded', this.reloadList)
         },
+        methods: {
+            reloadList (subscriber, data) {
+                if (subscriber !== this.subscriber) return
+                this.agentReceiptService.updateList(data)
+            },
+            async closeNewReceipt () {
+                this.showNewReceipt = false
+                this.resetKey += 1
+            },
+            async newReceipt () {
+                await this.getAgentDetail()
+                this.showNewReceipt = true
+            },
+            async getAgentDetail () {
+                try {
+                    this.agent = await this.agentService.getAgent(this.agentId)
+                } catch (e) {
+                    this.alertNotify('error', e.message)
+                }
+            },
+            alertNotify (type, message) {
+                this.$notify({
+                    group: 'notify',
+                    type: type,
+                    title: type + ' !',
+                    text: message
+                })
+            },
+        },
+
     }
 
 </script>

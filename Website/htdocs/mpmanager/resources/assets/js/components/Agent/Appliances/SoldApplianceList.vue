@@ -8,15 +8,11 @@
         :subscriber="subscriber"
     >
 
-        <div>
+        <div v-if="agentSoldApplianceService.list.length>0">
             <!-- ana tablo  -->
             <md-table>
                 <md-table-row>
-                    <md-table-head>ID</md-table-head>
-                    <md-table-head>Appliance</md-table-head>
-                    <md-table-head>Amount</md-table-head>
-                    <md-table-head>Customer</md-table-head>
-                    <md-table-head>Sold Date</md-table-head>
+                    <md-table-head v-for="(item, index) in headers" :key="index">{{item}}</md-table-head>
                 </md-table-row>
 
                 <md-table-row v-for="(item, index) in agentSoldApplianceService.list" :key="index">
@@ -30,6 +26,10 @@
 
                 </md-table-row>
             </md-table>
+
+        </div>
+        <div v-else>
+            <no-table-data :headers="headers" :tableName="tableName"/>
         </div>
     </widget>
 
@@ -38,6 +38,7 @@
     import Widget from '../../../shared/widget'
     import { AgentSoldApplianceService } from '../../../services/AgentSoldApplianceService'
     import { EventBus } from '../../../shared/eventbus'
+    import NoTableData from '../../../shared/NoTableData'
 
     export default {
         name: 'SoldApplianceList',
@@ -45,10 +46,13 @@
             return {
                 subscriber: 'agent-sold-appliances',
                 agentSoldApplianceService: new AgentSoldApplianceService(this.agentId),
+                headers: ['ID', 'Appliance', 'Amount', 'Customer', 'Sold Date'],
+                tableName: 'Sold Appliance'
             }
         },
         components: {
-            Widget
+            Widget,
+            NoTableData
         },
         props: {
             agentId: {

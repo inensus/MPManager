@@ -5,7 +5,7 @@
         :button-text="'Assign new Appliance'"
         :button="true"
         title="Assigned Appliances"
-        :button-color="'red'"
+        color="orange"
         :callback="()=>{showNewAppliance = true}"
     >
 
@@ -13,17 +13,22 @@
         <div>
             <assign-appliance :assignNewAppliance="showNewAppliance" :agent-id="agentId"/>
             <!-- ana tablo  -->
-            <md-table>
-                <md-table-row>
-                    <md-table-head>Name</md-table-head>
-                    <md-table-head>Cost</md-table-head>
-                </md-table-row>
-                <md-table-row v-for="(item, index) in assignedApplianceTypes" :key="index">
-                    <md-table-cell md-label="Name" md-sort-by="name">{{item.applianceType}}</md-table-cell>
-                    <md-table-cell md-label="Cost" md-sort-by="total_cost">{{item.cost}}</md-table-cell>
+            <div v-if="assignedApplianceTypes.length>0">
+                <md-table>
+                    <md-table-row>
+                        <md-table-head v-for="(item, index) in headers" :key="index">{{item}}</md-table-head>
+                    </md-table-row>
+                    <md-table-row v-for="(item, index) in assignedApplianceTypes" :key="index">
+                        <md-table-cell md-label="Name" md-sort-by="name">{{item.applianceType}}</md-table-cell>
+                        <md-table-cell md-label="Cost" md-sort-by="total_cost">{{item.cost}}</md-table-cell>
 
-                </md-table-row>
-            </md-table>
+                    </md-table-row>
+                </md-table>
+            </div>
+            <div v-else>
+                <no-table-data :headers="headers" :tableName="tableName"/>
+            </div>
+
         </div>
     </widget>
 
@@ -33,9 +38,9 @@
     import Widget from '../../../shared/widget'
     import { AgentAssignedApplianceService } from '../../../services/AgentAssignedApplianceService'
     import { AgentService } from '../../../services/AgentService'
-    import { AssetService } from '../../../services/AssetService'
     import AssignAppliance from './AssignAppliance'
     import { EventBus } from '../../../shared/eventbus'
+    import NoTableData from '../../../shared/NoTableData'
 
     export default {
         name: 'AssignedApplianceList',
@@ -53,7 +58,9 @@
                 },
                 loading: false,
                 assignedApplianceTypes: [],
-                applianceTypes: []
+                applianceTypes: [],
+                headers: ['Name', 'Cost'],
+                tableName: 'Assigned Appliance'
             }
         },
         props: {
@@ -76,7 +83,8 @@
         },
         components: {
             AssignAppliance,
-            Widget
+            Widget,
+            NoTableData
         },
         methods: {
             async closeAssignAppliance () {
