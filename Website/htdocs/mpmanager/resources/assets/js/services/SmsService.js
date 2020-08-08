@@ -143,21 +143,22 @@ export class SmsService {
 
     async sendMaintenanceSms (maintenanceData) {
         try {
-            let sendSms_PM = {
+            let sendSmsPM = {
                 'person_id': maintenanceData.assigned,
                 'message': maintenanceData.description + '/n Amount : '
                     + maintenanceData.amount + '\n Due Date '
                     + maintenanceData.dueDate,
                 'senderId': maintenanceData.id,
             }
-            let response = await this.repository.send(sendSms_PM, 'single')
+            let response = await this.repository.send(sendSmsPM, 'single')
             if (response.status === 200 || response.status === 201) {
                 return response
             } else {
                 return new ErrorHandler(response.error, 'http', response.status)
             }
         } catch (e) {
-            return new ErrorHandler(e, 'http')
+            let errorMessage = e.response.data.data.message
+            return new ErrorHandler(errorMessage, 'http')
         }
     }
 

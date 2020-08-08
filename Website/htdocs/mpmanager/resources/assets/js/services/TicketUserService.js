@@ -22,7 +22,7 @@ export class TicketUserService {
                         id: user.id,
                         name: user.user_name,
                         tag: user.user_tag,
-                        created_at: user.created_at
+                        created_at:  user.created_at.toString().replace(/T/, ' ').replace(/\..+/, '')
                     })
                 })
 
@@ -52,10 +52,7 @@ export class TicketUserService {
             } else {
                 return new ErrorHandler(response.error, 'http', response.status)
             }
-
         } catch (e) {
-
-            console.log(e.response)
             let errorMessage = e.response.data.message
             return new ErrorHandler(errorMessage, 'http')
         }

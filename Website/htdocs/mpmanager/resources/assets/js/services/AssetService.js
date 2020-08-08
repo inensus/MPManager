@@ -12,7 +12,8 @@ export class AssetService {
             name: null,
             updated_at: null,
             edit: false,
-            asset_type_name: null
+            asset_type_name: null,
+            price: null
         }
         this.paginator = new Paginator(resources.assets.list)
 
@@ -33,8 +34,9 @@ export class AssetService {
             let assetType = {
                 id: data[a].id,
                 name: data[a].name,
-                updated_at: data[a].updated_at,
+                updated_at: data[a].updated_at.toString().replace(/T/, ' ').replace(/\..+/, ''),
                 edit: false,
+                price: data[a].price
             }
             this.list.push(assetType)
         }
@@ -103,4 +105,6 @@ export class AssetService {
             return new ErrorHandler(e, 'http')
         }
     }
+
+
 }

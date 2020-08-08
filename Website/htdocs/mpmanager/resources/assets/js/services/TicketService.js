@@ -71,14 +71,13 @@ export class TicketService {
                 title: maintenanceData.title,
                 owner_id: maintenanceData.assigned,
                 owner_type: 'person',
+                creator_type: 'admin'
             }
-
         try {
-            let response = await this.repository.create(maintenanceData_PM)
+            let response = await this.repository.create(maintenanceDataPM)
             if (response.status === 200 || response.status === 201) {
                 return response
             } else {
-
                 return new ErrorHandler(response.error, 'http', response.status)
             }
 
