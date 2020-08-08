@@ -94,17 +94,22 @@ class AgentController extends Controller
         return new ApiResource($agent->fresh());
     }
 
-    public function showBalance(Request $request, Response $response): Response
+
+
+
+    public function showDashboardBoxes(Request $request, Response $response): Response
     {
         $agent = Agent::find(auth('agent_api')->user()->id);
-        $balance = $this->agentService->getAgentBalance($agent);
+        $average = $this->agentService->getTransactionAverage($agent);
         return $response->setStatusCode(200)->setContent([
             'data' => [
-                'balance' => $balance,
+                'balance'=>$agent->balance,
+                'profit'=>$agent->commission_revenue,
+                'dept'=>$agent->due_to_energy_supplier,
+                'average' => $average,
                 'status_code' => 200
             ]
         ]);
     }
-
 
 }

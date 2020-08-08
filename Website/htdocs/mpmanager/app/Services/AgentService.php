@@ -9,6 +9,8 @@ use App\Http\Services\CountryService;
 use App\Models\Address\Address;
 use App\Models\Agent;
 
+use App\Models\AgentBalanceHistory;
+use App\Models\AgentReceipt;
 use App\Models\Country;
 use App\Models\Person\Person;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -148,6 +150,33 @@ class AgentService implements IUserService
     public function getAgentBalance($agent)
     {
         return $agent->balance;
+    }
+
+
+
+    public function getTransactionAverage($agent)
+    {
+
+        $lastReceipt = AgentReceipt::query()->where('id', $agent->id)->get()->last();
+
+        if ($lastReceipt) {
+            $averageTransactionAmounts = AgentBalanceHistory::query()
+                ->where('agent_id', $agent->id)
+                ->where('trigger_type', 'agent_transaction')
+                ->where('created_at', '>', $lastReceipt->created_at)
+                ->get()
+                ->avg('amount');
+
+        } else {
+            $averageTransactionAmounts = AgentBalanceHistory::query()
+                ->where('agent_id', $agent->id)
+                ->where('trigger_type', 'agent_transaction')
+                ->get()
+                ->avg('amount');
+        }
+
+
+        return -1 * $averageTransactionAmounts;
     }
 
     public function searchAgent($searchTerm, $paginate)

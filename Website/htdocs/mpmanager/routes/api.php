@@ -169,7 +169,6 @@ Route::group([
     Route::group(['prefix' => 'agents'], function () {
         Route::post('/firebase', 'AgentController@setFirebaseToken');
         Route::get('/balance', 'AgentController@showBalance');
-
         Route::group(['prefix' => 'customers'], function () {
             Route::get('/', 'AgentCustomerController@index');
             Route::get('/search', 'AgentCustomerController@search');
@@ -196,6 +195,10 @@ Route::group([
             Route::get('/customer/{customerId}', 'AgentTicketController@agentCustomerTickets');
             Route::post('/', 'AgentTicketController@store');
         });
+        Route::group(['prefix' => 'dashboard'], function () {
+            Route::get('/boxes', 'AgentController@showDashboardBoxes');
+        });
+
 
     });
 
