@@ -4,11 +4,6 @@
                 title="Add New Ticketing User">
             <form class="md-layout">
                 <md-card class="md-layout-item md-size-100">
-                    <md-card-header>
-                        <div class="md-title">Add New User</div>
-                    </md-card-header>
-
-
                     <md-card-content>
                         <div class="md-layout md-gutter">
                             <div class="md-layout-item md-size-100">
@@ -33,10 +28,12 @@
                                 </md-checkbox>
                             </div>
                         </div>
+                        <md-progress-bar md-mode="indeterminate" v-if="loading"/>
                     </md-card-content>
 
                     <md-card-actions>
-                        <md-button type="button" @click="saveUser" class="md-primary">Create User</md-button>
+                        <md-button type="button" @click="saveUser" :disabled="loading" class="md-primary">Create User
+                        </md-button>
                         <md-button type="button" @click="showNewUser = false" class="md-accent">Close</md-button>
                     </md-card-actions>
                 </md-card>
@@ -54,12 +51,8 @@
             button-text="Add new User"
             :callback="showAddUser"
         >
-            <div v-model="ticketUserService.list">
+            <div v-if="ticketUserService.list.length>0" v-model="ticketUserService.list">
                 <md-table v-model="ticketUserService.list" md-sort="name" md-sort-order="asc" md-card>
-                    <md-table-toolbar>
-                        <h1 class="md-title">Users</h1>
-                    </md-table-toolbar>
-
                     <md-table-row slot="md-table-row" slot-scope="{ item }">
                         <md-table-cell md-label="ID" md-sort-by="id" md-numeric>{{ item.id }}</md-table-cell>
                         <md-table-cell md-label="Name" md-sort-by="name">{{ item.name }}</md-table-cell>
@@ -68,6 +61,9 @@
                         </md-table-cell>
                     </md-table-row>
                 </md-table>
+            </div>
+            <div v-else>
+                <no-table-data :headers="headers" :tableName="tableName"/>
             </div>
         </widget>
 
@@ -78,15 +74,18 @@
 <script>
     import Widget from '../../shared/widget'
     import { TicketUserService } from '../../services/TicketUserService'
+    import NoTableData from '../../shared/NoTableData'
 
     export default {
         name: 'UserManagement',
-        components: { Widget },
+        components: { Widget, NoTableData },
         data () {
             return {
                 ticketUserService: new TicketUserService(),
-
                 showNewUser: false,
+                headers: ['ID', 'Name', 'Tag', 'Registered Since'],
+                tableName: 'Ticket User',
+                loading: false,
             }
 
         },
@@ -100,24 +99,20 @@
             async saveUser () {
                 let validator = await this.$validator.validateAll()
                 if (validator) {
+                    this.loading = true
                     try {
                         let userData = await this.ticketUserService.createUser(this.ticketUserService.newUser.name, this.ticketUserService.newUser.tag, this.ticketUserService.newUser.outsourcing)
 
                         if (userData.error != undefined) {
                             this.alertNotify('warn', this.ticketUserService.newUser.tag + ' not found in the Ticketing system!')
+                            this.loading = false
                             return
                         }
-                        this.ticketUserService.list.push(
-                            {
-                                id: userData.id,
-                                name: userData.user_name,
-                                tag: userData.user_tag,
-                                created_at: userData.created_at
-                            }
-                        )
+                        await this.getUsers()
                         this.alertNotify('success', 'User added successfully.')
-
+                        this.loading = false
                     } catch (e) {
+                        this.loading = false
                         this.alertNotify('error', e.message)
                     }
                     this.showNewUser = false
@@ -126,6 +121,7 @@
             },
             async getUsers () {
                 try {
+                    this.ticketUserService.list = []
                     await this.ticketUserService.getUsers()
                 } catch (e) {
                     this.alertNotify('error', e.message)

@@ -185,7 +185,8 @@
                 </md-card-actions>
             </md-card>
         </widget>
-
+        <redirection-modal :redirection-url="redirectionUrl" :imperative-item="imperativeItem"
+                           :dialog-active="redirectDialogActive"/>
     </div>
 
 </template>
@@ -197,10 +198,11 @@
     import { EventBus } from '../../shared/eventbus'
     import Datepicker from 'vuejs-datepicker'
     import { AgentCommissionService } from '../../services/AgentCommissionService'
+    import RedirectionModal from '../../shared/RedirectionModal'
 
     export default {
         name: 'AddAgent',
-        components: { Widget, Datepicker },
+        components: { Widget, Datepicker, RedirectionModal },
         props: {
             addAgent: {
                 default: false,
@@ -222,6 +224,9 @@
                 countries: [],
                 confirmPassword: null,
                 loading: false,
+                redirectionUrl: '/locations/add-mini-grid',
+                imperativeItem: 'Mini-Grid',
+                redirectDialogActive: false
             }
         },
 
@@ -236,7 +241,9 @@
             async getMiniGrids () {
                 try {
                     this.miniGrids = await this.miniGridService.getMiniGrids()
-
+                    if (this.miniGrids.length < 0) {
+                        this.redirectDialogActive = true
+                    }
                 } catch (e) {
                     this.alertNotify('error', e.message)
                 }
