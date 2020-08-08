@@ -8,7 +8,7 @@
             :center="center"
             :markerLocations="markerLocations"
             :constantLocations="constantLocations"
-            :zoom="18"
+            :zoom="9"
             :constantMarkerUrl="miniGridIcon"
             :markerUrl="meterIcon"
             :edit="true"

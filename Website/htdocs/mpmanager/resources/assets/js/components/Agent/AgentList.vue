@@ -63,7 +63,7 @@
                 agentService: new AgentService(),
                 searchTerm: '',
                 headers: ['ID', 'Name', 'Email', 'MiniGrid', 'Balance'],
-                tableName: 'Agent Transaction'
+                tableName: 'Agent'
             }
         },
 

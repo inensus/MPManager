@@ -1,10 +1,7 @@
 <template>
     <div>
-        <password-protection></password-protection>
         <widget title="Add New Village" color="green">
-
             <md-card class="md-layout-item md-size-100">
-
                 <md-card-content>
 
                     <div class="md-layout md-gutter md-size-100">
@@ -106,12 +103,13 @@
 
                 </md-card-content>
 
-                <md-progress-bar md-mode="indeterminate" class="md-progress-bar" v-if="sending"/>
+                <md-progress-bar md-mode="indeterminate" class="md-progress-bar" v-if="loading"/>
 
             </md-card>
 
         </widget>
-
+        <redirection-modal :redirection-url="redirectionUrl" :imperative-item="imperativeItem"
+                           :dialog-active="redirectDialogActive"/>
 
     </div>
 </template>
@@ -127,6 +125,7 @@
     import villageIcon from '../../../icons/village.png'
     import miniGridIcon from '../../../icons/miniGrid.png'
     import { EventBus } from '../../shared/eventbus'
+    import RedirectionModal from '../../shared/RedirectionModal'
 
     export default {
         name: 'AddVillage',
@@ -134,6 +133,7 @@
             Widget,
             PasswordProtection,
             Map,
+            RedirectionModal
         },
         data () {
             return {
@@ -146,7 +146,7 @@
                 geoData: null,
                 center: this.appConfig.mapStartingPoint,
                 villageSaved: false,
-                sending: false,
+                loading: false,
                 lastVillage: null,
                 cityName: '',
                 selectedMiniGridId: '',
@@ -163,6 +163,15 @@
                 markerLocations: [],
                 constantLocations: [],
                 markingInfos: [],
+                redirectionUrl: '/locations/add-mini-grid',
+                imperativeItem: 'Mini-Grid',
+                redirectDialogActive: false,
+                redirectedMiniGridId: null
+            }
+        },
+        created () {
+            if (this.$route.params.id) {
+                this.redirectedMiniGridId = this.$route.params.id
             }
         },
         mounted () {
@@ -174,7 +183,6 @@
             EventBus.$on('markerError', (message) => {
                 this.$swal({
                     type: 'warn',
-
                     text: message,
                 })
 
@@ -187,27 +195,31 @@
                 if (validator) {
                     this.setMarker()
                 }
-
             },
             async getMiniGrids () {
                 try {
                     this.constantLocations = []
                     this.miniGrids = await this.miniGridService.getMiniGrids()
                     if (this.miniGrids.length > 0) {
-
                         this.constantLocations = []
                         this.markingInfos = []
-                        this.selectedMiniGridId = this.miniGrids[this.miniGrids.length - 1].id
+                        if (this.redirectedMiniGridId != null) {
+                            this.selectedMiniGridId = this.redirectedMiniGridId
+                        } else {
+                            this.selectedMiniGridId = this.miniGrids[this.miniGrids.length - 1].id
+                        }
                         let miniGridGeoData = await this.miniGridService.getMiniGridGeoData(this.selectedMiniGridId)
                         let Points = miniGridGeoData.location.points.split(',')
                         this.miniGridLatLng.lat = Points[0]
                         this.miniGridLatLng.lon = Points[1]
 
-                        await this.getGeoData(this.miniGrids[this.miniGrids.length - 1].cluster_id)
+                        await this.getGeoData(miniGridGeoData.cluster_id)
                         let markingInfo = this.mappingService.createMarkinginformation(miniGridGeoData.id, miniGridGeoData.name, null, Points[0], Points[1])
                         this.markingInfos.push(markingInfo)
                         this.constantLocations.push([this.miniGridLatLng.lat, this.miniGridLatLng.lon])
 
+                    } else {
+                        this.redirectDialogActive = true
                     }
                 } catch (e) {
                     this.alertNotify('error', e.message)
@@ -223,20 +235,21 @@
                     this.alertNotify('error', e.message)
                 }
             },
+
             async saveVillage () {
                 let validator = await this.$validator.validateAll()
+                let validatorPoints = await this.$validator.validateAll('Points-Form')
 
-                if (validator) {
+                if (validator && validatorPoints) {
                     try {
-                        this.sending = false
-
-                        const city = await this.cityService.createCity(this.cityName, this.clusterId,
-                            this.selectedMiniGridId, this.geoData)
-
+                        this.loading = true
+                        const city = await this.cityService.createCity(this.cityName, this.clusterId, this.selectedMiniGridId, this.geoData)
                         this.alertNotify('success', 'The Village you add is stored successfully.')
+                        this.loading = false
                         await this.$router.replace('/dashboards/mini-grid/' + city.data.data.mini_grid.id)
 
                     } catch (e) {
+                        this.loading = false
                         this.alertNotify('error', e.message)
                     }
 
@@ -266,10 +279,10 @@
                 this.constantLocations.push([this.miniGridLatLng.lat, this.miniGridLatLng.lon])
             },
             getValidateVillage () {
-                this.sending = true
+                this.loading = true
                 let validator = this.$validator.validateAll()
                 if (validator) {
-                    this.sending = false
+                    this.loading = false
                     this.saveVillage()
                 }
             },

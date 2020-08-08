@@ -95,12 +95,11 @@
                     class="md-layout-item  md-xlarge-size-20  md-large-size-20 md-medium-size-20  md-small-size-100 md-xsmall-size-100">
                     <filter-transaction @searchSubmit="filterTransaction"></filter-transaction>
                 </div>
-                <div
-                    class="md-layout-item  md-xlarge-size-80  md-large-size-80 md-medium-size-80  md-small-size-100 md-xsmall-size-100">
+                <div v-if="transactionService.list.length>0"
+                     class="md-layout-item  md-xlarge-size-80  md-large-size-80 md-medium-size-80  md-small-size-100 md-xsmall-size-100">
                     <md-table style="width:100%;" md-card>
                         <md-table-row>
                             <md-table-head>
-
                                 Status
                             </md-table-head>
                             <md-table-head>
@@ -146,7 +145,7 @@
                                 </md-icon>
                             </md-table-cell>
 
-                            <md-table-cell>
+                            <md-table-cell style="text-align: center !important;">
 
 
                                 <img v-if="transaction.service==='vodacom_transaction'"
@@ -155,14 +154,10 @@
                                 />
                                 <img v-if="transaction.service==='airtel_transaction'"
                                      src="https://upload.wikimedia.org/wikipedia/en/thumb/8/8d/Bharti_Airtel_Limited_logo.svg/361px-Bharti_Airtel_Limited_logo.svg.png"
-                                     style="max-height:18px;"
+                                     style="max-height:18px; text-align: center"
                                 />
                                 <img v-if="transaction.service==='agent_transaction'"
                                      src="https://image.flaticon.com/icons/svg/99/99395.svg"
-                                     style="max-height:18px;"
-                                />
-                                <img v-else="transaction.service==='vodacom_transaction'"
-                                     src="https://cdn1.iconfinder.com/data/icons/rounded-flat-country-flag-collection-1/2000/_Unknown.png"
                                      style="max-height:18px;"
                                 />
 
@@ -188,6 +183,10 @@
                         </md-table-row>
                     </md-table>
                 </div>
+                <div v-else
+                     class="md-layout-item  md-xlarge-size-80  md-large-size-80 md-medium-size-80  md-small-size-100 md-xsmall-size-100">
+                    <no-table-data :headers="headers" :tableName="tableName"/>
+                </div>
             </div>
         </widget>
     </div>
@@ -205,11 +204,12 @@
     import FilterTransaction from './FilterTransaction'
     import Box from '../Box'
     import { TransactionService } from '../../services/TransactionService'
+    import NoTableData from '../../shared/NoTableData'
 
     export default {
         name: 'transactionList',
         mixins: [timing, currency],
-        components: { Box, FilterTransaction, Widget },
+        components: { Box, FilterTransaction, Widget, NoTableData },
         data () {
             return {
                 transactionService: new TransactionService(),
@@ -227,7 +227,8 @@
                     'Past 7 days',
                     'Past 30 days'
                 ],
-
+                headers: ['ID', 'Service', 'Sender', 'Amount', 'Type', 'Message', 'Sent Date', 'Process Time'],
+                tableName: 'Transaction'
             }
         },
 

@@ -43,7 +43,7 @@ export class AgentCommissionService {
                 return new ErrorHandler(response.error, 'http', response.status)
             }
         } catch (e) {
-            let errorMessage = e.response.data.data
+            let errorMessage = e.response.data.data.message
             return new ErrorHandler(errorMessage, 'http')
         }
     }

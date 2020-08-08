@@ -86,7 +86,19 @@
                     </div>
                 </md-list-item>
             </md-list>
+            <md-list class="md-triple-line ticket-area">
+                <md-list-item class="text-center no-ticket"
+                              data-v-aec15928
+                              data-v-e03de5b4
 
+
+                              v-if="tickets.list.length === 0 ">
+                    <h4 data-v-aec15928 data-v-e03de5b4 style="font-weight: 500;">
+                        No tickets
+                        found
+                    </h4>
+                </md-list-item>
+            </md-list>
             <div class="well" v-if="tickets.length === 0">No tickets found</div>
             <div class="row" style="text-align: center" v-if="loaded === false">
                 <h5>Tickets are Loading</h5>

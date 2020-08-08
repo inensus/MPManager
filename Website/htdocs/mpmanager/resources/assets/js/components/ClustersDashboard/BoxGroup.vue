@@ -52,16 +52,6 @@
                     :boxIconColor="'#5c5837'"
                 />
             </div>
-
-
-            <md-speed-dial md-direction="bottom" style="position: fixed; right: 1rem; bottom: 1rem; z-index: 999">
-                <md-speed-dial-target @click="newCluster">
-                    <md-tooltip md-direction="top">Add a new Cluster</md-tooltip>
-                    <md-icon>add</md-icon>
-                </md-speed-dial-target>
-
-            </md-speed-dial>
-
         </div>
 
     </div>
