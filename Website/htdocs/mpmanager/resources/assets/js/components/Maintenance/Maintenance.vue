@@ -75,7 +75,8 @@
                             </div>
                             <div class="md-layout-item md-size-50">
                                 <div>
-                                    <md-datepicker v-model="selectedDue" name="date" v-validate="'required'">
+                                    <md-datepicker v-model="selectedDue" name="date" v-validate="'required'"
+                                                   md-immediately>
                                         <label>Due Date</label>
                                     </md-datepicker>
                                     <span class="md-error">{{ errors.first('form-maintain.date') }}</span>
@@ -89,11 +90,11 @@
                                 </md-field>
                             </div>
                         </div><!-- end layout -->
-
+                        <md-progress-bar md-mode="indeterminate" v-if="loading"/>
                     </md-card-content>
 
                     <md-card-actions>
-                        <md-button class="md-raised md-primary" type="submit">
+                        <md-button class="md-raised md-primary" type="submit" :disabled="loading">
                             <font-awesome-icon icon="save"></font-awesome-icon>
                             Save
                         </md-button>
@@ -108,15 +109,15 @@
     import Widget from '../../shared/widget'
     import Datepicker from 'vuejs-datepicker'
     import NewUser from './NewUser'
-    import {EventBus} from '../../shared/eventbus'
-    import {TicketService} from '../../services/TicketService'
-    import {MaintenanceService} from '../../services/MaintenanceService'
-    import {SmsService} from '../../services/SmsService'
+    import { EventBus } from '../../shared/eventbus'
+    import { TicketService } from '../../services/TicketService'
+    import { MaintenanceService } from '../../services/MaintenanceService'
+    import { SmsService } from '../../services/SmsService'
 
     export default {
         name: 'Maintenance',
-        components: {NewUser, Datepicker, Widget},
-        data() {
+        components: { NewUser, Datepicker, Widget },
+        data () {
             return {
                 newUser: false,
                 categories: [],
@@ -125,7 +126,8 @@
                 ticketService: new TicketService(),
                 maintenanceService: new MaintenanceService(),
                 smsService: new SmsService(),
-                selectedDue: null
+                selectedDue: null,
+                loading: false
             }
         },
         watch: {
@@ -133,11 +135,11 @@
                 this.dueDateSelected(date)
             }
         },
-        created() {
+        created () {
             this.maintenanceData = this.maintenanceService.personData
-            this.maintenanceData.creator = this.$store.state.admin.id
+            this.maintenanceData.creator = this.$store.getters['auth/authenticationService'].authenticateUser.id
         },
-        mounted() {
+        mounted () {
             this.getCategories()
             this.getEmployees()
             EventBus.$on('newUserClosed', (e) => {
@@ -146,68 +148,51 @@
             })
         },
         methods: {
-            getCategories() {
-                this.ticketService.getCategories().then(data => {
-                    this.categories = data
-                }).catch(e => {
-                    this.alertNotify('error', e)
-                })
+            async getCategories () {
+                try {
+                    this.categories = await this.ticketService.getCategories()
+                } catch (e) {
+                    this.alertNotify('error', e.message)
+                }
             },
-            getEmployees() {
-                this.maintenanceService.getEmployees().then(data => {
-                    this.employees = data
-                }).catch(e => {
-                    this.alertNotify('error', e)
-                })
+            async getEmployees () {
+                try {
+                    this.employees = await this.maintenanceService.getEmployees()
+                } catch (e) {
+                    this.alertNotify('error', e.message)
+                }
 
             },
-            dueDateSelected(date) {
-
+            dueDateSelected (date) {
                 if (date === null) {
                     return
                 }
                 this.maintenanceService.setDueDate(date)
             },
-            async submitMaintainForm() {
-                await this.validateForm('form-maintain').then(result => {
-                    if (result) {
-                        this.sending = true
-                        this.saveTicket()
-                    }
-                    if (!result) {
-                    }
-                })
+            async submitMaintainForm () {
+                let validator = await this.$validator.validateAll('form-maintain')
+                if (validator) {
+                    await this.saveTicket()
+                }
             },
-            saveTicket() {
-                this.ticketService.createMaintenanceTicket(this.maintenanceData).then(status => {
-
-                    this.smsService.sendMaintenanceSms(this.maintenanceData).then(response => {
-
-                        this.alertNotify('success', 'The Task created successfully. The Person will also be notified by sms')
-                        this.maintenanceService.maintenanceData = {
-                            maintenance: true,
-                            title: null,
-                            assigned: null,
-                            category: null,
-                            amount: null,
-                            description: null,
-                            dueDate: null,
-                        }
-                    })
-
-                }).catch(e => {
-                    this.alertNotify('error', e)
-                })
-                this.sending = false
+            async saveTicket () {
+                try {
+                    this.loading = true
+                    await this.ticketService.createMaintenanceTicket(this.maintenanceData)
+                    await this.smsService.sendMaintenanceSms(this.maintenanceData)
+                    this.alertNotify('success', 'The Task created successfully. The Person will also be notified by sms')
+                    this.maintenanceService.resetMaintenance()
+                    this.loading = false
+                } catch (e) {
+                    this.alertNotify('error', e.message)
+                    this.loading = false
+                }
             },
-            async validateForm(scope) {
-                return await this.$validator.validateAll(scope)
-            },
-            openNewUser() {
+            openNewUser () {
                 EventBus.$emit('getLists')
                 this.newUser = true
             },
-            alertNotify(type, message) {
+            alertNotify (type, message) {
                 this.$notify({
                     group: 'notify',
                     type: type,
