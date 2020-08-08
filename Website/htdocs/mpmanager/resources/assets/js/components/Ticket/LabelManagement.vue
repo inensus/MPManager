@@ -69,41 +69,41 @@
 
 
                 </md-card-content>
+                <md-progress-bar md-mode="indeterminate" v-if="loading"/>
                 <md-card-actions>
 
-                    <md-button class="md-raised md-primary" @click="saveLabel">Add Categorie</md-button>
+                    <md-button class="md-raised md-primary" @click="saveLabel">Add Category</md-button>
                     <md-button class="md-raised md-accent" @click="() => {newLabel = false}">Cancel</md-button>
                 </md-card-actions>
             </md-card>
 
             <md-card>
                 <md-card-content>
-                    <md-table>
-                        <md-table-row>
-                            <md-table-head>ID</md-table-head>
-                            <md-table-head>Name</md-table-head>
-                            <md-table-head>Color</md-table-head>
-                            <md-table-head>Outsourcing</md-table-head>
-                        </md-table-row>
+                    <div v-if="ticketLabelService.list.length>0">
+                        <md-table>
+                            <md-table-row>
+                                <md-table-head v-for="(item, index) in headers" :key="index">{{item}}</md-table-head>
+                            </md-table-row>
 
+                            <md-table-row v-for="(label, index) in ticketLabelService.list" :key="index">
+                                <md-table-cell>{{label.id}}</md-table-cell>
+                                <md-table-cell>{{label.label_name}}</md-table-cell>
+                                <md-table-cell><span class="colored-box"
+                                                     :style="{ backgroundColor: ticketLabelService.colors[label.label_color]}"></span>
+                                    {{label.label_color}}
+                                </md-table-cell>
+                                <md-table-cell>
+                                    <font-awesome-icon v-if="label.out_source===0" icon="times"/>
+                                    <font-awesome-icon v-else icon="check"/>
+                                </md-table-cell>
+                            </md-table-row>
 
-                        <md-table-row v-if="ticketLabelService.list.length == 0">
-                            <md-table-cell>No category found</md-table-cell>
-                        </md-table-row>
-                        <md-table-row v-for="(label, index) in ticketLabelService.list" :key="index">
-                            <md-table-cell>{{label.id}}</md-table-cell>
-                            <md-table-cell>{{label.label_name}}</md-table-cell>
-                            <md-table-cell><span class="colored-box"
-                                                 :style="{ backgroundColor: ticketLabelService.colors[label.label_color]}"></span>
-                                {{label.label_color}}
-                            </md-table-cell>
-                            <md-table-cell>
-                                <font-awesome-icon v-if="label.out_source===0" icon="times"/>
-                                <font-awesome-icon v-else icon="check"/>
-                            </md-table-cell>
-                        </md-table-row>
+                        </md-table>
+                    </div>
+                    <div v-else>
+                        <no-table-data :headers="headers" :tableName="tableName"/>
+                    </div>
 
-                    </md-table>
                 </md-card-content>
 
             </md-card>
@@ -117,15 +117,18 @@
 <script>
     import Widget from '../../shared/widget'
     import { TicketLabelService } from '../../services/TicketLabelService'
+    import NoTableData from '../../shared/NoTableData'
 
     export default {
         name: 'LabelManagement',
-        components: { Widget },
+        components: { Widget, NoTableData },
         data () {
             return {
                 ticketLabelService: new TicketLabelService(),
                 newLabel: false,
-
+                headers: ['ID', 'Name', 'Color', 'Outsourcing'],
+                tableName: 'Category',
+                loading: false
             }
 
         },
@@ -150,28 +153,14 @@
 
                 let validator = await this.$validator.validateAll()
                 if (validator) {
-                    if (this.currentColor === null) {
-                        this.$swal({
-                            type: 'error',
-                            title: 'No color selected',
-                            text: 'Please select a category color.',
-                            timer: 5000
-                        })
-                        return
-                    }
-                    if (this.newLabelName === '') {
-                        this.$swal({
-                            type: 'error',
-                            title: 'No name entered',
-                            text: 'Please enter a category name.',
-                            timer: 5000
-                        })
-                        return
-                    }
+
                     try {
+                        this.loading = true
                         await this.ticketLabelService.createLabel(this.ticketLabelService.newLabelName, this.ticketLabelService.currentColor, this.ticketLabelService.outSourcing)
                         this.alertNotify('success', 'New category added successfully.')
+                        this.loading = false
                     } catch (e) {
+                        this.loading = false
                         this.alertNotify('error', e.message)
                     }
                     this.ticketLabelService.resetLabel()
