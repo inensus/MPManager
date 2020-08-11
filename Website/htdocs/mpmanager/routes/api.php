@@ -197,6 +197,8 @@ Route::group([
         });
         Route::group(['prefix' => 'dashboard'], function () {
             Route::get('/boxes', 'AgentController@showDashboardBoxes');
+            Route::get('/graph', 'AgentController@showBalanceHistories');
+            Route::get('/revenue', 'AgentController@showRevenuesWeekly');
         });
 
 

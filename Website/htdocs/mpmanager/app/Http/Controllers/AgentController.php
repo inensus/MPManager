@@ -95,21 +95,35 @@ class AgentController extends Controller
     }
 
 
-
-
     public function showDashboardBoxes(Request $request, Response $response): Response
     {
         $agent = Agent::find(auth('agent_api')->user()->id);
         $average = $this->agentService->getTransactionAverage($agent);
+        $since = $this->agentService->getLastReceiptDate($agent);
         return $response->setStatusCode(200)->setContent([
             'data' => [
-                'balance'=>$agent->balance,
-                'profit'=>$agent->commission_revenue,
-                'dept'=>$agent->due_to_energy_supplier,
+                'balance' => $agent->balance,
+                'profit' => $agent->commission_revenue,
+                'dept' => $agent->due_to_energy_supplier,
                 'average' => $average,
+                'since' => $since,
                 'status_code' => 200
             ]
         ]);
     }
 
+    public function showBalanceHistories(Request $request, Response $response)
+    {
+        $agent = Agent::find(auth('agent_api')->user()->id);
+        $graphValues = $this->agentService->getGraphValues($agent);
+        return $graphValues;
+
+    }
+
+    public function showRevenuesWeekly(Request $request, Response $response)
+    {
+        $agent = Agent::find(auth('agent_api')->user()->id);
+        return $this->agentService->getAgentRevenuesWeekly($agent);
+
+    }
 }
