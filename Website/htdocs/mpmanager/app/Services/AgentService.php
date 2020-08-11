@@ -251,6 +251,10 @@ class AgentService implements IUserService
         if (count($history) == 1 && $history[0]->trigger_Type == 'agent_receipt') {
             $period[$history[0]->date]['balance'] = -1 * ($history[0]->due_to_supplier - $history[0]->amount);
             $period[$history[0]->date]['due'] = $history[0]->due_to_supplier - $history[0]->amount;
+        } elseif (count($history) == 0) {
+            $today = date("Y-m-d");
+            $period[$today]['balance'] = 0;
+            $period[$today]['due'] = 0;
         } else {
             foreach ($period as $key => $value) {
                 foreach ($history as $h) {
