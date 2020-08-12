@@ -87,7 +87,7 @@ class TokenProcessor implements ShouldQueue
                         'energy' => (float)$this->transactionContainer->chargedEnergy,
                     ];
                 } else {
-                    $tokenData = $api->generateToken(
+                    $tokenData = $api->chargeMeter(
                         $this->transactionContainer->meter,
                         (float)$this->transactionContainer->chargedEnergy
                     );
