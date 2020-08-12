@@ -58,7 +58,18 @@ return [
         ],
     ],
     'manufacturer_master_key' => '36dKhvjwE58!M2.A@L', // the key which is required to  add a new  manufacturer
+    'calinSmart' => [
+        'company_name' => env('CALIN_SMART_COMPANY_NAME'),
+        'url' => [
+            'purchase' => env('CALIN_SMART_PURCHASE_API_URL'),
+            'clear' => env('CALIN_SMART_CLEAR_API_URL'),
 
+        ],
+        'user_name' => env('CALIN_SMART_USER_NAME'),
+        'password' => env('CALIN_SMART_PASSWORD'),
+        'password_vend' => env('CALIN_SMART_PASSWORD_VENT'),
+
+    ],
     'sms' => [
         'bongo' => [
             'url' => 'http://www.bongolive.co.tz/api/sendSMS.php',
