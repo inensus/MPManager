@@ -8,7 +8,7 @@
             :button-color="'red'"
             :callback="()=>{showNewAsset = true}"
         >
-            <confirmation-box title="Edit Rate" @confirmed="editRate"></confirmation-box>
+
             <!-- assing new asset -->
             <form v-if="showNewAsset" novalidate class="md-layout" @submit.prevent="saveAsset">
                 <md-card class="md-layout-item">
@@ -20,7 +20,7 @@
                     <md-card-content>
                         <md-field>
                             <label for="asset_types">Asset Type</label>
-                            <md-select name="asset_types" id="asset_types" v-model="newAsset">
+                            <md-select name="asset_types" id="asset_types" v-model="newAsset.id">
                                 <md-option disabled value>--Select--</md-option>
                                 <md-option
                                     :value="assetType.id"
@@ -41,11 +41,31 @@
                             <md-input type="text" name="rate" v-model="newAsset.rate"/>
                         </md-field>
 
-                        <div v-for="x in parseInt(newAsset.rate)" :key="x" class="col-md-3 col-sm-4">
-                            <span v-if="x<10" style="opacity: 0;">0</span>
-                            {{x}}&nbsp;-&nbsp;{{ readable(getRate(x,
-                            newAsset.rate,newAsset.cost ))}} TZS
+                        <div  class="md-layout md-gutter">
+                            <div class="md-layout-item md-size-33">
+                                <md-list v-for="x in parseInt(newAsset.rate)" :key="x"
+                                         v-if="Math.ceil(newAsset.rate / 3 )>= x">{{x}}&nbsp;-&nbsp;{{ readable(getRate(x,
+                                    newAsset.rate,newAsset.cost ))}} {{appConfig.currency}}</md-list>
+                            </div>
+                            <div class="md-layout-item md-size-33">
+                                <md-list v-for="x in parseInt(newAsset.rate)" :key="x"
+                                         v-if="Math.ceil(newAsset.rate / 3)*2 >= x && x > Math.ceil(newAsset.rate / 3)">{{x}}&nbsp;-&nbsp;{{ readable(getRate(x,
+                                    newAsset.rate,newAsset.cost ))}} {{appConfig.currency}}</md-list>
+                            </div>
+                            <div class="md-layout-item md-size-33">
+                                <md-list v-for="x in parseInt(newAsset.rate)" :key="x"
+                                         v-if="newAsset.rate >= x && x > Math.ceil(newAsset.rate / 3)*2">{{x}}&nbsp;-&nbsp;{{ readable(getRate(x,
+                                    newAsset.rate,newAsset.cost ))}} {{appConfig.currency}}</md-list>
+                            </div>
+
+
+
+
+
+
+
                         </div>
+
                     </md-card-content>
                     <md-card-actions>
                         <md-button type="submit" class="md-primary btn-sell">Sell Asset</md-button>
@@ -53,61 +73,65 @@
                 </md-card>
             </form>
 
-            <div v-if="personAssets.length>0">
+            <div>
                 <!-- ana tablo  -->
-                <md-table>
-                    <md-table-row>
-                        <md-table-head v-for="(item, index) in headers" :key="index">{{item}}</md-table-head>
-                    </md-table-row>
-                    <md-table-row v-for="(item, index) in personAssets" :key="index">
-                        <md-table-cell md-label="Name" md-sort-by="name">{{item.asset_type.name}}</md-table-cell>
-                        <md-table-cell md-label="Cost" md-sort-by="total_cost">{{item.total_cost}} TZS</md-table-cell>
-                        <md-table-cell md-label="Rates" md-sort-by="rate_count">
-                            {{ item.rate_count}}
-                            <div
-                                :class="index=== -999?'text-danger':'text-success'"
-                                style="cursor: pointer; display:inline-block"
-                                @click="showDetails(index)"
-                            >
-                                <md-icon>remove_red_eye</md-icon>
-                                Details
-                            </div>
-                        </md-table-cell>
-                    </md-table-row>
-                </md-table>
-            </div>
-            <div v-else>
-                <no-table-data :headers="headers" :tableName="tableName"/>
+
+                <div v-if="personAsset.length !== 0 && personAsset.length !== null && showNewAsset === false">
+                    <md-table>
+
+                        <md-table-row>
+                            <md-table-head>Name</md-table-head>
+                            <md-table-head>Cost</md-table-head>
+                            <md-table-head>Rates</md-table-head>
+                        </md-table-row>
+                        <md-table-row v-for="(item, index) in personAsset" :key="index">
+                            <md-table-cell md-label="Name" md-sort-by="name">{{item.asset_type.name}}</md-table-cell>
+                            <md-table-cell md-label="Cost" md-sort-by="total_cost">{{item.total_cost}} TZS
+                            </md-table-cell>
+                            <md-table-cell md-label="Rates" md-sort-by="rate_count">
+                                {{ item.rate_count}}
+                                <div
+                                    :class="index=== -999?'text-danger':'text-success'"
+                                    style="cursor: pointer; display:inline-block"
+                                    @click="showDetails(index)"
+                                >
+                                    <md-icon>remove_red_eye</md-icon>
+                                    Details
+                                </div>
+                            </md-table-cell>
+                        </md-table-row>
+                    </md-table>
+                </div>
+                <span v-if="personAsset !== null && personAsset.length === 0 && showNewAsset === false"
+                      style="alignment: center;"><h3>There is no Asset for this Customer.</h3>  </span>
+
             </div>
         </widget>
 
-        <md-dialog v-if="selectedAsset!==null" :md-active.sync="showModal">
+        <md-dialog v-if="selectedAsset!==null" :md-active.sync="showModal" class="md-scrollbar">
             <md-dialog-title>
                 Details of
                 <strong>{{selectedAsset.asset_type.name}}</strong>
             </md-dialog-title>
+            <md-dialog-content class="md-scrollbar">
+                <div class="md-layout">
+                    <div class="md-layout-item">
+                        <span>Total Cost :</span>
+                        <span>{{readable(selectedAsset.total_cost)}}</span>
+                        <br/>
+                        <span>Sold At :</span>
+                        <span>{{formatReadableDate(selectedAsset.created_at)}}</span>
+                        <br/>
+                        <span>Rates Count :</span>
+                        <span>{{selectedAsset.rate_count}}</span>
+                    </div>
 
-            <vue-grid justify="between" class="details-modal-grid">
-                <vue-cell width="4of12">
-                    <span>Total Cost :</span>
-                    <span>{{readable(selectedAsset.total_cost)}}</span>
-                    <br/>
-                    <span>Sold At :</span>
-                    <span>{{formatReadableDate(selectedAsset.created_at)}}</span>
-                    <br/>
-                    <span>Rates Count :</span>
-                    <span>{{selectedAsset.rate_count}}</span>
-                </vue-cell>
-                <vue-cell width="8of12"></vue-cell>
-                <br/>
 
-                <vue-cell width="12of12">
-                    <strong>Rates</strong>æ
-                </vue-cell>
-
-                <vue-cell width="12of12">
-                    <md-table>
+                    <md-table class="md-layout-item md-size-100">
                         <md-table-row>
+                            <md-table-head>
+                                <strong>Rate</strong>
+                            </md-table-head>
                             <md-table-head>
                                 <strong>Cost</strong>
                             </md-table-head>
@@ -121,7 +145,8 @@
                                 <strong>#</strong>
                             </md-table-head>
                         </md-table-row>
-                        <md-table-row v-for="rate in selectedAsset.rates" :key="rate.id">
+                        <md-table-row v-for="(rate, index) in selectedAsset.rates" :key="rate.id">
+                            <md-table-cell>{{index + 1}}</md-table-cell>
                             <md-table-cell>{{readable( rate.rate_cost)}} TZS</md-table-cell>
                             <md-table-cell v-if="editRow === 'rate'+'_'+rate.id">
                                 <div style="display: inline-flex;">
@@ -136,7 +161,7 @@
                             <md-table-cell>{{rate.due_date}}</md-table-cell>
 
                             <md-table-cell v-if="editRow === 'rate'+'_'+rate.id">
-                                <div @click="showConfirm(rate)">
+                                <div @click="editRate(rate)">
                                     <md-icon style="color:green">save</md-icon>
                                 </div>
                             </md-table-cell>
@@ -147,19 +172,25 @@
                             </md-table-cell>
                         </md-table-row>
                     </md-table>
-                </vue-cell>
 
-                <vue-cell width="12of12">
-                    <h4>History</h4>
-                    <div class="col-sm-12" v-for="log in selectedAsset.logs" :key="log.id">
-                        <li>
-                            {{log.action}} on {{formatReadableDate(log.created_at)}} by
-                            <strong>{{log.owner.name}}</strong>
-                        </li>
+
+                    <div  class="md-layout-item md-size-100">
+                        <h4>History</h4>
+                        <md-list class="md-size-100" v-for="log in selectedAsset.logs" :key="log.id">
+                            <md-list-item>
+                                <md-icon>update</md-icon>
+                                <div class="md-list-item-text">
+                                    <span>{{log.action}} </span>
+                                    <small>on {{formatReadableDate(log.created_at)}}   </small>
+                                </div>
+
+
+                            </md-list-item>
+                            <md-divider></md-divider>
+                        </md-list>
                     </div>
-                </vue-cell>
-            </vue-grid>
-
+                </div>
+            </md-dialog-content>
             <md-dialog-actions>
                 <md-button class="md-accent" @click="toggleModal()">Close</md-button>
             </md-dialog-actions>
@@ -168,123 +199,170 @@
 </template>
 
 <script>
-    import Widget from '../../shared/widget'
-    import { AssetTypes } from '../../classes/asset/AssetTypes'
-    import { resources } from '../../resources'
-    import NoTableData from '../../shared/NoTableData'
-    import { currency } from '../../mixins/currency'
-    import ConfirmationBox from '../../shared/ConfirmationBox'
-    import { EventBus } from '../../shared/eventbus'
-    import Modal from '../../modal/modal'
-    import moment from 'moment'
+    import Widget from "../../shared/widget";
+    import {AssetTypes} from "../../classes/asset/AssetTypes";
+    import {resources} from "../../resources";
+
+    import {currency} from "../../mixins/currency";
+    import ConfirmationBox from "../../shared/ConfirmationBox";
+    import {EventBus} from "../../shared/eventbus";
+    import Modal from "../../modal/modal";
+    import moment from "moment";
 
     export default {
-        name: 'DeferredPayments',
+        name: "DeferredPayments",
         mixins: [currency],
-        components: { Modal, ConfirmationBox, Widget, NoTableData },
+        components: {Modal, ConfirmationBox, Widget},
         props: {
             personId: Number
         },
-        mounted () {
-            this.getAssetTypesList()
-            this.getAssetList()
+        mounted() {
+            this.getAssetTypesList();
+            this.getAssetList();
+
         },
-        data () {
+        data() {
             return {
                 selectedAsset: null,
                 showModal: false,
                 editRow: null,
                 showNewAsset: false,
-                personAssets: [],
+                personAsset: null,
                 assetTypes: null,
+                admin_id: this.$store.getters['auth/authenticationService'].authenticateUser.token,
                 newAsset: {
                     id: null,
                     cost: 1,
                     rate: 1
-                },
-                headers: ['Name', 'Cost', 'Rates'],
-                tableName: 'Sold Assets'
-            }
+                }
+            };
         },
 
+
         methods: {
-            toggleModal () {
-                this.showModal = !this.showModal
-            },
-            formatReadableDate (date) {
-                return moment(date).format('MMMM Do YYYY, h:mm:ss a')
-            },
-            changeRateAmount (rate_id) {
-                this.editRow = 'rate_' + rate_id
-            },
-            showDetails (index) {
-                this.toggleModal()
-                this.selectedAsset = this.personAssets[index]
-            },
-            showConfirm (data) {
-                EventBus.$emit('show.confirm', data)
-            },
-            editRate (data) {
-                axios
-                    .put(resources.assets.rate.update + data.id, {
-                        remaining: data.remaining,
-                        admin_id: this.$store.getters.admin.getId()
-                    })
-                    .then(response => {
-                        this.editRow = null
-                    })
-            },
-            getAssetTypesList () {
-                axios.get(resources.assets.type.list).then(response => {
-                    this.assetTypes = response.data.data
-                })
-            },
-            getRate (index, rateCount, cost) {
-                if (index === parseInt(rateCount)) {
-                    return cost - (rateCount - 1) * Math.floor(cost / rateCount)
-                } else {
-                    return Math.floor(cost / rateCount)
+            getRateColumns(){
+
+                let mid = Math.ceil(this.newAsset.rate / 3)
+                for (let col = 0; col < 3; col++) {
+                    this.rateColumns.push(this.currentRates.slice(col * mid, col * mid + mid))
                 }
+                return this.rateColumns
             },
-            getAssetList () {
+            toggleModal() {
+                this.showModal = !this.showModal;
+            },
+            formatReadableDate(date) {
+                return moment(date).format("MMMM DD YYYY");
+            },
+            changeRateAmount(rate_id) {
+                this.editRow = "rate_" + rate_id;
+            },
+            showDetails(index) {
+                this.toggleModal();
+                this.selectedAsset = this.personAsset[index];
+            },
+            showConfirm(data) {
+                EventBus.$emit("show.confirm", data);
+            },
+            async editRate(rate) {
+
+                const data ={
+                    remaining: rate.remaining,
+                    admin_id: this.admin_id,
+
+                }
+
+                this.$swal({
+                    type: "question",
+                    title: "Edit Rate",
+                    text: "Are you sure to change the rate ?",
+                    showCancelButton: true,
+                    cancelButtonText: "Cancel",
+                    confirmButtonText: "Change"
+                }).then(response => {
+                    axios
+                        .put(resources.assets.rate.update + rate.id, data )
+                        .then(response => {
+                            this.$swal({
+                                type: "success",
+                                title: "Success",
+                                text: "Rate Saved Successfully"
+
+                            })
+                            this.getAssetList();
+                            this.toggleModal();
+                            this.editRow = null;
+
+                        });
+                });
+            },
+            getAssetTypesList() {
+                axios.get(resources.assets.type.list).then(response => {
+                    this.assetTypes = response.data.data;
+                });
+            },
+
+            getRate(index, rateCount, cost) {
+                if (index === parseInt(rateCount)) {
+                    return cost - (rateCount - 1) * Math.round(cost / rateCount);
+                } else {
+                    return Math.round(cost / rateCount);
+                }
+
+            },
+            getAssetList() {
                 axios.get(resources.assets.type.person + this.personId).then(response => {
-                    this.personAssets = response.data.data
-                })
+                    this.personAsset = response.data.data;
+
+                });
             },
-            saveAsset () {
+            clearForm() {
+                this.newAsset.id = null;
+                this.newAsset.cost = 1;
+                this.newAsset.rate = 1;
+            },
+            saveAsset() {
                 if (this.newAsset.id === null) {
                     this.$swal({
-                        type: 'error',
-                        title: 'Asset not selected',
+                        type: "error",
+                        title: "Asset not selected",
                         text:
-                            'Please select an asset type from the list before you can sell/store it.'
-                    })
+                            "Please select an asset type from the list before you can sell/store it."
+                    });
 
-                    return
+                    return;
                 }
                 this.$swal({
-                    type: 'question',
-                    title: 'Save Asset',
-                    text: 'Are you sure to sell the asset for ' + this.newAsset.cost + '?',
+                    type: "question",
+                    title: "Save Asset",
+                    text: "Are you sure to sell the asset for " + this.newAsset.cost + "?",
                     showCancelButton: true,
-                    cancelButtonText: 'Cancel',
-                    confirmButtonText: 'Sell'
+                    cancelButtonText: "Cancel",
+                    confirmButtonText: "Sell"
                 }).then(response => {
                     axios
                         .post(
                             resources.assets.type.sell +
                             this.newAsset.id +
-                            '/people/' +
+                            "/people/" +
                             this.personId,
                             this.newAsset
                         )
                         .then(response => {
-                            this.getAssetList()
-                        })
-                })
+                            this.$swal({
+                                type: "success",
+                                title: "Success",
+                                text: "Asset Saved Successfully"
+
+                            })
+                            this.showNewAsset = false;
+                            this.clearForm();
+                            this.getAssetList();
+                        });
+                });
             }
         }
-    }
+    };
 </script>
 
 <style scoped>
