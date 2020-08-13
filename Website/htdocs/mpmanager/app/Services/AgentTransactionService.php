@@ -14,7 +14,7 @@ class AgentTransactionService implements IAgentRelatedService
 
     public function list($agentId)
     {
-        return Transaction::with('originalAgent')
+        return Transaction::with(['originalAgent', 'meter.meterParameter.owner'])
             ->whereHasMorph('originalTransaction', [AgentTransaction::class],
                 static function ($q) use ($agentId) {
                     $q->where('agent_id', $agentId);
@@ -45,8 +45,7 @@ class AgentTransactionService implements IAgentRelatedService
             })->get('serial_number');
 
 
-
-        return Transaction::with('originalAgent')
+        return Transaction::with(['originalAgent', 'meter.meterParameter.owner'])
             ->whereHasMorph('originalTransaction', [AgentTransaction::class],
                 static function ($q) use ($agentId) {
                     $q->where('agent_id', $agentId);
