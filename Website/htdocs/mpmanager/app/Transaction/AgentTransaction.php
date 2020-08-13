@@ -113,9 +113,9 @@ class AgentTransaction implements ITransactionProvider
         $history->trigger()->associate($commission);
         $history->save();
 
-        if (app()->environment('production')) {
+
             $this->fireBaseService->sendNotify($agent->fire_base_token, json_encode((string)$body));
-        }
+
 
     }
 
