@@ -6,84 +6,82 @@
                 color="green"
                 title="List of Tickets">
 
-                <div class="md-layout-item" v-if="filterTicket" >
-                    <filtering @filtering="filtered"></filtering>
+            <div class="md-layout-item" v-if="filterTicket" >
+                <filtering @filtering="filtered"></filtering>
 
-                </div>
-                <div class="md-layout md-gutter">
-                    <div class="md-layout-item md-size-50">
-                        <div class="ticket-list-card-l">
-                            <md-card>
-                                <md-card-header><span class="o-ticket">Opened Tickets</span></md-card-header>
-                                <md-card-content>
-                                    <div
-                                        class="dd"
-                                        id="nestable-opened"
-                                        style="min-height: 70vh !important; padding-bottom: 70px;"
-                                    >
-
-                                        <ticket-item
-                                            :allow-comment="true"
-                                            :key="ticket.id"
-                                            :ticket="ticket"
-                                            v-for="ticket in tickets.openedList"
-                                        ></ticket-item>
-                                        <md-list class="md-triple-line ticket-area">
-                                            <md-list-item class="text-center no-ticket"
-                                                          data-v-aec15928
-                                                          data-v-e03de5b4
+            </div>
+            <div class="md-layout md-gutter">
+                <div class="md-layout-item md-size-50">
+                    <div class="ticket-list-card-l">
+                        <md-card>
+                            <md-card-header><span class="o-ticket">Opened Tickets</span></md-card-header>
+                            <md-card-content>
+                                <div
+                                    class="dd"
+                                    id="nestable-opened"
+                                    style="min-height: 70vh !important; padding-bottom: 70px;"
+                                >
 
 
-                                                          v-if="tickets.openedList.length === 0 && !loading">
-                                                <h4 data-v-aec15928 data-v-e03de5b4 style="font-weight: 500;">
-                                                    No opened tickets
-                                                    found
-                                                </h4>
-                                            </md-list-item>
-                                        </md-list>
+                                    <ticket-item
+                                        :allow-comment="true"
+                                        :ticket-list="tickets.openedList"
+                                    ></ticket-item>
 
-                                    </div>
+                                    <md-list class="md-triple-line ticket-area">
+                                        <md-list-item class="text-center no-ticket"
+                                                      data-v-aec15928
+                                                      data-v-e03de5b4
 
-                                    <paginate
-                                        :paginatorReference="tickets.openedPaginator"
-                                        :subscriber="subscriber.opened"
-                                        style="position: absolute; bottom:0; width: 100%"
-                                    ></paginate>
-                                </md-card-content>
-                            </md-card>
-                        </div>
-                    </div>
-                    <div class="md-layout-item md-size-50">
-                        <div class="ticket-list-card-r">
-                            <md-card>
-                                <md-card-header>
-                                    <span class="c-ticket">Closed Tickets</span>
-                                </md-card-header>
-                                <md-card-content>
-                                    <div
-                                        class="dd"
-                                        id="nestable-closed"
-                                        style="min-height: 70vh !important; padding-bottom: 70px;"
-                                    >
 
-                                        <ticket-item
-                                            :allow-comment="false"
-                                            :key="ticket.id"
-                                            :ticket="ticket"
-                                            v-for="ticket in tickets.closedList"
-                                        ></ticket-item>
+                                                      v-if="tickets.openedList.length === 0 && !loading">
+                                            <h4 data-v-aec15928 data-v-e03de5b4 style="font-weight: 500;">
+                                                No opened tickets
+                                                found
+                                            </h4>
+                                        </md-list-item>
+                                    </md-list>
 
-                                    </div>
-                                    <paginate
-                                        :paginatorReference="tickets.closedPaginator"
-                                        :subscriber="subscriber.closed"
-                                        style="position: absolute; bottom:0; width: 100%"
-                                    ></paginate>
-                                </md-card-content>
-                            </md-card>
-                        </div>
+                                </div>
+
+                                <paginate
+                                    :paginatorReference="tickets.openedPaginator"
+                                    :subscriber="subscriber.opened"
+                                    style="position: absolute; bottom:0; width: 100%"
+                                ></paginate>
+                            </md-card-content>
+                        </md-card>
                     </div>
                 </div>
+                <div class="md-layout-item md-size-50">
+                    <div class="ticket-list-card-r">
+                        <md-card>
+                            <md-card-header>
+                                <span class="c-ticket">Closed Tickets</span>
+                            </md-card-header>
+                            <md-card-content>
+                                <div
+                                    class="dd"
+                                    id="nestable-closed"
+                                    style="min-height: 70vh !important; padding-bottom: 70px;"
+                                >
+
+                                    <ticket-item
+                                        :allow-comment="true"
+                                        :ticket-list="tickets.closedList"
+
+                                    ></ticket-item>
+                                </div>
+                                <paginate
+                                    :paginatorReference="tickets.closedPaginator"
+                                    :subscriber="subscriber.closed"
+                                    style="position: absolute; bottom:0; width: 100%"
+                                ></paginate>
+                            </md-card-content>
+                        </md-card>
+                    </div>
+                </div>
+            </div>
 
 
 
@@ -229,7 +227,7 @@
 
 <style scoped>
     .ticket-list-card-r {
-       margin-inline-end: 2vh;
+        margin-inline-end: 2vh;
         margin-top: 2vh;
 
     }
