@@ -137,9 +137,6 @@ class TokenProcessor implements ShouldQueue
 
         event('transaction.successful', [$this->transactionContainer->transaction]);
 
-
-        SmsProcessor::dispatch($this->transactionContainer->transaction,
-            SmsTypes::ENERGY_CONFIRMATION)->allOnConnection('redis')->onQueue('sms');
     }
 
 }
