@@ -8,7 +8,7 @@ services:
     image: laravel/php:73
 
     environment:
-      VIRTUAL_HOST: mpmanager.local
+      VIRTUAL_HOST: mpmanager.tk
     depends_on:
       - maria
     links:
