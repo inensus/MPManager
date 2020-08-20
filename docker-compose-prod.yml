@@ -41,6 +41,7 @@ services:
 
 
   'phpmyadmin':
+    container_name: phpma
     image: phpmyadmin/phpmyadmin:latest
     depends_on:
       - maria
