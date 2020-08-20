@@ -47,6 +47,10 @@ services:
       - maria
     links:
       - maria:db
+    ports:
+      - "8080:80"
+    volumes:
+      - ./PhpMyAdmin/data:/var/www/html
 
   'maria':
     container_name: maria
@@ -65,6 +69,7 @@ services:
     image: nginx:1.15-alpine
     restart: unless-stopped
     volumes:
+      - ./PhpMyAdmin/data:/var/www/PhpmaHtml
       - ./Website/htdocs:/var/www/html
       - ./NginxProxy/conf.p:/etc/nginx/conf.d
       - ./certbot/conf:/etc/letsencrypt
