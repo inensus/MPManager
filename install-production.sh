@@ -66,7 +66,7 @@ else
   done
 
   echo "### Starting nginx ..."
-  docker-compose -f docker-compose-prod.yml up --force-recreate -d
+  docker-compose -f docker-compose-prod.yml up --force-recreate -d --build
   echo
 
   for domain in "${domains[@]}"; do
