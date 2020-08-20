@@ -1,7 +1,6 @@
-FROM php:7.3-apache
+FROM php:7.2-fpm
 
-RUN a2enmod rewrite
-RUN a2enmod ssl
+
 
 RUN apt-get update && \
     apt-get install -y \
@@ -16,7 +15,8 @@ RUN apt-get update && \
     libzip-dev \
     vim
 
-
+# Clear cache
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # remove apt lists
 RUN rm -rf /var/lib/apt/lists/*
@@ -34,6 +34,9 @@ RUN touch /usr/local/etc/php/conf.d/xdebug.ini; \
     echo xdebug.remote_port=9000 >> /usr/local/etc/php/conf.d/xdebug.ini; \
     echo xdebug.remote_log=/tmp/php5-xdebug.log >> /usr/local/etc/php/conf.d/xdebug.ini;
 
-COPY configuration/webserver/sites-enabled/000-default.conf /etc/apache2/sites-enabled
-RUN a2enmod ssl
-RUN service apache2 restart
+# Change current user to www
+USER www
+
+# Expose port 9000 and start php-fpm server
+EXPOSE 9000
+CMD ["php-fpm"]
