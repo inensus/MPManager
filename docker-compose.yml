@@ -2,13 +2,10 @@ version: '3.1'
 
 services:
   'laravel':
-    container_name: laravel
     build:
       context: Docker/
-    image: laravel/php:73
-
-    environment:
-      VIRTUAL_HOST: mpmanager.tk
+    image: digitalocean.com/php
+    container_name: laravel
     depends_on:
       - maria
     links:
@@ -18,6 +15,8 @@ services:
     volumes:
       - ./Website/config/php/php.ini:/usr/local/etc/php/php.ini
       - ./Website/htdocs:/var/www/html
+    networks:
+      - mpm-network
 
   'composer':
     container_name: mpmanager_composer
@@ -28,6 +27,8 @@ services:
     command: install
     volumes:
       - ./Website/htdocs/mpmanager:/app
+    networks:
+      - mpm-network
 
   'node':
     container_name: mpmanager_node
@@ -37,23 +38,25 @@ services:
     volumes:
       - ./Website/htdocs/mpmanager:/home/node/app
     command:  /bin/sh -c "/tmp/start.sh"
-
+    networks:
+      - mpm-network
 
   'redis':
     image: redis:5
     volumes:
       - ./redis/:/data
+    networks:
+      - mpm-network
+
 
   'phpmyadmin':
     image: phpmyadmin/phpmyadmin:latest
-    environment:
-      VIRTUAL_HOST: db.mpmanager.local
-
     depends_on:
       - maria
     links:
       - maria:db
-
+    networks:
+      - mpm-network
 
   'maria':
     container_name: maria
@@ -65,18 +68,24 @@ services:
       MYSQL_PASSWORD: laravel
     volumes:
       - ./DB/mysql:/var/lib/mysql
+    networks:
+      - mpm-network
+
 
   nginx:
     image: nginx:1.15-alpine
     restart: unless-stopped
     volumes:
-      - ./nginx:/etc/nginx/conf.d
+      - ./nginx/conf.d:/etc/nginx/conf.d
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
     ports:
       - "80:80"
       - "443:443"
     command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+    networks:
+      - mpm-network
+
   certbot:
     image: certbot/certbot
     restart: unless-stopped
@@ -84,3 +93,5 @@ services:
       - ./certbot/conf:/etc/letsencrypt
       - ./certbot/www:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+    networks:
+      - mpm-network
