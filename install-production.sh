@@ -53,7 +53,7 @@ function make_dummy_certificate() {
 
 function start_nginx() {
   echo "### Starting nginx ..."
-  docker-compose -f docker-compose-prod.yml up --force-recreate -d nginx
+  docker-compose -f docker-compose-prod.yml up --build --force-recreate -d 
   echo
 }
 
@@ -127,7 +127,7 @@ else
     for key in ${!domains_list[*]}; do
       printf "%4d: %s\n" $key ${domains_list[$key]}
     done
-    read -p "Add new domain name? (y/N) " newDomain
+    read -p "Add new domain name? (y/n) " newDomain
     if [ "$newDomain" != "Y" ] && [ "$newDomain" != "y" ]; then
       break
     fi
