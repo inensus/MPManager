@@ -1,4 +1,24 @@
 
+# Production 
+
+  #### Production mode starts MPM with Let's Encrypt SSL certificate assigned to your domain name, You have to get a domain and  a subdomain (for PhpMyAdmin page) before the start 
+  
+  
+1. Clone or download the repository
+2. Open  conf.p  in NginxProxy  folder change "server_name" fields with your domain names on app.conf & db.conf files 
+3. Go MPManager folder and type "install-production.sh" in terminal
+4. Fill necessary informations with your domain names that used on app.conf & db.conf
+   #### Example
+  
+   - "domain-name-used-in-app-conf.com"
+   - "www.domain-name-used-in-app-conf.com"
+   - "db.domain-name-used-in-db-conf.com"
+5. Pass the "1.Setup the Project" step and go on set the all other steps and complete the setup
+
+   In production setup, you have to use these two commands to starts and stops project;
+    - "docker-compose -f docker-compose-prod.yml up" 
+    - "docker-compose -f docker-compose-prod.yml down"
+    Otherwise, with only docker-compose up command will try to run with "vhost" option then the project would not be reached
 # Development
 
 ## System Requirements
