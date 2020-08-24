@@ -113,23 +113,27 @@ class AgentTransaction implements ITransactionProvider
         $history->trigger()->associate($commission);
         $history->save();
 
-        $this->fireBaseService->sendNotify($agent->fire_base_token, json_encode((string)$body));
+        $this->fireBaseService->sendNotify($agent->fire_base_token, json_encode($body));
 
     }
 
     private function prepareBodySuccess(Transaction $transaction)
     {
-        return Transaction::with('token', 'originalTransaction', 'originalTransaction.conflicts', 'sms', 'token.meter',
+        $transaction =   Transaction::with('token', 'originalTransaction', 'originalTransaction.conflicts', 'sms', 'token.meter',
             'token.meter.meterParameter', 'token.meter.meterType', 'paymentHistories')->where('id',
             $transaction->id)->first();
+        $transaction['firebase_notify_status'] = 1; 
     }
 
     private function prepareBodyFail(Transaction $transaction)
     {
-        return "{'message':'Transaction failed.',
-        'type':'agent_transaction',
-        'meter':$transaction->message,
-        'date':$transaction->created_at}";
+        return ['message' => 'Transaction failed', 
+                'type' => 'agent_transaction',
+                'firebase_notify_status' => -1,
+                'meter' => $transaction->message,
+                'date' => $transaction->created_at
+                ];
+      
     }
 
     /**
