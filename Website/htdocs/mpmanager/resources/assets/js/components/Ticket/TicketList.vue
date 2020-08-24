@@ -73,7 +73,19 @@
                                         :ticket="ticket"
                                         v-for="ticket in ticketService.closedList"
                                     ></ticket-item>
+                                    <md-list class="md-triple-line ticket-area">
+                                        <md-list-item class="text-center no-ticket"
+                                                      data-v-aec15928
+                                                      data-v-e03de5b4
 
+
+                                                      v-if="ticketService.closedList.length === 0 && !loading">
+                                            <h4 data-v-aec15928 data-v-e03de5b4 style="font-weight: 500;">
+                                                No closed tickets
+                                                found
+                                            </h4>
+                                        </md-list-item>
+                                    </md-list>
                                 </div>
                                 <paginate
                                     :paginatorReference="ticketService.closedPaginator"
@@ -98,7 +110,6 @@
     import Widget from '../../shared/widget'
     import Paginate from '../../shared/Paginate'
     import TicketItem from './TicketItem'
-    import { Tickets, Ticket } from '../../classes/Ticket'
     import { EventBus } from '../../shared/eventbus'
     import Filtering from './Filtering'
     import { resources } from '../../resources'
@@ -198,7 +209,6 @@
         },
         methods: {
             reloadList (subscriber, data) {
-                debugger
                 if (
                     subscriber !== 'ticketListOpened' &&
                     subscriber !== 'ticketListClosed'

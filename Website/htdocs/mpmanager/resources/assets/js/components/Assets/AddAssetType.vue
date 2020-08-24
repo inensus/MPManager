@@ -28,9 +28,10 @@
                         ></md-input>
                         <span class="md-error">{{ errors.first('asset_price') }}</span>
                     </md-field>
+                    <md-progress-bar md-mode="indeterminate" v-if="loading"/>
                 </md-card-content>
                 <md-card-actions>
-                    <md-button class="md-raised md-primary" @click="saveAsset()">
+                    <md-button class="md-raised md-primary" @click="saveAsset()" :disabled="loading">
                         Save
                     </md-button>
                     <md-button class="md-raised " @click="closeAddComponent()">
@@ -57,6 +58,7 @@
         data () {
             return {
                 assetService: new AssetService(),
+                loading: false
             }
         },
         created () {
@@ -73,25 +75,29 @@
                 }
 
                 try {
+                    this.loading = true
                     await this.assetService.createAsset()
+                    this.loading = false
                     this.alertNotify('success', 'AssetType has registered.')
+                    EventBus.$emit('AssetTypeAdded', )
                 } catch (e) {
+                    this.loading = false
                     this.alertNotify('error', e.message)
                 }
 
                 this.closeAddComponent()
             },
 
-            closeAddComponent() {
-                EventBus.$emit('addAssetTypeClosed', false);
+            closeAddComponent () {
+                EventBus.$emit('addAssetTypeClosed', false)
             },
-            alertNotify(type, message) {
+            alertNotify (type, message) {
                 this.$notify({
-                    group: "notify",
+                    group: 'notify',
                     type: type,
-                    title: type + " !",
+                    title: type + ' !',
                     text: message
-                });
+                })
             },
 
         }

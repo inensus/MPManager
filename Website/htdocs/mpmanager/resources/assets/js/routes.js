@@ -218,6 +218,12 @@ let routes = [
         meta: { layout: 'default' },
     },
     {
+        path: '/locations/add-village/:id',
+        component: require('./components/Village/AddVillage').default,
+        name: 'add-village',
+        meta: { layout: 'default' },
+    },
+    {
         path: '/locations/add-mini-grid',
         component: require('./components/MiniGrid/AddMiniGrid').default,
         name: 'add-mini-grid',

@@ -12,7 +12,8 @@
                                     <md-field :class="{'md-invalid': errors.has('form-user.name')}">
                                         <label for="name">Name</label>
 
-                                        <md-input type="text" name="name" id="name" v-model="personData.name"
+                                        <md-input type="text" name="name" id="name"
+                                                  v-model="this.maintenanceService.personData.name"
                                                   placeholder="Name"
                                                   v-validate="'required|min:3'"/>
                                         <span class="md-error">{{ errors.first('form-user.name') }}</span>
@@ -22,7 +23,8 @@
                                     <md-field :class="{'md-invalid': errors.has('form-user.surname')}">
                                         <label for="surname">Surname</label>
 
-                                        <md-input type="text" v-validate="'required'" v-model="personData.surname"
+                                        <md-input type="text" v-validate="'required'"
+                                                  v-model="this.maintenanceService.personData.surname"
                                                   id="surname"
                                                   name="surname"
                                                   placeholder="Surname"/>
@@ -36,7 +38,7 @@
                                             Grid)</label>
 
                                         <md-select v-validate="'required'" id="mini-grids" name="mini-grids"
-                                                   v-model="personData.mini_grid_id">
+                                                   v-model="this.maintenanceService.personData.mini_grid_id">
                                             <md-option value selected disabled>&#45;&#45; Select &#45;&#45;</md-option>
                                             <md-option
                                                 v-for="(miniGrid,index) in miniGrids"
@@ -57,7 +59,7 @@
                                             id="phone"
                                             name="phone"
                                             v-validate="'required'"
-                                            v-model="personData.phone"
+                                            v-model="this.maintenanceService.personData.phone"
                                             placeholder="Phone (+___ _+9___ ____)"
                                         />
                                         <span class="md-error">{{ errors.first('form-user.phone') }}</span>
@@ -68,7 +70,7 @@
                                         <label for="city">Living In</label>
 
                                         <md-select id="city" v-validate="'required'" name="city"
-                                                   v-model="personData.city_id">
+                                                   v-model="this.maintenanceService.personData.city_id">
                                             <md-option value selected disabled>&#45;&#45; Select &#45;&#45;</md-option>
                                             <md-option
                                                 v-for="(city,index) in cities"
@@ -81,11 +83,11 @@
                                     </md-field>
                                 </div>
                             </div>
+                            <md-progress-bar md-mode="indeterminate" v-if="loading"/>
                         </md-card-content>
                         <md-card-actions>
+                            <md-button class="md-primary btn-lg" :disabled="loading" type="submit">Save</md-button>
                             <md-button class="md-accent" @click="onClose()">Close</md-button>
-
-                            <md-button class="md-primary btn-lg" type="submit">Save</md-button>
                         </md-card-actions>
                     </md-card>
 
@@ -103,6 +105,8 @@
                 </stepper>
             </md-dialog-content>
         </md-dialog>
+        <redirection-modal :redirection-url="redirectionUrl" :imperative-item="imperativeItem"
+                           :dialog-active="redirectDialogActive"/>
     </div>
 
 </template>
@@ -111,19 +115,20 @@
     import Modal from '../../modal/modal'
     import widget from '../../shared/widget'
     import Stepper from '../../shared/stepper'
-    import {CityService} from '../../services/CityService'
-    import {MiniGridService} from '../../services/MiniGridService'
-    import {MaintenanceService} from '../../services/MaintenanceService'
-    import {EventBus} from '../../shared/eventbus'
+    import { CityService } from '../../services/CityService'
+    import { MiniGridService } from '../../services/MiniGridService'
+    import { MaintenanceService } from '../../services/MaintenanceService'
+    import { EventBus } from '../../shared/eventbus'
+    import RedirectionModal from '../../shared/RedirectionModal'
 
     export default {
         name: 'NewUser',
-        components: {Modal, widget, Stepper},
+        components: { Modal, widget, Stepper, RedirectionModal },
         props: {
             newUser: false
         },
 
-        data() {
+        data () {
             return {
 
                 miniGrids: [],
@@ -131,83 +136,74 @@
                 miniGridService: new MiniGridService(),
                 cityService: new CityService(),
                 maintenanceService: new MaintenanceService(),
-                personData: null,
                 ModalVisibility: false,
+                loading: false,
+                imperativeItem: 'Mini-Grid',
+                redirectDialogActive: false,
+                redirectionUrl: '/locations/add-mini-grid'
             }
         },
-        created() {
-            this.personData = this.maintenanceService.personData
-        },
-        mounted() {
+
+        mounted () {
             EventBus.$on('getLists', () => {
                 this.getMiniGrids()
                 this.getCities()
             })
             EventBus.$on('closeModal', (data) => {
-
                 this.ModalVisibility = false
-
             })
         },
         methods: {
 
-            getMiniGrids() {
-                this.miniGridService.getMiniGrids().then(data => {
+            async getMiniGrids () {
 
-                    this.miniGrids = data
-
-                }).catch(e => {
-
-                    this.alertNotify('error', e)
-                })
+                try {
+                    this.miniGrids = await this.miniGridService.getMiniGrids()
+                    if (this.miniGrids.length < 10000) {
+                        this.redirectDialogActive = true
+                    }
+                } catch (e) {
+                    this.alertNotify('error', e.message)
+                }
             },
-
-            getCities() {
-                this.cityService.getCities().then(data => {
-                    this.cities = data
-
-                }).catch(e => {
-
-                    this.alertNotify('error', e)
-                })
+            async getCities () {
+                try {
+                    this.cities = await this.cityService.getCities()
+                } catch (e) {
+                    this.alertNotify('error', e.message)
+                }
 
             },
-            async submitNewUserForm() {
+            async submitNewUserForm () {
 
                 let validator = await this.$validator.validateAll('form-user')
                 if (!validator) {
 
                     return
                 }
-                this.maintenanceService.createMaintenance(this.personData).then(response => {
+                try {
+                    this.loading = true
+                    await this.maintenanceService.createMaintenance(this.personData)
+                    this.loading = false
                     this.alertNotify('success', 'Maintenance Person Created')
-                    this.personData = {
-                        customer_type: 'maintenance',
-                        name: null,
-                        surname: null,
-                        phone: null,
-                        city_id: null,
-                        mini_grid_id: null,
-                        sex: 'male'
-                    }
+                    this.maintenanceService.resetPersonData()
                     this.onClose()
-                }).catch((e) => {
-
+                } catch (e) {
+                    this.loading = false
                     if (e.status_code === 409) {
                         this.alertNotify('warn', e.message)
                         this.ModalVisibility = true
                     } else {
                         this.alertNotify('error', e.message)
                     }
-
-                })
+                }
 
             },
 
-            onClose() {
+            onClose () {
                 EventBus.$emit('newUserClosed', false)
             },
-            alertNotify(type, message) {
+            alertNotify (type, message) {
                 this.$notify({
                     group: 'notify',
                     type: type,

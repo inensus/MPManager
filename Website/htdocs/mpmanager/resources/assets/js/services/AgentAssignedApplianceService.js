@@ -49,13 +49,12 @@ export class AgentAssignedApplianceService {
                 return new ErrorHandler(response.error, 'http', response.status)
             }
         } catch (e) {
-            let errorMessage = e.response.data.data
+            let errorMessage = e.response.data.data.message
             return new ErrorHandler(errorMessage, 'http')
         }
     }
 
     async assignAppliance (newAppliance, userId, AgentId) {
-
         try {
             let assignAppliancePM = {
                 agent_id: AgentId,
@@ -70,7 +69,7 @@ export class AgentAssignedApplianceService {
                 return new ErrorHandler(response.error, 'http', response.status)
             }
         } catch (e) {
-            let errorMessage = e.response.data.data
+            let errorMessage = e.response.data.data.message
             return new ErrorHandler(errorMessage, 'http')
         }
     }

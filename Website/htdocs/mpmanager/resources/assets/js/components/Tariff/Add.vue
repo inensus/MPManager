@@ -4,8 +4,6 @@
         v-if="showAdd"
         title="Add New Tariff"
     >
-        <password-protection/>
-
         <md-card>
 
             <md-card-content>
@@ -235,10 +233,11 @@
 
                     </div>
                 </div>
+                <md-progress-bar md-mode="indeterminate" v-if="loading"/>
             </md-card-content>
 
             <md-card-actions>
-                <md-button role="button" class="md-raised md-primary" @click="saveTariff">Save
+                <md-button role="button" class="md-raised md-primary" :disabled="loading" @click="saveTariff">Save
                 </md-button>
                 <md-button role="button" class="md-raised" @click="hide">Close</md-button>
             </md-card-actions>
@@ -266,7 +265,8 @@
                 tariffService: new TariffService(),
                 components: [],
                 socialOptions: false,
-                socialTariff: null
+                socialTariff: null,
+                loading: false,
             }
         },
         created () {
@@ -304,14 +304,18 @@
 
                 if (validatorTariff && validatorAccessRate && validatorComponent && validatorSocial) {
                     try {
-                        this.hide()
+                        this.loading = true
+
                         this.tariffService.setCurrency(this.appConfig.currency)
                         this.tariffService.setAccessRate(this.hasAccessRate, this.accessRate)
                         this.tariff = await this.tariffService.createTariff()
+                        this.loading = false
+                        this.hide()
                         EventBus.$emit('tariffAdded', this.tariff)
                         this.alertNotify('success', 'New tariff registered successfully.')
 
                     } catch (e) {
+                        this.loading = false
                         this.alertNotify('error', e.message)
                     }
                 }

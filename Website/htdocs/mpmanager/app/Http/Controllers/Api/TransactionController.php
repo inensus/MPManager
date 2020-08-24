@@ -216,8 +216,6 @@ class TransactionController extends Controller
     }
 
 
-
-
     /**
      * Cancelled List
      * A list of cancelled transactions
@@ -288,7 +286,8 @@ class TransactionController extends Controller
     {
         return new ApiResource(
             Transaction::with('token', 'originalTransaction', 'originalTransaction.conflicts', 'sms', 'token.meter',
-                'token.meter.meterParameter', 'token.meter.meterType', 'paymentHistories')->where('id', $id)->first()
+                'token.meter.meterParameter', 'token.meter.meterType', 'paymentHistories',
+                'meter.meterParameter.owner')->where('id', $id)->first()
         );
     }
 

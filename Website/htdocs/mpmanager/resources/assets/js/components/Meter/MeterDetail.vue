@@ -140,34 +140,36 @@
                 >
                     <md-card>
                         <md-card-content>
-                            <md-table>
-                                <md-table-row>
-                                    <md-table-head>ID</md-table-head>
-                                    <md-table-head>Provider</md-table-head>
-                                    <md-table-head>Amount</md-table-head>
-                                    <md-table-head>Paid for</md-table-head>
-                                    <md-table-head>In Return</md-table-head>
-                                    <md-table-head>Date</md-table-head>
-                                </md-table-row>
-                                <md-table-row v-for="token in transactions.tokens" :key="token.id">
-                                    <md-table-cell v-text="token.transaction.id"></md-table-cell>
-                                    <md-table-cell
-                                        v-text="token.transaction.original_transaction_type == 'vodacom_transaction' ? 'Vodacom' :'Airtel'"
-                                    ></md-table-cell>
-                                    <md-table-cell v-text="token.transaction.amount"></md-table-cell>
-                                    <md-table-cell
-                                        v-if="token.paid_for_type === 'token'"
-                                    >Token {{token.paid_for.token}}
-                                    </md-table-cell>
-                                    <md-table-cell v-else>Access Rate</md-table-cell>
-                                    <md-table-cell
-                                        v-if="token.paid_for_type === 'token'"
-                                        v-text="token.paid_for.energy + 'kWh'"
-                                    ></md-table-cell>
-                                    <md-table-cell v-else>-</md-table-cell>
-                                    <md-table-cell v-text="token.created_at"></md-table-cell>
-                                </md-table-row>
-                            </md-table>
+                            <div v-if="transactions.tokens.length>0">
+                                <md-table>
+                                    <md-table-row>
+                                        <md-table-head v-for="(item, index) in headers" :key="index">{{item}}
+                                        </md-table-head>
+                                    </md-table-row>
+                                    <md-table-row v-for="token in transactions.tokens" :key="token.id">
+                                        <md-table-cell v-text="token.transaction.id"></md-table-cell>
+                                        <md-table-cell
+                                            v-text="token.transaction.original_transaction_type == 'vodacom_transaction' ? 'Vodacom' :'Airtel'"
+                                        ></md-table-cell>
+                                        <md-table-cell v-text="token.transaction.amount"></md-table-cell>
+                                        <md-table-cell
+                                            v-if="token.paid_for_type === 'token'"
+                                        >Token {{token.paid_for.token}}
+                                        </md-table-cell>
+                                        <md-table-cell v-else>Access Rate</md-table-cell>
+                                        <md-table-cell
+                                            v-if="token.paid_for_type === 'token'"
+                                            v-text="token.paid_for.energy + 'kWh'"
+                                        ></md-table-cell>
+                                        <md-table-cell v-else>-</md-table-cell>
+                                        <md-table-cell v-text="token.created_at"></md-table-cell>
+                                    </md-table-row>
+                                </md-table>
+                            </div>
+
+                            <div v-else>
+                                <no-table-data :headers="headers" :tableName="tableName"/>
+                            </div>
                         </md-card-content>
                     </md-card>
                 </widget>
@@ -176,7 +178,7 @@
 
         <div style="margin-top: 1rem;"></div>
 
-        <widget :title="'Meter Readings'" class="col-sm-12" :id="'meter-readings'">
+        <widget :title="'Meter Readings'" v-if="meter.meterType.online>0" class="col-sm-12" :id="'meter-readings'">
             <div role="menu" slot="tabbar">
                 <button
                     class="md-button dropdown-toggle btn-xs"
@@ -268,12 +270,13 @@
     import { resources } from '../../resources'
     import { ConnectionTypes } from '../../classes/connection/ConnectionTypes'
     import { currency } from '../../mixins/currency'
+    import NoTableData from '../../shared/NoTableData'
 
     const debounce = require('debounce')
 
     export default {
         name: 'MeterDetail',
-        components: { Modal, Widget },
+        components: { Modal, Widget, NoTableData },
         mixins: [currency],
         created () {
             EventBus.$on('pageLoaded', this.reloadList)
@@ -289,7 +292,6 @@
             this.consumptions = new Consumptions(this.$route.params.id)
             this.meter = new Meter(this.$route.params.id)
             this.meter.detail().then(() => {
-
                 this.meter.revenue()
             })
 
@@ -344,7 +346,9 @@
                     today: null,
                     difference: 0
                 },
-                loading: true
+                loading: true,
+                headers: ['ID', 'Provider', 'Amount', 'Paid for', 'In Return', 'Date'],
+                tableName: 'Meter Transactions'
             }
         },
         watch: {

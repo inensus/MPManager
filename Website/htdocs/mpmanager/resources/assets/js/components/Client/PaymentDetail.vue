@@ -4,23 +4,35 @@
             <div slot="tabbar">
                 <md-field>
                     <label class="period-style">Period</label>
-                    <md-select class="period-style md-has-value" name="period" id="period" v-model="period" @md-selected="getFlow">
-                        <md-option  value="D">Daily</md-option>
-                        <md-option  value="W">Weekly</md-option>
-                        <md-option  value="M">Monthly</md-option>
-                        <md-option  value="Y">Annually</md-option>
+                    <md-select class="period-style md-has-value" name="period" id="period" v-model="period"
+                               @md-selected="getFlow">
+                        <md-option value="D">Daily</md-option>
+                        <md-option value="W">Weekly</md-option>
+                        <md-option value="M">Monthly</md-option>
+                        <md-option value="Y">Annually</md-option>
 
                     </md-select>
                 </md-field>
             </div>
             <div class="md-layout md-gutter">
                 <div class="md-layout-item md-size-95">
-                    <GChart
-                        type="ColumnChart"
-                        :data="chartData"
-                        :options="chartOptions"
-                        :resizeDebounce="500"
-                    />
+                    <div v-if="chartData.length>1000000000000000">
+                        <GChart
+                            type="ColumnChart"
+                            :data="chartData"
+                            :options="chartOptions"
+                            :resizeDebounce="500"
+                        />
+                    </div>
+                    <div v-else>
+
+                        <div style="width: 100%!important;height: 3rem">
+                            <span>There is no payment overview.</span>
+                        </div>
+
+
+                    </div>
+
                 </div>
             </div>
 
@@ -44,7 +56,7 @@
             return {
                 contentWidth: 0,
                 personId: null,
-                period:'M',
+                period: 'M',
                 periodName: 'Monthly',
                 chartData: [],
                 chartOptions: {
@@ -114,12 +126,14 @@
         padding-right: 2.5rem !important;
         padding-left: 2.5rem !important;
     }
+
     .period-style {
         color: white !important;
         -webkit-text-fill-color: white !important;
     }
-    #period input[type="text"]{
-        color: white!important;
+
+    #period input[type="text"] {
+        color: white !important;
         -webkit-text-fill-color: white !important;
     }
 </style>

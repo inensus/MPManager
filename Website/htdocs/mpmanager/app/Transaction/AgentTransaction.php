@@ -93,7 +93,8 @@ class AgentTransaction implements ITransactionProvider
             'agent_id' => $agent->id,
             'amount' => -$transaction->amount,
             'transaction_id' => $transaction->id,
-
+            'available_balance'=>$agent->balance,
+            'due_to_supplier'=>$agent->due_to_energy_supplier
         ]);
         $history->trigger()->associate($this->agentTransaction);
         $history->save();
@@ -106,6 +107,8 @@ class AgentTransaction implements ITransactionProvider
             'agent_id' => $agent->id,
             'amount' => ($transaction->amount * $commission->energy_commission),
             'transaction_id' => $transaction->id,
+            'available_balance'=>$agent->commission_revenue,
+            'due_to_supplier'=>$agent->due_to_energy_supplier
         ]);
         $history->trigger()->associate($commission);
         $history->save();
