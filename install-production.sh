@@ -22,16 +22,20 @@ function setup_tls_parameters() {
 
 function should_renew_certificate() {
   local data_path=$1
-  local domains=("$2") # This will convert the string values into an array
+  local domains=$2 
+
   # Check if certificates already exists
-  if [ -d "$data_path" ]; then
-    read -p "Existing data found for ${domains[*]}. Continue and replace existing certificate? (y/N) " decision
-    if [ "$decision" != "Y" ] && [ "$decision" != "y" ]; then
+  if [ -d "$data_path/conf/live/${domains}" ]; then    
+    read -p "Existing data found for ${domains}. Continue and replace existing certificate? (y/N) " decision
+      if [ "$decision" != "Y" ] && [ "$decision" != "y" ]; then
       echo 0
     else
       echo 1
-    fi
+      fi
+  else
+    echo 1
   fi
+
 
 }
 function make_dummy_certificate() {
@@ -138,30 +142,30 @@ if [ "$decision" != "Y" ] && [ "$decision" != "y" ] && [ "$decision" != "" ]; th
 else
   domainsDone=0
 
-  echo ""
-  echo "Please add two entries for the main domain(example.com, wwww.example.com)"
-  echo ""
   while [ $domainsDone == 0 ]; do
-    read -p "Enter domain name and press [ENTER]:" domain
+    read -p "Enter domain name (without www) and press [ENTER]:" domain
     if [ "$domain" == "" ]; then
         echo "Please enter a valid domain"
         continue
     fi
     domains_list+=($domain)
+    domains_list+=("www.$domain")
+    domains_list+=("db.$domain")
     for key in ${!domains_list[*]}; do
       printf "%4d: %s\n" $key ${domains_list[$key]}
     done
-    read -p "Add new domain name? (y/n) " newDomain
-    if [ "$newDomain" != "Y" ] && [ "$newDomain" != "y" ]; then
+    read -p "Are the inputs correct? (y/n) " newDomain
+    if [ "$newDomain" != "N" ] && [ "$newDomain" != "n" ]; then
+    
+      domainsDone=1
       break
+    else 
+        domains_list=()
     fi
   done
   read -p "Enter a valid email address and press [ENTER]:" email
   echo "Email address :" $email
-  if [ "$email" == "" ]; then
-        echo "Please enter a valid email"
-  fi
-
+ 
   setup_tls_parameters $data_path
 
   # Create dummy certificates if needed.
