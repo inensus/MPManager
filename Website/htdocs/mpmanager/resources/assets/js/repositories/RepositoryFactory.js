@@ -1,68 +1,72 @@
-import AssetRepository from './AssetRepository'
-import TariffRepository from './TariffRepository'
-import TicketRepository from './TicketRepository'
-import MaintenanceRepository from './MaintenanceRepository'
-import SmsRepository from './SmsRepository'
-import MiniGridRepository from './MiniGridRepository'
-import CityRepository from './CityRepository'
-import ConnectionTypeRepository from './ConnectionTypeRepository'
-import ConnectionGroupsRepository from './ConnectionGroupsRepository'
-
-import RestrictionRepository from './RestrictionRepository'
-import MappingRepository from './MappingRepository'
-import ClusterRepository from './ClusterRepository'
-import UserRepository from './UserRepository'
-import MeterRepository from './MeterRepository'
-import PersonRepository from './PersonRepository'
-import AuthenticationRepository from './AuthenticationRepository'
-import TransactionRepository from './TransactionRepository'
-import RevenueRepository from './RevenueRepository'
 import AgentRepository from './AgentRepository'
-import CountryRespository from './CountryRespository'
 import AgentCommissionRepository from './AgentCommissionRepository'
 import AgentAssignedApplianceRepository from './AgentAssignedApplianceRepository'
 import AgentBalanceHistoryRepository from './AgentBalanceHistoryRepository'
 import AgentChargeRepository from './AgentChargeRepository'
 import AgentSoldApplianceRepository from './AgentSoldApplianceRepository'
 import AgentTransactionRepository from './AgentTransactionRepository'
+import AgentReceiptRepository from './AgentReceiptRepository'
+import AssetRepository from './AssetRepository'
+import AssetPersonRepository from './AssetPersonRepository'
+import AssetRateRepository from './AssetRateRepository'
+import AuthenticationRepository from './AuthenticationRepository'
+import CountryRespository from './CountryRespository'
+import CityRepository from './CityRepository'
+import ConnectionTypeRepository from './ConnectionTypeRepository'
+import ConnectionGroupsRepository from './ConnectionGroupsRepository'
+import ClusterRepository from './ClusterRepository'
+import MaintenanceRepository from './MaintenanceRepository'
+import MappingRepository from './MappingRepository'
+import MeterRepository from './MeterRepository'
+import MiniGridRepository from './MiniGridRepository'
+import PersonRepository from './PersonRepository'
+import RevenueRepository from './RevenueRepository'
+import RestrictionRepository from './RestrictionRepository'
+import SmsRepository from './SmsRepository'
+import TariffRepository from './TariffRepository'
+import TicketRepository from './TicketRepository'
+import TransactionRepository from './TransactionRepository'
 import TicketCommentRepository from './TicketCommentRepository'
 import TicketTrelloRepository from './TicketTrelloRepository'
 import TicketUserRepository from './TicketUserRepository'
 import TicketLabelRepository from './TicketLabelRepository'
-import AgentReceiptRepository from './AgentReceiptRepository'
+import UserRepository from './UserRepository'
+
 
 const repositories = {
     'asset': AssetRepository,
-    'tariff': TariffRepository,
-    'ticket': TicketRepository,
-    'maintenance': MaintenanceRepository,
-    'sms': SmsRepository,
-    'minigrid': MiniGridRepository,
-    'city': CityRepository,
-    'map': MappingRepository,
-    'user': UserRepository,
+    'assetPerson':AssetPersonRepository,
+    'assetRate':AssetRateRepository,
+    'authentication': AuthenticationRepository,
+    'agent': AgentRepository,
+    'assignedAppliance': AgentAssignedApplianceRepository,
+    'agentTransactions': AgentTransactionRepository,
+    'agentReceipt':AgentReceiptRepository,
+    'balanceHistory': AgentBalanceHistoryRepository,
+    'balanceCharge': AgentChargeRepository,
     'cluster': ClusterRepository,
     'connectionTypes': ConnectionTypeRepository,
     'connectionGroups': ConnectionGroupsRepository,
-    'restriction': RestrictionRepository,
+    'city': CityRepository,
+    'country': CountryRespository,
+    'commission': AgentCommissionRepository,
+    'maintenance': MaintenanceRepository,
+    'minigrid': MiniGridRepository,
+    'map': MappingRepository,
     'meter': MeterRepository,
     'person': PersonRepository,
-    'authentication': AuthenticationRepository,
-    'transaction': TransactionRepository,
     'revenue': RevenueRepository,
+    'restriction': RestrictionRepository,
+    'sms': SmsRepository,
+    'soldAppliance': AgentSoldApplianceRepository,
+    'transaction': TransactionRepository,
+    'tariff': TariffRepository,
+    'ticket': TicketRepository,  
     'ticketComment': TicketCommentRepository,
     'ticketTrello': TicketTrelloRepository,
     'ticketUser': TicketUserRepository,
     'ticketLabel': TicketLabelRepository,
-    'agent': AgentRepository,
-    'country': CountryRespository,
-    'commission': AgentCommissionRepository,
-    'assignedAppliance': AgentAssignedApplianceRepository,
-    'balanceHistory': AgentBalanceHistoryRepository,
-    'balanceCharge': AgentChargeRepository,
-    'soldAppliance': AgentSoldApplianceRepository,
-    'agentTransactions': AgentTransactionRepository,
-    'agentReceipt':AgentReceiptRepository
+    'user': UserRepository,
 }
 
 export default {
