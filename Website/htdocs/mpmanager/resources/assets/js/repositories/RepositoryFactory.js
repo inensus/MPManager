@@ -30,6 +30,7 @@ import TicketTrelloRepository from './TicketTrelloRepository'
 import TicketUserRepository from './TicketUserRepository'
 import TicketLabelRepository from './TicketLabelRepository'
 import AgentReceiptRepository from './AgentReceiptRepository'
+import MeterTypeRepository from './MeterTypeRepository'
 
 const repositories = {
     'asset': AssetRepository,
@@ -62,7 +63,8 @@ const repositories = {
     'balanceCharge': AgentChargeRepository,
     'soldAppliance': AgentSoldApplianceRepository,
     'agentTransactions': AgentTransactionRepository,
-    'agentReceipt':AgentReceiptRepository
+    'agentReceipt':AgentReceiptRepository,
+    'meterType': MeterTypeRepository
 }
 
 export default {
