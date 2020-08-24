@@ -27,7 +27,6 @@ function should_renew_certificate() {
   if [ -d "$data_path" ]; then
     read -p "Existing data found for ${domains[*]}. Continue and replace existing certificate? (y/N) " decision
     if [ "$decision" != "Y" ] && [ "$decision" != "y" ]; then
-
       echo 0
     else
       echo 1
@@ -115,14 +114,39 @@ data_path="./certbot"
 email=""  # Adding a valid address is strongly recommended
 staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
 check_if_docker_compose_installed
+echo "###################################################################################"
+echo "#                               IMPORTANT !!                                      #"
+echo "###################################################################################"
+echo "# This script will setup SSL Certificates that are required for the Prod. mode    #"
+echo "# If you already confirgured your Certificates, you can skip the first part and   #"
+echo "# start the web services.                                                         #"
+echo "###################################################################################"
+echo ""
 
-read -p "Micro Power Manager starting with production mode. Continue set up certification? (n/Y) " decision
-if [ "$decision" != "Y" ] && [ "$decision" != "y" ]; then
+read -p "MicroPowerManager starting with production mode. Continue set up certification? (n/Y) " decision
+if [ "$decision" != "Y" ] && [ "$decision" != "y" ] && [ "$decision" != "" ]; then
+  echo "Do you want to start only the web services? "
+  read -p "(N/y)" webservice
+
+  if [ "$webservice" == "Y" ] || [ "$webservice" == "y" ]; then
+    echo " Starting web services please wait."
+    echo $( docker-compose -f docker-compose-prod.yml up --build --force-recreate -d )
+    echo "Web services started "
+  fi
+
   exit
 else
   domainsDone=0
+
+  echo ""
+  echo "Please add two entries for the main domain(example.com, wwww.example.com)"
+  echo ""
   while [ $domainsDone == 0 ]; do
     read -p "Enter domain name and press [ENTER]:" domain
+    if [ "$domain" == "" ]; then
+        echo "Please enter a valid domain"
+        continue
+    fi
     domains_list+=($domain)
     for key in ${!domains_list[*]}; do
       printf "%4d: %s\n" $key ${domains_list[$key]}
@@ -134,6 +158,9 @@ else
   done
   read -p "Enter a valid email address and press [ENTER]:" email
   echo "Email address :" $email
+  if [ "$email" == "" ]; then
+        echo "Please enter a valid email"
+  fi
 
   setup_tls_parameters $data_path
 
@@ -151,7 +178,9 @@ else
     fi
   done
   if [ "$n_renewals" -eq "0" ]; then
-    echo "No new renewals, quitting."
+    echo "No new renewals, starting web services and quiting."
+    echo $( docker-compose -f docker-compose-prod.yml up --build --force-recreate -d )
+    echo "Web services started "
     exit
   fi
 
