@@ -39,7 +39,7 @@ class CalinReadMeter implements IMeterReader
         try {
             $this->api = new SoapClient(config('services.calin.meter.api'), ['keep_alive' => false]);
         } catch (\Exception $exception) {
-
+            Log::debug('You\'re not able to read out CALIN meters');
         }
         $this->consumption = $consumption;
     }
