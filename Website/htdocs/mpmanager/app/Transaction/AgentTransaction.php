@@ -79,14 +79,14 @@ class AgentTransaction implements ITransactionProvider
     public function sendResult(bool $requestType, Transaction $transaction): void
     {
         $this->agentTransaction->update(['status' => $requestType === true ? 1 : -1]);
-
+        $agent = $this->agentTransaction->agent;
         if (!$requestType) {
+            $body = $this->prepareBodyFail($transaction);
+            $this->fireBaseService->sendNotify($agent->fire_base_token, json_encode((string)$body));
             return;
         }
 
-        $body = $this->prepareRequest($transaction);
-
-        $agent = $this->agentTransaction->agent;
+        $body = $this->prepareBodySuccess($transaction);
 
 
         $history = AgentBalanceHistory::query()->make([
@@ -113,17 +113,27 @@ class AgentTransaction implements ITransactionProvider
         $history->trigger()->associate($commission);
         $history->save();
 
-
-            $this->fireBaseService->sendNotify($agent->fire_base_token, json_encode((string)$body));
-
+        $this->fireBaseService->sendNotify($agent->fire_base_token, json_encode($body));
 
     }
 
-    private function prepareRequest(Transaction $transaction)
+    private function prepareBodySuccess(Transaction $transaction)
     {
-        return Transaction::with('token', 'originalTransaction', 'originalTransaction.conflicts', 'sms', 'token.meter',
+        $transaction =   Transaction::with('token', 'originalTransaction', 'originalTransaction.conflicts', 'sms', 'token.meter',
             'token.meter.meterParameter', 'token.meter.meterType', 'paymentHistories')->where('id',
             $transaction->id)->first();
+        $transaction['firebase_notify_status'] = 1; 
+    }
+
+    private function prepareBodyFail(Transaction $transaction)
+    {
+        return ['message' => 'Transaction failed', 
+                'type' => 'agent_transaction',
+                'firebase_notify_status' => -1,
+                'meter' => $transaction->message,
+                'date' => $transaction->created_at
+                ];
+      
     }
 
     /**
