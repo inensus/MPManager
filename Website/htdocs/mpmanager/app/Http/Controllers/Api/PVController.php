@@ -31,7 +31,7 @@ class PVController extends Controller
     }
 
 
-    public function showReadings(Request $request, $miniGridId)
+    public function showReadings(Request $request, $miniGridId): ApiResource
     {
         $pvReadings = $this->pv->newQuery()
             ->where('mini_grid_id', $miniGridId);
@@ -61,10 +61,7 @@ class PVController extends Controller
      */
     public function store(PVRequest $request, Response $response)
     {
-
-        $miniGridId = $request->get('mini_grid_id');
-        $nodeId = $request->get('node_id');
-        $pv = $request->get('pv');
+        $pv = $request->input('pv');
 
         if (!array_key_exists('daily', $pv) || !array_key_exists('total', $pv)) {
             return $response->setStatusCode(422)->setContent([
@@ -75,24 +72,24 @@ class PVController extends Controller
             ]);
         }
 
-        $daily_gen_energy = (double)(str_replace(',', '.', $pv['daily']['energy']));
-        $total_gen_energy = (double)(str_replace(',', '.', $pv['total']['energy']));
+        $dailyGeneratedEnergy = $this->formatEnergyData($pv['daily']['energy']);
+        $totalGeneratedEnergy = $this->formatEnergyData($pv['total']['energy']);
 
 
-        $this->pv::create([
-            'mini_grid_id' => $request->get('mini_grid_id'),
-            'node_id' => $request->get('node_id'),
-            'device_id' => $request->get('device_id'),
-            'reading_time' => $request->get('time_stamp'),
-            'daily' => $daily_gen_energy,
-            'daily_unit' => $pv['daily']['unit'],
-            'total' => $total_gen_energy,
-            'total_unit' => $pv['total']['unit'],
-            'new_generated_energy' => 0,
-            'new_generated_energy_unit' => 'Wh'
-        ]);
-
-        return;
+        $this->pv
+            ->newQuery()
+            ->create([
+                'mini_grid_id' => $request->input('mini_grid_id'),
+                'node_id' => $request->input('node_id'),
+                'device_id' => $request->input('device_id'),
+                'reading_date' => Carbon::createFromFormat('d.m.Y H:i', $pv['time_stamp'])->toDateTimeString(),
+                'daily' => $dailyGeneratedEnergy,
+                'daily_unit' => $pv['daily']['unit'],
+                'total' => $totalGeneratedEnergy,
+                'total_unit' => $pv['total']['unit'],
+                'new_generated_energy' => 0,
+                'new_generated_energy_unit' => 'Wh'
+            ]);
     }
 
     /**
@@ -102,10 +99,16 @@ class PVController extends Controller
      * @param Request $request
      * @return ApiResource
      */
-    public function show($miniGridId, Request $request)
+    public function show($miniGridId, Request $request): ApiResource
     {
-        $limit = $request->get('limit') ?? 50;
-        $miniGridPVs = $this->pv->where('mini_grid_id', $miniGridId)->latest()->take($limit)->get()->reverse();
+        $limit = $request->get('limit') ?? 96;
+        $miniGridPVs = $this->pv->newQuery()
+            ->where('mini_grid_id', $miniGridId)
+            ->latest()
+            ->take($limit)
+            ->get()
+            ->reverse()
+            ->values();
 
         foreach ($miniGridPVs as $index => $miniGridPV) {
             $miniGridPVs[$index]['daily'] = PowerConverter::convert($miniGridPV->daily, $miniGridPV->daily_unit, 'kWh');
@@ -119,4 +122,13 @@ class PVController extends Controller
         return new ApiResource($miniGridPVs);
 
     }
+
+
+    private function formatEnergyData($val): float
+    {
+        $val = (double)(str_replace('.', '', $val));
+        $val = (double)(str_replace(',', '.', $val));
+        return $val;
+    }
+
 }

@@ -26,12 +26,12 @@
                                 <md-option
                                     :value="assetType.id"
                                     v-for="assetType in assetService.list"
+
                                     :key="assetType.id"
                                 >{{assetType.name}}
                                 </md-option>
                             </md-select>
                         </md-field>
-
                         <md-field :class="{'md-invalid': errors.has('Cost')}">
                             <label for="Cost">Cost (TZS)</label>
                             <md-input type="number"
@@ -156,6 +156,7 @@
                             </md-table-cell>
                         </md-table-row>
                     </md-table>
+
                 </div>
                 <div class="md-layout-item md-size-100">
 
@@ -169,8 +170,6 @@
                 </div>
 
             </div>
-
-
             <md-dialog-actions>
                 <md-button class="md-accent" @click="toggleModal()">Close</md-button>
             </md-dialog-actions>
@@ -180,8 +179,8 @@
 
 <script>
     import Widget from '../../shared/widget'
-    import { resources } from '../../resources'
 
+    import { resources } from '../../resources'
     import { currency } from '../../mixins/currency'
     import ConfirmationBox from '../../shared/ConfirmationBox'
     import { EventBus } from '../../shared/eventbus'

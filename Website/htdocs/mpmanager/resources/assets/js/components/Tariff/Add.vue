@@ -4,8 +4,6 @@
         v-if="showAdd"
         title="Add New Tariff"
     >
-        <password-protection/>
-
         <md-card>
 
             <md-card-content>
@@ -27,7 +25,8 @@
                             </div>
                             <div class="md-layout-item md-large-size-50 md-medium-size-50 md-small-size-50 ">
                                 <md-field :class="{'md-invalid': errors.has('Tariff-Form.kwh_price')}">
-                                    <label for="kwh_price">kWh Price </label>
+                                    <label for="kwh_price">kWh Price (last two digits represents two decimals ex: 100 =
+                                        1.00)</label>
                                     <md-input id="kwh_price"
                                               name="kwh_price"
                                               v-model="tariff.price"
@@ -174,7 +173,7 @@
                                         class="social-input"
                                     />
                                     <span class="md-error">{{ errors.first('Social-Form.social_price') }}</span>
-                                    <span class="md-suffix">TZS</span>
+                                    <span class="md-suffix">{{appConfig.currency}}</span>
                                 </md-field>
                             </div>
                             <div class="md-layout-item md-large-size-50 md-medium-size-50 md-small-size-50 "></div>
@@ -234,10 +233,11 @@
 
                     </div>
                 </div>
+                <md-progress-bar md-mode="indeterminate" v-if="loading"/>
             </md-card-content>
 
             <md-card-actions>
-                <md-button role="button" class="md-raised md-primary" @click="saveTariff">Save
+                <md-button role="button" class="md-raised md-primary" :disabled="loading" @click="saveTariff">Save
                 </md-button>
                 <md-button role="button" class="md-raised" @click="hide">Close</md-button>
             </md-card-actions>
@@ -249,7 +249,6 @@
 
 <script>
     import { EventBus } from '../../shared/eventbus'
-    import { AccessRate } from '../../classes/AccessRate'
     import PasswordProtection from '../PasswordProtection'
     import Widget from '../../shared/widget'
     import { TariffService } from '../../services/TariffService'
@@ -266,7 +265,8 @@
                 tariffService: new TariffService(),
                 components: [],
                 socialOptions: false,
-                socialTariff: null
+                socialTariff: null,
+                loading: false,
             }
         },
         created () {
@@ -282,6 +282,7 @@
             },
             show () {
                 this.showAdd = true
+                this.tariffService.tariff = this.tariffService.initTariff()
                 this.tariff = this.tariffService.tariff
                 this.accessRate = this.tariffService.accessRate
             },
@@ -303,14 +304,18 @@
 
                 if (validatorTariff && validatorAccessRate && validatorComponent && validatorSocial) {
                     try {
-                        this.hide()
+                        this.loading = true
 
+                        this.tariffService.setCurrency(this.appConfig.currency)
                         this.tariffService.setAccessRate(this.hasAccessRate, this.accessRate)
                         this.tariff = await this.tariffService.createTariff()
+                        this.loading = false
+                        this.hide()
                         EventBus.$emit('tariffAdded', this.tariff)
                         this.alertNotify('success', 'New tariff registered successfully.')
 
                     } catch (e) {
+                        this.loading = false
                         this.alertNotify('error', e.message)
                     }
                 }

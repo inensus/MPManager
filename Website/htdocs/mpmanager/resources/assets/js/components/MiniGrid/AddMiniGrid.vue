@@ -1,6 +1,5 @@
 <template>
     <div>
-        <password-protection></password-protection>
         <widget
             title="Add New Mini-Grid"
             color="green">
@@ -97,16 +96,17 @@
                         />
                     </div>
                 </md-card-content>
-                <md-progress-bar md-mode="indeterminate" class="md-progress-bar" v-if="sending"/>
+                <md-progress-bar md-mode="indeterminate" class="md-progress-bar" v-if="loading"/>
 
             </md-card>
         </widget>
+        <redirection-modal :redirection-url="redirectionUrl" :imperative-item="imperativeItem"
+                           :dialog-active="redirectDialogActive"/>
     </div>
 </template>
 
 <script>
     import marker from 'leaflet/dist/images/marker-icon.png'
-
     import Widget from '../../shared/widget'
     import PasswordProtection from '../PasswordProtection'
     import { ClusterService } from '../../services/ClusterService'
@@ -114,6 +114,7 @@
     import { MappingService } from '../../services/MappingService'
     import { EventBus } from '../../shared/eventbus'
     import { MiniGridService } from '../../services/MiniGridService'
+    import RedirectionModal from '../../shared/RedirectionModal'
 
     export default {
         name: 'AddMiniGrid',
@@ -121,6 +122,7 @@
             Widget,
             PasswordProtection,
             Map,
+            RedirectionModal
         },
         data () {
             return {
@@ -137,13 +139,15 @@
                     lat: null,
                     lon: null
                 },
-                sending: false,
+                loading: false,
                 clusterName: '',
                 clusters: [],
                 selectedClusterId: '',
                 miniGridId: null,
-                markerLocations: []
-
+                markerLocations: [],
+                redirectionUrl: '/locations/add-cluster',
+                imperativeItem: 'Cluster',
+                redirectDialogActive: false
             }
         },
         mounted () {
@@ -155,7 +159,6 @@
             EventBus.$on('markerError', (message) => {
                 this.$swal({
                     type: 'warn',
-
                     text: message,
                 })
 
@@ -167,6 +170,8 @@
                     this.clusters = await this.clusterService.getClusters()
                     if (this.clusters.length > 0) {
                         this.selectedClusterId = this.clusters[this.clusters.length - 1].id
+                    } else {
+                        this.redirectDialogActive = true
                     }
                 } catch (e) {
                     this.alertNotify('error', e.message)
@@ -191,16 +196,18 @@
 
             },
             async saveMiniGrid () {
-                this.sending = true
+
                 let validator = await this.$validator.validateAll()
-                if (validator) {
+                let validatorPoints = await this.$validator.validateAll('Points-Form')
+                if (validator && validatorPoints) {
                     try {
-                        this.sending = false
-
-                        await this.miniGridService.createMiniGrid(this.miniGridName, this.clusterId, this.miniGridLatLng)
+                        this.loading = true
+                        const miniGrid = await this.miniGridService.createMiniGrid(this.miniGridName, this.clusterId, this.miniGridLatLng)
                         this.alertNotify('success', 'The Mini-Grid you add is stored successfully.')
-
+                        this.loading = false
+                        await this.$router.replace('/dashboards/mini-grid/' + miniGrid.data.data.id)
                     } catch (e) {
+                        this.loading = false
                         this.alertNotify('error', e.message)
                     }
                 }

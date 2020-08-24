@@ -140,7 +140,6 @@ class AssetRateChecker extends Command
         event('sms.send',
             [
                 'sender' => $assetRate->assetPerson->person->addresses[0]->phone,
-                'type' => $smsType,
                 'data' => $assetRate,
                 'trigger' => $assetRate,
             ]);

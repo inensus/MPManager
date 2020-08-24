@@ -1,12 +1,12 @@
 import Repository from '../repositories/RepositoryFactory'
-import {ErrorHandler} from "../Helpers/ErrorHander";
-import {Paginator} from "../classes/paginator";
-import {resources} from "../resources";
-import {EventBus} from "../shared/eventbus";
+import { ErrorHandler } from '../Helpers/ErrorHander'
+import { Paginator } from '../classes/paginator'
+import { resources } from '../resources'
+import { EventBus } from '../shared/eventbus'
 
 export class SmsService {
-    constructor() {
-        this.repository = Repository.get('sms');
+    constructor () {
+        this.repository = Repository.get('sms')
         this.sms = {
             id: null,
             number: null,
@@ -14,26 +14,26 @@ export class SmsService {
             message: null,
             total: 0,
             owner: null
-        };
-        this.numberList = [];
-        this.list = [];
-        this.resultList=[];
-        this.receiverList=[];
-        this.paginator = new Paginator(resources.sms.list);
+        }
+        this.numberList = []
+        this.list = []
+        this.resultList = []
+        this.receiverList = []
+        this.paginator = new Paginator(resources.sms.list)
     }
 
-    search(term) {
-        this.paginator = new Paginator(resources.sms.search);
-        EventBus.$emit('loadPage', this.paginator, {'term': term});
+    search (term) {
+        this.paginator = new Paginator(resources.sms.search)
+        EventBus.$emit('loadPage', this.paginator, { 'term': term })
     }
 
-    showAll() {
-        this.paginator = new Paginator(resources.sms.list);
-        EventBus.$emit('loadPage', this.paginator);
+    showAll () {
+        this.paginator = new Paginator(resources.sms.list)
+        EventBus.$emit('loadPage', this.paginator)
     }
 
-    updateList(smsList) {
-        this.numberList = [];
+    updateList (smsList) {
+        this.numberList = []
         for (let index in smsList) {
             let sms = {
                 id: smsList[index].id,
@@ -42,7 +42,7 @@ export class SmsService {
                 message: smsList[index].body,
                 owner: '',
                 total: 0
-            };
+            }
             if (smsList[index].address !== null) {
                 sms.owner = smsList[index].address.owner
             }
@@ -51,13 +51,13 @@ export class SmsService {
             }
             this.numberList.push(sms)
         }
-        return this.numberList;
+        return this.numberList
     }
 
-    searchSms(text) {
+    searchSms (text) {
 
         if (text.length === 0) {
-            return this.numberList;
+            return this.numberList
         }
         return this.numberList.filter((n) => {
             return n.number.includes(text) ||
@@ -71,18 +71,18 @@ export class SmsService {
 
     }
 
-    addReceiver(receiver,stored=true){
-        let found = false;
+    addReceiver (receiver, stored = true) {
+        let found = false
         for (let index in this.receiverList) {
             if (this.receiverList[index].stored !== stored) {
                 continue
             }
             if (stored && this.receiverList[index].receiver.id === receiver.id) {
-                found = true;
+                found = true
                 break
             }
             if (!stored && this.receiverList[r].receiver === receiver) {
-                found = true;
+                found = true
                 break
             }
             if (!found) {
@@ -92,11 +92,11 @@ export class SmsService {
                 })
             }
 
-            return this.receiverList;
+            return this.receiverList
         }
     }
 
-    removeReceiver(receiver){
+    removeReceiver (receiver) {
         for (let index in this.receiverList) {
             if (receiver.stored !== this.receiverList[index].stored) {
                 continue
@@ -109,134 +109,159 @@ export class SmsService {
                 break
             }
         }
-        return this.receiverList;
+        return this.receiverList
     }
 
-    async getList() {
+    async getList () {
         try {
-            let response = await this.repository.list('list');
+            let response = await this.repository.list('list')
             if (response.status === 200) {
 
                 return this.updateList(response.data.data)
             } else {
-                return new ErrorHandler(response.error, 'http', response.status);
+                return new ErrorHandler(response.error, 'http', response.status)
             }
         } catch (e) {
-            return new ErrorHandler(e, 'http');
+            return new ErrorHandler(e, 'http')
         }
 
     }
-    async getDetail(phone) {
+
+    async getDetail (phone) {
         try {
-            let response = await this.repository.detail(phone);
+            let response = await this.repository.detail(phone)
             if (response.status === 200) {
-                this.list = response.data.data;
-                return this.list;
+                this.list = response.data.data
+                return this.list
             } else {
-                return new ErrorHandler(response.error, 'http', response.status);
+                return new ErrorHandler(response.error, 'http', response.status)
             }
         } catch (e) {
-            return new ErrorHandler(e, 'http');
+            return new ErrorHandler(e, 'http')
         }
     }
-    async sendMaintenanceSms(maintenanceData) {
+
+    async sendMaintenanceSms (maintenanceData) {
         try {
-            let sendSms_PM = {
+            let sendSmsPM = {
                 'person_id': maintenanceData.assigned,
                 'message': maintenanceData.description + '/n Amount : '
                     + maintenanceData.amount + '\n Due Date '
                     + maintenanceData.dueDate,
                 'senderId': maintenanceData.id,
-            };
-            let response = await this.repository.send(sendSms_PM,'single');
+            }
+            let response = await this.repository.send(sendSmsPM, 'single')
             if (response.status === 200 || response.status === 201) {
-                return response;
+                return response
             } else {
-                return new ErrorHandler(response.error, 'http', response.status);
+                return new ErrorHandler(response.error, 'http', response.status)
             }
         } catch (e) {
-            return new ErrorHandler(e, 'http');
+            let errorMessage = e.response.data.data.message
+            return new ErrorHandler(errorMessage, 'http')
         }
     }
-    async sendToPerson(type, message, phone, senderId) {
-        let sendSms_PM = {
+
+    async sendToNumber (type, message, phone, senderId) {
+        let sendSmsPM = {
             'type': type,
             'message': message,
             'phone': phone,
             'senderId': senderId,
-        };
+        }
         try {
-            let response = await this.repository.send(sendSms_PM,'single');
+            let response = await this.repository.send(sendSmsPM, 'single')
             if (response.status === 200 || response.status === 201) {
-                return response;
+                return response
             } else {
-                return new ErrorHandler(response.error, 'http', response.status);
+                return new ErrorHandler(response.error, 'http', response.status)
             }
         } catch (e) {
-            return new ErrorHandler(e, 'http');
+            return new ErrorHandler(e, 'http')
         }
     }
-    async sendBulk(type,miniGrid,receivers,message,senderId){
-        let sendSms_PM = {
+
+    async sendToPerson (message, personId, senderId) {
+        let sendSmsPM = {
+            'message': message,
+            'phone': phone,
+            'senderId': senderId,
+        }
+        try {
+            let response = await this.repository.send(sendSmsPM, 'single')
+            if (response.status === 200 || response.status === 201) {
+                return response
+            } else {
+                return new ErrorHandler(response.error, 'http', response.status)
+            }
+        } catch (e) {
+            return new ErrorHandler(e, 'http')
+        }
+    }
+
+    async sendBulk (type, miniGrid, receivers, message, senderId) {
+        let sendSmsPM = {
             'type': type,
-            'miniGrid':miniGrid,
-            'receivers':receivers,
+            'miniGrid': miniGrid,
+            'receivers': receivers,
             'message': message,
             'senderId': senderId,
-        };
+        }
         try {
-            let response = await this.repository.send(sendSms_PM,'bulk');
+            let response = await this.repository.send(sendSmsPM, 'bulk')
             if (response.status === 200 || response.status === 201) {
-                return response;
+                return response
             } else {
-                return new ErrorHandler(response.error, 'http', response.status);
+                return new ErrorHandler(response.error, 'http', response.status)
             }
         } catch (e) {
-            return new ErrorHandler(e, 'http');
+            return new ErrorHandler(e, 'http')
         }
     }
-    async getGroups() {
+
+    async getGroups () {
         try {
-            let response = await this.repository.list('groups');
+            let response = await this.repository.list('groups')
             if (response.status === 200) {
 
-                this.resultList = response.data.data;
-                return  this.resultList;
+                this.resultList = response.data.data
+                return this.resultList
             } else {
-                return new ErrorHandler(response.error, 'http', response.status);
+                return new ErrorHandler(response.error, 'http', response.status)
             }
         } catch (e) {
-            return new ErrorHandler(e, 'http');
+            return new ErrorHandler(e, 'http')
         }
     }
-    async getTypes() {
+
+    async getTypes () {
         try {
-            let response = await this.repository.list('types');
+            let response = await this.repository.list('types')
             if (response.status === 200) {
 
-                this.resultList = response.data.data;
-                return  this.resultList;
+                this.resultList = response.data.data
+                return this.resultList
             } else {
-                return new ErrorHandler(response.error, 'http', response.status);
+                return new ErrorHandler(response.error, 'http', response.status)
             }
         } catch (e) {
-            return new ErrorHandler(e, 'http');
+            return new ErrorHandler(e, 'http')
         }
     }
-    async searchPerson(term){
+
+    async searchPerson (term) {
         try {
-            let response = await this.repository.search(term);
+            let response = await this.repository.search(term)
             if (response.status === 200) {
 
-                this.resultList = response.data.data;
-                return  this.resultList;
+                this.resultList = response.data.data
+                return this.resultList
             } else {
-                return new ErrorHandler(response.error, 'http', response.status);
+                return new ErrorHandler(response.error, 'http', response.status)
             }
         } catch (e) {
-            return new ErrorHandler(e, 'http');
+            return new ErrorHandler(e, 'http')
         }
     }
-
 
 }

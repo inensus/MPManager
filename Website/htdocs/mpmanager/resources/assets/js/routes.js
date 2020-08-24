@@ -218,6 +218,12 @@ let routes = [
         meta: { layout: 'default' },
     },
     {
+        path: '/locations/add-village/:id',
+        component: require('./components/Village/AddVillage').default,
+        name: 'add-village',
+        meta: { layout: 'default' },
+    },
+    {
         path: '/locations/add-mini-grid',
         component: require('./components/MiniGrid/AddMiniGrid').default,
         name: 'add-mini-grid',
@@ -245,7 +251,17 @@ let routes = [
         path: '/profile/management',
         component: require('./components/Profile/UserManagement').default,
         meta: { layout: 'default' },
-    }
+    },
+    {
+        path: '/agents/page/:page_number',
+        component: require('./components/Agent/AgentList').default,
+        meta: { layout: 'default' },
+    },
+    {
+        path: '/agents/:id',
+        component: require('./components/Agent/Agent').default,
+        meta: { layout: 'default' },
+    },
 
 ]
 

@@ -1,0 +1,32 @@
+<?php
+
+
+namespace App\Services;
+
+
+use App\Models\AgentBalanceHistory;
+use App\Models\AgentCharge;
+
+class AgentChargeService
+{
+
+    public function create($agent, $data)
+    {
+
+
+        $agentCharge = AgentCharge::query()->create([
+            'agent_id' => $agent->id,
+            'user_id' => $data['user_id'],
+        ]);
+
+        $history = AgentBalanceHistory::query()->make([
+            'agent_id' => $agent->id,
+            'amount' => request()->input('amount'),
+            'available_balance'=>$agent->balance
+        ]);
+        $history->trigger()->associate($agentCharge);
+        $history->save();
+        return $agentCharge->fresh();
+
+    }
+}

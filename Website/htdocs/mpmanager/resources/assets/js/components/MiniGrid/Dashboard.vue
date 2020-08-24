@@ -362,7 +362,8 @@
             </md-dialog>
             <!-- purchasing modal-->
         </section>
-
+        <redirection-modal :redirection-url="redirectionUrl" :imperative-item="imperativeItem"
+                           :dialog-active="redirectDialogActive"/>
     </div>
 
 </template>
@@ -373,7 +374,6 @@
     import moment from 'moment'
     import { currency } from '../../mixins/currency'
     import TableList from '../../shared/TableList'
-    import { resources } from '../../resources'
     import Datepicker from 'vuejs-datepicker'
     import { BatchRevenue } from '../../classes/revenue/batch'
     import TargetList from './TargetList'
@@ -388,6 +388,7 @@
     import { EventBus } from '../../shared/eventbus'
     import MiniGridMap from './MiniGridMap'
     import { RevenueService } from '../../services/RevenueService'
+    import RedirectionModal from '../../shared/RedirectionModal'
 
     export default {
         name: 'Dashboard',
@@ -403,11 +404,13 @@
             TableList,
             Widget,
             Datepicker,
-            Stepper
+            Stepper,
+            RedirectionModal
         },
         mixins: [currency],
         created () {
             this.miniGridId = this.$route.params.id
+            this.redirectionUrl += '/' + this.miniGridId
             this.getMiniGridData(this.miniGridId)
         },
         mounted () {
@@ -626,7 +629,9 @@
                 labels: ['Base', 'Comparision'],
                 chartData: [],
                 chartTmpData: [],
-
+                redirectionUrl: '/locations/add-village',
+                imperativeItem: 'City',
+                redirectDialogActive: false
             }
         },
         methods: {
@@ -651,11 +656,10 @@
                 }
             },
             async getTransactionsOverview () {
-
                 try {
                     this.currentTransaction = await this.miniGridService.getTransactionsOverview(this.miniGridId, this.startDate, this.endDate)
-
                 } catch (e) {
+
                     this.alertNotify('error', e.message)
                 }
 
@@ -762,7 +766,7 @@
                     }
 
                 } catch (e) {
-                    this.alertNotify('error', e.message)
+                    this.redirectDialogActive = true
                 }
 
             },

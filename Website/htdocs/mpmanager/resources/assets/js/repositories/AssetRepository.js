@@ -1,9 +1,7 @@
-
 const resource = '/api/assets/types';
 import Client from './Client/AxiosClient'
 
 export default {
-
     list(){
         return Client.get(`${resource}`)
     },
@@ -18,5 +16,4 @@ export default {
     delete (id) {
         return Client.delete(`${resource}/${id}`)
     }
-
 }
