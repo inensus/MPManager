@@ -6,16 +6,22 @@ namespace App\Services;
 use App\Helpers\PasswordGenerator;
 use App\Http\Services\AddressService;
 use App\Http\Services\CountryService;
+use App\Http\Services\PeriodService;
 use App\Models\Address\Address;
 use App\Models\Agent;
 
+use App\Models\AgentBalanceHistory;
+use App\Models\AgentReceipt;
 use App\Models\Country;
 use App\Models\Person\Person;
+use Complex\Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\DB;
+use phpDocumentor\Reflection\Types\Array_;
 
 
 class AgentService implements IUserService
@@ -23,13 +29,16 @@ class AgentService implements IUserService
 
     private $countryService;
     private $addressService;
+    private $periodService;
 
-
-    public function __construct(CountryService $countryService, AddressService $addressService)
-    {
+    public function __construct(
+        CountryService $countryService,
+        AddressService $addressService,
+        PeriodService $periodService
+    ) {
         $this->countryService = $countryService;
         $this->addressService = $addressService;
-
+        $this->periodService = $periodService;
     }
 
     public function createFromRequest(Request $request): Model
@@ -150,6 +159,43 @@ class AgentService implements IUserService
         return $agent->balance;
     }
 
+
+    public function getLastReceiptDate($agent)
+    {
+        $lastReceiptDate = AgentReceipt::query()->where('agent_id', $agent->id)->get()->last();
+        if ($lastReceiptDate) {
+            return $lastReceiptDate->created_at;
+        } else {
+
+            return $agent->created_at;
+        }
+    }
+
+    public function getTransactionAverage($agent)
+    {
+
+        $lastReceipt = AgentReceipt::query()->where('id', $agent->id)->get()->last();
+
+        if ($lastReceipt) {
+            $averageTransactionAmounts = AgentBalanceHistory::query()
+                ->where('agent_id', $agent->id)
+                ->where('trigger_type', 'agent_transaction')
+                ->where('created_at', '>', $lastReceipt->created_at)
+                ->get()
+                ->avg('amount');
+
+        } else {
+            $averageTransactionAmounts = AgentBalanceHistory::query()
+                ->where('agent_id', $agent->id)
+                ->where('trigger_type', 'agent_transaction')
+                ->get()
+                ->avg('amount');
+        }
+
+
+        return -1 * $averageTransactionAmounts;
+    }
+
     public function searchAgent($searchTerm, $paginate)
     {
         if ($paginate === 1) {
@@ -188,5 +234,81 @@ class AgentService implements IUserService
     {
         $agent->delete();
 
+    }
+
+
+    public function getGraphValues($agent)
+    {
+
+        $periodDate = $this->getLastReceiptDate($agent);
+        $period = $this->getPeriod($agent, $periodDate);
+        $history = AgentBalanceHistory::query()
+            ->selectRaw('DATE_FORMAT(created_at,\'%Y-%m-%d\') as date,id,trigger_Type,amount,available_balance,due_to_supplier')
+            ->where('agent_id', $agent->id)
+            ->where('created_at', '>=', $periodDate)
+            ->groupBy(DB::raw('DATE_FORMAT(created_at,\'%Y-%m-%d\'),date,id,trigger_Type,amount,available_balance,due_to_supplier'))->get();
+
+        if (count($history) == 1 && $history[0]->trigger_Type == 'agent_receipt') {
+            $period[$history[0]->date]['balance'] = -1 * ($history[0]->due_to_supplier - $history[0]->amount);
+            $period[$history[0]->date]['due'] = $history[0]->due_to_supplier - $history[0]->amount;
+        } elseif (count($history) == 0) {
+            return json_encode(json_decode("{}"));
+        } else {
+            foreach ($period as $key => $value) {
+                foreach ($history as $h) {
+                    if ($key == $h->date) {
+                        $lastRow = $history->where('trigger_Type', '!=', 'agent_commission')
+                            ->where('trigger_Type', '!=', 'agent_receipt')
+                            ->where('date', '=',
+                                $h->date)->last();
+
+                        $lastComissionRow = $history->where('trigger_Type', '=', 'agent_commission')
+                            ->where('trigger_Type', '!=', 'agent_receipt')
+                            ->where('date', '=',
+                                $h->date)->last();
+                        $period[$key]['balance'] = $lastRow->amount + $lastRow->available_balance;
+                        $period[$key]['due'] = ((-1 * $lastRow->amount) + $lastRow->due_to_supplier) - (1 * $lastComissionRow->amount);
+
+                    }
+                }
+            }
+        }
+        return $period;
+
+    }
+
+    public function getPeriod($agent, $date)
+    {
+
+        $days = AgentBalanceHistory::query()->selectRaw('DATE_FORMAT(created_at,\'%Y-%m-%d\') as day')
+            ->where('agent_id', $agent->id)
+            ->where('created_at',
+                '>=', $date)->groupBy(DB::raw('DATE_FORMAT(created_at,\'%Y-%m-%d\')'))->get();
+        $period = array();
+        foreach ($days as $key => $item) {
+            $period[$item->day] = [
+
+                'balance' => 0,
+                'due' => 0
+            ];
+        }
+
+        return $period;
+    }
+
+
+    public function getAgentRevenuesWeekly($agent)
+    {
+        $startDate = date("Y-m-d", strtotime("-3 months"));
+        $endDate = date("Y-m-d");
+        $Revenues = AgentBalanceHistory::query()->selectRaw('DATE_FORMAT(created_at,\'%Y-%u\') as period, SUM(amount) as revenue')->where('trigger_type',
+            'agent_commission')->groupBy(DB::raw('DATE_FORMAT(created_at,\'%Y-%u\')'))->get();
+
+        $p = $this->periodService->generatePeriodicList($startDate, $endDate, 'weekly', ['revenue' => 0]);
+
+        foreach ($Revenues as $rIndex => $revenue) {
+            $p[$revenue->period]['revenue'] = $revenue->revenue;
+        }
+        return $p;
     }
 }

@@ -27,6 +27,7 @@
                                     :value="assetType.id"
                                     v-for="assetType in assetService.list"
 
+
                                     :key="assetType.id"
                                 >{{assetType.name}}
                                 </md-option>
@@ -68,7 +69,7 @@
                 </md-card>
             </form>
 
-            <div>
+            <div v-if="personAssets.length>0">
                 <md-table>
                     <md-table-row>
                         <md-table-head>Name</md-table-head>
@@ -91,6 +92,9 @@
                         </md-table-cell>
                     </md-table-row>
                 </md-table>
+            </div>
+             <div v-else>
+                <no-table-data :headers="headers" :tableName="tableName"/>
             </div>
         </widget>
 
@@ -178,22 +182,23 @@
 </template>
 
 <script>
-    import Widget from '../../shared/widget'
-
-    import { resources } from '../../resources'
-    import { currency } from '../../mixins/currency'
-    import ConfirmationBox from '../../shared/ConfirmationBox'
-    import { EventBus } from '../../shared/eventbus'
-    import Modal from '../../modal/modal'
-    import moment from 'moment'
     import { AssetService } from '../../services/AssetService'
     import { AssetRateService } from '../../services/AssetRateService'
     import { AssetPersonService } from '../../services/AssetPersonService'
-
+    import { currency } from '../../mixins/currency'
+    import ConfirmationBox from '../../shared/ConfirmationBox'
+    import { EventBus } from '../../shared/eventbus'
+    import Widget from '../../shared/widget'
+    import NoTableData from '../../shared/NoTableData'
+    import { resources } from '../../resources'
+    import Modal from '../../modal/modal'
+    import moment from 'moment'
+    
+    
     export default {
         name: 'DeferredPayments',
         mixins: [currency],
-        components: { Modal, ConfirmationBox, Widget },
+        components: { Modal, ConfirmationBox, Widget, NoTableData },
         props: {
             personId: Number
         },
@@ -216,7 +221,10 @@
                     id: null,
                     cost: 1,
                     rate: 1
-                }
+                },
+                headers: ['Name', 'Cost', 'Rates'],
+                tableName: 'Sold Assets'
+
             }
         },
 
@@ -232,6 +240,7 @@
             },
             showDetails (index) {
                 this.toggleModal()
+
                 this.selectedAsset = this.assetPersonService.list[index]
             },
             showConfirm (data) {

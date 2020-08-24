@@ -22,7 +22,8 @@ class AgentChargeService
         $history = AgentBalanceHistory::query()->make([
             'agent_id' => $agent->id,
             'amount' => request()->input('amount'),
-            'available_balance'=>$agent->balance
+            'available_balance'=>$agent->balance,
+            'due_to_supplier'=>$agent->due_to_energy_supplier
         ]);
         $history->trigger()->associate($agentCharge);
         $history->save();
