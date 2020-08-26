@@ -117,13 +117,21 @@ class AgentTransaction implements ITransactionProvider
 
     private function prepareBodySuccess(Transaction $transaction)
     {
+
+
         $transaction = Transaction::with('token', 'originalTransaction', 'originalTransaction.conflicts', 'sms',
-            'token.meter',
-            'meter.meterParameter.owner',
-            'token.meter.meterParameter', 'token.meter.meterType', 'paymentHistories')->where('id',
-            $transaction->id)->first();
+            'token.meter', 'meter.meterParameter.owner', 'token.meter.meterParameter', 'token.meter.meterType',
+            'paymentHistories')->latest()->first();
         $transaction['firebase_notify_status'] = 1;
-        return $transaction;
+        $transaction['title'] = "Successful Payment!";
+        $transaction['content'] = 1;
+
+
+        return [
+            'id' => $transaction->id,
+            'firebase_notification_status' => 1,
+            'payload' => $transaction
+        ];
     }
 
     private function prepareBodyFail(Transaction $transaction)
