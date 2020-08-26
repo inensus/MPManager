@@ -6,6 +6,7 @@ services:
       context: Docker/
       dockerfile: DockerfileLaravelProd
     image: laravel/php:73
+    user: "www-data:www-data"
     depends_on:
       - maria
     links:
