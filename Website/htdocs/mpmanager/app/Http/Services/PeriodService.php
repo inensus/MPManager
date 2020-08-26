@@ -57,7 +57,7 @@ class PeriodService
                 $mPeriod = new DatePeriod(
                     date_create($p->format('o-m-1')),
                     new DateInterval('P1W'),
-                    date_create(date("Y-m-t", strtotime($p->format('o-m-1')))),
+                    date_create(date("Y-m-t", strtotime($p->format('o-m-1'))))
                 );
                 foreach ($mPeriod as $mP) {
                     $result    [$p->format('o-m')][$mP->format('o-W')] = $initialData;
