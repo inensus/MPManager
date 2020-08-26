@@ -69,7 +69,7 @@
                 </md-card>
             </form>
 
-            <div v-if="personAssets.length>0">
+            <div v-if="assetPersonService.list.length>0">
                 <md-table>
                     <md-table-row>
                         <md-table-head>Name</md-table-head>
@@ -93,7 +93,7 @@
                     </md-table-row>
                 </md-table>
             </div>
-             <div v-else>
+            <div v-else>
                 <no-table-data :headers="headers" :tableName="tableName"/>
             </div>
         </widget>
@@ -193,8 +193,7 @@
     import { resources } from '../../resources'
     import Modal from '../../modal/modal'
     import moment from 'moment'
-    
-    
+
     export default {
         name: 'DeferredPayments',
         mixins: [currency],
