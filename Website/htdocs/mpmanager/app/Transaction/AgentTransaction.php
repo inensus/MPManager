@@ -82,19 +82,17 @@ class AgentTransaction implements ITransactionProvider
         $agent = $this->agentTransaction->agent;
         if (!$requestType) {
             $body = $this->prepareBodyFail($transaction);
-            $this->fireBaseService->sendNotify($agent->fire_base_token, json_encode((string)$body));
+            $this->fireBaseService->sendNotify($agent->fire_base_token, $body);
             return;
         }
 
         $body = $this->prepareBodySuccess($transaction);
-
-
         $history = AgentBalanceHistory::query()->make([
             'agent_id' => $agent->id,
             'amount' => -$transaction->amount,
             'transaction_id' => $transaction->id,
-            'available_balance'=>$agent->balance,
-            'due_to_supplier'=>$agent->due_to_energy_supplier
+            'available_balance' => $agent->balance,
+            'due_to_supplier' => $agent->due_to_energy_supplier
         ]);
         $history->trigger()->associate($this->agentTransaction);
         $history->save();
@@ -107,33 +105,35 @@ class AgentTransaction implements ITransactionProvider
             'agent_id' => $agent->id,
             'amount' => ($transaction->amount * $commission->energy_commission),
             'transaction_id' => $transaction->id,
-            'available_balance'=>$agent->commission_revenue,
-            'due_to_supplier'=>$agent->due_to_energy_supplier
+            'available_balance' => $agent->commission_revenue,
+            'due_to_supplier' => $agent->due_to_energy_supplier
         ]);
         $history->trigger()->associate($commission);
         $history->save();
 
-        $this->fireBaseService->sendNotify($agent->fire_base_token, json_encode($body));
+        $this->fireBaseService->sendNotify($agent->fire_base_token, $body);
 
     }
 
     private function prepareBodySuccess(Transaction $transaction)
     {
-        $transaction =   Transaction::with('token', 'originalTransaction', 'originalTransaction.conflicts', 'sms', 'token.meter',
+        $transaction = Transaction::with('token', 'originalTransaction', 'originalTransaction.conflicts', 'sms',
+            'token.meter',
             'token.meter.meterParameter', 'token.meter.meterType', 'paymentHistories')->where('id',
             $transaction->id)->first();
-        $transaction['firebase_notify_status'] = 1; 
+        $transaction['firebase_notify_status'] = 1;
     }
 
     private function prepareBodyFail(Transaction $transaction)
     {
-        return ['message' => 'Transaction failed', 
-                'type' => 'agent_transaction',
-                'firebase_notify_status' => -1,
-                'meter' => $transaction->message,
-                'date' => $transaction->created_at
-                ];
-      
+        return [
+            'message' => 'Transaction failed',
+            'type' => 'agent_transaction',
+            'firebase_notify_status' => -1,
+            'meter' => $transaction->message,
+            'date' => $transaction->created_at
+        ];
+
     }
 
     /**

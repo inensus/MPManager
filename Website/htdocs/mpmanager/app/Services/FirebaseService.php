@@ -17,7 +17,7 @@ class FirebaseService
             [
                 'headers' => [
                     'Content-Type' => 'application/json',
-                    'Authorization' => config()->get('services.agent.token'),
+                    'Authorization' => config()->get('services.agent.key'),
                     'Accept' => 'application/json',
                 ],
                 'json' => [
