@@ -121,7 +121,7 @@ class AgentTransaction implements ITransactionProvider
 
         $transaction = Transaction::with('token', 'originalTransaction', 'originalTransaction.conflicts', 'sms',
             'token.meter', 'meter.meterParameter.owner', 'token.meter.meterParameter', 'token.meter.meterType',
-            'paymentHistories')->latest()->first();
+            'paymentHistories')->where('id', $transaction->id)->first();
         $transaction['firebase_notify_status'] = 1;
         $transaction['title'] = "Successful Payment!";
         $transaction['content'] = 1;
