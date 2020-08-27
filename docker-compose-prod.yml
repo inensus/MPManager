@@ -22,10 +22,15 @@ services:
     restart: unless-stopped
     volumes:
       - ./Website/htdocs/mpmanager:/var/www/app
+    depends_on:
+      - maria
+      - redis
     links:
       - redis:redis
+      - maria:db
     environment:
       - LARAVEL_HORIZON=true
+
   'composer':
     container_name: mpmanager_composer
     build:
