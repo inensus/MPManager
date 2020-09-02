@@ -20,7 +20,7 @@ Route::group(['prefix' => 'meters'], function () {
         Route::get('/', 'MeterTypeController@index');
         Route::get('/{id}', 'MeterTypeController@show');
         Route::post('/', 'MeterTypeController@store');
-        Route::put('/{id}', 'MeterTypeController@update');
+        Route::put('/{meterType}', 'MeterTypeController@update');
         Route::get('/{id}/list', 'MeterTypeController@meterList');
     });
 

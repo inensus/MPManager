@@ -30,8 +30,8 @@ import TicketCommentRepository from './TicketCommentRepository'
 import TicketTrelloRepository from './TicketTrelloRepository'
 import TicketUserRepository from './TicketUserRepository'
 import TicketLabelRepository from './TicketLabelRepository'
+import MeterTypeRepository from './MeterTypeRepository'
 import UserRepository from './UserRepository'
-
 
 const repositories = {
     'asset': AssetRepository,
@@ -66,6 +66,7 @@ const repositories = {
     'ticketTrello': TicketTrelloRepository,
     'ticketUser': TicketUserRepository,
     'ticketLabel': TicketLabelRepository,
+    'meterType': MeterTypeRepository
     'user': UserRepository,
 }
 

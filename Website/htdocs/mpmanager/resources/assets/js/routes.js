@@ -104,8 +104,14 @@ let routes = [
         meta: { layout: 'default' },
     },
     {
-        path: '/meters',
+        path: '/meters/list',
         component: require('./components/Meter/MeterList').default,
+        meta: { layout: 'default' },
+
+    },
+    {
+        path: '/meters/types',
+        component: require('./components/Meter/Types').default,
         meta: { layout: 'default' },
 
     },
