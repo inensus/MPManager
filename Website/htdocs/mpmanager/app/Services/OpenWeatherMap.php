@@ -19,7 +19,6 @@ class OpenWeatherMap implements IWeatherDataProvider
     public function __construct(Client $httpClient)
     {
         $this->apiKey = config('services.weather.owm_app_id');
-        Log::debug('api key', [$this->apiKey]);
         $this->httpClient = $httpClient;
     }
 

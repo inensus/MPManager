@@ -102,7 +102,7 @@
             <div class="well" v-if="tickets.length === 0">No tickets found</div>
             <div class="row" style="text-align: center" v-if="loaded === false">
                 <h5>Tickets are Loading</h5>
-                <img src="https://loading.io/spinners/dash-ring/index.dash-ring-loading-icon.svg"/>
+
             </div>
         </widget>
 

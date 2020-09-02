@@ -29,7 +29,12 @@ class AgentTransactionsController extends Controller
         $transactions = $this->agentTransactionService->list($agent->id);
         return new ApiResource($transactions);
     }
-
+    public function agentCustomerTransactions($customerId, Request $request)
+    {
+        $agent = request()->attributes->get('user');
+        $transactions = $this->agentTransactionService->listByCustomer($agent->id, $customerId);
+        return new ApiResource($transactions);
+    }
     public function show($customerId): ApiResource
     {
         $agent = request()->attributes->get('user');

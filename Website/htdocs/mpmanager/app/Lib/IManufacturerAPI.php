@@ -14,9 +14,11 @@ use App\Models\Meter\MeterToken;
 interface IManufacturerAPI
 {
     /**
-     * @param $tokenData
-     * @return MeterToken
+     * @param Meter $meter
+     * @param $energy
+     * @return array
      */
-    public function generateToken(Meter $meters, $energy): array;
+    public function  chargeMeter(Meter $meter, $energy): array;
 
+    public function clearMeter(Meter $meter);
 }
