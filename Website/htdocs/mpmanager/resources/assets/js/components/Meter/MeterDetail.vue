@@ -178,7 +178,7 @@
 
         <div style="margin-top: 1rem;"></div>
 
-        <widget :title="'Meter Readings'" v-if="meter.meterType.online>0" class="col-sm-12" :id="'meter-readings'">
+        <widget :title="'Meter Readings'" class="col-sm-12" :id="'meter-readings'">
             <div role="menu" slot="tabbar">
                 <button
                     class="md-button dropdown-toggle btn-xs"

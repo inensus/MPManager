@@ -6,6 +6,7 @@ services:
       context: Docker/
       dockerfile: DockerfileLaravelProd
     image: laravel/php:73
+    user: "www-data:www-data"
     depends_on:
       - maria
     links:
@@ -14,6 +15,21 @@ services:
     volumes:
       - ./Website/config/php/php.ini:/usr/local/etc/php/php.ini
       - ./Website/htdocs:/var/www/html
+
+  queue:
+    image: ipunktbs/laravel-queue-worker
+    container_name: queue
+    restart: unless-stopped
+    volumes:
+      - ./Website/htdocs/mpmanager:/var/www/app
+    depends_on:
+      - maria
+      - redis
+    links:
+      - redis:redis
+      - maria:db
+    environment:
+      - LARAVEL_HORIZON=true
 
   'composer':
     container_name: mpmanager_composer
