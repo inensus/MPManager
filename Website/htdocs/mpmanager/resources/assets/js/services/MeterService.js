@@ -22,6 +22,7 @@ export class MeterService {
         }
     }
 
+
     async getMeterGeos (miniGridId) {
         try {
             let response = await this.repository.geoList(miniGridId)
