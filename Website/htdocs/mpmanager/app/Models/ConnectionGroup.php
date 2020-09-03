@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  *
  * @package App\Models
  */
-class ConnectionGroup extends Model
+class ConnectionGroup extends BaseModel
 {
 
     public function meterParameters(): HasMany

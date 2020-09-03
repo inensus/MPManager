@@ -145,6 +145,20 @@
                         icon: 'file-excel',
                     },
                     {
+                        name: 'Connection',
+                        icon: 'network-wired',
+                        children: [
+                            {
+                                name: 'Groups',
+                                route: '/connection-groups',
+                            },
+                            {
+                                name: 'Types',
+                                route: '/connection-types'
+                            }
+                        ]
+                    },
+                    {
                         name: 'Sms',
                         icon: 'sms',
                         children: [

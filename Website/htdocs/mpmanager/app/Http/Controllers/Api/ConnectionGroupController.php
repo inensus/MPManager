@@ -38,4 +38,11 @@ class ConnectionGroupController
         return new ApiResource($this->connectionGroup);
 
     }
+    public function update(ConnectionGroup $connectionGroup): ApiResource
+    {
+        $connectionGroup->update(request()->only(['name']));
+        $connectionGroup->fresh();
+        return new ApiResource($connectionGroup);
+
+    }
 }

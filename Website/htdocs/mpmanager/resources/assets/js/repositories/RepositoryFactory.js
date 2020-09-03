@@ -7,7 +7,7 @@ import MiniGridRepository from './MiniGridRepository'
 import CityRepository from './CityRepository'
 import ConnectionTypeRepository from './ConnectionTypeRepository'
 import ConnectionGroupsRepository from './ConnectionGroupsRepository'
-
+import SubConnectionTypeRepository from './SubConnectionTypeRepository'
 import RestrictionRepository from './RestrictionRepository'
 import MappingRepository from './MappingRepository'
 import ClusterRepository from './ClusterRepository'
@@ -44,6 +44,7 @@ const repositories = {
     'cluster': ClusterRepository,
     'connectionTypes': ConnectionTypeRepository,
     'connectionGroups': ConnectionGroupsRepository,
+    'subConnectionTypes': SubConnectionTypeRepository,
     'restriction': RestrictionRepository,
     'meter': MeterRepository,
     'person': PersonRepository,

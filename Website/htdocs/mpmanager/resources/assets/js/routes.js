@@ -168,6 +168,13 @@ let routes = [
         name: 'connection-types',
         meta: { layout: 'default' },
     },
+    // connection-types
+    {
+        path: '/connection-types/:id',
+        component: require('./components/ConnectionTypes/ConnectionTypeDetail').default,
+        name: 'connection-type-detail',
+        meta: { layout: 'default'}
+    },
     {
         path: '/connection-types/new',
         component: require('./components/ConnectionTypes/NewConnectionType').default,

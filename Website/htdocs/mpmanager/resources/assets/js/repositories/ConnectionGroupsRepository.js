@@ -1,11 +1,15 @@
 const resource =  '/api/connection-groups';
+import Client from './Client/AxiosClient'
 
 export default {
     list(){
-        return axios.get(`${resource}`)
+        return Client.get(`${resource}`)
     },
     create(name){
-        return axios.post(`${resource}`,name)
+        return Client.post(`${resource}`,name)
+    },
+    update(connectionGroup){
+        return Client.put(`${resource}/${connectionGroup.id}`,connectionGroup)
     }
 }
 

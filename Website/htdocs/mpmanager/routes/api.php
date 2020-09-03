@@ -367,9 +367,17 @@ Route::group(['prefix' => 'targets'], static function () {
 Route::group(['prefix' => 'connection-types'], static function () {
     Route::get('/', 'ConnectionTypeController@index');
     Route::post('/', 'ConnectionTypeController@store');
-});
-Route::get('/sub-connection-types', 'SubConnectionTypeController@index');
+    Route::get('/{connectionTypeId?}', 'ConnectionTypeController@show');
+    Route::put('/{connectionType}', 'ConnectionTypeController@update');
 
+});
+Route::group(['prefix' => 'sub-connection-types'], static function (){
+    Route::get('/{connectionTypeId?}', 'SubConnectionTypeController@index');
+    Route::post('/', 'SubConnectionTypeController@store');
+    Route::get('/{id}', 'SubConnectionTypeController@show');
+    Route::put('/{subConnectionType}', 'SubConnectionTypeController@update');
+
+});
 
 Route::group(['prefix' => '/clusters'], static function () {
     Route::post('/{id}/revenue/analysis', 'RevenueController@getRevenueAnalysisForCluster');
@@ -395,6 +403,7 @@ Route::get('/reports/{id}/download', 'ReportController@download');
 Route::group(['prefix' => 'connection-groups'], static function () {
     Route::get('/', 'ConnectionGroupController@index');
     Route::post('/', 'ConnectionGroupController@store');
+    Route::put('/{connectionGroup}', 'ConnectionGroupController@update');
 });
 
 
