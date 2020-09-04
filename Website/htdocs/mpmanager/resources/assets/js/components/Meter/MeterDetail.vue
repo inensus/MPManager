@@ -25,9 +25,26 @@
                                             {{meter.owner.name}}
                                             {{meter.owner.surname}}
                                         </a>
-                                        <i class="fa fa-pencil" @click="showModal = true"></i>
+                                        <i class="fa fa-pencil" @click="showOwnerEdit = true"></i>
+                                    </div>
+                                    <div class="md-layout-item" v-if="showOwnerEdit" >
+                                        <div class="md-layout-item">New Owner</div>
+
+                                        <md-autocomplete
+                                            v-model="customerSearchTerm"
+                                            :md-options="searchNames"
+                                            @md-changed="searchFor"
+                                            @md-opened="searchFor"
+                                            @md-selected="selectCustomer"
+                                        >
+                                            <label>Customer Name</label>
+                                            <template slot="md-autocomplete-item" slot-scope="{ item }">{{ item.name }}</template>
+                                        </md-autocomplete>
+                                        <md-button v-if="showOwnerEdit" class="md-icon-button md-primary" @click="saveNewOwner()"><md-icon>save</md-icon></md-button>
+                                        <md-button class="md-accent md-icon-button" @click="closeOwnerEdit()"><md-icon>close</md-icon></md-button>
                                     </div>
                                 </div>
+
                             </div>
                             <div class="md-layout">
                                 <div class="md-layout-item">Total Revenue</div>
@@ -221,42 +238,6 @@
         ></airbnb-style-datepicker>
 
 
-        <md-dialog v-if="meter!==null && meter.loaded===true" :md-active.sync="showModal">
-            <md-dialog-title>Reassign {{meter.serialNumber}}</md-dialog-title>
-            <md-dialog-content>
-
-                <md-card>
-                    <md-card-header>
-                        <div class="md-title">
-                            Current Owner :
-                            <small>{{meter.owner.name}} {{meter.owner.surname}}</small>
-                        </div>
-                    </md-card-header>
-
-                    <md-card-content>
-                        <div class="md-layout">
-                            <div class="md-layout-item">New Owner</div>
-
-                            <md-autocomplete
-                                v-model="customerSearchTerm"
-                                :md-options="searchNames"
-                                @md-changed="searchFor"
-                                @md-opened="searchFor"
-                                @md-selected="selectCustomer"
-                            >
-                                <label>Customer Name</label>
-                                <template slot="md-autocomplete-item" slot-scope="{ item }">{{ item.name }}</template>
-                            </md-autocomplete>
-                        </div>
-                    </md-card-content>
-                </md-card>
-
-            </md-dialog-content>
-            <md-dialog-actions>
-                <md-button v-if="showModal" class="md-primary btn-lg" @click="saveNewOwner()">Save</md-button>
-                <md-button class="md-accent" @click="closeModal()">Close</md-button>
-            </md-dialog-actions>
-        </md-dialog>
     </div>
 </template>
 
@@ -316,6 +297,7 @@
                 newTariff: null,
                 newConnectionType: null,
                 tariffs: [],
+                showOwnerEdit:false,
                 //meter connection controlller
                 connectionTypes: new ConnectionTypes(),
                 //re-assing connection flag
@@ -431,9 +413,9 @@
             setOwner (owner) {
                 this.newOwner = owner
             },
-            closeModal () {
+            closeOwnerEdit () {
                 this.resetOwner()
-                this.showModal = false
+                this.showOwnerEdit = false
             },
             updateTariff (tariffId) {
                 this.updateParameter(this.meter.id, { tariffId: tariffId })
@@ -504,7 +486,7 @@
                             .then(response => {
                                 if (response.status === 200) {
                                     this.meter.owner = response.data.data.owner
-                                    this.showModal = false
+                                    this.showOwnerEdit = false
                                     this.resetOwner()
                                 } else {
                                     this.$swal({
