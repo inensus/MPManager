@@ -19,18 +19,16 @@ export class BatteryService {
         list.data.data.map((b) => (
             this.batteryData.push(new Battery().fromJson(b))
         ))
-        console.log('BATTERIES TaMAM', this.batteryData)
 
         return true
     }
 
     chartDataDistributor (data) {
-        console.log('BATTERIES DISTR Basladi')
+
         this.prepareStateChartData(data)
-        console.log('BATTERIES state bitti')
+
         this.prepareEnergyChartData(data)
 
-        console.log('BATTERIES DIST TAMAM', this.stateChartData, this.energyChartData)
     }
 
     prepareStateChartData (b) {
@@ -51,7 +49,7 @@ export class BatteryService {
             },
         )
         this.stateChartData.push(chartData)
-        console.log('STATE CHART', chartData)
+
     }
 
     prepareEnergyChartData (d) {
@@ -76,7 +74,7 @@ export class BatteryService {
     }
 
     prepareChartData () {
-        console.log('BATTERIES prepare basladi')
+
         if (this.batteryData.length === 0) {
             return null
         }

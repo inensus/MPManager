@@ -23,12 +23,12 @@ class SmsListener
      *
      * @return bool
      */
-    public function sendSms($number, $type, $data, $trigger): bool
+    public function sendSms($number,$data, $trigger): bool
     {
         if (config('app.debug')) {
             //store sent sms
             $sms = new Sms();
-            $sms->body = SmsTypes::generateSmsBody($type, $data);
+            $sms->body = SmsTypes::generateSmsBody($data);
             $sms->receiver = $number;
             $sms->trigger()->associate($trigger);
             $sms->save();
@@ -38,7 +38,7 @@ class SmsListener
         }
         try {
             //sends sms or throws exception
-            resolve('SmsProvider')->sendSms($number, SmsTypes::generateSmsBody($type, $data), '');
+            resolve('SmsProvider')->sendSms($number, SmsTypes::generateSmsBody($data), '');
         } catch (Exception $e) {
             //slack failure
             Log::critical('Sms Service failed ' . $number,
@@ -47,7 +47,7 @@ class SmsListener
         }
         //store sent sms
         $sms = new Sms();
-        $sms->body = SmsTypes::generateSmsBody($type, $data);
+        $sms->body = SmsTypes::generateSmsBody($data);
         $sms->receiver = $number;
         $sms->trigger()->associate($trigger);
         $sms->save();

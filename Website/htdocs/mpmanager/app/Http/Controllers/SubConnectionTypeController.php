@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\ApiResource;
+use App\Http\Requests\SubConnectionTypeCreateRequest;
 use App\Models\SubConnectionType;
+use App\Models\Meter\MeterTariff;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
@@ -25,35 +27,33 @@ class SubConnectionTypeController extends Controller
      *
      * @return ApiResource
      */
-    public function index()
+    public function index($connectionTypeId)
     {
-        if (request()->input('paginate') === null) {
-            $connectionTypes = $this->subConnectionType->newQuery()->paginate(15);
+        $connectionTypes = $this->subConnectionType::with('tariff')->newQuery();
+        if($connectionTypeId !== null){
+            $connectionTypes->where('connection_type_id', $connectionTypeId);
+        }
+        if (request()->input('paginate') !== null) {
+            $connectionTypes = $connectionTypes->paginate(15);
         } else {
-            $connectionTypes = $this->subConnectionType->newQuery()->get();
+            $connectionTypes = $connectionTypes->get();
         }
         return new ApiResource($connectionTypes);
     }
 
     /**
      * Show the form for creating a new resource.
-     *
-     * @return Response
+     * @param SubConnectionTypeCreateRequest $request
+     * @return ApiResource
      */
-    public function create()
-    {
-        //
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param Request $request
-     * @return Response
-     */
-    public function store(Request $request)
+    public function store(SubConnectionTypeCreateRequest $request): ApiResource
     {
-        //
+        $subConnectionType = $this->subConnectionType::query()
+            ->create(
+                $request->only(['name', 'connection_type_id', 'tariff_id'])
+            );
+        return new ApiResource($subConnectionType);
     }
 
     /**
@@ -81,13 +81,15 @@ class SubConnectionTypeController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
      * @param SubConnectionType $subConnectionType
      * @return Response
      */
-    public function update(Request $request, SubConnectionType $subConnectionType)
+    public function update(SubConnectionType $subConnectionType): ApiResource
     {
-        //
+        $subConnectionType->update(request()->only(['name','tariff_id']));
+        $subConnectionType->fresh();
+        $subConnectionType->load('tariff');
+        return new ApiResource($subConnectionType);
     }
 
     /**

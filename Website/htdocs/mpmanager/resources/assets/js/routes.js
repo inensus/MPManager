@@ -104,8 +104,14 @@ let routes = [
         meta: { layout: 'default' },
     },
     {
-        path: '/meters',
+        path: '/meters/list',
         component: require('./components/Meter/MeterList').default,
+        meta: { layout: 'default' },
+
+    },
+    {
+        path: '/meters/types',
+        component: require('./components/Meter/Types').default,
         meta: { layout: 'default' },
 
     },
@@ -168,6 +174,13 @@ let routes = [
         name: 'connection-types',
         meta: { layout: 'default' },
     },
+    // connection-types
+    {
+        path: '/connection-types/:id',
+        component: require('./components/ConnectionTypes/ConnectionTypeDetail').default,
+        name: 'connection-type-detail',
+        meta: { layout: 'default'}
+    },
     {
         path: '/connection-types/new',
         component: require('./components/ConnectionTypes/NewConnectionType').default,
@@ -218,6 +231,12 @@ let routes = [
         meta: { layout: 'default' },
     },
     {
+        path: '/locations/add-village/:id',
+        component: require('./components/Village/AddVillage').default,
+        name: 'add-village',
+        meta: { layout: 'default' },
+    },
+    {
         path: '/locations/add-mini-grid',
         component: require('./components/MiniGrid/AddMiniGrid').default,
         name: 'add-mini-grid',
@@ -245,7 +264,17 @@ let routes = [
         path: '/profile/management',
         component: require('./components/Profile/UserManagement').default,
         meta: { layout: 'default' },
-    }
+    },
+    {
+        path: '/agents/page/:page_number',
+        component: require('./components/Agent/AgentList').default,
+        meta: { layout: 'default' },
+    },
+    {
+        path: '/agents/:id',
+        component: require('./components/Agent/Agent').default,
+        meta: { layout: 'default' },
+    },
 
 ]
 

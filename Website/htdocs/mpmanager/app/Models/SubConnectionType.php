@@ -9,8 +9,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class SubConnectionType extends Model
+class SubConnectionType extends BaseModel
 {
+
     public function connectionType(): BelongsTo
     {
         return $this->belongsTo(ConnectionType::class);

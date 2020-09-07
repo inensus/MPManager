@@ -94,7 +94,6 @@
 
         <md-dialog :md-active.sync="showModal">
             <md-dialog-title>New Ticket</md-dialog-title>
-
             <div class="new-ticket-modal-container">
                 <form novalidate class="md-layout">
                     <div  class="md-layout md-gutter" >
@@ -112,13 +111,14 @@
                             <md-datepicker
                                 name="ticketDueDate"
                                 id="ticketDueDate"
-                                v-model="newTicket.dueDate"
-                            > <label for="ticketDueDate">Due Date</label></md-datepicker>
+                                v-model="newTicket.dueDate"> <label for="ticketDueDate">Due Date</label></md-datepicker>
+
 
                         </div>
 
 
                         <div class="md-layout-item md-size-100 ">
+
                             <md-field name="ticketPriority">
                                 <label for="ticketPriority">Category</label>
                                 <md-select name="ticketPriority" id="ticketPriority">
@@ -127,6 +127,7 @@
                                         v-for="(label,index) in labels"
                                         :value="label.id"
                                         :key="index"
+
                                     >{{label.label_name}}</md-option>
                                 </md-select>
                             </md-field>
@@ -139,17 +140,18 @@
                                     <md-option disabled selected>No one</md-option>
                                     <md-option v-for="user in users" :value="user.id" :key="user.id">{{user.name}}</md-option>
                                 </md-select>
+
                             </md-field>
                         </div>
 
 
                         <div class="md-layout-item md-size-100 ">
+
                             <md-field>
                                 <label for="description">Description</label>
                                 <md-textarea type="text" id="description" name="description" />
                             </md-field>
                         </div>
-
                     </div>
                 </form>
             </div>
@@ -158,6 +160,7 @@
                 <md-button class="md-accent" @click="closeModal()">Close</md-button>
 
                 <md-button class="md-primary btn-lg" @click="saveTicket()">Save</md-button>
+
             </md-dialog-actions>
         </md-dialog>
     </div>
@@ -505,6 +508,7 @@
         border-color: #9aa7af;
     }
     .t-text{
+
         min-width: 90%;
         white-space: initial;
     }
@@ -515,5 +519,4 @@
         float: right;
 
     }
-
 </style>

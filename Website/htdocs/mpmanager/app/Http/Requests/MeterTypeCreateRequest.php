@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class AssetTypeRequest extends FormRequest
+class MeterTypeCreateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,7 +24,9 @@ class AssetTypeRequest extends FormRequest
     public function rules()
     {
         return [
-            'asset_type_name' => 'required|min:3'
+            'max_current' => 'required|numeric|min:1',
+            'phase' => 'required|numeric|min:1',
+            'online' => 'required',
         ];
     }
 }

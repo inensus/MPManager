@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class CreateCitiesTable extends Migration
 {
@@ -18,6 +18,7 @@ class CreateCitiesTable extends Migration
             $table->string('name');
             $table->integer('country_id');
             $table->integer('cluster_id');
+            $table->integer('mini_grid_id');
             $table->timestamps();
         });
     }

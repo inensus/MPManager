@@ -1,8 +1,5 @@
 <?php
-
-
 namespace App\Http\Controllers;
-
 
 use App\Http\Requests\StoreBatteryStateRequest;
 use App\Http\Resources\ApiResource;
@@ -17,8 +14,6 @@ use Illuminate\Http\Request;
  */
 class BatteryController extends Controller
 {
-
-
     /**
      *
      * @var Battery
@@ -31,7 +26,7 @@ class BatteryController extends Controller
     }
 
 
-    public function show(Request $request, $miniGridId)
+    public function show(Request $request, $miniGridId): ApiResource
     {
         $batteryReadings = $this->battery->newQuery()
             ->where('mini_grid_id', $miniGridId);
@@ -60,12 +55,14 @@ class BatteryController extends Controller
      */
     public function showByMiniGrid(Request $request, $id): ApiResource
     {
-        $limit = $request->get('limit') ?? 50;
-        $batteries = $this->battery->where('mini_grid_id', $id)
+        $limit = $request->input('limit') ?? 96;
+        $batteries = $this->battery
+            ->newQuery()
+            ->where('mini_grid_id', $id)
             ->latest()
             ->take($limit)
             ->get();
-        return new ApiResource($batteries);
+        return new ApiResource($batteries->reverse()->values());
     }
 
     /**
@@ -74,41 +71,52 @@ class BatteryController extends Controller
      * @param StoreBatteryStateRequest $request
      * @return ApiResource
      */
-    public function store($miniGridId, StoreBatteryStateRequest $request): ApiResource
+    public function store(StoreBatteryStateRequest $request): ApiResource
     {
-        $battery_data = $request->get('batteries');
-        $state_of_charge_data = $battery_data['state_of_charge'];
-        $state_of_health_data = $battery_data['state_of_health'];
-        $total = $battery_data['battery_discharge'];
-        $cTotal = $battery_data['battery_charge'];
+        $batteryData = $request->input('batteries');
+        $stateOfChargeData = $batteryData['state_of_charge'];
+        $stateOfHealthData = $batteryData['state_of_health'];
+        $total = $batteryData['battery_discharge'];
+        $charge = $batteryData['battery_charge'];
+        $temperature = $batteryData['temperature'];
 
-        $battery = $this->battery::create([
-            'mini_grid_id' => $request->get('mini_grid_id'),
-            'node_id' => $request->get('node_id'),
-            'device_id' => $request->get('device_id'),
-            'battery_count' => $state_of_charge_data['count'],
-            'soc_average' => $state_of_charge_data['average'],
-            'soc_unit' => $state_of_charge_data['unit'],
-            'soc_min' => $state_of_charge_data['min'] ?? 0,
-            'soc_max' => $state_of_charge_data['max'] ?? 0,
+        // temperature values have ':' before the number when the value is < 0
+        $temperature['min'] = str_replace(':', '-', $temperature['min']);
+        $temperature['max'] = str_replace(':', '-', $temperature['max']);
+        $temperature['average'] = str_replace(':', '-', $temperature['average']);
 
-            'soh_average' => 100 - (double)$state_of_health_data['average'],
-            'soh_unit' => $state_of_health_data['unit'],
-            'soh_min' => 100 - (double)($state_of_health_data['min'] ?? 0),
-            'soh_max' => 100 - (double)($state_of_health_data['max'] ?? 0),
+        $battery = $this->battery
+            ->newQuery()
+            ->create([
+                'mini_grid_id' => $request->input('mini_grid_id'),
+                'node_id' => $request->input('node_id'),
+                'device_id' => $request->input('device_id'),
+                'battery_count' => $stateOfChargeData['count'],
+                'soc_average' => $stateOfChargeData['average'],
+                'soc_unit' => $stateOfChargeData['unit'],
+                'soc_min' => $stateOfChargeData['min'] ?? 0,
+                'soc_max' => $stateOfChargeData['max'] ?? 0,
 
-            'd_total' => str_replace(',', '.', $total['discharge']),
-            'd_total_unit' => $total['unit'],
-            'd_newly_energy' => 0,
-            'd_newly_energy_unit' => 'Wh',
+                'soh_average' => 100 - (double)$stateOfHealthData['average'],
+                'soh_unit' => $stateOfHealthData['unit'],
+                'soh_min' => 100 - (double)($stateOfHealthData['min'] ?? 0),
+                'soh_max' => 100 - (double)($stateOfHealthData['max'] ?? 0),
 
-            'c_total' => str_replace(',', '.', $cTotal['charge']),
-            'c_total_unit' => $cTotal['unit'],
-            'c_newly_energy' => 0,
-            'c_newly_energy_unit' => 'Wh',
+                'd_total' => str_replace(',', '.', $total['discharge']),
+                'd_total_unit' => $total['unit'],
+                'd_newly_energy' => 0,
+                'd_newly_energy_unit' => 'Wh',
 
-            'read_out' => $request->get('read_out'),
-        ]);
+                'c_total' => str_replace(',', '.', $charge['charge']),
+                'c_total_unit' => $charge['unit'],
+                'c_newly_energy' => 0,
+                'c_newly_energy_unit' => 'Wh',
+                'temperature_min' => $temperature['min'],
+                'temperature_max' => $temperature['max'],
+                'temperature_average' => $temperature['average'],
+                'temperature_unit' => $temperature['unit'],
+                'read_out' => date('Y-m-d H:i:s', strtotime($batteryData['time_stamp'])),
+            ]);
 
 
         return new ApiResource($battery);

@@ -32,6 +32,12 @@ class PeriodService
         $end = date_create($endDate);
 
 
+        $daysDifference = $end->diff($begin)->days;
+
+        if ($interval === 'weekly' && $daysDifference % 7 !== 0) {
+            $end->add(new DateInterval('P' . ($daysDifference % 7) . 'D'));
+        }
+
         if ($end->diff($begin)->days % 365 === 0) {
             $end->add(new DateInterval('P1D'));
         }
@@ -51,7 +57,7 @@ class PeriodService
                 $mPeriod = new DatePeriod(
                     date_create($p->format('o-m-1')),
                     new DateInterval('P1W'),
-                    date_create(date("Y-m-t", strtotime($p->format('o-m-1')))),
+                    date_create(date("Y-m-t", strtotime($p->format('o-m-1'))))
                 );
                 foreach ($mPeriod as $mP) {
                     $result    [$p->format('o-m')][$mP->format('o-W')] = $initialData;

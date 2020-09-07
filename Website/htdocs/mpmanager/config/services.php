@@ -58,7 +58,18 @@ return [
         ],
     ],
     'manufacturer_master_key' => '36dKhvjwE58!M2.A@L', // the key which is required to  add a new  manufacturer
+    'calinSmart' => [
+        'company_name' => env('CALIN_SMART_COMPANY_NAME'),
+        'url' => [
+            'purchase' => env('CALIN_SMART_PURCHASE_API_URL'),
+            'clear' => env('CALIN_SMART_CLEAR_API_URL'),
 
+        ],
+        'user_name' => env('CALIN_SMART_USER_NAME'),
+        'password' => env('CALIN_SMART_PASSWORD'),
+        'password_vend' => env('CALIN_SMART_PASSWORD_VENT'),
+
+    ],
     'sms' => [
         'bongo' => [
             'url' => 'http://www.bongolive.co.tz/api/sendSMS.php',
@@ -71,6 +82,7 @@ return [
             'url' => 'https://fcm.googleapis.com/fcm/send',
             'token' => 'FIREBASE_TOKEN',
             'key' => 'PHONE_KEY',
+
         ],
         'callback' => 'https://mpmanager.local/api/sms/%s/confirm',
     ],
@@ -91,6 +103,11 @@ return [
     'payment' => [
         'data-stream' => 'placeholder-url',
         'maintenance' => 'placeholder-url',
+    ],
+    'agent' => [
+        'key' => 'key=AAAAdSTAIwc:APA91bHl4w-l4QSlHFPbfM-soHzf0hf1rQSgV-ubjzSxALNYjb_lnJigRvyWvp1IybrZTDfM-CaZ7yFBSoZh47V49fdOz5gLCSriN5T1qmLJ40S1WWUCLWNV32g7YPaz-6lcxbunyHcB',
+
+
     ]
 
 ];

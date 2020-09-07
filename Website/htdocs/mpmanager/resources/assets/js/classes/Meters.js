@@ -59,8 +59,6 @@ export class Meters {
         if (data[m].meter_parameter != null && 'tariff' in data[m].meter_parameter) {
           meter.tariff = data[m].meter_parameter.tariff.name + ' ' + (data[m].meter_parameter.tariff.price / 100)
         }
-      } else {
-        console.log('meter parameter not found ', data[m])
       }
       this.list.push(meter)
     }

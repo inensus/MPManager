@@ -9,9 +9,11 @@
 namespace App\Transaction;
 
 
+use App\Jobs\SmsProcessor;
 use App\Lib\ITransactionProvider;
 use App\Models\Transaction\Transaction;
 use App\Models\Transaction\TransactionConflicts;
+use App\Sms\SmsTypes;
 use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
@@ -74,6 +76,8 @@ class AirtelTransaction implements ITransactionProvider
         if ($requestType) {
             $this->airtelTransaction->status = 1;
             $this->airtelTransaction->save();
+            SmsProcessor::dispatch($transaction,
+                SmsTypes::ENERGY_CONFIRMATION)->allOnConnection('redis')->onQueue('sms');
         } else { //send cancellation to airtel gateway server and this will send the final request to airtel
 
             $requestContent = $this->prepareRequest($this->transaction, $this->airtelTransaction);
@@ -174,7 +178,7 @@ class AirtelTransaction implements ITransactionProvider
         $this->airtelTransaction->tr_id = (string)$data->TRID;
         // common transaction data
         $this->transaction->amount = (int)$data->Amount;
-        $this->transaction->sender = '255'.(string)$data->Msisdn;
+        $this->transaction->sender = '255' . (string)$data->Msisdn;
         $this->transaction->message = $data->ReferenceField;
     }
 

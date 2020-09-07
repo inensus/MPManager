@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\MeterTypeCreateRequest;
+use App\Http\Requests\MeterTypeUpdateRequest;
 use App\Http\Resources\ApiResource;
 
 use App\Http\Resources\MeterTypeResource;
@@ -31,7 +33,7 @@ class MeterTypeController extends Controller
     public function index()
     {
         return new ApiResource(
-            MeterType::all()
+            MeterType::paginate(15)
         );
     }
 
@@ -44,17 +46,11 @@ class MeterTypeController extends Controller
      * @bodyParam phase int required
      * @bodyParam max_current int required
      *
-     * @param Request $request
+     * @param MeterTypeCreateRequest $request
      * @return ApiResource
-     * @throws ValidationException
      */
-    public function store(Request $request)
+    public function store(MeterTypeCreateRequest $request)
     {
-        //validate
-        $validation = Validator::make($request->all(), MeterType::$rules);
-        if ($validation->fails()) {
-            throw new ValidationException($validation);
-        }
         return
             new ApiResource(
                 MeterType::create(
@@ -90,25 +86,15 @@ class MeterTypeController extends Controller
      * @bodyParam phase int required
      * @bodyParam max_current int required
      *
-     * @param Request $request
-     * @param int $id
-     * @return Response
-     * @throws ValidationException
+     * @param MeterTypeUpdateRequest $request
+     * @param MeterType $meterType
+     * @return ApiResource
      */
-    public function update(Request $request, $id)
+    public function update(MeterTypeUpdateRequest $request, MeterType $meterType)
     {
-        //validate
-        $validation = Validator::make($request->all(), MeterType::$rules);
-        if ($validation->fails()) {
-            throw new ValidationException($validation);
-        }
-
-        $meter_type = MeterType::findOrFail($id);
-        $meter_type->online = request('online');
-        $meter_type->phase = request('phase');
-        $meter_type->max_current = request('max_current');
-        $meter_type->save();
-        return new ApiResource($meter_type);
+        $meterType->update($request->only(['online','phase','max_current']));
+        $meterType->fresh();
+        return new ApiResource($meterType);
     }
 
     /**

@@ -15,37 +15,40 @@
                 <div class="md-layout-item md-size-35 " style="min-height: 95vh!important;
     border-right: 1px solid #d6d6d6;">
                     <div class="scrollable">
-                        <md-table>
-                            <md-table-toolbar>
-                                <md-field>
-                                    <md-input v-model="filterNumber" type="text" class="form-control"
-                                              placeholder="Search"
-                                    ></md-input>
-                                </md-field>
-                            </md-table-toolbar>
-                            <md-table-row v-for="sms in numberList" :key="sms.number"
-                                          style="cursor:pointer;"
-                                          @click="smsDetail( sms.number)">
+                        <div v-if="numberList.length>0">
+                            <md-table>
+                                <md-table-toolbar>
+                                    <md-field>
+                                        <md-input v-model="filterNumber" type="text" class="form-control"
+                                                  placeholder="Search"
+                                        ></md-input>
+                                    </md-field>
+                                </md-table-toolbar>
+                                <md-table-row v-for="sms in numberList" :key="sms.number"
+                                              style="cursor:pointer;"
+                                              @click="smsDetail( sms.number)">
+                                    <md-table-cell v-if="sms.owner"
+                                                   :class="sms.number === selectedNumber?  'active':''">
+                                        <img :data-letters="sms.owner.name[0] +sms.owner.surname[0]" src="" alt="">
+                                        {{sms.owner.name}}
+                                        {{sms.owner.surname}}
+                                        <small>({{sms.number}})</small>
 
-                                <md-table-cell v-if="sms.owner"
-                                               :class="sms.number === selectedNumber?  'active':''">
-                                    <img :data-letters="sms.owner.name[0] +sms.owner.surname[0]" src="" alt="">
-                                    {{sms.owner.name}}
-                                    {{sms.owner.surname}}
-                                    <small>({{sms.number}})</small>
+                                    </md-table-cell>
+                                    <md-table-cell v-else>
+                                        <span data-letters="??" src="" alt=""></span>
+                                        {{ sms.number}}
+                                        <small style="position: absolute; right: 1vw;" class="badge badge-info"> {{
+                                            sms.total}}
+                                        </small>
+                                    </md-table-cell>
+                                </md-table-row>
+                            </md-table>
+                        </div>
 
-                                </md-table-cell>
-                                <md-table-cell v-else>
-                                    <span data-letters="??" src="" alt=""></span>
-                                    {{ sms.number}}
-                                    <small style="position: absolute; right: 1vw;" class="badge badge-info"> {{
-                                        sms.total}}
-                                    </small>
-                                </md-table-cell>
-
-
-                            </md-table-row>
-                        </md-table>
+                        <div v-else>
+                            <no-table-data :headers="headers" :tableName="tableName"/>
+                        </div>
                     </div>
                 </div>
                 <div class="md-layout-item md-size-65">
@@ -71,20 +74,15 @@
                                 <md-textarea v-model="message"
                                 ></md-textarea>
                             </md-field>
+                            <md-progress-bar md-mode="indeterminate" v-if="loading"/>
                         </div>
                         <div class="md-layout-item md-size-20">
-                            <md-button @click="sendSms" class="md-raised md-primary"
+                            <md-button @click="sendSms" :disabled="loading" class="md-raised md-primary"
                                        style=" height: 10vh; width: 100%;">
                                 Send
                             </md-button>
-
-
                         </div>
-
-
                     </div>
-
-
                 </div>
             </div>
 
@@ -94,32 +92,31 @@
 
 <script>
     import Widget from '../../shared/widget'
-    import {Smses} from '../../classes/Sms/SmsList'
-    import {EventBus} from '../../shared/eventbus'
+    import NoTableData from '../../shared/NoTableData'
+    import { EventBus } from '../../shared/eventbus'
     import NewSms from './NewSms'
-    import {resources} from '../../resources'
-    import {SmsService} from "../../services/SmsService";
+    import { SmsService } from '../../services/SmsService'
 
-    const debounce = require('debounce');
+    const debounce = require('debounce')
 
     export default {
         name: 'List',
-        components: {NewSms, Widget},
+        components: { NewSms, Widget, NoTableData },
         watch: {
             filterNumber: debounce(function (e) {
                 this.searchSms(this.filterNumber)
             }, 250),
         },
 
-        mounted() {
+        mounted () {
             EventBus.$on('pageLoaded', this.reloadList)
-            this.senderId = this.$store.state.admin.id;
+            this.senderId = this.$store.state.admin.id
             /*  this.loadList()*/
         },
-        beforeDestroy() {
+        beforeDestroy () {
             EventBus.$off('pageLoaded', this.reloadList)
         },
-        data() {
+        data () {
             return {
                 smsService: new SmsService(),
                 list: [],
@@ -130,22 +127,24 @@
                 selectedNumber: '',
                 senderId: '',
                 message: '',
-
+                headers: [],
+                tableName: 'SMS',
+                loading: false
             }
         },
         methods: {
-            reloadList(subscriber, data) {
+            reloadList (subscriber, data) {
 
-                if (subscriber !== this.subscriber) return;
-                this.numberList = this.smsService.updateList(data);
+                if (subscriber !== this.subscriber) return
+                this.numberList = this.smsService.updateList(data)
                 if (this.numberList.length > 0)
                     this.list = this.smsDetail(this.numberList[0].number)
             },
-            async loadList() {
-                this.list = [];
-                this.numberList = [];
+            async loadList () {
+                this.list = []
+                this.numberList = []
                 try {
-                    this.numberList = await this.smsService.getList();
+                    this.numberList = await this.smsService.getList()
                     if (this.numberList.length > 0)
                         this.list = this.smsDetail(this.numberList[0].number)
 
@@ -154,36 +153,38 @@
                 }
 
             },
-            async smsDetail(phone) {
-                this.selectedNumber = phone;
+            async smsDetail (phone) {
+                this.selectedNumber = phone
                 this.list = await this.smsService.getDetail(phone)
 
             },
-            async sendSms() {
+            async sendSms () {
                 if (this.message.length <= 3) {
-
-                    this.alertNotify('warn', 'Message should contain more than 3 letters');
+                    this.alertNotify('warn', 'Message should contain more than 3 letters')
                     return
                 }
                 try {
-                    await this.smsService.sendToPerson('person', this.message, this.selectedNumber, this.senderId);
-                    this.alertNotify('success', 'The Sms is send out');
-                    this.message = '';
+                    this.loading = true
+                    await this.smsService.sendToNumber('person', this.message, this.selectedNumber, this.senderId)
+                    this.loading = false
+                    this.alertNotify('success', 'The Sms is send out')
+                    this.message = ''
                     this.smsDetail(this.selectedNumber)
                 } catch (e) {
+                    this.loading = false
                     this.alertNotify('error', e.message)
                 }
 
             },
-            alertNotify(type, message) {
+            alertNotify (type, message) {
                 this.$notify({
-                    group: "notify",
+                    group: 'notify',
                     type: type,
-                    title: type + " !",
+                    title: type + ' !',
                     text: message
-                });
+                })
             },
-            searchSms(text) {
+            searchSms (text) {
                 this.numberList = this.smsService.searchSms(text)
             }
         }

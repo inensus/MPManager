@@ -38,6 +38,19 @@ export class ConnectionTypeService {
         }
 
     }
+    async updateConnectionType(connectionType){
+        try {
+            let response = await this.repository.update(connectionType)
+            if(response.status === 200 || response.status === 201){
+
+            }else{
+                return new ErrorHandler(response.error, 'http', response.status)
+            }
+        }catch (e) {
+            let erorMessage = e.response.data.data.message
+            return new ErrorHandler(erorMessage, 'http')
+        }
+    }
 
     async getConnectionTypes() {
         try {
@@ -45,6 +58,22 @@ export class ConnectionTypeService {
 
             if (response.status === 200) {
                 this.connectionTypes = response.data.data
+                return this.connectionTypes
+            } else {
+                return new ErrorHandler(response.error, 'http', response.status)
+            }
+        } catch (e) {
+            let erorMessage = e.response.data.data.message
+            return new ErrorHandler(erorMessage, 'http')
+        }
+    }
+
+    async getConnectionTypeDetail(connectionTypeId){
+        try {
+            let response = await this.repository.show(connectionTypeId)
+
+            if (response.status === 200) {
+                this.connectionTypes = response.data.data[0]
                 return this.connectionTypes
             } else {
                 return new ErrorHandler(response.error, 'http', response.status)

@@ -9,7 +9,6 @@ use App\Misc\TransactionDataContainer;
 use App\Models\Transaction\AirtelTransaction;
 use App\Models\Transaction\Transaction;
 use App\Models\Transaction\VodacomTransaction;
-use App\Sms\SmsTypes;
 use DateInterval;
 use DateTime;
 use Exception;
@@ -217,8 +216,6 @@ class TransactionController extends Controller
     }
 
 
-
-
     /**
      * Cancelled List
      * A list of cancelled transactions
@@ -260,12 +257,10 @@ class TransactionController extends Controller
 
         if (config('app.env') === 'production') {//production queue
             $queue = 'payment';
-        } else {
-            if (config('app.env') === 'staging') { //staging queue
-                $queue = 'staging_payment';
-            } else { // local queue‚
-                $queue = 'local_payment';
-            }
+        } elseif (config('app.env') === 'staging') {
+            $queue = 'staging_payment';
+        } else { // local queue‚
+            $queue = 'local_payment';
         }
 
         ProcessPayment::dispatch($transaction->id)->allOnConnection('redis')->onQueue($queue);
@@ -291,7 +286,8 @@ class TransactionController extends Controller
     {
         return new ApiResource(
             Transaction::with('token', 'originalTransaction', 'originalTransaction.conflicts', 'sms', 'token.meter',
-                'token.meter.meterParameter', 'token.meter.meterType', 'paymentHistories')->where('id', $id)->first()
+                'token.meter.meterParameter', 'token.meter.meterType', 'paymentHistories',
+                'meter.meterParameter.owner')->where('id', $id)->first()
         );
     }
 
@@ -652,8 +648,7 @@ class TransactionController extends Controller
         $messageSent = event('sms.send.token',
             [
                 'sender' => $number ?? $transactionContainer->transaction->sender,
-                'type' => SmsTypes::RESEND_INFORMATION,
-                'data' => $transactionContainer,
+                'data' => $transactionContainer->transaction,
                 'trigger' => $transactionContainer->transaction,
             ]);
         if (!$messageSent) {
