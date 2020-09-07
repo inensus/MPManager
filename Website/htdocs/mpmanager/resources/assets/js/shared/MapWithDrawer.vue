@@ -300,8 +300,6 @@
             }
             parent.polygon.setLatLngs(parent.polygonCoordinates)
 
-          } else {
-            console.log(parent.drawCluster)
           }
         })
         this.$emit('mapInitialized', this.map)

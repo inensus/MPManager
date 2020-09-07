@@ -8,35 +8,41 @@
 
         <md-card>
             <md-card-content>
-                <md-table style="width:100%" v-model="transactions" md-card md-fixed-header>
-                    <md-table-row
-                        @click="loadTransaction(item.transaction_id)"
-                        slot="md-table-row"
-                        slot-scope="{ item }"
-                    >
-                        <md-table-cell
-                            md-label="Payment Type"
-                            md-sort-by="payment_type"
-                            md-numeric
-                        >{{ item.payment_type }}
-                        </md-table-cell>
-                        <md-table-cell md-label="Sender" md-sort-by="sender">{{ item.sender }}</md-table-cell>
-                        <md-table-cell md-label="Amount" md-sort-by="amount">{{ item.amount + ' ' + appConfig.currency}}
-                        </md-table-cell>
-                        <md-table-cell md-label="Paid For" md-sort-by="paid_for_type">{{ item.paid_for_type }}
-                        </md-table-cell>
-                        <md-table-cell
-                            md-label="Payment Service"
-                            md-sort-by="payment_service"
-                        >{{ item.payment_service }}
-                        </md-table-cell>
-                        <md-table-cell
-                            md-label="Created At"
-                            md-sort-by="paid_for_type"
-                        >{{timeForHuman(item.created_at)}}
-                        </md-table-cell>
-                    </md-table-row>
-                </md-table>
+                <div v-if="transactions.length>0">
+                    <md-table style="width:100%" v-model="transactions" md-card md-fixed-header>
+                        <md-table-row
+                            @click="loadTransaction(item.transaction_id)"
+                            slot="md-table-row"
+                            slot-scope="{ item }"
+                        >
+                            <md-table-cell
+                                md-label="Payment Type"
+                                md-sort-by="payment_type"
+                                md-numeric
+                            >{{ item.payment_type }}
+                            </md-table-cell>
+                            <md-table-cell md-label="Sender" md-sort-by="sender">{{ item.sender }}</md-table-cell>
+                            <md-table-cell md-label="Amount" md-sort-by="amount">{{ item.amount + ' ' + appConfig.currency}}
+                            </md-table-cell>
+                            <md-table-cell md-label="Paid For" md-sort-by="paid_for_type">{{ item.paid_for_type }}
+                            </md-table-cell>
+                            <md-table-cell
+                                md-label="Payment Service"
+                                md-sort-by="payment_service"
+                            >{{ item.payment_service }}
+                            </md-table-cell>
+                            <md-table-cell
+                                md-label="Created At"
+                                md-sort-by="paid_for_type"
+                            >{{timeForHuman(item.created_at)}}
+                            </md-table-cell>
+                        </md-table-row>
+                    </md-table>
+                </div>
+                <div v-else>
+                    <no-table-data :headers="headers" :tableName="tableName"/>
+                </div>
+
             </md-card-content>
             <md-card-actions>
                 <div>
@@ -82,10 +88,10 @@
     import { timing } from '../../mixins/timing'
     import Widget from '../../shared/widget'
     import Modal from '../../modal/modal'
-
+    import NoTableData from '../../shared/NoTableData'
     export default {
         name: 'Transactions',
-        components: { Widget, Modal },
+        components: { Widget, Modal,NoTableData },
         mixins: [currency, timing],
         data () {
             return {
@@ -96,7 +102,9 @@
                 from: 0,
                 to: 0,
                 total: 0,
-                totalPages: 0
+                totalPages: 0,
+                headers: ['Payment Type', 'Sender', 'Amount','Paid For','Payment Service','Created At'],
+                tableName: 'Transactions'
             }
         },
         mounted () {

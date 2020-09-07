@@ -21,7 +21,7 @@ export class TransactionService {
         }
         this.paginator = new Paginator(resources.transactions.list.all)
         this.analyticsData = null
-        this.transactionJson=null
+        this.transactionJson = null
     }
 
     async getTransactions () {
@@ -70,6 +70,7 @@ export class TransactionService {
             return new ErrorHandler(errorMessage, 'http')
         }
     }
+
     async getTransaction (id) {
         try {
 
@@ -87,6 +88,7 @@ export class TransactionService {
             return new ErrorHandler(errorMessage, 'http')
         }
     }
+
     searchAdvanced (data) {
         this.paginator.url = resources.transactions.searchAdvanced
         this.paginator.method = 'POST'
@@ -99,7 +101,7 @@ export class TransactionService {
         for (let transaction in transactionList) {
             this.list.push(this.fromJson(transactionList[transaction]))
         }
-        console.log(this.list)
+
         return this.list
     }
 

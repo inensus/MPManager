@@ -2,7 +2,8 @@
     <widget
         v-if="showAdd"
         :id="'new-connection-group'"
-        :title="'Add New Connection Group'">
+        :title="'Add New Connection Group'"
+        :color="'red'">
 
 
         <md-card>

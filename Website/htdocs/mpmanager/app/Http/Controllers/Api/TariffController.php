@@ -53,14 +53,17 @@ class TariffController extends Controller
      */
     public function store(TariffCreateRequest $request): ApiResource
     {
-        $tariff = MeterTariff::create(
-            [
-                'name' => $request->input('name'),
-                'factor' => $request->input('factor'),
-                'currency' => $request->input('currency'),
-                'price' => $request->input('price'),
-                'total_price' => $request->input('price'),
-            ]);
+        $newTariff = MeterTariff::query()
+            ->create(
+                [
+                    'name' => $request->input('name'),
+                    'factor' => $request->input('factor'),
+                    'currency' => $request->input('currency'),
+                    'price' => $request->input('price'),
+                    'total_price' => $request->input('price'),
+                ]);
+
+        $tariff = MeterTariff::with('accessRate')->find($newTariff->id);
 
         return new ApiResource($tariff);
     }

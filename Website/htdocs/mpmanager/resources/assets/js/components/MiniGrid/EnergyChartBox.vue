@@ -62,7 +62,7 @@
             initBatteryChart () {
                 this.batteryService.getBatteryUsageList(this.miniGridId).then((result) => {
                     if (!result) {
-                        console.log('Battery chart data failed to load')
+
                         return
                     }
                     this.batteryService.prepareChartData()
@@ -71,7 +71,7 @@
             initPVChart () {
                 this.pvService.getList(this.miniGridId).then((result) => {
                     if (!result) {
-                        console.log('PV chart data failed to load')
+
                         return
                     }
                     this.pvService.prepareChartData()

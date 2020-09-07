@@ -1,7 +1,5 @@
 <template>
     <div>
-
-
         <md-table>
             <md-table-row>
                 <md-table-head></md-table-head>
@@ -60,7 +58,6 @@
                                     <small @click="showComments=!showComments">Comments</small>
                                     {{ticket.commentCount()}}
                                 </em>
-
                             </div>
                             <div class="clear-fix"></div>
 
@@ -99,6 +96,7 @@
                         </div>
                     </md-table-cell>
 
+
                 </md-table-row>
             </template>
         </md-table>
@@ -109,15 +107,20 @@
     import { UserTickets } from '../../classes/person/ticket'
     import { resources } from '../../resources'
 
+
     export default {
         name: 'TicketItem',
         props: {
+
             ticket: String,
             allowComment: Boolean,
             ticketList: Array
         },
         data () {
             return {
+                ticketCommentService: new TicketCommentService(),
+                ticketService: new TicketService(),
+                smsService: new SmsService(),
                 showComments: false,
                 newComment: '',
                 showTicket: null,
@@ -139,6 +142,7 @@
                     this.showTicket = index
                 }
 
+
             },
             navigateToOwner (id) {
                 this.$router.push({ path: '/people/' + id })
@@ -156,7 +160,10 @@
                     cardId: this.ticket.id
                 }
 
-                axios.post(resources.ticket.comments, comment).then(response => {
+                try {
+                    let name = this.$store.getters['auth/authenticationService'].authenticateUser.name
+                    let username = this.$store.getters['auth/authenticationService'].authenticateUser.email
+                    await this.ticketCommentService.createComment(this.newComment, this.ticket.id, name, username)
                     if (this.ticket.category.out_source) {
                         axios.post(resources.sms.send, {
                             message: this.newComment,
@@ -198,8 +205,6 @@
         border-width: 1px;
         border-style: dotted;
         padding: 10px;
-
-
     }
     .t-text-area {
         min-width: 100%!important;
@@ -268,6 +273,5 @@
         padding-right: 5px!important;
         max-width: 10%!important;
     }
-
 
 </style>

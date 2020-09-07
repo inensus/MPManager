@@ -13,8 +13,6 @@ export class PVService {
         }
         let list = await axios.get(resources.pv.list + miniGridId)
 
-        console.log('PV USAGE LIST ', list)
-
         list.data.data.map((l) => (
             this.usageList.push(new PV().fromJson(l))
         ))

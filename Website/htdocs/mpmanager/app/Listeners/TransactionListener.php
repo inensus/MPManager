@@ -24,7 +24,6 @@ class TransactionListener
         $baseTransaction->addConflict($message);
         if (config('app.debug')) {
             Log::debug('Transaction failed');
-            return;
         }
         $baseTransaction->sendResult(false, $transaction);
 

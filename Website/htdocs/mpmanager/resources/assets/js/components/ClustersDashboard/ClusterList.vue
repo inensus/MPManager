@@ -20,11 +20,11 @@
         </div>
         <div v-else>
             <div style="margin-left: 40vw; margin-top: 20vh;">
-                <img src="https://loading.io/spinners/curve-bars/lg.curved-bar-spinner.gif" alt="">
+                <img width="48px" src="/storage/spinner.svg" alt="">
             </div>
         </div>
-    </div>
 
+    </div>
 </template>
 
 <script>

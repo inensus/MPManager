@@ -362,7 +362,8 @@
             </md-dialog>
             <!-- purchasing modal-->
         </section>
-
+        <redirection-modal :redirection-url="redirectionUrl" :imperative-item="imperativeItem"
+                           :dialog-active="redirectDialogActive"/>
     </div>
 
 </template>
@@ -373,7 +374,6 @@
     import moment from 'moment'
     import { currency } from '../../mixins/currency'
     import TableList from '../../shared/TableList'
-    import { resources } from '../../resources'
     import Datepicker from 'vuejs-datepicker'
     import { BatchRevenue } from '../../classes/revenue/batch'
     import TargetList from './TargetList'
@@ -388,6 +388,7 @@
     import { EventBus } from '../../shared/eventbus'
     import MiniGridMap from './MiniGridMap'
     import { RevenueService } from '../../services/RevenueService'
+    import RedirectionModal from '../../shared/RedirectionModal'
 
     export default {
         name: 'Dashboard',
@@ -403,11 +404,13 @@
             TableList,
             Widget,
             Datepicker,
-            Stepper
+            Stepper,
+            RedirectionModal
         },
         mixins: [currency],
         created () {
             this.miniGridId = this.$route.params.id
+            this.redirectionUrl += '/' + this.miniGridId
             this.getMiniGridData(this.miniGridId)
         },
         mounted () {
@@ -626,7 +629,9 @@
                 labels: ['Base', 'Comparision'],
                 chartData: [],
                 chartTmpData: [],
-
+                redirectionUrl: '/locations/add-village',
+                imperativeItem: 'City',
+                redirectDialogActive: false
             }
         },
         methods: {
@@ -651,11 +656,10 @@
                 }
             },
             async getTransactionsOverview () {
-
                 try {
                     this.currentTransaction = await this.miniGridService.getTransactionsOverview(this.miniGridId, this.startDate, this.endDate)
-
                 } catch (e) {
+
                     this.alertNotify('error', e.message)
                 }
 
@@ -695,7 +699,6 @@
                             ticketChartDataClosed.push(ticketData.closed)
                         }
 
-
                         openedTicketChartData.push(ticketChartDataOpened)
                         openedTicketChartData.push(ticketChartDataClosed)
                         closedTicketChartData.push(ticketChartDataClosed)
@@ -704,23 +707,6 @@
 
                     this.openedTicketChartData = openedTicketChartData
                     this.closedTicketChartData = closedTicketChartData
-                    for (let i = 0; i < this.openedTicketChartData.length; i++) {
-
-                        let ticketItem = this.openedTicketChartData[i]
-                        let columnNumber = this.openedTicketChartData[0].length
-                        if (i !== 0) {
-                            if (ticketItem.length > columnNumber) {
-
-                                ticketItem.splice(ticketItem.length - 1, ticketItem.length - columnNumber)
-                            } else if (columnNumber > ticketItem.length) {
-
-                                for (let j = 0; j < columnNumber - ticketItem.length; j++) {
-                                    ticketItem.push(0)
-                                }
-                            }
-                        }
-
-                    }
 
                 } catch (e) {
 
@@ -759,8 +745,8 @@
                         }
                         tmpChartData.push(totalRev)
                         this.trendChartData.base.push(tmpChartData)
-                    }
 
+                    }
 
                     if (Object.keys(this.highlighted.compared).length > 0) { //compare data is also available.
                         let compareData = await this.revenueService.getMiniGridRevenueTrends(this.miniGridId, this.startDate, this.endDate)
@@ -776,10 +762,11 @@
                             this.trendChartData.compare.push(tmpChartData)
 
                         }
+
                     }
 
                 } catch (e) {
-                    this.alertNotify('error', e.message)
+                    this.redirectDialogActive = true
                 }
 
             },

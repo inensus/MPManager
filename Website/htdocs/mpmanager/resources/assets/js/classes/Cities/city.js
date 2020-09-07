@@ -37,7 +37,7 @@ export class City {
             return response.data.data
 
         }).catch(err => {
-            console.log(err)
+
             return err
         })
     }

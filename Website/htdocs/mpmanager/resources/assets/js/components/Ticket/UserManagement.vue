@@ -4,30 +4,36 @@
                 title="Add New Ticketing User">
             <form class="md-layout">
                 <md-card class="md-layout-item md-size-100">
-                    <md-card-header>
-                        <div class="md-title">Add New User</div>
-                    </md-card-header>
-
-                    <!-- start user form-->
-
                     <md-card-content>
                         <div class="md-layout md-gutter">
                             <div class="md-layout-item md-size-100">
-                                <md-field>
+                                <md-field :class="{'md-invalid': errors.has('name')}">
                                     <label>Name</label>
-                                    <md-input v-model="newUser.name"></md-input>
+                                    <md-input
+                                        v-model="ticketUserService.newUser.name"
+                                        name="name"
+                                        id="name"
+                                        v-validate="'required|min:3'"></md-input>
+                                    <span class="md-error">{{ errors.first('name') }}</span>
                                 </md-field>
-                                <md-field>
+                                <md-field :class="{'md-invalid': errors.has('tag')}">
                                     <label>Ticketing System Tag</label>
-                                    <md-input v-model="newUser.tag"></md-input>
+                                    <md-input v-model="ticketUserService.newUser.tag"
+                                              name="tag"
+                                              id="tag"
+                                              v-validate="'required|min:3'"></md-input>
+                                    <span class="md-error">{{ errors.first('tag') }}</span>
                                 </md-field>
-                                <md-checkbox v-model="newUser.outsourcing">User for Outsourcing?</md-checkbox>
+                                <md-checkbox v-model="ticketUserService.newUser.outsourcing">User for Outsourcing?
+                                </md-checkbox>
                             </div>
                         </div>
-                    </md-card-content><!-- end user form-->
+                        <md-progress-bar md-mode="indeterminate" v-if="loading"/>
+                    </md-card-content>
 
                     <md-card-actions>
-                        <md-button type="button" @click="saveUser" class="md-primary">Create User</md-button>
+                        <md-button type="button" @click="saveUser" :disabled="loading" class="md-primary">Create User
+                        </md-button>
                         <md-button type="button" @click="showNewUser = false" class="md-accent">Close</md-button>
                     </md-card-actions>
                 </md-card>
@@ -36,8 +42,6 @@
             </form>
 
         </widget>
-
-        <!-- TODO: Replace with class -->
         <div v-if="showNewUser" style="margin-top: 1rem;"></div>
 
 
@@ -47,12 +51,8 @@
             button-text="Add new User"
             :callback="showAddUser"
         >
-            <div v-model="users">
-                <md-table v-model="users" md-sort="name" md-sort-order="asc" md-card>
-                    <md-table-toolbar>
-                        <h1 class="md-title">Users</h1>
-                    </md-table-toolbar>
-
+            <div v-if="ticketUserService.list.length>0" v-model="ticketUserService.list">
+                <md-table v-model="ticketUserService.list" md-sort="name" md-sort-order="asc" md-card>
                     <md-table-row slot="md-table-row" slot-scope="{ item }">
                         <md-table-cell md-label="ID" md-sort-by="id" md-numeric>{{ item.id }}</md-table-cell>
                         <md-table-cell md-label="Name" md-sort-by="name">{{ item.name }}</md-table-cell>
@@ -62,127 +62,89 @@
                     </md-table-row>
                 </md-table>
             </div>
+            <div v-else>
+                <no-table-data :headers="headers" :tableName="tableName"/>
+            </div>
         </widget>
 
-        <!-- area to show feedback from add user -->
-        <!-- <notifications group="foo" position="top right"/>
-        <notifications group="error" position="top center"/> -->
 
     </div>
 </template>
 
 <script>
-  import { EventBus } from '../../shared/eventbus'
-  import Widget from '../../shared/widget'
+    import Widget from '../../shared/widget'
+    import { TicketUserService } from '../../services/TicketUserService'
+    import NoTableData from '../../shared/NoTableData'
 
-  export default {
-    name: 'UserManagement',
-    components: { Widget },
-    data () {
-      return {
-        users: [],
-        showNewUser: false,
-        newUser: {
-          name: '',
-          tag: '',
-          outsourcing: null,
-        },
-        bcd: {
-          'Home': {
-            'href': '/'
-          },
-          'Tickets': {
-            'href': null
-          },
-          'Settings': {
-            'href': null
-          },
-          'User Management': {
-            'href': null
-          },
-        },
-      }
-
-    },
-
-    created () {
-      this.getUsers()
-
-    },
-
-    mounted () {
-      EventBus.$emit('bread', this.bcd)
-
-    },
-    methods: {
-      showAddUser () {
-        this.showNewUser = true
-      },
-      saveUser () {
-        axios.post(resources.ticket.createUserTicket, {
-          'username': this.newUser.name,
-          'usertag': this.newUser.tag,
-          'outsourcing': this.newUser.outsourcing
-        }).then(response => {
-          let userData = response.data.data
-
-          if (userData.error != undefined) {
-
-            this.$notify({
-              group: 'error',
-              title: 'User Not Found!',
-              type: 'warn',
-              text: this.newUser.tag + 'not found in the Ticketing system!'
-            })
-            return
-          }
-
-          this.users.push(
-            {
-              id: userData.id,
-              name: userData.user_name,
-              tag: userData.user_tag,
-              created_at: userData.created_at
+    export default {
+        name: 'UserManagement',
+        components: { Widget, NoTableData },
+        data () {
+            return {
+                ticketUserService: new TicketUserService(),
+                showNewUser: false,
+                headers: ['ID', 'Name', 'Tag', 'Registered Since'],
+                tableName: 'Ticket User',
+                loading: false,
             }
-          )
 
-          this.$notify({
-            group: 'foo',
-            title: 'User Added!',
-            text: userData.user_name + 'created!'
-          })
+        },
 
-        })
-        this.showNewUser = false
-        this.resetNewUser()
+        mounted () {
 
-      },
-      resetNewUser () {
-        this.newUser = {
-          'name': '',
-          'tag': '',
-          'outsourcing': null,
-        }
-      },
+            this.getUsers()
+        },
+        methods: {
 
-      getUsers () {
-        axios.get(resources.ticket.users)
-          .then(response => {
-            let data = response.data.data
+            async saveUser () {
+                let validator = await this.$validator.validateAll()
+                if (validator) {
+                    this.loading = true
+                    try {
+                        let userData = await this.ticketUserService.createUser(this.ticketUserService.newUser.name, this.ticketUserService.newUser.tag, this.ticketUserService.newUser.outsourcing)
 
-            for (let _user in data) {
-              let user = data[_user]
-              this.users.push({
-                id: user.id,
-                name: user.user_name,
-                tag: user.user_tag,
-                created_at: user.created_at
-              })
-            }
-          })
-      }
-    },
-  }
+                        if (userData.error != undefined) {
+                            this.alertNotify('warn', this.ticketUserService.newUser.tag + ' not found in the Ticketing system!')
+                            this.loading = false
+                            return
+                        }
+                        await this.getUsers()
+                        this.alertNotify('success', 'User added successfully.')
+                        this.loading = false
+                    } catch (e) {
+                        this.loading = false
+                        this.alertNotify('error', e.message)
+                    }
+                    this.showNewUser = false
+                    this.resetNewUser()
+                }
+            },
+            async getUsers () {
+                try {
+                    this.ticketUserService.list = []
+                    await this.ticketUserService.getUsers()
+                } catch (e) {
+                    this.alertNotify('error', e.message)
+                }
+
+            },
+            resetNewUser () {
+                this.ticketUserService.resetNewUser()
+            },
+            showAddUser () {
+                this.showNewUser = true
+            },
+            alertNotify (type, message) {
+                this.$notify({
+                    group: 'notify',
+                    type: type,
+                    title: type + ' !',
+                    text: message,
+                    speed: 0
+                })
+            },
+        },
+    }
 </script>
 
 <style scoped>

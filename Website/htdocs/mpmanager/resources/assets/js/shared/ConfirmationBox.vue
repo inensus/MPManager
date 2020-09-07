@@ -29,11 +29,9 @@
           confirmButtonText: 'I\'m sure',
           cancelButtonText: 'Cancel',
         }).then((result) => {
-          console.log(result)
+
           if (result.value) {
             this.$emit('confirmed', data)
-          } else {
-            console.log('user cancelled action')
           }
 
         })

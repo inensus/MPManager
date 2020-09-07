@@ -5,6 +5,7 @@ services:
     container_name: laravel
     build:
       context: Docker/
+      dockerfile: DockerfileLaravelDev
     image: laravel/php:73
 
     environment:
@@ -18,6 +19,17 @@ services:
     volumes:
       - ./Website/config/php/php.ini:/usr/local/etc/php/php.ini
       - ./Website/htdocs:/var/www/html
+
+  queue:
+    image: ipunktbs/laravel-queue-worker
+    container_name: queue
+    restart: unless-stopped
+    volumes:
+      - ./Website/htdocs/mpmanager:/var/www/app
+    links:
+      - redis:redis
+    environment:
+      - LARAVEL_HORIZON=true
 
   'composer':
     container_name: mpmanager_composer

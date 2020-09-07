@@ -94,7 +94,7 @@
                                     </md-field>
                                 </md-card-content>
                                 <md-card-actions>
-                                    <md-button type="submit" class="md-primary btn-save">Save</md-button>
+                                    <md-button type="submit" @click="updatePerson" class="md-primary btn-save">Save</md-button>
                                     <md-button type="button" @click="editPerson = false" class="md-accent btn-save">
                                         Cancel
                                     </md-button>
@@ -127,7 +127,7 @@
                 required: true
             }
         },
-        mounted () {},
+
         data () {
             return {
                 personService: new PersonService(),
@@ -137,8 +137,8 @@
         methods: {
             updatePerson () {
                 this.editPerson = false
+                this.personService.updatePerson(this.person)
 
-                this.person.updatePerson()
             },
             confirmDelete () {
                 this.$swal({
