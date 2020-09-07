@@ -9,18 +9,19 @@
             :button="true"
             :button-text="'New Connection Type'"
             :callback="addNew"
+            :color="'green'"
         >
             <md-table md-card style="margin-left: 0">
                 <md-table-row>
+                    <md-table-head>#</md-table-head>
                     <md-table-head>ID</md-table-head>
                     <md-table-head>Name</md-table-head>
                 </md-table-row>
-                <md-table-row v-for="type in connectionTypes" :key="type.id">
-                    <md-table-cell> {{ type.id}}</md-table-cell>
-                    <md-table-cell> {{ type.name}}</md-table-cell>
-
-                </md-table-row>
-
+                    <md-table-row v-for="type,index in connectionTypes" :key="type.id" @click="connectionTypeDetail(type)" style="cursor: pointer">
+                        <md-table-cell> {{ index+1}}</md-table-cell>
+                        <md-table-cell> {{ type.id}}</md-table-cell>
+                        <md-table-cell> {{ type.name}}</md-table-cell>
+                    </md-table-row>
             </md-table>
 
 
@@ -34,6 +35,7 @@
     import {EventBus} from '../../shared/eventbus'
     import TableList from '../../shared/TableList'
     import {ConnectionTypeService} from '../../services/ConnectionTypeService'
+    import {SubConnectionTypeService} from '../../services/SubConnectionTypeService'
     import NewConnectionType from './NewConnectionType'
 
     export default {
@@ -51,11 +53,17 @@
         data() {
             return {
                 connectionTypeService: new ConnectionTypeService(),
+                subConnectionTypeService: new SubConnectionTypeService(),
                 subscriber: 'connection-types-list',
                 connectionTypes: [],
+                subConnectionTypes: [],
             }
         },
         methods: {
+            connectionTypeDetail(type){
+                this.$router.push({ path: '/connection-types/' + type.id })
+                EventBus.$emit('connectionTypeDetail', type.name)
+            },
             reloadList(subscriber, data) {
                 if (subscriber !== this.subscriber) return
                 this.connectionTypes = this.connectionTypeService.updateList(data)

@@ -1,11 +1,18 @@
 const resource = '/api/connection-types'
+import Client from './Client/AxiosClient'
 
 export default {
     list() {
-        return axios.get(`${resource}`)
+        return Client.get(`${resource}`)
     },
     create(name) {
-        return axios.post(`${resource}`, name)
+        return Client.post(`${resource}`, name)
+    },
+    show(connectionTypeId) {
+        return Client.get(`${resource}/${connectionTypeId}?meter_count=1`)
+    },
+    update(connectionType){
+        return Client.put(`${resource}/${connectionType.id}`,connectionType)
     }
 }
 

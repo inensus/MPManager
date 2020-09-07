@@ -39,6 +39,20 @@ export class ConnectionGroupService {
 
     }
 
+    async updateConnectionGroup(connectionGroup){
+        try {
+            let response = await this.repository.update(connectionGroup)
+            if(response.status === 200 || response.status === 201){
+                return connectionGroup
+            }else{
+                return new ErrorHandler(response.error, 'http', response.status)
+            }
+        }catch (e) {
+            let erorMessage = e.response.data.data.message
+            return new ErrorHandler(erorMessage, 'http')
+        }
+    }
+
     async getConnectionGroups() {
         try {
             let response = await this.repository.list()

@@ -23,6 +23,7 @@ import PersonRepository from './PersonRepository'
 import RevenueRepository from './RevenueRepository'
 import RestrictionRepository from './RestrictionRepository'
 import SmsRepository from './SmsRepository'
+import SubConnectionTypeRepository from './SubConnectionTypeRepository'
 import TariffRepository from './TariffRepository'
 import TicketRepository from './TicketRepository'
 import TransactionRepository from './TransactionRepository'
@@ -47,6 +48,7 @@ const repositories = {
     'cluster': ClusterRepository,
     'connectionTypes': ConnectionTypeRepository,
     'connectionGroups': ConnectionGroupsRepository,
+
     'city': CityRepository,
     'country': CountryRespository,
     'commission': AgentCommissionRepository,
@@ -59,6 +61,7 @@ const repositories = {
     'restriction': RestrictionRepository,
     'sms': SmsRepository,
     'soldAppliance': AgentSoldApplianceRepository,
+    'subConnectionTypes': SubConnectionTypeRepository,
     'transaction': TransactionRepository,
     'tariff': TariffRepository,
     'ticket': TicketRepository,  
