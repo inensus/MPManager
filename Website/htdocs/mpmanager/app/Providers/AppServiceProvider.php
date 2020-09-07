@@ -5,6 +5,7 @@ namespace App\Providers;
 
 use App\Helpers\MailHelper;
 use App\ManufacturerApi\CalinApi;
+use App\ManufacturerApi\CalinSmartApi;
 use App\Misc\LoanDataContainer;
 use App\Models\AccessRate\AccessRate;
 use App\Models\Agent;
@@ -82,6 +83,9 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->singleton('CalinApi', static function ($app) {
             return new CalinApi(new Client());
+        });
+        $this->app->singleton('CalinSmartApi', static function ($app) {
+            return new CalinSmartApi(new Client());
         });
 
 

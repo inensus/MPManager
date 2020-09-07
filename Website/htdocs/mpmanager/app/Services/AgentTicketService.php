@@ -60,7 +60,7 @@ class AgentTicketService implements IAgentRelatedService
 
     public function listByCustomer($agentId, $customerId)
     {
-        return Ticket::with('category')
+        return Ticket::with(['category','owner'])
             ->whereHasMorph('creator', [Agent::class],
                 static function ($q) use ($agentId) {
                     $q->where('id', $agentId);
@@ -120,9 +120,10 @@ class AgentTicketService implements IAgentRelatedService
         $ticket = Ticket::make([
             'ticket_id' => $ticketId,
             'category_id' => $categoryId,
-
+            'creator_type' => 'agent',
+            'creator_id' => $creator->id
         ]);
-        $ticket->creator()->associate($creator);
+
         $ticket->owner()->associate($owner);
         $ticket->save();
         return $ticket;
@@ -145,6 +146,7 @@ class AgentTicketService implements IAgentRelatedService
         return $tickets;
 
     }
+
     public function getTicket($ticketId)
     {
         $ticket = Ticket::with('category', 'owner')->where('ticket_id', $ticketId)->first();
