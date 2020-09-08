@@ -55,6 +55,7 @@ const repositories = {
     'minigrid': MiniGridRepository,
     'map': MappingRepository,
     'meter': MeterRepository,
+    'meterType': MeterTypeRepository,
     'person': PersonRepository,
     'revenue': RevenueRepository,
     'restriction': RestrictionRepository,
@@ -68,7 +69,6 @@ const repositories = {
     'ticketTrello': TicketTrelloRepository,
     'ticketUser': TicketUserRepository,
     'ticketLabel': TicketLabelRepository,
-    'meterType': MeterTypeRepository
     'user': UserRepository,
 }
 
