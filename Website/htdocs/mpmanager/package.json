@@ -11,8 +11,10 @@
     },
     "devDependencies": {
         "axios": "^0.18.1",
+        "compression-webpack-plugin": "^4.0.0",
         "cross-env": "^5.2.1",
         "debounce": "^1.2.0",
+        "eslint-loader": "^4.0.2",
         "jquery": "^3.5.0",
         "laravel-mix": "^5.0.1",
         "lodash": "^4.17.19",
@@ -23,8 +25,7 @@
         "sass-loader": "^8.0.2",
         "vue": "^2.6.11",
         "vue-sparklines": "^0.1.6",
-        "vue-template-compiler": "^2.6.11",
-        "compression-webpack-plugin": "^4.0.0"
+        "vue-template-compiler": "^2.6.11"
     },
     "dependencies": {
         "@fortawesome/fontawesome-svg-core": "^1.2.27",
