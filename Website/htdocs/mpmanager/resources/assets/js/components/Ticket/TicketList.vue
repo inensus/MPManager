@@ -25,14 +25,14 @@
 
                                     <ticket-item
                                         :allow-comment="true"
-                                        :ticket-list="tickets.openedList"
+                                        :ticket-list="ticketService.openedList"
                                     ></ticket-item>
 
                                     <md-list class="md-triple-line ticket-area">
                                         <md-list-item class="text-center no-ticket"
                                                       data-v-aec15928
                                                       data-v-e03de5b4
-                                                      v-if="tickets.openedList.length === 0 && !loading">
+                                                      v-if="ticketService.openedList.length === 0 && !loading">
                                             <h4 data-v-aec15928 data-v-e03de5b4 style="font-weight: 500;">
                                                 No opened tickets
                                                 found
@@ -43,7 +43,7 @@
                                 </div>
 
                                 <paginate
-                                    :paginatorReference="tickets.openedPaginator"
+                                    :paginatorReference="ticketService.openedPaginator"
                                     :subscriber="subscriber.opened"
                                     style="position: absolute; bottom:0; width: 100%"
 
@@ -67,12 +67,12 @@
 
                                     <ticket-item
                                         :allow-comment="true"
-                                        :ticket-list="tickets.closedList"
+                                        :ticket-list="ticketService.closedList"
 
                                     ></ticket-item>
                                 </div>
                                 <paginate
-                                    :paginatorReference="tickets.closedPaginator"
+                                    :paginatorReference="ticketService.closedPaginator"
                                     :subscriber="subscriber.closed"
                                     style="position: absolute; bottom:0; width: 100%"
 
@@ -169,7 +169,7 @@
                         }
                     } else {
                         //created event, add the ticket to the list.
-                        let t = new Ticket()
+                        let t = new TicketS()
 
                         t.getDetail(data.target.ticket_id).then(response => {
 
