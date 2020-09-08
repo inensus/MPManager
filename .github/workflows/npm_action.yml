@@ -1,0 +1,28 @@
+name: Build
+
+on:
+  push:
+    paths:
+    - 'Website/**'
+  pull_request:
+    paths:
+    - 'Website/**'
+
+
+jobs:
+  
+  build:
+    
+    runs-on: ubuntu-latest
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+     
+      - name: route to mpmanager
+        run:  cd Website/htdocs/mpmanager
+
+      
+      - name: npm watch
+        run:  npm run watch
+           
