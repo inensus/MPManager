@@ -9,6 +9,7 @@
 namespace App\ManufacturerApi;
 
 
+use App\Exceptions\Manufacturer\ApiCallDoesNotSupportedException;
 use App\Lib\IManufacturerAPI;
 use App\Models\Meter\Meter;
 use App\Models\Meter\MeterToken;
@@ -51,13 +52,7 @@ class CalinApi implements IManufacturerAPI
         return [$httpCode, $response];
     }
 
-    /**
-     * @param Meter $meter
-     * @param $energy
-     * @return MeterToken
-     * @throws Exception
-     */
-    public function generateToken(Meter $meter, $energy): array
+    public function chargeMeter(Meter $meter, $energy): array
     {
         $timestamp = time();
         $cipherText = $this->generateCipherText(
@@ -77,8 +72,6 @@ class CalinApi implements IManufacturerAPI
             'timestamp' => $timestamp,
             'ciphertext' => $cipherText,
         ];
-
-
         return [
             'token' => $this->tokenRequest($tokenParams),
             'energy' => $energy
@@ -126,5 +119,11 @@ class CalinApi implements IManufacturerAPI
             sprintf('%s%s%s%s%s%s%s',
                 $serialID, $userID, $meterID, $tokenType, $amount, $timestamp, config('services.calin.key'))
         );
+    }
+
+
+    public function clearMeter(Meter $meters)
+    {
+        throw  new ApiCallDoesNotSupportedException('This api call does not supported');
     }
 }

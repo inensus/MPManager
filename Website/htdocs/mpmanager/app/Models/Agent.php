@@ -128,4 +128,9 @@ class Agent extends Authenticatable implements JWTSubject
     {
         return $this->morphMany(Address::class, 'owner');
     }
+
+    public function receipt()
+    {
+        return $this->hasMany(AgentReceipt::class, 'agent_id', 'id');
+    }
 }
