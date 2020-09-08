@@ -2,20 +2,16 @@ version: '3.1'
 
 services:
   'laravel':
-    container_name: laravel
     build:
       context: Docker/
-      dockerfile: DockerfileLaravelDev
+      dockerfile: DockerfileLaravelProd
     image: laravel/php:73
-
-    environment:
-      VIRTUAL_HOST: mpmanager.local
+    user: "www-data:www-data"
     depends_on:
       - maria
     links:
       - maria:db
       - redis:redis
-
     volumes:
       - ./Website/config/php/php.ini:/usr/local/etc/php/php.ini
       - ./Website/htdocs:/var/www/html
@@ -26,8 +22,12 @@ services:
     restart: unless-stopped
     volumes:
       - ./Website/htdocs/mpmanager:/var/www/app
+    depends_on:
+      - maria
+      - redis
     links:
       - redis:redis
+      - maria:db
     environment:
       - LARAVEL_HORIZON=true
 
@@ -50,21 +50,21 @@ services:
       - ./Website/htdocs/mpmanager:/home/node/app
     command:  /bin/sh -c "/tmp/start.sh"
 
-
   'redis':
     image: redis:5
     volumes:
       - ./redis/:/data
 
-  'phpmyadmin':
-    image: phpmyadmin/phpmyadmin:latest
-    environment:
-      VIRTUAL_HOST: db.mpmanager.local
 
+  'phpmyadmin':
+    container_name: phpma
+    image: phpmyadmin/phpmyadmin:latest
     depends_on:
       - maria
     links:
       - maria:db
+    environment:
+      - "PMA_ABSOLUTE_URI=https://db.mpmanager.tk" # Your subdomain address
 
 
   'maria':
@@ -78,18 +78,26 @@ services:
     volumes:
       - ./DB/mysql:/var/lib/mysql
 
-  nginxproxy:
-    container_name: nginx-proxy
-    image: jwilder/nginx-proxy:latest
+
+  nginx:
+    container_name: nginx
+    image: nginx:1.15-alpine
+    restart: unless-stopped
+    volumes:
+      - ./Website/htdocs:/var/www/html
+      - ./NginxProxy/conf.p:/etc/nginx/conf.d
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
     ports:
       - "80:80"
       - "443:443"
-      - "6379:6379"
-    environment:
-      VIRTUAL_PROTO: https
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+
+  certbot:
+    container_name: certbot
+    image: certbot/certbot
+    restart: unless-stopped
     volumes:
-      - ./NginxProxy/proxy.conf:/etc/nginx/proxy.conf
-      - ./NginxProxy/conf.d:/etc/nginx/conf.d
-      - ./NginxProxy/certs:/etc/nginx/certs
-      - ./NginxProxy/vhost.d:/etc/nginx/vhost.d
-      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./certbot/conf:/etc/letsencrypt
+      - ./certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"

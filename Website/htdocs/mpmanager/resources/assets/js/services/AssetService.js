@@ -56,7 +56,8 @@ export class AssetService {
                 return new ErrorHandler(response.error, 'http', response.status)
             }
         } catch (e) {
-            return new ErrorHandler(e, 'http')
+            let errorMessage = e.response.data.data.message
+            return new ErrorHandler(errorMessage, 'http');
         }
 
     }
@@ -67,11 +68,12 @@ export class AssetService {
             if (response.status === 200 || response.status === 201) {
                 return response
             } else {
-                new ErrorHandler(response.error, 'http', response.status)
+             return    new ErrorHandler(response.error, 'http', response.status);
             }
 
         } catch (e) {
-            return new ErrorHandler(e, 'http')
+            let errorMessage = e.response.data.data.message
+            return new ErrorHandler(errorMessage, 'http');
         }
 
     }
@@ -82,27 +84,28 @@ export class AssetService {
             if (response.status === 200 || response.status === 201) {
                 return response
             } else {
-                new ErrorHandler(response.error, 'http', response.status)
+                return new ErrorHandler(response.error, 'http', response.status);
             }
-            return response
+
         } catch (e) {
-            return new ErrorHandler(e, 'http')
+            let errorMessage = e.response.data.data.message
+            return new ErrorHandler(errorMessage, 'http');
         }
 
     }
-
-    async getAssets () {
+    async getAssets(){
         try {
-            let response = await this.repository.list()
-            if (response.status === 200) {
-                let list = response.data.data
-                this.list = this.updateList(list)
-                return this.list
+            let response = await this.repository.list();
+            if (response.status === 200 || response.status === 201) {
+                this.list=response.data.data
+                return this.list;
             } else {
-                return new ErrorHandler(response.error, 'http', response.status)
+                new ErrorHandler(response.error, 'http', response.status);
             }
+
         } catch (e) {
-            return new ErrorHandler(e, 'http')
+            let errorMessage = e.response.data.data.message
+            return new ErrorHandler(errorMessage, 'http');
         }
     }
 

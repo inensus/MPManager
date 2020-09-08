@@ -87,7 +87,7 @@ class TokenProcessor implements ShouldQueue
                         'energy' => (float)$this->transactionContainer->chargedEnergy,
                     ];
                 } else {
-                    $tokenData = $api->generateToken(
+                    $tokenData = $api->chargeMeter(
                         $this->transactionContainer->meter,
                         (float)$this->transactionContainer->chargedEnergy
                     );
@@ -137,9 +137,6 @@ class TokenProcessor implements ShouldQueue
 
         event('transaction.successful', [$this->transactionContainer->transaction]);
 
-
-        SmsProcessor::dispatch($this->transactionContainer->transaction,
-            SmsTypes::ENERGY_CONFIRMATION)->allOnConnection('redis')->onQueue('sms');
     }
 
 }

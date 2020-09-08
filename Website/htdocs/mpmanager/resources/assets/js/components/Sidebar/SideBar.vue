@@ -103,13 +103,24 @@
                     },
                     {
                         name: 'Meters',
-                        route: '/meters/page/1',
                         icon: 'bolt',
+                        children: [
+                            {
+                                name: 'List',
+                                route: '/meters/page/1',
+                            },
+                            {
+                                name: 'Types',
+                                route: '/meters/types'
+                            },
+                        ]
+
                     },
                     {
                         name: 'Transactions',
                         route: '/transactions/page/1',
                         icon: 'university',
+
                     },
                     {
                         name: 'Tickets',

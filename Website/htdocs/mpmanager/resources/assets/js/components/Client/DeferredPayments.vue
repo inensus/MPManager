@@ -20,32 +20,48 @@
                     <md-card-content>
                         <md-field>
                             <label for="asset_types">Asset Type</label>
-                            <md-select name="asset_types" id="asset_types" v-model="newAsset">
+                            <md-select name="asset_types" id="asset_types" v-model="newAsset.id"
+                            >
                                 <md-option disabled value>--Select--</md-option>
                                 <md-option
                                     :value="assetType.id"
-                                    v-for="assetType in assetTypes"
+                                    v-for="assetType in assetService.list"
+
+
                                     :key="assetType.id"
                                 >{{assetType.name}}
                                 </md-option>
                             </md-select>
                         </md-field>
-
-                        <md-field>
+                        <md-field :class="{'md-invalid': errors.has('Cost')}">
                             <label for="Cost">Cost (TZS)</label>
-                            <md-input type="text" name="Cost" v-model="newAsset.cost"/>
+                            <md-input type="number"
+                                      name="Cost"
+                                      id="Cost"
+                                      v-model="newAsset.cost"
+                                      v-validate="'required'"/>
+                            <span class="md-error">{{ errors.first('Cost') }}</span>
                         </md-field>
 
-                        <md-field>
+                        <md-field :class="{'md-invalid': errors.has('rate')}">
                             <label for="rate">Rate Count</label>
-                            <md-input type="text" name="rate" v-model="newAsset.rate"/>
+                            <md-input type="number"
+                                      name="rate"
+                                      id="rate"
+                                      v-model="newAsset.rate"
+                                      v-validate="'required'"
+                            />
+                            <span class="md-error">{{ errors.first('rate') }}</span>
                         </md-field>
-
-                        <div v-for="x in parseInt(newAsset.rate)" :key="x" class="col-md-3 col-sm-4">
-                            <span v-if="x<10" style="opacity: 0;">0</span>
-                            {{x}}&nbsp;-&nbsp;{{ readable(getRate(x,
-                            newAsset.rate,newAsset.cost ))}} TZS
+                        <div v-if="newAsset.rate">
+                            <div v-for="x in parseInt(newAsset.rate)" :key="x"
+                                 class="col-md-3 col-sm-4">
+                                <span v-if="x<10" style="opacity: 0;">0</span>
+                                {{x}}&nbsp;-&nbsp;{{ readable(getRate(x,
+                                newAsset.rate,newAsset.cost ))}} TZS
+                            </div>
                         </div>
+
                     </md-card-content>
                     <md-card-actions>
                         <md-button type="submit" class="md-primary btn-sell">Sell Asset</md-button>
@@ -53,13 +69,14 @@
                 </md-card>
             </form>
 
-            <div v-if="personAssets.length>0">
-                <!-- ana tablo  -->
+            <div v-if="assetPersonService.list.length>0">
                 <md-table>
                     <md-table-row>
-                        <md-table-head v-for="(item, index) in headers" :key="index">{{item}}</md-table-head>
+                        <md-table-head>Name</md-table-head>
+                        <md-table-head>Cost</md-table-head>
+                        <md-table-head>Rates</md-table-head>
                     </md-table-row>
-                    <md-table-row v-for="(item, index) in personAssets" :key="index">
+                    <md-table-row v-for="(item, index) in assetPersonService.list" :key="index">
                         <md-table-cell md-label="Name" md-sort-by="name">{{item.asset_type.name}}</md-table-cell>
                         <md-table-cell md-label="Cost" md-sort-by="total_cost">{{item.total_cost}} TZS</md-table-cell>
                         <md-table-cell md-label="Rates" md-sort-by="rate_count">
@@ -87,8 +104,8 @@
                 <strong>{{selectedAsset.asset_type.name}}</strong>
             </md-dialog-title>
 
-            <vue-grid justify="between" class="details-modal-grid">
-                <vue-cell width="4of12">
+            <div class="md-layout md-gutter dialog-place">
+                <div class="md-layout-item md-size-100">
                     <span>Total Cost :</span>
                     <span>{{readable(selectedAsset.total_cost)}}</span>
                     <br/>
@@ -97,15 +114,11 @@
                     <br/>
                     <span>Rates Count :</span>
                     <span>{{selectedAsset.rate_count}}</span>
-                </vue-cell>
-                <vue-cell width="8of12"></vue-cell>
-                <br/>
-
-                <vue-cell width="12of12">
-                    <strong>Rates</strong>æ
-                </vue-cell>
-
-                <vue-cell width="12of12">
+                </div>
+                <div class="md-layout-item md-size-100">
+                    <strong>Rates</strong>
+                </div>
+                <div class="md-layout-item md-size-100">
                     <md-table>
                         <md-table-row>
                             <md-table-head>
@@ -147,9 +160,10 @@
                             </md-table-cell>
                         </md-table-row>
                     </md-table>
-                </vue-cell>
 
-                <vue-cell width="12of12">
+                </div>
+                <div class="md-layout-item md-size-100">
+
                     <h4>History</h4>
                     <div class="col-sm-12" v-for="log in selectedAsset.logs" :key="log.id">
                         <li>
@@ -157,9 +171,9 @@
                             <strong>{{log.owner.name}}</strong>
                         </li>
                     </div>
-                </vue-cell>
-            </vue-grid>
+                </div>
 
+            </div>
             <md-dialog-actions>
                 <md-button class="md-accent" @click="toggleModal()">Close</md-button>
             </md-dialog-actions>
@@ -168,13 +182,15 @@
 </template>
 
 <script>
-    import Widget from '../../shared/widget'
-    import { AssetTypes } from '../../classes/asset/AssetTypes'
-    import { resources } from '../../resources'
-    import NoTableData from '../../shared/NoTableData'
+    import { AssetService } from '../../services/AssetService'
+    import { AssetRateService } from '../../services/AssetRateService'
+    import { AssetPersonService } from '../../services/AssetPersonService'
     import { currency } from '../../mixins/currency'
     import ConfirmationBox from '../../shared/ConfirmationBox'
     import { EventBus } from '../../shared/eventbus'
+    import Widget from '../../shared/widget'
+    import NoTableData from '../../shared/NoTableData'
+    import { resources } from '../../resources'
     import Modal from '../../modal/modal'
     import moment from 'moment'
 
@@ -191,12 +207,15 @@
         },
         data () {
             return {
+                assetService: new AssetService(),
+                assetRateService: new AssetRateService(),
+                assetPersonService: new AssetPersonService(),
+                adminId: this.$store.getters['auth/authenticationService'].authenticateUser.id,
                 selectedAsset: null,
+                selectedAssetId: null,
                 showModal: false,
                 editRow: null,
                 showNewAsset: false,
-                personAssets: [],
-                assetTypes: null,
                 newAsset: {
                     id: null,
                     cost: 1,
@@ -204,6 +223,7 @@
                 },
                 headers: ['Name', 'Cost', 'Rates'],
                 tableName: 'Sold Assets'
+
             }
         },
 
@@ -219,39 +239,37 @@
             },
             showDetails (index) {
                 this.toggleModal()
-                this.selectedAsset = this.personAssets[index]
+
+                this.selectedAsset = this.assetPersonService.list[index]
             },
             showConfirm (data) {
                 EventBus.$emit('show.confirm', data)
             },
-            editRate (data) {
-                axios
-                    .put(resources.assets.rate.update + data.id, {
-                        remaining: data.remaining,
-                        admin_id: this.$store.getters.admin.getId()
-                    })
-                    .then(response => {
-                        this.editRow = null
-                    })
-            },
-            getAssetTypesList () {
-                axios.get(resources.assets.type.list).then(response => {
-                    this.assetTypes = response.data.data
-                })
-            },
-            getRate (index, rateCount, cost) {
-                if (index === parseInt(rateCount)) {
-                    return cost - (rateCount - 1) * Math.floor(cost / rateCount)
-                } else {
-                    return Math.floor(cost / rateCount)
+            async editRate (data) {
+                try {
+                    await this.assetRateService.editAssetRate(data.id, data.remaining, this.adminId)
+                    this.editRow = null
+                    this.alertNotify('success', 'Asset Rate updated successfully.')
+                } catch (e) {
+                    this.alertNotify('error', e.message)
                 }
             },
-            getAssetList () {
-                axios.get(resources.assets.type.person + this.personId).then(response => {
-                    this.personAssets = response.data.data
-                })
+            async getAssetTypesList () {
+                try {
+                    await this.assetService.getAssets()
+                } catch (e) {
+                    this.alertNotify('error', e.message)
+                }
+
             },
-            saveAsset () {
+            async getAssetList () {
+                try {
+                    await this.assetPersonService.getPersonAssets(this.personId)
+                } catch (e) {
+                    this.alertNotify('error', e.message)
+                }
+            },
+            async saveAsset () {
                 if (this.newAsset.id === null) {
                     this.$swal({
                         type: 'error',
@@ -269,25 +287,48 @@
                     showCancelButton: true,
                     cancelButtonText: 'Cancel',
                     confirmButtonText: 'Sell'
-                }).then(response => {
-                    axios
-                        .post(
-                            resources.assets.type.sell +
-                            this.newAsset.id +
-                            '/people/' +
-                            this.personId,
-                            this.newAsset
-                        )
-                        .then(response => {
-                            this.getAssetList()
-                        })
+                }).then(async response => {
+                    try {
+                        let validator = await this.$validator.validateAll()
+                        if (validator) {
+                            await this.assetPersonService.saveAsset(this.newAsset.id, this.personId, this.newAsset)
+                            this.showNewAsset = false
+                            this.alertNotify('success', 'New asset sold successfully.')
+                            await this.getAssetList()
+                        }
+
+                    } catch (e) {
+                        this.alertNotify('error', e.message)
+                    }
                 })
-            }
-        }
+            },
+            getRate (index, rateCount, cost) {
+                if (index === parseInt(rateCount)) {
+                    return cost - (rateCount - 1) * Math.floor(cost / rateCount)
+                } else {
+                    return Math.floor(cost / rateCount)
+                }
+            },
+            alertNotify (type, message) {
+                this.$notify({
+                    group: 'notify',
+                    type: type,
+                    title: type + ' !',
+                    text: message
+                })
+            },
+        },
+
     }
 </script>
 
 <style scoped>
+    .dialog-place {
+        max-width: 100%;
+        margin: auto !important;
+        overflow-y: scroll;
+    }
+
     .mb {
         margin-bottom: 15px;
         border-bottom: 1px solid #eceaea;

@@ -6,7 +6,7 @@
                 color="green"
                 title="List of Tickets">
 
-            <div class="md-layout-item" v-if="filterTicket">
+            <div class="md-layout-item" v-if="filterTicket" >
                 <filtering @filtering="filtered"></filtering>
 
             </div>
@@ -22,19 +22,17 @@
                                     style="min-height: 70vh !important; padding-bottom: 70px;"
                                 >
 
+
                                     <ticket-item
                                         :allow-comment="true"
-                                        :key="ticket.id"
-                                        :ticket="ticket"
-                                        v-for="ticket in ticketService.openedList"
+                                        :ticket-list="tickets.openedList"
                                     ></ticket-item>
+
                                     <md-list class="md-triple-line ticket-area">
                                         <md-list-item class="text-center no-ticket"
                                                       data-v-aec15928
                                                       data-v-e03de5b4
-
-
-                                                      v-if="ticketService.openedList.length === 0 && !loading">
+                                                      v-if="tickets.openedList.length === 0 && !loading">
                                             <h4 data-v-aec15928 data-v-e03de5b4 style="font-weight: 500;">
                                                 No opened tickets
                                                 found
@@ -45,10 +43,10 @@
                                 </div>
 
                                 <paginate
-                                    :paginatorReference="ticketService.openedPaginator"
+                                    :paginatorReference="tickets.openedPaginator"
                                     :subscriber="subscriber.opened"
                                     style="position: absolute; bottom:0; width: 100%"
-                                    :key="resetKey"
+
                                 ></paginate>
                             </md-card-content>
                         </md-card>
@@ -68,38 +66,22 @@
                                 >
 
                                     <ticket-item
-                                        :allow-comment="false"
-                                        :key="ticket.id"
-                                        :ticket="ticket"
-                                        v-for="ticket in ticketService.closedList"
+                                        :allow-comment="true"
+                                        :ticket-list="tickets.closedList"
+
                                     ></ticket-item>
-                                    <md-list class="md-triple-line ticket-area">
-                                        <md-list-item class="text-center no-ticket"
-                                                      data-v-aec15928
-                                                      data-v-e03de5b4
-
-
-                                                      v-if="ticketService.closedList.length === 0 && !loading">
-                                            <h4 data-v-aec15928 data-v-e03de5b4 style="font-weight: 500;">
-                                                No closed tickets
-                                                found
-                                            </h4>
-                                        </md-list-item>
-                                    </md-list>
                                 </div>
                                 <paginate
-                                    :paginatorReference="ticketService.closedPaginator"
+                                    :paginatorReference="tickets.closedPaginator"
                                     :subscriber="subscriber.closed"
                                     style="position: absolute; bottom:0; width: 100%"
-                                    :key="resetKey"
+
                                 ></paginate>
                             </md-card-content>
                         </md-card>
                     </div>
                 </div>
             </div>
-
-
         </widget>
 
 
