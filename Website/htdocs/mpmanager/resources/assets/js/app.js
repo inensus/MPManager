@@ -42,6 +42,7 @@ router.beforeEach((to, from, next) => {
     //else next()
 })
 
+/*eslint-disable */
 const app = new Vue({
     el: '#app',
     components: {
