@@ -53,7 +53,7 @@ const repositories = {
     'commission': AgentCommissionRepository,
     'maintenance': MaintenanceRepository,
     'minigrid': MiniGridRepository,
-    'map': MappingRepository,´
+    'map': MappingRepository,
     'meter': MeterRepository,
     'person': PersonRepository,
     'revenue': RevenueRepository,
