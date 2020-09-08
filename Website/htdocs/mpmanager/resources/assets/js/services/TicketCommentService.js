@@ -21,7 +21,7 @@ export class TicketCommentService {
             let response = await this.repository.create(commentPm)
 
             if (response.status === 200 || response.status === 201) {
-                return response
+                return commentPm
             } else {
                 return new ErrorHandler(response.error, 'http', response.status_code)
             }

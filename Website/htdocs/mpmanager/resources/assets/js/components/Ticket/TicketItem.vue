@@ -56,7 +56,7 @@
 
                                 <em class="pull-right-label-primary" style="cursor:pointer">
                                     <small @click="showComments=!showComments">Comments</small>
-                                    {{ticket.commentCount()}}
+                                    {{ticket.comments.length}}
                                 </em>
                             </div>
                             <div class="clear-fix"></div>
@@ -87,7 +87,7 @@
                                     <md-button
                                         type="submit"
                                         class="md-primary md-dense"
-                                        @click="sendComment()"
+                                        @click="sendComment(ticket)"
                                     >Save
                                     </md-button>
                                 </md-field>
@@ -104,9 +104,12 @@
 </template>
 
 <script>
-    import { UserTickets } from '../../classes/person/ticket'
-    import { resources } from '../../resources'
-
+import { UserTickets } from '../../classes/person/ticket'
+import { resources } from '../../resources'
+import { TicketCommentService } from '../../services/TicketCommentService'
+import { EventBus } from '../../shared/eventbus'
+import { SmsService } from '../../services/SmsService'
+import { TicketService } from '../../services/TicketService'
 
     export default {
         name: 'TicketItem',
@@ -124,12 +127,12 @@
                 showComments: false,
                 newComment: '',
                 showTicket: null,
+                senderId: this.$store.getters['auth/authenticationService'].authenticateUser.id,
             }
         },
         methods: {
             getTimeAgo (date) {
                 return moment(date).fromNow()
-
             },
             formatDate (date) {
                 let d = new Date(date)
@@ -147,32 +150,41 @@
             navigateToOwner (id) {
                 this.$router.push({ path: '/people/' + id })
             },
-            lockTicket (ticket) {
-                ticket.close()
+            async lockTicket (id) {
+                try {
+                    await this.ticketService.closeTicket(id)
+                    EventBus.$emit('listChanged')
+                    this.alertNotify('success', 'Ticket closed successfully.')
+                } catch (e) {
+                }
             },
 
-            sendComment () {
-                let comment = {
-                    comment: this.newComment,
-                    date: new Date(),
-                    fullName: this.$store.getters.admin.name,
-                    username: this.$store.getters.admin.email,
-                    cardId: this.ticket.id
-                }
-
+            async sendComment (ticket) {
                 try {
                     let name = this.$store.getters['auth/authenticationService'].authenticateUser.name
                     let username = this.$store.getters['auth/authenticationService'].authenticateUser.email
-                    await this.ticketCommentService.createComment(this.newComment, this.ticket.id, name, username)
-                    if (this.ticket.category.out_source) {
-                        axios.post(resources.sms.send, {
-                            message: this.newComment,
-                            person_id: this.ticket.owner.id,
-                            senderId: this.$store.getters.admin.id
-                        })
+                    let newComment = await this.ticketCommentService.createComment(this.newComment, ticket.id, name, username)
+                    if (ticket.category.out_source) {
+                        await this.smsService.sendToPerson(this.newComment, ticket.owner.id, this.senderId)
                     }
+                    this.showComments = false
+                    EventBus.$emit('listChanged')
+                    this.alertNotify('success', 'Comment send successfully.')
+                    ticket.comments.push(newComment)
+                    this.showComments=false
+                    this.newComment=null
+                } catch (e) {
+                    this.alertNotify('error', e.message)
+                }
+            },
+            alertNotify (type, message) {
+                this.$notify({
+                    group: 'notify',
+                    type: type,
+                    title: type + ' !',
+                    text: message
                 })
-            }
+            },
         }
     }
 </script>
