@@ -48,7 +48,6 @@ const repositories = {
     'cluster': ClusterRepository,
     'connectionTypes': ConnectionTypeRepository,
     'connectionGroups': ConnectionGroupsRepository,
-
     'city': CityRepository,
     'country': CountryRespository,
     'commission': AgentCommissionRepository,
