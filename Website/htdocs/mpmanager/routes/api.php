@@ -160,52 +160,6 @@ Route::group([
 
 });
 
-
-// Android App Services
-Route::group([
-    'middleware' => ['agent_api', 'jwt.verify'],
-    'prefix' => 'app'
-], function () {
-    Route::group(['prefix' => 'agents'], function () {
-        Route::post('/firebase', 'AgentController@setFirebaseToken');
-        Route::get('/balance', 'AgentController@showBalance');
-        Route::group(['prefix' => 'customers'], function () {
-            Route::get('/', 'AgentCustomerController@index');
-            Route::get('/search', 'AgentCustomerController@search');
-        });
-        Route::group(['prefix' => 'transactions'], function () {
-            Route::get('/', 'AgentTransactionsController@index');
-            Route::get('/{customerId}', 'AgentTransactionsController@agentCustomerTransactions');
-
-        });
-        Route::group(['prefix' => 'appliances'], function () {
-
-            Route::get('/', 'AgentSoldApplianceController@index');
-            Route::get('/{customer}', 'AgentSoldApplianceController@customerSoldAppliances');
-            Route::post('/', [
-                'middleware' => 'agent.balance',
-                'uses' => 'AgentSoldApplianceController@store'
-            ])->name('agent-sell-appliance');
-        });
-        Route::group(['prefix' => 'applianceTypes'], function () {
-            Route::get('/', 'AgentAssignedAppliancesController@index');
-        });
-        Route::group(['prefix' => 'ticket'], function () {
-            Route::get('/', 'AgentTicketController@index');
-            Route::get('/customer/{customerId}', 'AgentTicketController@agentCustomerTickets');
-            Route::post('/', 'AgentTicketController@store');
-        });
-        Route::group(['prefix' => 'dashboard'], function () {
-            Route::get('/boxes', 'AgentController@showDashboardBoxes');
-            Route::get('/graph', 'AgentController@showBalanceHistories');
-            Route::get('/revenue', 'AgentController@showRevenuesWeekly');
-        });
-
-
-    });
-
-});
-
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
@@ -376,7 +330,7 @@ Route::group(['prefix' => 'connection-types'], static function () {
     Route::put('/{connectionType}', 'ConnectionTypeController@update');
 
 });
-Route::group(['prefix' => 'sub-connection-types'], static function (){
+Route::group(['prefix' => 'sub-connection-types'], static function () {
     Route::get('/{connectionTypeId?}', 'SubConnectionTypeController@index');
     Route::post('/', 'SubConnectionTypeController@store');
     Route::get('/{id}', 'SubConnectionTypeController@show');
