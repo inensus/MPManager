@@ -25,12 +25,11 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           node-version: 14.3
-      - name: Navigate to source folder
-        run: cd ./Website/htdocs/mpmanager
       - run: npm install
-      - name: Echo contents
-        run: ls
+        working-directory: ./Website/htdocs/mpmanager
       - name: Run eslint
+        working-directory: ./Website/htdocs/mpmanager
         run: ./node_modules/.bin/eslint ./resources/assets/js/**/*.js
       - name: Build npm on production mode
+        working-directory: ./Website/htdocs/mpmanager
         run: npm run production
