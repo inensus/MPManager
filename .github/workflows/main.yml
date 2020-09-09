@@ -27,8 +27,11 @@ jobs:
           node-version: 14.3
       - run: npm install
         working-directory: ./Website/htdocs/mpmanager
-      - name: Run eslint
-        run: ./node_modules/.bin/eslint ./resources/assets/js/**/*.js
+      - name: Echo contents
+        run: ls
+        working-directory: ./Website/htdocs/mpmanager
+        
+      - run: ./node_modules/.bin/eslint ./resources/assets/js/**/*.js
         working-directory: ./Website/htdocs/mpmanager
       - name: Build npm on production mode
         run: npm run production
