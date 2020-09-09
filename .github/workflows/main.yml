@@ -28,8 +28,9 @@ jobs:
       - run: npm install
         working-directory: ./Website/htdocs/mpmanager
       - name: Run eslint
-        working-directory: ./Website/htdocs/mpmanager
         run: ./node_modules/.bin/eslint ./resources/assets/js/**/*.js
-      - name: Build npm on production mode
         working-directory: ./Website/htdocs/mpmanager
+      - name: Build npm on production mode
         run: npm run production
+        working-directory: ./Website/htdocs/mpmanager
+        
