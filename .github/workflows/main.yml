@@ -27,9 +27,13 @@ jobs:
           node-version: 14.3
       - run: npm install
         working-directory: ./Website/htdocs/mpmanager
-      - name: Echo contents
+      - name: Echo contents of node modules
         run: ls
-        working-directory: ./Website/htdocs/mpmanager
+        working-directory: ./Website/htdocs/mpmanager/node_modules
+      - name: Echo contents of bin
+        run: ls
+        working-directory: ./Website/htdocs/mpmanager/node_modules/.bin
+   
         
       - run: ./node_modules/.bin/eslint ./resources/assets/js/**/*.js
         working-directory: ./Website/htdocs/mpmanager
