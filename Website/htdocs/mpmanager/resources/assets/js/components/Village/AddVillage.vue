@@ -267,13 +267,14 @@
                 }
                 this.constantLocations = []
                 this.markingInfos = []
-                let miniGrid = this.miniGrids.filter(x => x.id === miniGridId)[0]
+
                 this.selectedMiniGridId = miniGridId
                 let miniGridGeoData = await this.miniGridService.getMiniGridGeoData(this.selectedMiniGridId)
                 let Points = miniGridGeoData.location.points.split(',')
                 this.miniGridLatLng.lat = Points[0]
                 this.miniGridLatLng.lon = Points[1]
-                await this.getGeoData(miniGrid.cluster_id)
+
+                await this.getGeoData(miniGridGeoData.cluster_id)
                 let markingInfo = this.mappingService.createMarkinginformation(miniGridGeoData.id, miniGridGeoData.name, Points[0], Points[1])
                 this.markingInfos.push(markingInfo)
                 this.constantLocations.push([this.miniGridLatLng.lat, this.miniGridLatLng.lon])
