@@ -17,7 +17,7 @@
                     <md-table-head>ID</md-table-head>
                     <md-table-head>Name</md-table-head>
                 </md-table-row>
-                    <md-table-row v-for="type,index in connectionTypes" :key="type.id" @click="connectionTypeDetail(type)" style="cursor: pointer">
+                    <md-table-row v-for="(type,index) in connectionTypes" :key="type.id" @click="connectionTypeDetail(type)" style="cursor: pointer">
                         <md-table-cell> {{ index+1}}</md-table-cell>
                         <md-table-cell> {{ type.id}}</md-table-cell>
                         <md-table-cell> {{ type.name}}</md-table-cell>
@@ -31,66 +31,65 @@
 </template>
 
 <script>
-    import Widget from '../../shared/widget'
-    import {EventBus} from '../../shared/eventbus'
-    import TableList from '../../shared/TableList'
-    import {ConnectionTypeService} from '../../services/ConnectionTypeService'
-    import {SubConnectionTypeService} from '../../services/SubConnectionTypeService'
-    import NewConnectionType from './NewConnectionType'
+import Widget from '../../shared/widget'
+import {EventBus} from '../../shared/eventbus'
+import {ConnectionTypeService} from '../../services/ConnectionTypeService'
+import {SubConnectionTypeService} from '../../services/SubConnectionTypeService'
+import NewConnectionType from './NewConnectionType'
 
-    export default {
-        name: 'ConnectionTypesList',
-        components: {TableList, Widget, NewConnectionType},
-        mounted() {
-            EventBus.$on('pageLoaded', this.reloadList)
-            EventBus.$on('searching', this.searching)
-            EventBus.$on('end_searching', this.endSearching)
-            EventBus.$on('connectionTypeAdded', this.getConnectionTypes)
+export default {
+    name: 'ConnectionTypesList',
+    components: {Widget, NewConnectionType},
+    mounted() {
+        EventBus.$on('pageLoaded', this.reloadList)
+        EventBus.$on('searching', this.searching)
+        EventBus.$on('end_searching', this.endSearching)
+        EventBus.$on('connectionTypeAdded', this.getConnectionTypes)
 
-            this.getConnectionTypes()
+        this.getConnectionTypes()
+    },
+
+    data() {
+        return {
+            connectionTypeService: new ConnectionTypeService(),
+            subConnectionTypeService: new SubConnectionTypeService(),
+            subscriber: 'connection-types-list',
+            connectionTypes: [],
+            subConnectionTypes: [],
+        }
+    },
+    methods: {
+        connectionTypeDetail(type){
+            this.$router.push({ path: '/connection-types/' + type.id })
+            EventBus.$emit('connectionTypeDetail', type.name)
         },
+        reloadList(subscriber, data) {
+            if (subscriber !== this.subscriber) return
+            this.connectionTypes = this.connectionTypeService.updateList(data)
+        },
+        async getConnectionTypes() {
+            try {
+                this.connectionTypes = await this.connectionTypeService.getConnectionTypes()
 
-        data() {
-            return {
-                connectionTypeService: new ConnectionTypeService(),
-                subConnectionTypeService: new SubConnectionTypeService(),
-                subscriber: 'connection-types-list',
-                connectionTypes: [],
-                subConnectionTypes: [],
+            } catch (e) {
+
+                this.alertNotify('error', e.message)
             }
         },
-        methods: {
-            connectionTypeDetail(type){
-                this.$router.push({ path: '/connection-types/' + type.id })
-                EventBus.$emit('connectionTypeDetail', type.name)
-            },
-            reloadList(subscriber, data) {
-                if (subscriber !== this.subscriber) return
-                this.connectionTypes = this.connectionTypeService.updateList(data)
-            },
-            async getConnectionTypes() {
-                try {
-                    this.connectionTypes = await this.connectionTypeService.getConnectionTypes()
-
-                } catch (e) {
-
-                    this.alertNotify('error', e.message)
-                }
-            },
-            addNew() {
-                EventBus.$emit('showNewConnectionType')
-            },
-
+        addNew() {
+            EventBus.$emit('showNewConnectionType')
         },
-        alertNotify(type, message) {
-            this.$notify({
-                group: 'notify',
-                type: type,
-                title: type + ' !',
-                text: message
-            })
-        },
-    }
+
+    },
+    alertNotify(type, message) {
+        this.$notify({
+            group: 'notify',
+            type: type,
+            title: type + ' !',
+            text: message
+        })
+    },
+}
 </script>
 
 <style scoped>

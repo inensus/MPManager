@@ -1,8 +1,5 @@
 import RepositoryFactory from '../repositories/RepositoryFactory'
 import { ErrorHandler } from '../Helpers/ErrorHander'
-import 'leaflet/dist/leaflet.css'
-import 'leaflet-draw'
-import 'leaflet-draw/dist/leaflet.draw.css'
 
 export class MappingService {
 

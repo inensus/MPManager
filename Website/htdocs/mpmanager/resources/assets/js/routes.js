@@ -1,5 +1,4 @@
 import VueRouter from 'vue-router'
-import Vue from 'vue'
 import LoginFooter from './components/Login/LoginFooter'
 import LoginHeader from './components/Login/LoginHeader'
 import Login from './components/Login/Login'

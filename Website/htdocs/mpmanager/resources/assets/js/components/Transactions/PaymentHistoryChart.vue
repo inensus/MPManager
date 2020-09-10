@@ -1,40 +1,37 @@
 <template>
-    <donut-chart id="donut" :data="_donutData" colors='[ "#FF6384", "#36A2EB", "#FFCE56" ]'
+    <donut-chart id="donut" :data="prepareChartData()" colors='[ "#FF6384", "#36A2EB", "#FFCE56" ]'
                  resize="true"></donut-chart>
 
 
 </template>
 
 <script>
-  import { DonutChart } from 'vue-morris'
+import { DonutChart } from 'vue-morris'
 
-  export default {
+export default {
     name: 'PaymentHistoryChart',
     components: {DonutChart},
     props: ['paymentdata'],
-    computed: {
-      _donutData: function () {
-        for (let i in this.paymentdata) {
-          this.donutData.push({
-            label: this.paymentdata[i].payment_type,
-            value: this.paymentdata[i].amount
-
-          })
-        }
-        let data = {}
-
-        return this.donutData
-      }
-    },
-
     data () {
-      return {
-        hebele: this.paymentdata,
+        return {
+            hebele: this.paymentdata,
 
-        donutData: []
-      }
+            donutData: []
+        }
+    },
+    methods:{
+        prepareChartData(){
+            for (let i in this.paymentdata) {
+                this.donutData.push({
+                    label: this.paymentdata[i].payment_type,
+                    value: this.paymentdata[i].amount
+
+                })
+            }
+            return this.donutData
+        }
     }
-  }
+}
 </script>
 
 <style scoped>

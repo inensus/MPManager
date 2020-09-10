@@ -126,16 +126,11 @@ Vue.use(VeeValidate)
 import {library} from '@fortawesome/fontawesome-svg-core'
 import {fas} from '@fortawesome/free-solid-svg-icons'
 import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
-import {faJs, faVuejs, faFacebookF, faSkype} from '@fortawesome/free-brands-svg-icons'
+import {faJs, faFacebookF, faSkype} from '@fortawesome/free-brands-svg-icons'
 
 library.add(fas)
 library.add(faJs, faFacebookF, faSkype)
 Vue.component('font-awesome-icon', FontAwesomeIcon)
-
-import {VueGrid, VueCell} from 'vue-grd'
-
-Vue.component('vue-grid', VueGrid)
-Vue.component('vue-cell', VueCell)
 
 import Default from './layouts/Default.vue'
 

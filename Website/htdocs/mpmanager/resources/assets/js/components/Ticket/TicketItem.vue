@@ -7,15 +7,15 @@
                 <md-table-head >Category</md-table-head>
                 <md-table-head >Date</md-table-head>
             </md-table-row>
-            <template v-for="(ticket,index) in ticketList">
-                <md-table-row @click="openTicket(index)">
+            <template v-for="(ticket,index) in ticketList" >
+                <md-table-row @click="openTicket(index)" :key="index">
                     <md-table-cell><md-icon>{{showTicket === index ? 'keyboard_arrow_down' : 'keyboard_arrow_right'}}</md-icon></md-table-cell>
                     <md-table-cell >{{ticket.name}}</md-table-cell>
                     <md-table-cell v-if="ticket.category">{{ticket.category.label_name}}</md-table-cell>
                     <md-table-cell v-else>-</md-table-cell>
                     <md-table-cell >{{formatDate(ticket.created)}}</md-table-cell>
                 </md-table-row>
-                <md-table-row v-if="showTicket === index">
+                <md-table-row v-if="showTicket === index" :key="index">
                     <md-table-cell colspan="4">
                         <hr :class="[!ticket.closed ? 'open-ticket-hr' : 'close-ticket-hr']">
 
@@ -104,89 +104,89 @@
 </template>
 
 <script>
-import { UserTickets } from '../../classes/person/ticket'
-import { resources } from '../../resources'
 import { TicketCommentService } from '../../services/TicketCommentService'
 import { EventBus } from '../../shared/eventbus'
 import { SmsService } from '../../services/SmsService'
 import { TicketService } from '../../services/TicketService'
+import moment from 'moment'
 
-    export default {
-        name: 'TicketItem',
-        props: {
+export default {
+    name: 'TicketItem',
+    props: {
 
-            ticket: String,
-            allowComment: Boolean,
-            ticketList: Array
+        ticket: String,
+        allowComment: Boolean,
+        ticketList: Array
+    },
+    data () {
+        return {
+            ticketCommentService: new TicketCommentService(),
+            ticketService: new TicketService(),
+            smsService: new SmsService(),
+            showComments: false,
+            newComment: '',
+            showTicket: null,
+            senderId: this.$store.getters['auth/authenticationService'].authenticateUser.id,
+        }
+    },
+    methods: {
+        getTimeAgo (date) {
+            return moment(date).fromNow()
         },
-        data () {
-            return {
-                ticketCommentService: new TicketCommentService(),
-                ticketService: new TicketService(),
-                smsService: new SmsService(),
-                showComments: false,
-                newComment: '',
-                showTicket: null,
-                senderId: this.$store.getters['auth/authenticationService'].authenticateUser.id,
+        formatDate (date) {
+            let d = new Date(date)
+            return d.toLocaleDateString()
+        },
+        openTicket (index) {
+            if (this.showTicket === index) {
+                this.showTicket = null
+            } else {
+                this.showTicket = index
+            }
+
+
+        },
+        navigateToOwner (id) {
+            this.$router.push({ path: '/people/' + id })
+        },
+        async lockTicket (id) {
+            try {
+                await this.ticketService.closeTicket(id)
+                EventBus.$emit('listChanged')
+                this.alertNotify('success', 'Ticket closed successfully.')
+            } catch (e) {
+                this.alertNotify('error', e.message)
             }
         },
-        methods: {
-            getTimeAgo (date) {
-                return moment(date).fromNow()
-            },
-            formatDate (date) {
-                let d = new Date(date)
-                return d.toLocaleDateString()
-            },
-            openTicket (index) {
-                if (this.showTicket === index) {
-                    this.showTicket = null
-                } else {
-                    this.showTicket = index
-                }
 
-
-            },
-            navigateToOwner (id) {
-                this.$router.push({ path: '/people/' + id })
-            },
-            async lockTicket (id) {
-                try {
-                    await this.ticketService.closeTicket(id)
-                    EventBus.$emit('listChanged')
-                    this.alertNotify('success', 'Ticket closed successfully.')
-                } catch (e) {
+        async sendComment (ticket) {
+            try {
+                let name = this.$store.getters['auth/authenticationService'].authenticateUser.name
+                let username = this.$store.getters['auth/authenticationService'].authenticateUser.email
+                let newComment = await this.ticketCommentService.createComment(this.newComment, ticket.id, name, username)
+                if (ticket.category.out_source) {
+                    await this.smsService.sendToPerson(this.newComment, ticket.owner.id, this.senderId)
                 }
-            },
-
-            async sendComment (ticket) {
-                try {
-                    let name = this.$store.getters['auth/authenticationService'].authenticateUser.name
-                    let username = this.$store.getters['auth/authenticationService'].authenticateUser.email
-                    let newComment = await this.ticketCommentService.createComment(this.newComment, ticket.id, name, username)
-                    if (ticket.category.out_source) {
-                        await this.smsService.sendToPerson(this.newComment, ticket.owner.id, this.senderId)
-                    }
-                    this.showComments = false
-                    EventBus.$emit('listChanged')
-                    this.alertNotify('success', 'Comment send successfully.')
-                    ticket.comments.push(newComment)
-                    this.showComments=false
-                    this.newComment=null
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-            },
-            alertNotify (type, message) {
-                this.$notify({
-                    group: 'notify',
-                    type: type,
-                    title: type + ' !',
-                    text: message
-                })
-            },
-        }
+                this.showComments = false
+                EventBus.$emit('listChanged')
+                this.alertNotify('success', 'Comment send successfully.')
+                ticket.comments.push(newComment)
+                this.showComments=false
+                this.newComment=null
+            } catch (e) {
+                this.alertNotify('error', e.message)
+            }
+        },
+        alertNotify (type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message
+            })
+        },
     }
+}
 </script>
 
 <style scoped>

@@ -1,4 +1,4 @@
-const resource =  '/api/connection-groups';
+const resource =  '/api/connection-groups'
 import Client from './Client/AxiosClient'
 
 export default {

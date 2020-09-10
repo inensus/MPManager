@@ -54,12 +54,12 @@
 <script>
 
 
-    export default {
+export default {
 
-        name: 'VodacomTransactionDetail',
+    name: 'VodacomTransactionDetail',
 
-        props: ['ot']
-    }
+    props: ['ot']
+}
 </script>
 
 <style scoped>

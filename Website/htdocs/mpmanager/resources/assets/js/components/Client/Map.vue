@@ -40,160 +40,135 @@
 </template>
 
 <script>
-    import { Meters } from '../../classes/person/meters'
-    import { EventBus } from '../../shared/eventbus'
+import { Meters } from '../../classes/person/meters'
+import { EventBus } from '../../shared/eventbus'
+import Widget from '../../shared/widget'
 
-    import {
-        LMap,
-        LTileLayer,
-        LMarker,
-        LPolyline,
-        LLayerGroup,
-        LTooltip,
-        LPopup,
-        LControlZoom,
-        LControlAttribution,
-        LControlScale,
-        LControlLayers
-    } from 'vue2-leaflet'
-    import Widget from '../../shared/widget'
+export default {
+    name: 'Mapiko',
+    components: {
+        Widget
+    },
+    props: {
+        meters: {},
+    },
+    data () {
+        return {
+            map: null,
+            tileLayer: null,
+            center: { lat: 0, lng: 0 },
+            zoom: 7,
+            markers: [],
+            currentMap: 0,
+            gMap: {},
+            shape: {
+                coords: [10, 10, 10, 15, 15, 15, 15, 10],
+                type: 'poly'
+            },
+        }
+    },
+    created () {
+        EventBus.$on('map', data => {
 
-    export default {
-        name: 'Mapiko',
-        components: {
-            Widget,
-            LMap,
-            LTileLayer,
-            LMarker,
-            LPolyline,
-            LLayerGroup,
-            LTooltip,
-            LPopup,
-            LControlZoom,
-            LControlAttribution,
-            LControlScale,
-            LControlLayers
-        },
-        props: {
-            meters: {},
-        },
-        data () {
-            return {
-                map: null,
-                tileLayer: null,
-                center: { lat: 0, lng: 0 },
-                zoom: 7,
-                markers: [],
-                currentMap: 0,
-                gMap: {},
-                shape: {
-                    coords: [10, 10, 10, 15, 15, 15, 15, 10],
-                    type: 'poly'
-                },
+            let marker = this.markers.filter(x => x.id === data)
+            if (marker.length > 0) {
+
+                this.map.setView(marker[0].coords, 22)
+                this.center = this.makePosition(marker[0])
+                this.zoom = 14
             }
+
+        })
+
+    },
+    mounted () {
+        this.initMap()
+        this.addMeters()
+
+    },
+    watch: {
+        meters () {
         },
-        created () {
-            EventBus.$on('map', data => {
+        currentMap () {
+            let self = this
+            this.markers = []
+            setTimeout(function () {
+                self.initMap()
+                self.addMeters()
+            }, 1000)
+        }
+    },
+    methods: {
 
-                let marker = this.markers.filter(x => x.id === data)
-                if (marker.length > 0) {
-
-                    this.map.setView(marker[0].coords, 22)
-                    this.center = this.makePosition(marker[0])
-                    this.zoom = 14
-                }
-
-            })
-
+        mapSelected (val) {
+            this.currentMap = val
         },
-        mounted () {
-            this.initMap()
-            this.addMeters()
 
-        },
-        watch: {
-            meters () {
-            },
-            currentMap () {
-                let self = this
-                this.markers = []
-                setTimeout(function () {
-                    self.initMap()
-                    self.addMeters()
-                }, 1000)
+        addMeters () {
+            for (let i = 0; i < this.meters.length; i++) {
+                new Meters().getMeterDetails(this.meters[i]).then(meters => {
+                    this.addMarker(this.newMarker(meters))
+                })
+
             }
+
         },
-        methods: {
-
-            mapSelected (val) {
-                this.currentMap = val
-            },
-
-            addMeters () {
-                for (let i = 0; i < this.meters.length; i++) {
-                    new Meters().getMeterDetails(this.meters[i]).then(meters => {
-                        this.addMarker(this.newMarker(meters))
-                    })
-
-                }
-
-            },
-            newMarker (meter) {
-                let marker = {
-                    id: meter.id,
-                    name: meter.serial_number +
+        newMarker (meter) {
+            let marker = {
+                id: meter.id,
+                name: meter.serial_number +
                         '<br> Tariff: ' + meter.tariff.name +
                         '<br> Phase: ' + meter.phase +
                         '<br> Max Current:' + meter.max_current + 'A ' +
                         '<br><a href="#/meters/' + meter.serial_number + '" >Detail</a>',
 
-                    type: 'marker',
-                    coords: meter.geo,
-                }
-                return marker
-            },
-            initMap () {
-                if (this.currentMap === 0) {
-                    this.map = L.map('map')
-                        .setView([38.63, -90.23], 12)
-                    this.tileLayer = L.tileLayer(
-                        'https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png',
-                        {
-                            maxZoom: 18,
-                            attribution: ' <span style="cursor:pointer">&copy; MpManager</span>',
-                        }
-                    )
+                type: 'marker',
+                coords: meter.geo,
+            }
+            return marker
+        },
+        initMap () {
+            if (this.currentMap === 0) {
+                this.map = L.map('map')
+                    .setView([38.63, -90.23], 12)
+                this.tileLayer = L.tileLayer(
+                    'https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png',
+                    {
+                        maxZoom: 18,
+                        attribution: ' <span style="cursor:pointer">&copy; MpManager</span>',
+                    }
+                )
 
-                    this.tileLayer.addTo(this.map)
-                }
-
-            },
-            addMarker (_marker) {
-                if (this.currentMap === 0) {
-                    let marker = L.marker(_marker.coords, {
-                        icon: L.icon({
-                            iconSize: [40, 40],
-                            iconUrl: 'https://cdn2.iconfinder.com/data/icons/gadgets-and-devices/48/87-128.png',
-                            iconAnchor: [20, 20],
-                        })
-                    })
-                    marker.bindPopup(_marker.name)
-
-                    marker.addTo(this.map)
-                    this.markers.push(_marker)
-                    this.map.setView(_marker.coords, 16)
-                } else {
-                    this.markers.push(_marker)
-                    this.center = this.makePosition(_marker)
-                }
-            },
-            makePosition (marker) {
-                return { lat: parseFloat(marker.coords[0]), lng: parseFloat(marker.coords[1]) }
+                this.tileLayer.addTo(this.map)
             }
 
         },
+        addMarker (_marker) {
+            if (this.currentMap === 0) {
+                let marker = L.marker(_marker.coords, {
+                    icon: L.icon({
+                        iconSize: [40, 40],
+                        iconUrl: 'https://cdn2.iconfinder.com/data/icons/gadgets-and-devices/48/87-128.png',
+                        iconAnchor: [20, 20],
+                    })
+                })
+                marker.bindPopup(_marker.name)
 
-    }
+                marker.addTo(this.map)
+                this.markers.push(_marker)
+                this.map.setView(_marker.coords, 16)
+            } else {
+                this.markers.push(_marker)
+                this.center = this.makePosition(_marker)
+            }
+        },
+        makePosition (marker) {
+            return { lat: parseFloat(marker.coords[0]), lng: parseFloat(marker.coords[1]) }
+        }
+
+    },
+
+}
 </script>
 
 <style>

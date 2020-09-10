@@ -39,88 +39,88 @@
 
 </template>
 <script>
-    import { AgentService } from '../../../services/AgentService'
-    import { AgentBalanceHistoryService } from '../../../services/AgentBalanceHistoryService'
-    import Widget from '../../../shared/widget'
-    import { EventBus } from '../../../shared/eventbus'
-    import AddAgentBalance from './AddBalance'
-    import NoTableData from '../../../shared/NoTableData'
+import { AgentService } from '../../../services/AgentService'
+import { AgentBalanceHistoryService } from '../../../services/AgentBalanceHistoryService'
+import Widget from '../../../shared/widget'
+import { EventBus } from '../../../shared/eventbus'
+import AddAgentBalance from './AddBalance'
+import NoTableData from '../../../shared/NoTableData'
 
-    export default {
-        name: 'agentBalanceHistoryList',
-        data () {
-            return {
-                subscriber: 'agent-balance-histories',
-                agentService: new AgentService(),
-                agentBalanceHistoryService: new AgentBalanceHistoryService(this.agentId),
-                showNewBalance: false,
-                agent: {},
-                newBalance: {},
-                loading: false,
-                resetKey: 0,
-                headers: ['ID', 'Type', 'Amount', 'Date'],
-                tableName: 'Agent Balance History'
-            }
-        },
-        props: {
-            agentId: {
-                default: null
-            }
-        },
-
-        mounted () {
-            EventBus.$on('balanceAdded', () => {
-                this.showNewBalance = false
-                this.resetKey += 1
-            })
-
-            EventBus.$on('addBalanceClosed', () => {
-                this.showNewBalance = false
-
-            })
-            EventBus.$on('receiptAdded', () => {
-                this.resetKey += 1
-            })
-            EventBus.$on('pageLoaded', this.reloadList)
-
-        },
-        beforeDestroy () {
-            EventBus.$off('addBalanceClosed', () => {
-                this.showNewBalance = false
-            })
-            EventBus.$off('pageLoaded', this.reloadList)
-        },
-        components: {
-            NoTableData,
-            AddAgentBalance,
-            Widget
-        },
-        methods: {
-
-            reloadList (subscriber, data) {
-                if (subscriber !== this.subscriber) return
-                this.agentBalanceHistoryService.updateList(data)
-            },
-            async saveBalance () {
-                let validator = await this.$validator('Balance-Form')
-                if (validator) {
-
-                }
-            },
-            hide () {
-                this.showNewAppliance = false
-            },
-            alertNotify (type, message) {
-                this.$notify({
-                    group: 'notify',
-                    type: type,
-                    title: type + ' !',
-                    text: message
-                })
-            },
+export default {
+    name: 'agentBalanceHistoryList',
+    data () {
+        return {
+            subscriber: 'agent-balance-histories',
+            agentService: new AgentService(),
+            agentBalanceHistoryService: new AgentBalanceHistoryService(this.agentId),
+            showNewBalance: false,
+            agent: {},
+            newBalance: {},
+            loading: false,
+            resetKey: 0,
+            headers: ['ID', 'Type', 'Amount', 'Date'],
+            tableName: 'Agent Balance History'
         }
+    },
+    props: {
+        agentId: {
+            default: null
+        }
+    },
 
+    mounted () {
+        EventBus.$on('balanceAdded', () => {
+            this.showNewBalance = false
+            this.resetKey += 1
+        })
+
+        EventBus.$on('addBalanceClosed', () => {
+            this.showNewBalance = false
+
+        })
+        EventBus.$on('receiptAdded', () => {
+            this.resetKey += 1
+        })
+        EventBus.$on('pageLoaded', this.reloadList)
+
+    },
+    beforeDestroy () {
+        EventBus.$off('addBalanceClosed', () => {
+            this.showNewBalance = false
+        })
+        EventBus.$off('pageLoaded', this.reloadList)
+    },
+    components: {
+        NoTableData,
+        AddAgentBalance,
+        Widget
+    },
+    methods: {
+
+        reloadList (subscriber, data) {
+            if (subscriber !== this.subscriber) return
+            this.agentBalanceHistoryService.updateList(data)
+        },
+        async saveBalance () {
+            let validator = await this.$validator('Balance-Form')
+            if (validator) {
+                console.log(validator)
+            }
+        },
+        hide () {
+            this.showNewAppliance = false
+        },
+        alertNotify (type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message
+            })
+        },
     }
+
+}
 </script>
 <style scoped>
 

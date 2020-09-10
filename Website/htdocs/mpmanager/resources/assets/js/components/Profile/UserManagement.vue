@@ -179,181 +179,179 @@
     </div>
 </template>
 <script>
-    import Widget from '../../shared/widget'
-    import { Admin } from '../../classes/admin'
-    import { City } from '../../classes/Cities/city'
-    import Modal from '../../modal/modal'
+import Widget from '../../shared/widget'
+import { Admin } from '../../classes/admin'
+import { City } from '../../classes/Cities/city'
 
-    export default {
-        name: 'ProfileManagement',
-        components: { Widget, Modal },
+export default {
+    name: 'ProfileManagement',
+    components: { Widget },
 
-        data () {
-            return {
-                sending: false,
-                modalVisibility: false,
-                cities: [],
-                selectedCity: '',
-                adminService: new Admin(),
-                cityService: new City(),
-                users: [],
-                user: {
-                    id: null,
-                    name: '',
-                    email: '',
-                    phone: '',
-                    street: '',
-                    city_id: null,
-                    password: '',
-                    confirmPassword: ''
-                },
-                showNewUser: false
+    data () {
+        return {
+            sending: false,
+            modalVisibility: false,
+            cities: [],
+            selectedCity: '',
+            adminService: new Admin(),
+            cityService: new City(),
+            users: [],
+            user: {
+                id: null,
+                name: '',
+                email: '',
+                phone: '',
+                street: '',
+                city_id: null,
+                password: '',
+                confirmPassword: ''
+            },
+            showNewUser: false
+        }
+    },
+
+    created () {
+        this.getUsers()
+    },
+    computed: {},
+    methods: {
+        async getUsers () {
+            let users = await this.adminService.getUserList()
+            users.forEach(u => {
+                let usr = {
+                    id: u.id,
+                    name: u.name,
+                    email: u.email,
+                    phone: u.address ? u.address.phone : '-',
+                }
+                this.users.push(usr)
+            })
+        },
+        userDetail (user) {
+            this.user.name = ''
+            this.user.id = ''
+            this.user.name = user.name
+            this.user.id = user.id
+            this.fillInformation()
+        },
+        async fillInformation () {
+            try {
+                this.cities = []
+                let cities = await this.cityService.getCities()
+                cities.forEach(e => {
+                    let city = {
+                        id: e.id,
+                        name: e.name
+                    }
+                    this.cities.push(city)
+                })
+
+                let data = await this.adminService.getAddress(this.user.id)
+
+                if (data.phone !== undefined) this.user.phone = data.phone
+                if (data.street !== undefined) this.user.street = data.street
+                if (data.email !== undefined) this.user.email = data.email
+                if (data.city_id !== undefined) {
+                    this.selectedCity = this.cities
+                        .filter(x => x.id === data.city_id)
+                        .map(x => x.id)[0]
+                }
+                this.openModal()
+            } catch (error) {
+                console.log(error)
             }
         },
-
-        created () {
-            this.getUsers()
+        openModal () {
+            this.modalVisibility = true
         },
-        computed: {},
-        methods: {
-            async getUsers () {
-                let users = await this.adminService.getUserList()
-                users.forEach(u => {
-                    let usr = {
-                        id: u.id,
-                        name: u.name,
-                        email: u.email,
-                        phone: u.address ? u.address.phone : '-',
-                    }
-                    this.users.push(usr)
-                })
-            },
-            userDetail (user) {
-                this.user.name = ''
-                this.user.id = ''
-                this.user.name = user.name
-                this.user.id = user.id
-                this.fillInformation()
-            },
-            async fillInformation () {
-                try {
+        closeModal () {
+            this.clearUserModel()
+            this.modalVisibility = false
+        },
+        submitEditForm () {
+            this.validateForm('form-edit').then(result => {
+                if (result) {
+                    this.sending = true
+                    this.updateUser()
+                }else{
+                    return
+                }
+            })
+        },
+        async submitCreateForm () {
+            await this.validateForm('form-create').then(result => {
+                if (result) {
+                    this.sending = true
+                    this.createUser()
+                }else{
+                    return
+                }
+            })
+        },
+
+        async updateUser () {
+            if (this.selectedCity !== undefined) {
+                this.user.city_id = this.selectedCity
+            }
+            try {
+                let response = await this.adminService.updateDetails(this.user)
+                if (response.status === 200) {
+                    this.alertNotify('success', 'The update has been done.')
+                } else {
+                    this.alertNotify('error', response.error)
+                }
+            } catch (error) {
+                this.alertNotify('error', error)
+            }
+            this.closeModal()
+            this.clearUserModel()
+            this.sending = false
+        },
+        async createUser () {
+            try {
+                let response = await this.adminService.createUser(this.user)
+
+                if (response.error == undefined) {
+                    this.alertNotify('success', 'New user created.')
+                    this.showNewUser = false
                     this.cities = []
-                    let cities = await this.cityService.getCities()
-                    cities.forEach(e => {
-                        let city = {
-                            id: e.id,
-                            name: e.name
-                        }
-                        this.cities.push(city)
-                    })
-
-                    let data = await this.adminService.getAddress(this.user.id)
-
-                    if (data.phone !== undefined) this.user.phone = data.phone
-                    if (data.street !== undefined) this.user.street = data.street
-                    if (data.email !== undefined) this.user.email = data.email
-                    if (data.city_id !== undefined) {
-                        this.selectedCity = this.cities
-                            .filter(x => x.id === data.city_id)
-                            .map(x => x.id)[0]
-                    }
-                    this.openModal()
-                } catch (error) {
-                    console.log(error)
+                    this.user.id = this.users.length+1
+                    this.users.push(this.user)
+                } else {
+                    this.alertNotify('error', response.error.message)
                 }
-            },
-            openModal () {
-                this.modalVisibility = true
-            },
-            closeModal () {
-                this.clearUserModel()
-                this.modalVisibility = false
-            },
-            submitEditForm () {
-                this.validateForm('form-edit').then(result => {
-                    if (result) {
-                        this.sending = true
-                        this.updateUser()
-                    }
-                    if (!result) {
-                    }
-                })
-            },
-            async submitCreateForm () {
-                await this.validateForm('form-create').then(result => {
-                    if (result) {
-                        this.sending = true
-                        this.createUser()
-                    }
-                    if (!result) {
+            } catch (error) {
+                this.alertNotify('error', error)
+            }
+            this.clearUserModel()
+            this.sending = false
+        },
 
-                    }
-                })
-            },
-
-            async updateUser () {
-                if (this.selectedCity !== undefined) {
-                    this.user.city_id = this.selectedCity
-                }
-                try {
-                    let response = await this.adminService.updateDetails(this.user)
-                    if (response.status === 200) {
-                        this.alertNotify('success', 'The update has been done.')
-                    } else {
-                        this.alertNotify('error', response.error)
-                    }
-                } catch (error) {
-                    this.alertNotify('error', error)
-                }
-                this.closeModal()
-                this.clearUserModel()
-                this.sending = false
-            },
-            async createUser () {
-                try {
-                    let response = await this.adminService.createUser(this.user)
-
-                    if (response.error == undefined) {
-                        this.alertNotify('success', 'New user created.')
-                        this.showNewUser = false
-                        this.cities = []
-                        this.user.id = this.users.length+1
-                        this.users.push(this.user)
-                    } else {
-                        this.alertNotify('error', response.error.message)
-                    }
-                } catch (error) {
-                    this.alertNotify('error', error)
-                }
-                this.clearUserModel()
-                this.sending = false
-            },
-
-            validateForm (scope) {
-                return this.$validator.validateAll(scope)
-            },
-            alertNotify (type, message) {
-                this.$notify({
-                    group: 'notify',
-                    type: type,
-                    title: type + ' !',
-                    text: message
-                })
-            },
-            clearUserModel () {
-                this.user = {
-                    id: null,
-                    name: '',
-                    email: '',
-                    phone: '',
-                    street: '',
-                    city_id: null,
-                    password: '',
-                    confirmPassword: ''
-                }
+        validateForm (scope) {
+            return this.$validator.validateAll(scope)
+        },
+        alertNotify (type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message
+            })
+        },
+        clearUserModel () {
+            this.user = {
+                id: null,
+                name: '',
+                email: '',
+                phone: '',
+                street: '',
+                city_id: null,
+                password: '',
+                confirmPassword: ''
             }
         }
     }
+}
 </script>
 <style scoped>
     .edit-container {

@@ -27,8 +27,8 @@
                     </md-table-row>
 
 
-                    <template v-for="(target,index) in targets.list">
-                        <md-table-row>
+                    <template v-for="(target,index) in targets.list" >
+                        <md-table-row :key="index">
                             <md-table-cell :colspan="expandedRow>=0 ? 3:1">{{ target.target.targetDate}}</md-table-cell>
                             <md-table-cell>{{ target.target.owner.name}} ({{target.owner}})</md-table-cell>
                             <md-table-cell v-if="target.target.subTargets.length>0">
@@ -42,15 +42,18 @@
                             <md-table-cell v-else>-</md-table-cell>
 
                         </md-table-row>
-                        <md-table-row v-if="index === expandedRow"
-                                      v-for="(subTarget, subIndex) in target.target.subTargets"
-                                      :key="subIndex">
-                            <md-table-cell>{{subTarget.connections.name}}</md-table-cell>
-                            <md-table-cell>Revenue</md-table-cell>
-                            <md-table-cell> {{subTarget.revenue}}</md-table-cell>
-                            <md-table-cell>New connections</md-table-cell>
-                            <md-table-cell>{{subTarget.newConnections}}</md-table-cell>
-                        </md-table-row>
+                        <template v-if="index === expandedRow">
+                            <md-table-row
+                                          v-for="(subTarget, subIndex) in target.target.subTargets"
+                                          :key="subIndex">
+                                <md-table-cell>{{subTarget.connections.name}}</md-table-cell>
+                                <md-table-cell>Revenue</md-table-cell>
+                                <md-table-cell> {{subTarget.revenue}}</md-table-cell>
+                                <md-table-cell>New connections</md-table-cell>
+                                <md-table-cell>{{subTarget.newConnections}}</md-table-cell>
+                            </md-table-row>
+                        </template>
+
 
                     </template>
 
@@ -65,61 +68,60 @@
 </template>
 
 <script>
-    import TableList from '../../shared/TableList'
-    import Widget from '../../shared/widget'
-    import { Targets } from '../../classes/target/Targets'
-    import { EventBus } from '../../shared/eventbus'
-    import NoTableData from '../../shared/NoTableData'
+import Widget from '../../shared/widget'
+import { Targets } from '../../classes/target/Targets'
+import { EventBus } from '../../shared/eventbus'
+import NoTableData from '../../shared/NoTableData'
 
-    export default {
-        name: 'TargetList',
-        components: {
-            Widget,
-            TableList, NoTableData
-        },
-        computed: {
-            expandedTarget: function () {
-                return this.expandedRow !== null ? this.expandedRow : -1
-            }
-        },
-        created () {
-        },
-        mounted () {
-            EventBus.$emit('bread', this.bcd)
-            EventBus.$on('pageLoaded', this.reloadList)
-            EventBus.$on('searching', this.searching)
-            EventBus.$on('end_searching', this.endSearching)
-        },
-        data () {
-            return {
-                expandedRow: null,
-                targets: new Targets(),
-                subscriber: 'targets',
-                headers: ['Period', 'For', 'Sub Targets'],
-                tableName: 'Target',
-            }
-        },
-        methods: {
-            reloadList (subscriber, data) {
-                if (subscriber !== this.subscriber) return
-                this.targets.updateList(data)
-            },
-            expandTarget (index) {
-                let subTarget = this.targets.targetAtIndex(index)
-                if (subTarget !== null) {
-                    this.expandedRow = index
-                }
-
-            },
-            collapseTarget () {
-                this.expandedRow = null
-            },
-            newTarget () {
-                this.$router.push({ path: '/targets/new' })
-            }
-
+export default {
+    name: 'TargetList',
+    components: {
+        Widget,
+        NoTableData
+    },
+    computed: {
+        expandedTarget: function () {
+            return this.expandedRow !== null ? this.expandedRow : -1
         }
+    },
+    created () {
+    },
+    mounted () {
+        EventBus.$emit('bread', this.bcd)
+        EventBus.$on('pageLoaded', this.reloadList)
+        EventBus.$on('searching', this.searching)
+        EventBus.$on('end_searching', this.endSearching)
+    },
+    data () {
+        return {
+            expandedRow: null,
+            targets: new Targets(),
+            subscriber: 'targets',
+            headers: ['Period', 'For', 'Sub Targets'],
+            tableName: 'Target',
+        }
+    },
+    methods: {
+        reloadList (subscriber, data) {
+            if (subscriber !== this.subscriber) return
+            this.targets.updateList(data)
+        },
+        expandTarget (index) {
+            let subTarget = this.targets.targetAtIndex(index)
+            if (subTarget !== null) {
+                this.expandedRow = index
+            }
+
+        },
+        collapseTarget () {
+            this.expandedRow = null
+        },
+        newTarget () {
+            this.$router.push({ path: '/targets/new' })
+        }
+
     }
+}
 </script>
 
 <style scoped>

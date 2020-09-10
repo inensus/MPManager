@@ -52,57 +52,57 @@
 </template>
 
 <script>
-    import Widget from '../../shared/widget'
-    import { currency } from '../../mixins/currency'
-    import Add from './Add'
-    import { EventBus } from '../../shared/eventbus'
-    import { TariffService } from '../../services/TariffService'
-    import NoTableData from '../../shared/NoTableData'
+import Widget from '../../shared/widget'
+import { currency } from '../../mixins/currency'
+import Add from './Add'
+import { EventBus } from '../../shared/eventbus'
+import { TariffService } from '../../services/TariffService'
+import NoTableData from '../../shared/NoTableData'
 
-    export default {
-        name: 'TariffList',
-        components: { Widget, Add, NoTableData },
-        mixins: [currency],
-        data () {
-            return {
-                tariffService: new TariffService(),
-                tariffList: [],
-                headers: ['ID', 'Name', 'kWh Price', 'Access Rate', 'Access Rate Period in Days'],
-                tableName: 'Tariff'
+export default {
+    name: 'TariffList',
+    components: { Widget, Add, NoTableData },
+    mixins: [currency],
+    data () {
+        return {
+            tariffService: new TariffService(),
+            tariffList: [],
+            headers: ['ID', 'Name', 'kWh Price', 'Access Rate', 'Access Rate Period in Days'],
+            tableName: 'Tariff'
+        }
+    },
+    mounted () {
+
+        this.getTariffs()
+        EventBus.$on('tariffAdded', this.addToList)
+    },
+    methods: {
+
+        async getTariffs () {
+            try {
+                this.tariffList = await this.tariffService.getTariffs()
+            } catch (e) {
+                this.alertNotify('error', e.message)
             }
         },
-        mounted () {
-
-            this.getTariffs()
-            EventBus.$on('tariffAdded', this.addToList)
+        showNewTariff () {
+            EventBus.$emit('showNewTariff')
         },
-        methods: {
+        addToList (tariff) {
+            console.log('new tariff', tariff)
+            this.tariffList = this.tariffService.addToList(tariff)
 
-            async getTariffs () {
-                try {
-                    this.tariffList = await this.tariffService.getTariffs()
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-            },
-            showNewTariff () {
-                EventBus.$emit('showNewTariff')
-            },
-            addToList (tariff) {
-                console.log('new tariff', tariff)
-                this.tariffList = this.tariffService.addToList(tariff)
-
-            },
-            alertNotify (type, message) {
-                this.$notify({
-                    group: 'notify',
-                    type: type,
-                    title: type + ' !',
-                    text: message
-                })
-            },
         },
-    }
+        alertNotify (type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message
+            })
+        },
+    },
+}
 </script>
 
 <style scoped>

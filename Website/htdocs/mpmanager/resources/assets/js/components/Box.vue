@@ -38,46 +38,46 @@
 </template>
 
 <script>
-    export default {
-        name: 'Box',
-        props: {
-            color: {
-                type: Array,
-                default: () => ['#c3c3c3', '#e1e1e1']
-            },
-            centerText: {
-                type: Boolean,
-                default: false
-            },
-            headerText: String,
-            headerTextColor: {
-                type: String,
-                default: '#000'
-            },
-            subText: String,
-            subTextColor: {
-                type: String,
-                default: '#525252'
-            },
-            boxIcon: String,
-            customIcon: {
-                type: Boolean,
-                default: false
-            },
-            boxIconColor: String
+export default {
+    name: 'Box',
+    props: {
+        color: {
+            type: Array,
+            default: () => ['#c3c3c3', '#e1e1e1']
         },
-        computed: {
-            backgroundColor: function () {
-                let color =
+        centerText: {
+            type: Boolean,
+            default: false
+        },
+        headerText: String,
+        headerTextColor: {
+            type: String,
+            default: '#000'
+        },
+        subText: String,
+        subTextColor: {
+            type: String,
+            default: '#525252'
+        },
+        boxIcon: String,
+        customIcon: {
+            type: Boolean,
+            default: false
+        },
+        boxIconColor: String
+    },
+    computed: {
+        backgroundColor: function () {
+            let color =
                     'background:linear-gradient(135deg,' +
                     this.color[0] +
                     ' 0%, ' +
                     this.color[1] +
                     ' 100%)'
-                return color
-            }
+            return color
         }
     }
+}
 </script>
 
 <style>

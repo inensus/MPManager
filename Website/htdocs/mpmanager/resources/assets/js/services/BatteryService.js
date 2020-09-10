@@ -1,12 +1,10 @@
 import { Battery } from '../entities/Battery'
 
 export class BatteryService {
-    constructor (props) {
+    constructor () {
         this.batteryData = []
-
         this.stateChartData = []
         this.energyChartData = []
-
     }
 
     async getBatteryUsageList (miniGridId) {

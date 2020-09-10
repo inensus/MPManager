@@ -46,33 +46,33 @@
     </div>
 </template>
 <script>
-  import LoginCard from './LoginCard'
+import LoginCard from './LoginCard'
 
-  export default {
+export default {
     components: {
-      LoginCard
+        LoginCard
     },
     bodyClass: 'login-page',
     data () {
-      return {
-        firstname: null,
-        email: null,
-        password: null
-      }
+        return {
+            firstname: null,
+            email: null,
+            password: null
+        }
     },
     props: {
-      header: {
-        type: String,
-      }
+        header: {
+            type: String,
+        }
     },
     computed: {
-      headerStyle () {
-        return {
-          backgroundImage: `url(${this.header})`
+        headerStyle () {
+            return {
+                backgroundImage: `url(${this.header})`
+            }
         }
-      }
     }
-  }
+}
 </script>
 
 <style lang="css"></style>

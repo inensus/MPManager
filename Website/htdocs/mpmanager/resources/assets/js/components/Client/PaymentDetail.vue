@@ -42,83 +42,75 @@
 </template>
 
 <script>
-
-
-    import { DonutChart } from 'vue-morris'
-    import { BarChart } from 'vue-morris'
-    import { GChart } from 'vue-google-charts'
-    import Widget from '../../shared/widget'
-
-    export default {
-        name: 'PaymentDetail',
-
-        data () {
-            return {
-                contentWidth: 0,
-                personId: null,
-                period: 'M',
-                periodName: 'Monthly',
-                chartData: [],
-                chartOptions: {
-                    chart: {
-                        title: 'Customer Payment Flow',
-                        subtitle: 'Sales, Expenses, and Profit: 2014-2017',
-                    },
-                    colors: ['#FF6384', '#CC6384', '#36A2EB']
+import Widget from '../../shared/widget'
+export default {
+    name: 'PaymentDetail',
+    data () {
+        return {
+            contentWidth: 0,
+            personId: null,
+            period: 'M',
+            periodName: 'Monthly',
+            chartData: [],
+            chartOptions: {
+                chart: {
+                    title: 'Customer Payment Flow',
+                    subtitle: 'Sales, Expenses, and Profit: 2014-2017',
                 },
+                colors: ['#FF6384', '#CC6384', '#36A2EB']
+            },
 
-                barData: [],
-            }
-        },
-        created () {
-            this.personId = this.$store.getters.person.id
-        },
-        mounted () {
-            this.getFlow()
-            /*  this.contentWidth = document.getElementById('client-payment-detail').clientWidth*/
-        },
-        components: {
-            Widget,
-            BarChart,
-        },
-        methods: {
+            barData: [],
+        }
+    },
+    created () {
+        this.personId = this.$store.getters.person.id
+    },
+    mounted () {
+        this.getFlow()
+        /*  this.contentWidth = document.getElementById('client-payment-detail').clientWidth*/
+    },
+    components: {
+        Widget,
+    },
+    methods: {
 
-            getFlow (period = 'M') {
-                switch (period) {
-                    case 'Y':
-                        this.periodName = 'Annually'
-                        break
-                    case 'M':
-                        this.periodName = 'Monthly'
-                        break
-                    case 'W':
-                        this.periodName = 'Weekly'
-                        break
-                    case 'D':
-                        this.periodName = 'Daily'
-                        break
-
-                }
-                axios.get(resources.paymenthistories + this.personId + '/payments/' + period)
-                    .then(response => {
-                        this.chartData = [['Period', 'Energy', 'AccessRate', 'Deferred Payments']]
-
-                        let data = response.data
-                        for (let x in data) {
-                            let items = []
-                            items = [
-                                x,
-                                'energy' in data[x] ? parseInt(data[x]['energy']) : 0,
-                                'access rate' in data[x] ? parseInt(data[x]['access rate']) : 0,
-                                'deferred payment' in data[x] ? parseInt(data[x]['energy']) : 0,
-                            ]
-                            this.chartData.push(items)
-                        }
-                    })
+        getFlow (period = 'M') {
+            switch (period) {
+            case 'Y':
+                this.periodName = 'Annually'
+                break
+            case 'M':
+                this.periodName = 'Monthly'
+                break
+            case 'W':
+                this.periodName = 'Weekly'
+                break
+            case 'D':
+                this.periodName = 'Daily'
+                break
 
             }
+            axios.get(resources.paymenthistories + this.personId + '/payments/' + period)
+                .then(response => {
+                    this.chartData = [['Period', 'Energy', 'AccessRate', 'Deferred Payments']]
+
+                    let data = response.data
+                    for (let x in data) {
+                        let items = []
+                        items = [
+                            x,
+                            'energy' in data[x] ? parseInt(data[x]['energy']) : 0,
+                            'access rate' in data[x] ? parseInt(data[x]['access rate']) : 0,
+                            'deferred payment' in data[x] ? parseInt(data[x]['energy']) : 0,
+                        ]
+                        this.chartData.push(items)
+                    }
+                })
+
         }
     }
+}
 </script>
 <style scoped>
     .payment-period-select {

@@ -40,43 +40,43 @@
 </template>
 
 <script>
-    import { Meters } from '../../classes/person/meters'
-    import { EventBus } from '../../shared/eventbus'
-    import Widget from '../../shared/widget'
+import { Meters } from '../../classes/person/meters'
+import { EventBus } from '../../shared/eventbus'
+import Widget from '../../shared/widget'
 
-    export default {
-        name: 'ClientMeterList',
-        props: {
-            'meterList': {
-                required: true,
-            }
+export default {
+    name: 'ClientMeterList',
+    props: {
+        'meterList': {
+            required: true,
+        }
+    },
+    components: {
+        Widget
+    },
+    data () {
+        return {
+            meter: new Meters(),
+            meters: [],
+        }
+    },
+    mounted: function () {
+        for (let m in this.meterList) {
+            this.getDetail(this.meterList[m])
+        }
+    },
+    methods: {
+        getDetail (meterId) {
+            this.meter.getMeterDetails(meterId).then((meter) => {
+                this.meters.push(meter)
+            })
         },
-        components: {
-            Widget
-        },
-        data () {
-            return {
-                meter: new Meters(),
-                meters: [],
-            }
-        },
-        mounted: function () {
-            for (let m in this.meterList) {
-                this.getDetail(this.meterList[m])
-            }
-        },
-        methods: {
-            getDetail (meterId) {
-                this.meter.getMeterDetails(meterId).then((meter) => {
-                    this.meters.push(meter)
-                })
-            },
-            setMapCenter (meterId) {
-                EventBus.$emit('map', meterId)
-            }
-        },
+        setMapCenter (meterId) {
+            EventBus.$emit('map', meterId)
+        }
+    },
 
-    }
+}
 </script>
 
 <style>

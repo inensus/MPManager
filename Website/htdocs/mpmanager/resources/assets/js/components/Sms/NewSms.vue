@@ -114,195 +114,194 @@
 </template>
 
 <script>
-    import { resources } from '../../resources'
-    import Widget from '../../shared/widget'
-    import { MiniGridService } from '../../services/MiniGridService'
-    import { SmsService } from '../../services/SmsService'
+import Widget from '../../shared/widget'
+import { MiniGridService } from '../../services/MiniGridService'
+import { SmsService } from '../../services/SmsService'
 
-    const debounce = require('debounce')
-    export default {
-        name: 'NewSms',
-        components: { Widget },
-        props: {
-            show: {
-                type: Boolean,
-                default: false,
-            }
-        },
-        mounted () {
-            this.senderId = this.$store.state.admin.id
-            this.getMiniGrids()
-        },
-        data () {
-            return {
-                smsService: new SmsService(),
-                miniGridService: new MiniGridService(),
-                receiver: '',
-                message: '',
-                receiverList: [],
-                searching: false,
-                tab: 'person',
-                resultList: [],
-                miniGridList: [],
-                miniGrid: 0,
-                customerSearchTerm: '',
-                senderId: null
-            }
-        },
+const debounce = require('debounce')
+export default {
+    name: 'NewSms',
+    components: { Widget },
+    props: {
+        show: {
+            type: Boolean,
+            default: false,
+        }
+    },
+    mounted () {
+        this.senderId = this.$store.state.admin.id
+        this.getMiniGrids()
+    },
+    data () {
+        return {
+            smsService: new SmsService(),
+            miniGridService: new MiniGridService(),
+            receiver: '',
+            message: '',
+            receiverList: [],
+            searching: false,
+            tab: 'person',
+            resultList: [],
+            miniGridList: [],
+            miniGrid: 0,
+            customerSearchTerm: '',
+            senderId: null
+        }
+    },
 
-        watch: {
-            tab: function () {
-                this.receiverList = []
-                this.receiver = ''
-                this.resultList = []
+    watch: {
+        tab: function () {
+            this.receiverList = []
+            this.receiver = ''
+            this.resultList = []
+            this.search()
+        },
+        receiver: debounce(function () {
+
+            if (this.receiver.length >= 3) {
+                this.searching = true
                 this.search()
-            },
-            receiver: debounce(function (e) {
-
-                if (this.receiver.length >= 3) {
-                    this.searching = true
-                    this.search()
-                } else {
-                    this.searching = false
-                    this.resultList = []
-                }
-
-                this.search(this.searchTerm)
-            }, 250),
-        },
-        methods: {
-            async getMiniGrids () {
-                try {
-                    this.miniGridList = await this.miniGridService.getMiniGrids()
-
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-            },
-            search () {
-                if (this.tab === 'group') {
-                    this.searchForConnectionGroup()
-                } else if (this.tab === 'type') {
-                    this.searchForConnectionType()
-                }
-            },
-            selectCustomer (c) {
-
-                this.customerSearchTerm = c.name
-                this.addReceiver(c)
-
-            },
-
-            async searchForPerson (term) {
-                if (term !== undefined && term.length > 2) {
-                    try {
-                        this.resultList = this.smsService.searchPerson(term).then(r => {
-                            return r.map(x => ({
-                                'id': x.id,
-                                'name': x.name,
-                                'surname': x.surname,
-                                'toLowerCase': () => x.name.toLowerCase(),
-                                'toString': () => x.name
-                            }))
-                        })
-
-                    } catch (e) {
-                        this.alertNotify('error', e.message)
-                    }
-                } else {
-                    this.resultList = new Promise(resolve => {
-                        window.setTimeout(() => {
-
-                            resolve([
-                                {
-                                    'id': -1,
-                                    'name': '--- Entered at Least 3 letters ---',
-                                    'surname': '',
-                                    'toLowerCase': () => '',
-                                    'toString': () => ''
-                                }
-                            ])
-
-                        }, 500)
-                    })
-                }
-
-            },
-            async searchForConnectionGroup () {
-                try {
-                    this.resultList = await this.smsService.getGroups()
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-
-            },
-            async searchForConnectionType () {
-                try {
-                    this.resultList = await this.smsService.getTypes()
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-            },
-
-            addReceiver (receiver) {
-                this.receiverList = this.smsService.addReceiver(receiver)
-            },
-            removeReceiver (receiver) {
-                this.receiverList = this.smsService.removeReceiver(receiver)
-            },
-            closeSearch () {
+            } else {
                 this.searching = false
                 this.resultList = []
-                this.receiver = ''
-            },
-            closeModal () {
-                this.$emit('closeModal')
-            },
-            sendConfirm () {
-                this.$swal({
-                    type: 'question',
-                    allowOutsideClick: false,
-                    title: 'Confirm Bulk Sms',
-                    text: 'Are you sure to send the bulk sms?',
-                    cancelButtonText: 'No, dont send it!',
-                    showCancelButton: true,
-                }).then((value) => {
-                    if (value.value === true)
-                        this.send()
-                })
-            },
-            async send () {
-                let receivers = null
-                if (this.tab === 'person') {
-                    receivers = this.receiverList.map(x => x.stored ? x.receiver.addresses[0].phone : x.receiver)
-                } else {
-                    if (this.receiver === '-- Select --') {
-                        alert('Select a receiver from the list')
-                        return
-                    }
-                    receivers = this.receiver
-                }
+            }
+
+            this.search(this.searchTerm)
+        }, 250),
+    },
+    methods: {
+        async getMiniGrids () {
+            try {
+                this.miniGridList = await this.miniGridService.getMiniGrids()
+
+            } catch (e) {
+                this.alertNotify('error', e.message)
+            }
+        },
+        search () {
+            if (this.tab === 'group') {
+                this.searchForConnectionGroup()
+            } else if (this.tab === 'type') {
+                this.searchForConnectionType()
+            }
+        },
+        selectCustomer (c) {
+
+            this.customerSearchTerm = c.name
+            this.addReceiver(c)
+
+        },
+
+        async searchForPerson (term) {
+            if (term !== undefined && term.length > 2) {
                 try {
-                    await this.smsService.sendBulk(this.tab, this.miniGrid, receivers, this.message, this.senderId)
-                    this.alertNotify('success', 'The Sms(es) are send out')
-                    this.$emit('smsSent')
-                    this.message = ''
-                    this.customerSearchTerm = ''
-                    this.tab = 'person'
+                    this.resultList = this.smsService.searchPerson(term).then(r => {
+                        return r.map(x => ({
+                            'id': x.id,
+                            'name': x.name,
+                            'surname': x.surname,
+                            'toLowerCase': () => x.name.toLowerCase(),
+                            'toString': () => x.name
+                        }))
+                    })
+
                 } catch (e) {
                     this.alertNotify('error', e.message)
                 }
-            },
-            alertNotify (type, message) {
-                this.$notify({
-                    group: 'notify',
-                    type: type,
-                    title: type + ' !',
-                    text: message
+            } else {
+                this.resultList = new Promise(resolve => {
+                    window.setTimeout(() => {
+
+                        resolve([
+                            {
+                                'id': -1,
+                                'name': '--- Entered at Least 3 letters ---',
+                                'surname': '',
+                                'toLowerCase': () => '',
+                                'toString': () => ''
+                            }
+                        ])
+
+                    }, 500)
                 })
-            },
-        }
+            }
+
+        },
+        async searchForConnectionGroup () {
+            try {
+                this.resultList = await this.smsService.getGroups()
+            } catch (e) {
+                this.alertNotify('error', e.message)
+            }
+
+        },
+        async searchForConnectionType () {
+            try {
+                this.resultList = await this.smsService.getTypes()
+            } catch (e) {
+                this.alertNotify('error', e.message)
+            }
+        },
+
+        addReceiver (receiver) {
+            this.receiverList = this.smsService.addReceiver(receiver)
+        },
+        removeReceiver (receiver) {
+            this.receiverList = this.smsService.removeReceiver(receiver)
+        },
+        closeSearch () {
+            this.searching = false
+            this.resultList = []
+            this.receiver = ''
+        },
+        closeModal () {
+            this.$emit('closeModal')
+        },
+        sendConfirm () {
+            this.$swal({
+                type: 'question',
+                allowOutsideClick: false,
+                title: 'Confirm Bulk Sms',
+                text: 'Are you sure to send the bulk sms?',
+                cancelButtonText: 'No, dont send it!',
+                showCancelButton: true,
+            }).then((value) => {
+                if (value.value === true)
+                    this.send()
+            })
+        },
+        async send () {
+            let receivers = null
+            if (this.tab === 'person') {
+                receivers = this.receiverList.map(x => x.stored ? x.receiver.addresses[0].phone : x.receiver)
+            } else {
+                if (this.receiver === '-- Select --') {
+                    alert('Select a receiver from the list')
+                    return
+                }
+                receivers = this.receiver
+            }
+            try {
+                await this.smsService.sendBulk(this.tab, this.miniGrid, receivers, this.message, this.senderId)
+                this.alertNotify('success', 'The Sms(es) are send out')
+                this.$emit('smsSent')
+                this.message = ''
+                this.customerSearchTerm = ''
+                this.tab = 'person'
+            } catch (e) {
+                this.alertNotify('error', e.message)
+            }
+        },
+        alertNotify (type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message
+            })
+        },
     }
+}
 </script>
 
 <style scoped>

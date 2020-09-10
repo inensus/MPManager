@@ -8,10 +8,9 @@ export class AgentTicketService {
         this.ticket = this.trelloService.ticket
         this.list = []
         this.paginator = new Paginator(resources.agents.tickets + '/' + agentId)
-
     }
 
-    async updateList (data, type) {
+    async updateList (data) {
         this.list = []
         for (let m in data) {
             let ticketData = await this.trelloService.getTicketDetail(data[m])

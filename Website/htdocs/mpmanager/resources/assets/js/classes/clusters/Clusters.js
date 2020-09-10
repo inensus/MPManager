@@ -1,16 +1,10 @@
 export class Clusters {
 
     constructor() {
-        this.list = [];
+        this.list = []
     }
-
-
-
-
-    updateList(listData) {
-        this.list = [];
-
-
+    updateList() {
+        this.list = []
     }
 
 

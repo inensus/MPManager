@@ -43,10 +43,10 @@
 </template>
 
 <script>
-    export default {
-        name: 'AirtelTransactionDetail',
-        props: ['ot']
-    }
+export default {
+    name: 'AirtelTransactionDetail',
+    props: ['ot']
+}
 </script>
 
 <style scoped>

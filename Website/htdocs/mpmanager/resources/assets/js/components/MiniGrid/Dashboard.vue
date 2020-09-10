@@ -206,7 +206,7 @@
 
 
                             <div class="md-layout" style="margin-bottom: 0.8vh;"
-                                 v-for="(revenue, index) in getPercentileList()">
+                                 v-for="(revenue, index) in getPercentileList()" :key="index">
                                 <div class="md-layout-item md-size-100">
                                     {{index}}
                                 </div>
@@ -230,7 +230,7 @@
 
 
                         <div class="col-sm-12 text-center">
-                            <span v-for="i in totalCircles" style="margin:5px" class="dot compare-color-bg"
+                            <span v-for="i in totalCircles" style="margin:5px" :key="i" class="dot compare-color-bg"
                                   :class="currentSelectedTargetCircle=== i-1 ? '':'period-indicator' "
                                   @click="setCircleIndex(i-1)"> </span>
 
@@ -240,10 +240,6 @@
                         </div>
 
                     </widget>
-                </div>
-                <div class="md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-33">
-
-                    <battery-statuses :mini_grid_id="this.miniGridId"/>
                 </div>
 
                 <div class="md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-100">
@@ -369,235 +365,226 @@
 </template>
 
 <script>
-    import format from 'date-fns/format'
-    import Widget from '../../shared/widget'
-    import moment from 'moment'
-    import { currency } from '../../mixins/currency'
-    import TableList from '../../shared/TableList'
-    import Datepicker from 'vuejs-datepicker'
-    import { BatchRevenue } from '../../classes/revenue/batch'
-    import TargetList from './TargetList'
-    import BatteryStatuses from './BatteryStatuses'
-    import SolarDataAndWeather from './SolarDataAndWeather'
-    import Box from '../Box'
-    import ChartistBox from '../ChartistBox'
-    import ChartBox from '../ChartBox'
-    import EnergyChartBox from './EnergyChartBox'
-    import { MiniGridService } from '../../services/MiniGridService'
-    import Stepper from '../../shared/stepper'
-    import { EventBus } from '../../shared/eventbus'
-    import MiniGridMap from './MiniGridMap'
-    import { RevenueService } from '../../services/RevenueService'
-    import RedirectionModal from '../../shared/RedirectionModal'
+import format from 'date-fns/format'
+import Widget from '../../shared/widget'
+import moment from 'moment'
+import { currency } from '../../mixins/currency'
+import Datepicker from 'vuejs-datepicker'
+import { BatchRevenue } from '../../classes/revenue/batch'
+import TargetList from './TargetList'
+import SolarDataAndWeather from './SolarDataAndWeather'
+import Box from '../Box'
+import EnergyChartBox from './EnergyChartBox'
+import { MiniGridService } from '../../services/MiniGridService'
+import Stepper from '../../shared/stepper'
+import { EventBus } from '../../shared/eventbus'
+import MiniGridMap from './MiniGridMap'
+import { RevenueService } from '../../services/RevenueService'
+import RedirectionModal from '../../shared/RedirectionModal'
 
-    export default {
-        name: 'Dashboard',
-        components: {
-            EnergyChartBox,
-            ChartBox,
-            ChartistBox,
-            Box,
-            SolarDataAndWeather,
-            BatteryStatuses,
-            MiniGridMap,
-            TargetList,
-            TableList,
-            Widget,
-            Datepicker,
-            Stepper,
-            RedirectionModal
-        },
-        mixins: [currency],
-        created () {
-            this.miniGridId = this.$route.params.id
-            this.redirectionUrl += '/' + this.miniGridId
-            this.getMiniGridData(this.miniGridId)
-        },
-        mounted () {
-            //set initial dates for periods
-            this.initializePeriods()
-            this.fillRevenueTrendsOverview()
-            this.getBatchData()
+export default {
+    name: 'Dashboard',
+    components: {
+        EnergyChartBox,
+        Box,
+        SolarDataAndWeather,
+        MiniGridMap,
+        TargetList,
+        Widget,
+        Datepicker,
+        Stepper,
+        RedirectionModal
+    },
+    mixins: [currency],
+    created () {
+        this.miniGridId = this.$route.params.id
+        this.redirectionUrl += '/' + this.miniGridId
+        this.getMiniGridData(this.miniGridId)
+    },
+    mounted () {
+        //set initial dates for periods
+        this.initializePeriods()
+        this.fillRevenueTrendsOverview()
+        this.getBatchData()
 
-            EventBus.$on('closeModal', (data) => {
-                this.ModalVisibility = false
-            })
+        EventBus.$on('closeModal', this.closeModal)
+    },
+    watch: {
+        compareData: function () {
+            if (this.compareData.length === 0) {
+                return
+            }
+            this.compareTotal = 0
+            for (let i = 0; i < this.actualData.length; i++) {
+                this.compareTotal += parseInt(this.compareData[i].amount)
+                let old = this.chartTmpData[i + 1]
+                old.push(parseInt(this.compareData[i].amount))
+                let parsedIndex = old[0].split(' - ')
+                if (parsedIndex.length > 1) {
+                    old[0] = parsedIndex[0] + ' - ' + this.compareData[i].date
+                } else {
+                    old[0] += ' - ' + this.compareData[i].date
+                }
+                this.chartTmpData[i + 1] = old
+            }
+            this.refreshChart()
         },
-        watch: {
-            compareData: function () {
-                if (this.compareData.length === 0) {
-                    return
-                }
-                this.compareTotal = 0
-                for (let i = 0; i < this.actualData.length; i++) {
-                    this.compareTotal += parseInt(this.compareData[i].amount)
-                    let old = this.chartTmpData[i + 1]
-                    old.push(parseInt(this.compareData[i].amount))
-                    let parsedIndex = old[0].split(' - ')
-                    if (parsedIndex.length > 1) {
-                        old[0] = parsedIndex[0] + ' - ' + this.compareData[i].date
-                    } else {
-                        old[0] += ' - ' + this.compareData[i].date
-                    }
-                    this.chartTmpData[i + 1] = old
-                }
-                this.refreshChart()
-            },
-            actualData: function () {
-                if (this.actualData.length === 0) {
-                    return
-                }
-                this.actualTotal = 0
-                for (let i = 0; i < this.actualData.length; i++) {
-                    this.actualTotal += parseInt(this.actualData[i].amount)
-                    this.chartTmpData.push(
-                        [this.actualData[i].date, parseInt(this.actualData[i].amount),],
-                    )
-                }
-            },
-        },
-        computed: {
-            compareAnalysisAvailable () {
-                return this.comparedRevenues.revenueList !== null
-            },
-            totalCircles () {
-                if (this.batchRevenues.revenueList === null) {
-                    return 0
-                }
-                return Math.ceil(Object.keys(this.batchRevenues.revenueList.target.targets).length / 4)
-            },
-            //the summary of total revenues of both periods
-            totalRevenues () {
-                if (this.revenues.length === 0) {
-                    return 0
-                }
-                let sum = {
-                    revenue: 0,
-                    compareRevenue: 0,
-                    connections: 0,
-                    compareNewConnections: 0,
-                    totalConnections: 0,
-                    revenuePerConnection: 0,
-                    compareRevenuePerConnection: 0
-                }
-                for (let i in this.revenues) {
-                    let revenues = this.revenues[i]
-                    sum['revenue'] += revenues.revenue
-                    sum['compareRevenue'] += revenues.compareRevenue
-                    sum['connections'] += revenues.newConnections
-                    sum['compareNewConnections'] += revenues.compareNewConnections
-                    sum['totalConnections'] += revenues.totalConnections
-                    sum['revenuePerConnection'] += revenues.revenuePerConnection
-                    sum['compareRevenuePerConnection'] += revenues.compareRevenuePerConnection
-                }
-                return sum
-            },
-            currentTarget () {
-                if (this.donutData.length === 1) {
-                    return this.donutData[0].targets
-                }
-                return this.donutData[this.currentDonutIndex].targets
-            },
-            currentDonutIndex () {
-                return this.periodMapIterator % this.periodMap.length
+        actualData: function () {
+            if (this.actualData.length === 0) {
+                return
+            }
+            this.actualTotal = 0
+            for (let i = 0; i < this.actualData.length; i++) {
+                this.actualTotal += parseInt(this.actualData[i].amount)
+                this.chartTmpData.push(
+                    [this.actualData[i].date, parseInt(this.actualData[i].amount),],
+                )
             }
         },
-        data () {
-            return {
-                miniGridService: new MiniGridService(),
-                revenueService: new RevenueService(),
-                revenueTrends: null,
-                ticketsData: null,
-                enableDataStream: false,
-                isLoggerActive: false,
-                ModalVisibility: false,
-                switching: false,
-                watchingMiniGrids: [],
-                activeStep: 'firstStep',
-                firstStep: false,
-                secondStep: false,
-                thirdStep: false,
-                purchaseCode: '',
-                showModal: false,
+    },
+    computed: {
+        compareAnalysisAvailable () {
+            return this.comparedRevenues.revenueList !== null
+        },
+        totalCircles () {
+            if (this.batchRevenues.revenueList === null) {
+                return 0
+            }
+            return Math.ceil(Object.keys(this.batchRevenues.revenueList.target.targets).length / 4)
+        },
+        //the summary of total revenues of both periods
+        totalRevenues () {
+            if (this.revenues.length === 0) {
+                return 0
+            }
+            let sum = {
+                revenue: 0,
+                compareRevenue: 0,
+                connections: 0,
+                compareNewConnections: 0,
+                totalConnections: 0,
+                revenuePerConnection: 0,
+                compareRevenuePerConnection: 0
+            }
+            for (let i in this.revenues) {
+                let revenues = this.revenues[i]
+                sum['revenue'] += revenues.revenue
+                sum['compareRevenue'] += revenues.compareRevenue
+                sum['connections'] += revenues.newConnections
+                sum['compareNewConnections'] += revenues.compareNewConnections
+                sum['totalConnections'] += revenues.totalConnections
+                sum['revenuePerConnection'] += revenues.revenuePerConnection
+                sum['compareRevenuePerConnection'] += revenues.compareRevenuePerConnection
+            }
+            return sum
+        },
+        currentTarget () {
+            if (this.donutData.length === 1) {
+                return this.donutData[0].targets
+            }
+            return this.donutData[this.currentDonutIndex].targets
+        },
+        currentDonutIndex () {
+            return this.periodMapIterator % this.periodMap.length
+        }
+    },
+    data () {
+        return {
+            miniGridService: new MiniGridService(),
+            revenueService: new RevenueService(),
+            revenueTrends: null,
+            ticketsData: null,
+            enableDataStream: false,
+            isLoggerActive: false,
+            ModalVisibility: false,
+            switching: false,
+            watchingMiniGrids: [],
+            activeStep: 'firstStep',
+            firstStep: false,
+            secondStep: false,
+            thirdStep: false,
+            purchaseCode: '',
+            showModal: false,
 
-                currentSelectedTargetCircle: 0,
-                displayedTargetPercetinles: [0, 5],
-                miniGridData: {},
-                miniGridId: null,
-                activeDateTab: 'tab-monthly',
-                startDate: null,
-                endDate: null,
-                chartEvents:
+            currentSelectedTargetCircle: 0,
+            displayedTargetPercetinles: [0, 5],
+            miniGridData: {},
+            miniGridId: null,
+            activeDateTab: 'tab-monthly',
+            startDate: null,
+            endDate: null,
+            chartEvents:
                     {
                         select: () => {
                             const table = this.$refs.gChart.chartObject
                             const selection = table.getSelection()
-                            const onSelectionMeaasge = selection.length !== 0 ? 'row was selected' : 'row was diselected'
+                            const onSelectionMessage = selection.length !== 0 ? 'row was selected' : 'row was diselected'
+                            console.log(onSelectionMessage)
                         }
                     },
-                chartOptions: {
-                    isStacked: true,
-                    chart: {
-                        legend: {
-                            position: 'top'
-                        }
-                        ,
-                    },
-                    hAxis: {
-                        textPosition: 'out',
-                        slantedText:
+            chartOptions: {
+                isStacked: true,
+                chart: {
+                    legend: {
+                        position: 'top'
+                    }
+                    ,
+                },
+                hAxis: {
+                    textPosition: 'out',
+                    slantedText:
                             true
-                    },
-                    vAxis: {
-                        //scaleType: 'mirrorLog',
-                    },
-                    height: '600',
                 },
-                chartOptionsSmall: {
-                    chart: {
-                        legend: {
-                            position: 'top'
-                        },
-                    },
-                    hAxis: {
-                        textPosition: 'out',
-                        slantedText: true
-                    },
-                    vAxis: {
-                        //scaleType: 'mirrorLog',
-                    },
-                    colors: ['#739e73', '#448aff', '#78002e', '#dce775',],
-                    height: 220,
+                vAxis: {
+                    //scaleType: 'mirrorLog',
                 },
-                donutChartOptions: { // options for donut chart
-                    pieHole: 1,
-                    legend: 'bottom',
-                    height: 300,
+                height: '600',
+            },
+            chartOptionsSmall: {
+                chart: {
+                    legend: {
+                        position: 'top'
+                    },
                 },
-                closedTicketChartData: [],
-                openedTicketChartData: [],
-                periodMap: [],
-                soldEnergy: 0,
-                //bach revenue controller instance
-                batchRevenues: new BatchRevenue(),
-                comparedRevenues: new BatchRevenue(),
-                //hold the target(s) data
-                targets: [],
-                //holds the data for the donut chart
-                donutData: [],
-                //holds the donut data which should displayed
-                selectedDonutData: null,
-                //is the counter which is used to determine which data should displayed
-                periodMapIterator: 0,
-                //selected tartget
-                selectedTargetData: [],
-                //holds the current transaction data for the given period
-                currentTransaction: null,
-                //holds the ticket data for selected period
-                currentTickets: {},
-                disabled: {
-                    days: [0, 2, 3, 4, 5, 6], // Disable all days except monday
-                    customPredictor:
+                hAxis: {
+                    textPosition: 'out',
+                    slantedText: true
+                },
+                vAxis: {
+                    //scaleType: 'mirrorLog',
+                },
+                colors: ['#739e73', '#448aff', '#78002e', '#dce775',],
+                height: 220,
+            },
+            donutChartOptions: { // options for donut chart
+                pieHole: 1,
+                legend: 'bottom',
+                height: 300,
+            },
+            closedTicketChartData: [],
+            openedTicketChartData: [],
+            periodMap: [],
+            soldEnergy: 0,
+            //bach revenue controller instance
+            batchRevenues: new BatchRevenue(),
+            comparedRevenues: new BatchRevenue(),
+            //hold the target(s) data
+            targets: [],
+            //holds the data for the donut chart
+            donutData: [],
+            //holds the donut data which should displayed
+            selectedDonutData: null,
+            //is the counter which is used to determine which data should displayed
+            periodMapIterator: 0,
+            //selected tartget
+            selectedTargetData: [],
+            //holds the current transaction data for the given period
+            currentTransaction: null,
+            //holds the ticket data for selected period
+            currentTickets: {},
+            disabled: {
+                days: [0, 2, 3, 4, 5, 6], // Disable all days except monday
+                customPredictor:
                         function (date) {
                             let today = new Date()
                             let minDate = new Date('2018-01-01')
@@ -606,456 +593,457 @@
                                 return true
                             }
                         }
-                },
-                highlighted: {
-                    base: {},
-                    compared: {},
-                    tmpBase: {},
-                    tmpCompared: {},
-                },
-                tab: 'monthly',
-                expanded: true, // is the determinator whether the period picker should be displayed or not
+            },
+            highlighted: {
+                base: {},
+                compared: {},
+                tmpBase: {},
+                tmpCompared: {},
+            },
+            tab: 'monthly',
+            expanded: true, // is the determinator whether the period picker should be displayed or not
 
-                revenues: [],
-                tmpRevenues: [],
-                init: true,
-                dateFormat: 'DD MMM YYYY',
-                trendChartData:
+            revenues: [],
+            tmpRevenues: [],
+            init: true,
+            dateFormat: 'DD MMM YYYY',
+            trendChartData:
                     {
                         base: [],
                         compare: [],
                         overview: []
                     },
-                labels: ['Base', 'Comparision'],
-                chartData: [],
-                chartTmpData: [],
-                redirectionUrl: '/locations/add-village',
-                imperativeItem: 'City',
-                redirectDialogActive: false
+            labels: ['Base', 'Comparision'],
+            chartData: [],
+            chartTmpData: [],
+            redirectionUrl: '/locations/add-village',
+            imperativeItem: 'City',
+            redirectDialogActive: false
+        }
+    },
+    methods: {
+        closeModal(){
+            this.ModalVisibility = false
+        },
+        closeDatePicker () {
+            this.expanded = true
+        },
+        openDatePicker () {
+            this.expanded = false
+            this.tab = 'monthly'
+
+        },
+        editMiniGrid () {
+            this.showModal = true
+        },
+        async getMiniGridData (miniGridId) {
+            try {
+                this.miniGridData = await this.miniGridService.getMiniGridData(miniGridId)
+                this.enableDataStream = this.miniGridData.data_stream === 1 ? true : false
+                this.isLoggerActive = this.enableDataStream
+            } catch (e) {
+                this.alertNotify('error', e.message)
             }
         },
-        methods: {
-            closeDatePicker () {
-                this.expanded = true
-            },
-            openDatePicker () {
-                this.expanded = false
-                this.tab = 'monthly'
+        async getTransactionsOverview () {
+            try {
+                this.currentTransaction = await this.miniGridService.getTransactionsOverview(this.miniGridId, this.startDate, this.endDate)
+            } catch (e) {
 
-            },
-            editMiniGrid () {
-                this.showModal = true
-            },
-            async getMiniGridData (miniGridId) {
-                try {
-                    this.miniGridData = await this.miniGridService.getMiniGridData(miniGridId)
-                    this.enableDataStream = this.miniGridData.data_stream === 1 ? true : false
-                    this.isLoggerActive = this.enableDataStream
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-            },
-            async getTransactionsOverview () {
-                try {
-                    this.currentTransaction = await this.miniGridService.getTransactionsOverview(this.miniGridId, this.startDate, this.endDate)
-                } catch (e) {
+                this.alertNotify('error', e.message)
+            }
 
-                    this.alertNotify('error', e.message)
-                }
+        },
+        async getSoldEnergy () {
+            try {
+                this.soldEnergy = await this.miniGridService.getTSoldEnergy(this.miniGridId, this.startDate, this.endDate)
+            } catch (e) {
+                this.alertNotify('error', e.message)
+            }
+        },
+        async fillTicketChart () {
 
-            },
-            async getSoldEnergy () {
-                try {
-                    this.soldEnergy = await this.miniGridService.getTSoldEnergy(this.miniGridId, this.startDate, this.endDate)
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-            },
-            async fillTicketChart () {
+            let openedTicketChartData = []
+            let closedTicketChartData = []
+            try {
+                this.ticketsData = await this.revenueService.getTicketsData(this.miniGridId)
 
-                let openedTicketChartData = []
-                let closedTicketChartData = []
-                try {
-                    this.ticketsData = await this.revenueService.getTicketsData(this.miniGridId)
-
-                    openedTicketChartData.push(['Period'])
-                    closedTicketChartData.push(['Period'])
-                    for (let category in this.ticketsData.categories) {
-                        openedTicketChartData[0].push(this.ticketsData.categories[category].label_name)
-                        closedTicketChartData[0].push(this.ticketsData.categories[category].label_name)
-                    }
-
-                    for (let oT in this.ticketsData) {
-                        if (oT === 'categories') {
-                            continue
-                        }
-                        let ticketCategoryData = this.ticketsData[oT]
-
-                        let ticketChartDataOpened = [oT]
-                        let ticketChartDataClosed = [oT]
-                        for (let tD in ticketCategoryData) {
-                            let ticketData = ticketCategoryData[tD]
-                            ticketChartDataOpened.push(ticketData.opened)
-                            ticketChartDataClosed.push(ticketData.closed)
-                        }
-
-                        openedTicketChartData.push(ticketChartDataOpened)
-                        openedTicketChartData.push(ticketChartDataClosed)
-                        closedTicketChartData.push(ticketChartDataClosed)
-
-                    }
-
-                    this.openedTicketChartData = openedTicketChartData
-                    this.closedTicketChartData = closedTicketChartData
-
-                } catch (e) {
-
-                    this.alertNotify('error', e.message)
+                openedTicketChartData.push(['Period'])
+                closedTicketChartData.push(['Period'])
+                for (let category in this.ticketsData.categories) {
+                    openedTicketChartData[0].push(this.ticketsData.categories[category].label_name)
+                    closedTicketChartData[0].push(this.ticketsData.categories[category].label_name)
                 }
 
-            },
-            async fillRevenueTrends () {
-                this.trendChartData.base = [['Date']]
-                this.trendChartData.compare = [['Date']]
-
-                try {
-                    this.revenueTrends = await this.revenueService.getMiniGridRevenueTrends(this.miniGridId, this.startDate, this.endDate)
-
-                    if (this.tab === 'monthly') {
-                    }
-                    for (let dt in this.revenueTrends) {
-                        for (let tariffNames in this.revenueTrends[dt]) {
-                            this.trendChartData.base[0].push(tariffNames)
-                            this.trendChartData.compare[0].push(tariffNames)
-                        }
-                        this.trendChartData.base[0].push('Total')
-                        this.trendChartData.compare[0].push('Total')
-                        if (this.tab !== 'weekly') {
-                            break
-                        }
-                    }
-
-                    for (let x in this.revenueTrends) {
-
-                        let tmpChartData = [x]
-                        let totalRev = 0
-                        for (let d in this.revenueTrends[x]) {
-                            tmpChartData.push(this.revenueTrends[x][d].revenue)
-                            totalRev += this.revenueTrends[x][d].revenue
-                        }
-                        tmpChartData.push(totalRev)
-                        this.trendChartData.base.push(tmpChartData)
-
-                    }
-
-                    if (Object.keys(this.highlighted.compared).length > 0) { //compare data is also available.
-                        let compareData = await this.revenueService.getMiniGridRevenueTrends(this.miniGridId, this.startDate, this.endDate)
-
-                        for (let x in compareData) {
-                            let tmpChartData = [x]
-                            let totalRev = 0
-                            for (let d in compareData[x]) {
-                                tmpChartData.push(compareData[x][d].revenue)
-                                totalRev += compareData[x][d].revenue
-                            }
-                            tmpChartData.push(totalRev)
-                            this.trendChartData.compare.push(tmpChartData)
-
-                        }
-
-                    }
-
-                } catch (e) {
-                    this.redirectDialogActive = true
-                }
-
-            },
-            async onDataStreamChange (value) {
-                try {
-                    this.switching = true
-                    let data_stream = this.enableDataStream === true ? 1 : 0
-                    await this.miniGridService.setMiniGridDataStream(this.miniGridId, data_stream)
-                    let message = value === true ? 'Data Logger is activated.' : 'Data Logger is deactivated.'
-                    this.alertNotify('success', message)
-                    this.isLoggerActive = value
-                    this.enableDataStream = value
-                    this.switching = false
-                } catch (e) {
-                    this.switching = false
-                    this.alertNotify('warn', e.message)
-                    this.isLoggerActive = !value
-                    this.enableDataStream = !value
-                    try {
-                        this.watchingMiniGrids = await this.miniGridService.getMiniGridDataStreams(1)
-                        this.ModalVisibility = true
-                    } catch (e) {
-                        this.alertNotify('error', e.message)
-                    }
-                }
-            },
-            //get all data from the beginning of the time
-            async fillRevenueTrendsOverview () {
-                this.trendChartData.overview = [['Date']]
-                try {
-                    this.revenueTrends = await this.revenueService.getMiniGridRevenueTrends(this.miniGridId, '2018-08-01', this.highlighted.base.to)
-                    for (let dt in this.revenueTrends) {
-                        for (let tariffNames in this.revenueTrends[dt]) {
-                            this.trendChartData.overview[0].push(tariffNames)
-                        }
-                        this.trendChartData.overview[0].push('Total')
-                        break
-                    }
-                    for (let x in this.revenueTrends) {
-                        let tmpChartData = [x]
-                        let totalRev = 0
-                        for (let d in this.revenueTrends[x]) {
-                            tmpChartData.push(this.revenueTrends[x][d].revenue)
-                            totalRev += this.revenueTrends[x][d].revenue
-                        }
-                        tmpChartData.push(totalRev)
-                        this.trendChartData.overview.push(tmpChartData)
-                    }
-
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-
-            },
-            initializePeriods () {
-                this.datesInitialized = true
-                let startingPeriod = moment().weekday(-6).format('YYYY-MM-DD') // last Monday
-                let startingPeriodDateObj = moment(startingPeriod).toDate()
-                this.dateSelected(startingPeriodDateObj)
-            },
-            getBatchData () {
-                this.expanded = true
-                this.highlighted.base = this.highlighted.tmpBase
-                this.highlighted.compared = this.highlighted.tmpCompared
-                this.checkBatchData()
-                this.getSoldEnergy()
-                this.getTransactionsOverview()
-                this.fillRevenueTrends()
-                this.fillTicketChart()
-
-            },
-            checkBatchData () {
-                if (this.highlighted.base.to <= this.highlighted.compared.to) {
-                    this.startDate = this.highlighted.base.from
-                    this.endDate = this.highlighted.compared.to
-                } else {
-                    this.startDate = this.highlighted.compared.from
-                    this.endDate = this.highlighted.base.to
-                }
-
-            },
-
-            setCircleIndex (index) {
-                this.displayedTargetPercetinles[0] = index * 5
-                this.displayedTargetPercetinles[1] = this.displayedTargetPercetinles[0] + 5
-                this.currentSelectedTargetCircle = index
-            },
-            getPercentileList () {
-                let tmpList = {}
-                let counter = 0
-                for (let t in this.batchRevenues.revenueList.target.targets) {
-                    if (counter < this.displayedTargetPercetinles[0]) {
-                        counter++
+                for (let oT in this.ticketsData) {
+                    if (oT === 'categories') {
                         continue
                     }
-                    if (counter >= this.displayedTargetPercetinles[1]) {
+                    let ticketCategoryData = this.ticketsData[oT]
+
+                    let ticketChartDataOpened = [oT]
+                    let ticketChartDataClosed = [oT]
+                    for (let tD in ticketCategoryData) {
+                        let ticketData = ticketCategoryData[tD]
+                        ticketChartDataOpened.push(ticketData.opened)
+                        ticketChartDataClosed.push(ticketData.closed)
+                    }
+
+                    openedTicketChartData.push(ticketChartDataOpened)
+                    openedTicketChartData.push(ticketChartDataClosed)
+                    closedTicketChartData.push(ticketChartDataClosed)
+
+                }
+
+                this.openedTicketChartData = openedTicketChartData
+                this.closedTicketChartData = closedTicketChartData
+
+            } catch (e) {
+
+                this.alertNotify('error', e.message)
+            }
+
+        },
+        async fillRevenueTrends () {
+            this.trendChartData.base = [['Date']]
+            this.trendChartData.compare = [['Date']]
+
+            try {
+                this.revenueTrends = await this.revenueService.getMiniGridRevenueTrends(this.miniGridId, this.startDate, this.endDate)
+
+                for (let dt in this.revenueTrends) {
+                    for (let tariffNames in this.revenueTrends[dt]) {
+                        this.trendChartData.base[0].push(tariffNames)
+                        this.trendChartData.compare[0].push(tariffNames)
+                    }
+                    this.trendChartData.base[0].push('Total')
+                    this.trendChartData.compare[0].push('Total')
+                    if (this.tab !== 'weekly') {
                         break
                     }
-                    tmpList[t] = this.batchRevenues.revenueList.target.targets[t]
-                    counter++
                 }
-                return tmpList
-            },
-            totalConnectionsByTarget () {
-                let totalConnections = 0
-                if (this.periodMap.length === 0) return totalConnections
-                this.periodMap[0].targets.map(item => {
-                    totalConnections += item.new_connections
-                    return item
-                })
-                return totalConnections
-            },
-            calculateRevenueTargetPercentage (revenue, targetRevenue) {
-                if (revenue === 0 || targetRevenue === 0) return 0
-                return Math.round(
-                    parseInt(revenue) * 100
+
+                for (let x in this.revenueTrends) {
+
+                    let tmpChartData = [x]
+                    let totalRev = 0
+                    for (let d in this.revenueTrends[x]) {
+                        tmpChartData.push(this.revenueTrends[x][d].revenue)
+                        totalRev += this.revenueTrends[x][d].revenue
+                    }
+                    tmpChartData.push(totalRev)
+                    this.trendChartData.base.push(tmpChartData)
+
+                }
+
+                if (Object.keys(this.highlighted.compared).length > 0) { //compare data is also available.
+                    let compareData = await this.revenueService.getMiniGridRevenueTrends(this.miniGridId, this.startDate, this.endDate)
+
+                    for (let x in compareData) {
+                        let tmpChartData = [x]
+                        let totalRev = 0
+                        for (let d in compareData[x]) {
+                            tmpChartData.push(compareData[x][d].revenue)
+                            totalRev += compareData[x][d].revenue
+                        }
+                        tmpChartData.push(totalRev)
+                        this.trendChartData.compare.push(tmpChartData)
+
+                    }
+
+                }
+
+            } catch (e) {
+                this.redirectDialogActive = true
+            }
+
+        },
+        async onDataStreamChange (value) {
+            try {
+                this.switching = true
+                let data_stream = this.enableDataStream === true ? 1 : 0
+                await this.miniGridService.setMiniGridDataStream(this.miniGridId, data_stream)
+                let message = value === true ? 'Data Logger is activated.' : 'Data Logger is deactivated.'
+                this.alertNotify('success', message)
+                this.isLoggerActive = value
+                this.enableDataStream = value
+                this.switching = false
+            } catch (e) {
+                this.switching = false
+                this.alertNotify('warn', e.message)
+                this.isLoggerActive = !value
+                this.enableDataStream = !value
+                try {
+                    this.watchingMiniGrids = await this.miniGridService.getMiniGridDataStreams(1)
+                    this.ModalVisibility = true
+                } catch (e) {
+                    this.alertNotify('error', e.message)
+                }
+            }
+        },
+        //get all data from the beginning of the time
+        async fillRevenueTrendsOverview () {
+            this.trendChartData.overview = [['Date']]
+            try {
+                this.revenueTrends = await this.revenueService.getMiniGridRevenueTrends(this.miniGridId, '2018-08-01', this.highlighted.base.to)
+                for (let dt in this.revenueTrends) {
+                    for (let tariffNames in this.revenueTrends[dt]) {
+                        this.trendChartData.overview[0].push(tariffNames)
+                    }
+                    this.trendChartData.overview[0].push('Total')
+                    break
+                }
+                for (let x in this.revenueTrends) {
+                    let tmpChartData = [x]
+                    let totalRev = 0
+                    for (let d in this.revenueTrends[x]) {
+                        tmpChartData.push(this.revenueTrends[x][d].revenue)
+                        totalRev += this.revenueTrends[x][d].revenue
+                    }
+                    tmpChartData.push(totalRev)
+                    this.trendChartData.overview.push(tmpChartData)
+                }
+
+            } catch (e) {
+                this.alertNotify('error', e.message)
+            }
+
+        },
+        initializePeriods () {
+            this.datesInitialized = true
+            let startingPeriod = moment().weekday(-6).format('YYYY-MM-DD') // last Monday
+            let startingPeriodDateObj = moment(startingPeriod).toDate()
+            this.dateSelected(startingPeriodDateObj)
+        },
+        getBatchData () {
+            this.expanded = true
+            this.highlighted.base = this.highlighted.tmpBase
+            this.highlighted.compared = this.highlighted.tmpCompared
+            this.checkBatchData()
+            this.getSoldEnergy()
+            this.getTransactionsOverview()
+            this.fillRevenueTrends()
+            this.fillTicketChart()
+
+        },
+        checkBatchData () {
+            if (this.highlighted.base.to <= this.highlighted.compared.to) {
+                this.startDate = this.highlighted.base.from
+                this.endDate = this.highlighted.compared.to
+            } else {
+                this.startDate = this.highlighted.compared.from
+                this.endDate = this.highlighted.base.to
+            }
+
+        },
+
+        setCircleIndex (index) {
+            this.displayedTargetPercetinles[0] = index * 5
+            this.displayedTargetPercetinles[1] = this.displayedTargetPercetinles[0] + 5
+            this.currentSelectedTargetCircle = index
+        },
+        getPercentileList () {
+            let tmpList = {}
+            let counter = 0
+            for (let t in this.batchRevenues.revenueList.target.targets) {
+                if (counter < this.displayedTargetPercetinles[0]) {
+                    counter++
+                    continue
+                }
+                if (counter >= this.displayedTargetPercetinles[1]) {
+                    break
+                }
+                tmpList[t] = this.batchRevenues.revenueList.target.targets[t]
+                counter++
+            }
+            return tmpList
+        },
+        totalConnectionsByTarget () {
+            let totalConnections = 0
+            if (this.periodMap.length === 0) return totalConnections
+            this.periodMap[0].targets.map(item => {
+                totalConnections += item.new_connections
+                return item
+            })
+            return totalConnections
+        },
+        calculateRevenueTargetPercentage (revenue, targetRevenue) {
+            if (revenue === 0 || targetRevenue === 0) return 0
+            return Math.round(
+                parseInt(revenue) * 100
                     / parseInt(targetRevenue)
                     * 100
-                ) / 100
-            },
-            baseTargetData (connectionType, type) {
-                if (this.periodMap.length === 0) return 'Target not available'
-                let matchTarget = this.periodMap[0].targets.filter(target => {
-                    return target.connection === connectionType
-                })
-                if (matchTarget.length === 0) {
-                    return 'no data for ' + connectionType
-                }
-                if (type === 'connections') {
-                    return matchTarget[0].new_connections
-                } else if (type === 'revenue') {
-                    return matchTarget[0].revenue
-                }
-            },
-            //returns a readable string based on [seconds]
-            calcutateDuration (seconds) {
-                if (seconds === null) return '0'
-                seconds = parseInt(seconds)
-                return Math.floor(moment.duration(seconds, 'seconds').asHours()) + ':' + moment.duration(seconds, 'seconds').minutes() + ':' + moment.duration(seconds, 'seconds').seconds()
-            },
-            //re-formats the date
-            formatPeriodText (date) {
-                return moment(date, 'Y-W').format('YYYY MMM Do')
-            },
+            ) / 100
+        },
+        baseTargetData (connectionType, type) {
+            if (this.periodMap.length === 0) return 'Target not available'
+            let matchTarget = this.periodMap[0].targets.filter(target => {
+                return target.connection === connectionType
+            })
+            if (matchTarget.length === 0) {
+                return 'no data for ' + connectionType
+            }
+            if (type === 'connections') {
+                return matchTarget[0].new_connections
+            } else if (type === 'revenue') {
+                return matchTarget[0].revenue
+            }
+        },
+        //returns a readable string based on [seconds]
+        calcutateDuration (seconds) {
+            if (seconds === null) return '0'
+            seconds = parseInt(seconds)
+            return Math.floor(moment.duration(seconds, 'seconds').asHours()) + ':' + moment.duration(seconds, 'seconds').minutes() + ':' + moment.duration(seconds, 'seconds').seconds()
+        },
+        //re-formats the date
+        formatPeriodText (date) {
+            return moment(date, 'Y-W').format('YYYY MMM Do')
+        },
 
-            //calculates the reached target percentage
-            targetPercentage (actualRevenue, targetRevenue, makeHundred = true) {
-                if (typeof (targetRevenue) === 'undefined') return 0
-                if (targetRevenue === 0) return 100
-                let result = parseInt(parseInt(actualRevenue) * 100 / parseInt(targetRevenue))
-                if (Number.isNaN(result))
-                    return 0
-                return makeHundred === true ? (result > 100 ? 100 : result) : result
-            },
+        //calculates the reached target percentage
+        targetPercentage (actualRevenue, targetRevenue, makeHundred = true) {
+            if (typeof (targetRevenue) === 'undefined') return 0
+            if (targetRevenue === 0) return 100
+            let result = parseInt(parseInt(actualRevenue) * 100 / parseInt(targetRevenue))
+            if (Number.isNaN(result))
+                return 0
+            return makeHundred === true ? (result > 100 ? 100 : result) : result
+        },
 
-            revenueData (from, to, batchRevenues) {
-                return batchRevenues.revenueForPeriod(
-                    this.miniGridId,
-                    'mini-grid',
-                    from,
-                    to,
-                ).then((data) => {
-                    return data
-                })
-            },
-            dateSelected (val, base = true) {
-                if (this.tab === 'monthly') {
-                    let date = moment(val)
-                    if (base) {
-                        this.highlighted.tmpBase = {
-                            from: date.format('YYYY-MM-01'),
-                            to: date.add(1, 'months').date(0).format('YYYY-MM-DD'),
-                            includeDisabled: true // Highlight disabled dates
-                        }
-                        this.highlighted.tmpCompared = {
-                            to: date.date(0).format('YYYY-MM-DD'),
-                            from: date.format('YYYY-MM-01'),
-                            includeDisabled: true // Highlight disabled dates
-                        }
-                    } else {
-                        this.highlighted.tmpCompared = {
-                            from: date.format('YYYY-MM-01'),
-                            to: date.add(1, 'months').date(0).format('YYYY-MM-DD'),
-                            includeDisabled: true // Highlight disabled dates
-                        }
+        revenueData (from, to, batchRevenues) {
+            return batchRevenues.revenueForPeriod(
+                this.miniGridId,
+                'mini-grid',
+                from,
+                to,
+            ).then((data) => {
+                return data
+            })
+        },
+        dateSelected (val, base = true) {
+            if (this.tab === 'monthly') {
+                let date = moment(val)
+                if (base) {
+                    this.highlighted.tmpBase = {
+                        from: date.format('YYYY-MM-01'),
+                        to: date.add(1, 'months').date(0).format('YYYY-MM-DD'),
+                        includeDisabled: true // Highlight disabled dates
                     }
-                } else if (this.tab === 'weekly') {
-                    let starting = moment(val).format('YYYY-MM-DD')
-                    let nextSunday = moment(new Date(val.getFullYear(), val.getMonth(), val.getDate() + 6, val.getHours(), val.getMinutes())).format('YYYY-MM-DD')
-                    if (base) {
-                        let date = moment(nextSunday)
-                        this.highlighted.tmpBase = {
-                            from: starting,
-                            to: nextSunday,
-                            includeDisabled: true // Highlight disabled dates
-                        }
-                        this.highlighted.tmpCompared = {
-                            from: date.add(-13, 'days').format('YYYY-MM-DD'),
-                            to: date.add(6, 'days').format('YYYY-MM-DD'),
-                            includeDisabled: true // Highlight disabled dates
-                        }
-                    } else {
-                        this.highlighted.tmpCompared = {
-                            from: starting,
-                            to: nextSunday,
-                            includeDisabled: true // Highlight disabled dates
-                        }
+                    this.highlighted.tmpCompared = {
+                        to: date.date(0).format('YYYY-MM-DD'),
+                        from: date.format('YYYY-MM-01'),
+                        includeDisabled: true // Highlight disabled dates
                     }
-                } else if (this.tab === 'anual') {
-                    let date = moment(val)
-                    if (base) {
-                        this.highlighted.tmpBase = {
-                            from: date.format('YYYY-01-01'),
-                            to: date.format('YYYY-12-31'),
-                            includeDisabled: true // Highlight disabled dates
-                        }
-                        this.highlighted.tmpCompared = {
-                            from: date.add(-1, 'years').format('YYYY-01-01'),
-                            to: date.format('YYYY-12-31'),
-                            includeDisabled: true // Highlight disabled dates
-                        }
-                    } else {
-                        this.highlighted.tmpCompared = {
-                            from: date.format('YYYY-01-01'),
-                            to: date.format('YYYY-12-31'),
-                            includeDisabled: true // Highlight disabled dates
-                        }
+                } else {
+                    this.highlighted.tmpCompared = {
+                        from: date.format('YYYY-MM-01'),
+                        to: date.add(1, 'months').date(0).format('YYYY-MM-DD'),
+                        includeDisabled: true // Highlight disabled dates
                     }
                 }
-            },
-
-            baseDataAvailable (data) {
-                this.batchRevenues = data
-                this.initDonutData()
-            },
-            // get all periods from donut data and maps them into one array
-            initDonutData () {
-                this.donutData = this.initializeCharts(['Connection Name', 'Revenue'])
-            },
-            initializeCharts (initValue) {
-                let donutData = [initValue]
-                //donut chart for given period
-                let data = this.batchRevenues.revenueList.revenue
-                for (let con in data) {
-                    let connectionRev = data[con]
-                    donutData.push([
-                        con, parseInt(connectionRev)
-                    ])
+            } else if (this.tab === 'weekly') {
+                let starting = moment(val).format('YYYY-MM-DD')
+                let nextSunday = moment(new Date(val.getFullYear(), val.getMonth(), val.getDate() + 6, val.getHours(), val.getMinutes())).format('YYYY-MM-DD')
+                if (base) {
+                    let date = moment(nextSunday)
+                    this.highlighted.tmpBase = {
+                        from: starting,
+                        to: nextSunday,
+                        includeDisabled: true // Highlight disabled dates
+                    }
+                    this.highlighted.tmpCompared = {
+                        from: date.add(-13, 'days').format('YYYY-MM-DD'),
+                        to: date.add(6, 'days').format('YYYY-MM-DD'),
+                        includeDisabled: true // Highlight disabled dates
+                    }
+                } else {
+                    this.highlighted.tmpCompared = {
+                        from: starting,
+                        to: nextSunday,
+                        includeDisabled: true // Highlight disabled dates
+                    }
                 }
-                return donutData
-
-            },
-            dateSelectedBase (val) {
-                this.dateSelected(val)
-            },
-
-            dateSelectedCompared (val) {
-                this.dateSelected(val, false)
-            },
-
-            formatDates (dateOne, dateTwo) {
-                let formattedDates = ''
-                if (dateOne) {
-                    formattedDates = format(dateOne, this.dateFormat)
+            } else if (this.tab === 'anual') {
+                let date = moment(val)
+                if (base) {
+                    this.highlighted.tmpBase = {
+                        from: date.format('YYYY-01-01'),
+                        to: date.format('YYYY-12-31'),
+                        includeDisabled: true // Highlight disabled dates
+                    }
+                    this.highlighted.tmpCompared = {
+                        from: date.add(-1, 'years').format('YYYY-01-01'),
+                        to: date.format('YYYY-12-31'),
+                        includeDisabled: true // Highlight disabled dates
+                    }
+                } else {
+                    this.highlighted.tmpCompared = {
+                        from: date.format('YYYY-01-01'),
+                        to: date.format('YYYY-12-31'),
+                        includeDisabled: true // Highlight disabled dates
+                    }
                 }
-                if (dateTwo) {
-                    formattedDates += ' - ' + format(dateTwo, this.dateFormat)
-                }
-                return formattedDates !== '' ? formattedDates : 'Select Dates'
-            },
-            refreshChart () {
-                this.chartData = this.chartTmpData
-            },
-            calculateRevenuePercent (current, compared) {
-                if (current + compared === 0) return -1
-                return Math.round(current * 100 / compared)
-            },
+            }
+        },
 
-            alertNotify (type, message) {
-                this.$notify({
-                    group: 'notify',
-                    type: type,
-                    title: type + ' !',
-                    text: message,
-                    speed: 0
-                })
-            },
-        }
+        baseDataAvailable (data) {
+            this.batchRevenues = data
+            this.initDonutData()
+        },
+        // get all periods from donut data and maps them into one array
+        initDonutData () {
+            this.donutData = this.initializeCharts(['Connection Name', 'Revenue'])
+        },
+        initializeCharts (initValue) {
+            let donutData = [initValue]
+            //donut chart for given period
+            let data = this.batchRevenues.revenueList.revenue
+            for (let con in data) {
+                let connectionRev = data[con]
+                donutData.push([
+                    con, parseInt(connectionRev)
+                ])
+            }
+            return donutData
+
+        },
+        dateSelectedBase (val) {
+            this.dateSelected(val)
+        },
+
+        dateSelectedCompared (val) {
+            this.dateSelected(val, false)
+        },
+
+        formatDates (dateOne, dateTwo) {
+            let formattedDates = ''
+            if (dateOne) {
+                formattedDates = format(dateOne, this.dateFormat)
+            }
+            if (dateTwo) {
+                formattedDates += ' - ' + format(dateTwo, this.dateFormat)
+            }
+            return formattedDates !== '' ? formattedDates : 'Select Dates'
+        },
+        refreshChart () {
+            this.chartData = this.chartTmpData
+        },
+        calculateRevenuePercent (current, compared) {
+            if (current + compared === 0) return -1
+            return Math.round(current * 100 / compared)
+        },
+
+        alertNotify (type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message,
+                speed: 0
+            })
+        },
     }
+}
 </script>
 
 <style>

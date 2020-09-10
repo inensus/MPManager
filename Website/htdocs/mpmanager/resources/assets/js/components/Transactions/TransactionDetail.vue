@@ -168,84 +168,81 @@
 </template>
 
 <script>
-    import { resources } from '../../resources'
+import { timing } from '../../mixins/timing'
+import { currency } from '../../mixins/currency'
+import VodacomTransactionDetail from './VodacomTransactionDetail'
+import PaymentHistoryChart from './PaymentHistoryChart'
+import AirtelTransactionDetail from './AirtelTransactionDetail'
+import Widget from '../../shared/widget'
+import { TransactionService } from '../../services/TransactionService'
+import { PersonService } from '../../services/PersonService'
 
-    import { EventBus } from '../../shared/eventbus'
-    import { timing } from '../../mixins/timing'
-    import { currency } from '../../mixins/currency'
-    import VodacomTransactionDetail from './VodacomTransactionDetail'
-    import PaymentHistoryChart from './PaymentHistoryChart'
-    import AirtelTransactionDetail from './AirtelTransactionDetail'
-    import Widget from '../../shared/widget'
-    import { TransactionService } from '../../services/TransactionService'
-    import { PersonService } from '../../services/PersonService'
-
-    export default {
-        name: 'TransactionDetail',
-        components: {
-            AirtelTransactionDetail,
-            Widget,
-            VodacomTransactionDetail,
-            PaymentHistoryChart
-        },
-        mixins: [timing, currency],
-        created () {
-            this.transactionId = this.$route.params.id
-        },
-        mounted () {
-            this.getDetail(this.transactionId)
-        },
-        data () {
-            return {
-                transactionService: new TransactionService(),
-                personService: new PersonService(),
-                transactionId: null,
-                transaction: null,
-                personName: null,
-                personId: null
-            }
-        },
-        computed: {
-            ot: function () {
-                return this.transaction.original_transaction
-            }
-        },
-        methods: {
-            async getDetail (id) {
-
-                try {
-                    this.transaction = await this.transactionService.getTransaction(id)
-                    if (this.transaction.payment_histories !== null) {
-                        await this.getRelatedPerson(this.transaction.payment_histories[0].payer_id)
-                    }
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-
-            },
-            async getRelatedPerson (personId) {
-                try {
-                    let person = await this.personService.getPerson(personId)
-                    this.personName =
-                        person.name + ' ' + person.surname
-                    this.personId = person.id
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-
-            },
-            alertNotify (type, message) {
-                this.$notify({
-                    group: 'notify',
-                    type: type,
-                    title: type + ' !',
-                    text: message,
-                    speed: 0
-                })
-            },
-
+export default {
+    name: 'TransactionDetail',
+    components: {
+        AirtelTransactionDetail,
+        Widget,
+        VodacomTransactionDetail,
+        PaymentHistoryChart
+    },
+    mixins: [timing, currency],
+    created () {
+        this.transactionId = this.$route.params.id
+    },
+    mounted () {
+        this.getDetail(this.transactionId)
+    },
+    data () {
+        return {
+            transactionService: new TransactionService(),
+            personService: new PersonService(),
+            transactionId: null,
+            transaction: null,
+            personName: null,
+            personId: null
         }
+    },
+    computed: {
+        ot: function () {
+            return this.transaction.original_transaction
+        }
+    },
+    methods: {
+        async getDetail (id) {
+
+            try {
+                this.transaction = await this.transactionService.getTransaction(id)
+                if (this.transaction.payment_histories !== null) {
+                    await this.getRelatedPerson(this.transaction.payment_histories[0].payer_id)
+                }
+            } catch (e) {
+                this.alertNotify('error', e.message)
+            }
+
+        },
+        async getRelatedPerson (personId) {
+            try {
+                let person = await this.personService.getPerson(personId)
+                this.personName =
+                        person.name + ' ' + person.surname
+                this.personId = person.id
+            } catch (e) {
+                this.alertNotify('error', e.message)
+            }
+
+        },
+        alertNotify (type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message,
+                speed: 0
+            })
+        },
+
     }
+}
 </script>
 
 <style scoped>

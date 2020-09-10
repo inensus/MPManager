@@ -47,32 +47,32 @@
 </template>
 
 <script>
-    import Widget from "../../shared/widget";
+import Widget from '../../shared/widget'
 
-    export default {
-        name: "AddNewUser",
-        components: {Widget},
-        data() {
-            return {
-                registerUserFlag: false,
-                user: {}
-            }
+export default {
+    name: 'AddNewUser',
+    components: {Widget},
+    data() {
+        return {
+            registerUserFlag: false,
+            user: {}
+        }
+    },
+    methods: {
+        showRegister() {
+            this.registerUserFlag = true
         },
-        methods: {
-            showRegister() {
-                this.registerUserFlag = true;
-            },
-            saveUser() {
-                axios.post(
-                    'http://mpmanager.local/register', {
-                        'name': 'Ali KEmal Özkan',
-                        'email': 'hebele@hubele.com',
-                        'password': '3242353434543543',
-                        'password_confirmation': '3242353434543543',
-                    });
-            }
-        },
-    }
+        saveUser() {
+            axios.post(
+                'http://mpmanager.local/register', {
+                    'name': 'Ali KEmal Özkan',
+                    'email': 'hebele@hubele.com',
+                    'password': '3242353434543543',
+                    'password_confirmation': '3242353434543543',
+                })
+        }
+    },
+}
 </script>
 
 <style scoped>

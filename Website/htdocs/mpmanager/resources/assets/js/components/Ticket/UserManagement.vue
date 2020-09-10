@@ -51,7 +51,7 @@
             button-text="Add new User"
             :callback="showAddUser"
         >
-            <div v-if="ticketUserService.list.length>0" v-model="ticketUserService.list">
+            <div v-if="ticketUserService.list.length>0">
                 <md-table v-model="ticketUserService.list" md-sort="name" md-sort-order="asc" md-card>
                     <md-table-row slot="md-table-row" slot-scope="{ item }">
                         <md-table-cell md-label="ID" md-sort-by="id" md-numeric>{{ item.id }}</md-table-cell>
@@ -72,79 +72,79 @@
 </template>
 
 <script>
-    import Widget from '../../shared/widget'
-    import { TicketUserService } from '../../services/TicketUserService'
-    import NoTableData from '../../shared/NoTableData'
+import Widget from '../../shared/widget'
+import { TicketUserService } from '../../services/TicketUserService'
+import NoTableData from '../../shared/NoTableData'
 
-    export default {
-        name: 'UserManagement',
-        components: { Widget, NoTableData },
-        data () {
-            return {
-                ticketUserService: new TicketUserService(),
-                showNewUser: false,
-                headers: ['ID', 'Name', 'Tag', 'Registered Since'],
-                tableName: 'Ticket User',
-                loading: false,
+export default {
+    name: 'UserManagement',
+    components: { Widget, NoTableData },
+    data () {
+        return {
+            ticketUserService: new TicketUserService(),
+            showNewUser: false,
+            headers: ['ID', 'Name', 'Tag', 'Registered Since'],
+            tableName: 'Ticket User',
+            loading: false,
+        }
+
+    },
+
+    mounted () {
+
+        this.getUsers()
+    },
+    methods: {
+
+        async saveUser () {
+            let validator = await this.$validator.validateAll()
+            if (validator) {
+                this.loading = true
+                try {
+                    let userData = await this.ticketUserService.createUser(this.ticketUserService.newUser.name, this.ticketUserService.newUser.tag, this.ticketUserService.newUser.outsourcing)
+
+                    if (userData.error != undefined) {
+                        this.alertNotify('warn', this.ticketUserService.newUser.tag + ' not found in the Ticketing system!')
+                        this.loading = false
+                        return
+                    }
+                    await this.getUsers()
+                    this.alertNotify('success', 'User added successfully.')
+                    this.loading = false
+                } catch (e) {
+                    this.loading = false
+                    this.alertNotify('error', e.message)
+                }
+                this.showNewUser = false
+                this.resetNewUser()
+            }
+        },
+        async getUsers () {
+            try {
+                this.ticketUserService.list = []
+                await this.ticketUserService.getUsers()
+            } catch (e) {
+                this.alertNotify('error', e.message)
             }
 
         },
-
-        mounted () {
-
-            this.getUsers()
+        resetNewUser () {
+            this.ticketUserService.resetNewUser()
         },
-        methods: {
-
-            async saveUser () {
-                let validator = await this.$validator.validateAll()
-                if (validator) {
-                    this.loading = true
-                    try {
-                        let userData = await this.ticketUserService.createUser(this.ticketUserService.newUser.name, this.ticketUserService.newUser.tag, this.ticketUserService.newUser.outsourcing)
-
-                        if (userData.error != undefined) {
-                            this.alertNotify('warn', this.ticketUserService.newUser.tag + ' not found in the Ticketing system!')
-                            this.loading = false
-                            return
-                        }
-                        await this.getUsers()
-                        this.alertNotify('success', 'User added successfully.')
-                        this.loading = false
-                    } catch (e) {
-                        this.loading = false
-                        this.alertNotify('error', e.message)
-                    }
-                    this.showNewUser = false
-                    this.resetNewUser()
-                }
-            },
-            async getUsers () {
-                try {
-                    this.ticketUserService.list = []
-                    await this.ticketUserService.getUsers()
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-
-            },
-            resetNewUser () {
-                this.ticketUserService.resetNewUser()
-            },
-            showAddUser () {
-                this.showNewUser = true
-            },
-            alertNotify (type, message) {
-                this.$notify({
-                    group: 'notify',
-                    type: type,
-                    title: type + ' !',
-                    text: message,
-                    speed: 0
-                })
-            },
+        showAddUser () {
+            this.showNewUser = true
         },
-    }
+        alertNotify (type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message,
+                speed: 0
+            })
+        },
+    },
+}
 </script>
 
 <style scoped>

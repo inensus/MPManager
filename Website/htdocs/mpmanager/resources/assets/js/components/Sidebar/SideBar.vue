@@ -68,199 +68,198 @@
 </template>
 <script>
 
-    import store from '../../store/store'
 
-    export default {
+export default {
 
-        data: () => (
-            {
-                show_extender: false,
-                admin: null,
-                menus: [
-                    {
-                        name: 'Dashboard',
-                        icon: 'home',
-                        children: [
-                            {
-                                name: 'Clusters',
-                                route: '/'
-                            },
-                            {
-                                name: 'Mini-Grid',
-                                route: '/dashboards/mini-grid'
-                            },
-                        ]
-                    },
-                    {
-                        name: 'Customers',
-                        route: '/people/page/1',
-                        icon: 'user-friends',
-                    },
-                    {
-                        name: 'Agents',
-                        route: '/agents/page/1',
-                        icon: 'user',
-                    },
-                    {
-                        name: 'Meters',
-                        icon: 'bolt',
-                        children: [
-                            {
-                                name: 'List',
-                                route: '/meters/page/1',
-                            },
-                            {
-                                name: 'Types',
-                                route: '/meters/types'
-                            },
-                        ]
+    data: () => (
+        {
+            show_extender: false,
+            admin: null,
+            menus: [
+                {
+                    name: 'Dashboard',
+                    icon: 'home',
+                    children: [
+                        {
+                            name: 'Clusters',
+                            route: '/'
+                        },
+                        {
+                            name: 'Mini-Grid',
+                            route: '/dashboards/mini-grid'
+                        },
+                    ]
+                },
+                {
+                    name: 'Customers',
+                    route: '/people/page/1',
+                    icon: 'user-friends',
+                },
+                {
+                    name: 'Agents',
+                    route: '/agents/page/1',
+                    icon: 'user',
+                },
+                {
+                    name: 'Meters',
+                    icon: 'bolt',
+                    children: [
+                        {
+                            name: 'List',
+                            route: '/meters/page/1',
+                        },
+                        {
+                            name: 'Types',
+                            route: '/meters/types'
+                        },
+                    ]
 
-                    },
-                    {
-                        name: 'Transactions',
-                        route: '/transactions/page/1',
-                        icon: 'university',
+                },
+                {
+                    name: 'Transactions',
+                    route: '/transactions/page/1',
+                    icon: 'university',
 
-                    },
-                    {
-                        name: 'Tickets',
-                        icon: 'ticket-alt',
-                        children: [
-                            {
-                                name: 'List',
-                                route: '/tickets'
-                            },
-                            {
-                                name: 'Users',
-                                route: '/tickets/settings/users'
-                            },
-                            {
-                                name: 'Categories',
-                                route: '/tickets/settings/categories'
-                            },
-                        ]
-                    },
-                    {
-                        name: 'Tariffs',
-                        route: '/tariffs',
-                        icon: 'charging-station',
-                    },
-                    {
-                        name: 'Targets',
-                        route: '/targets',
-                        icon: 'bullseye',
-                    },
-                    {
-                        name: 'Reports',
-                        route: '/reports',
-                        icon: 'file-excel',
-                    },
-                    {
-                        name: 'Connection',
-                        icon: 'network-wired',
-                        children: [
-                            {
-                                name: 'Groups',
-                                route: '/connection-groups',
-                            },
-                            {
-                                name: 'Types',
-                                route: '/connection-types'
-                            }
-                        ]
-                    },
-                    {
-                        name: 'Sms',
-                        icon: 'sms',
-                        children: [
-                            {
-                                name: 'Sms List',
-                                route: '/sms/list'
-                            },
-                            {
-                                name: 'New Sms',
-                                route: '/sms/newsms'
-                            },
+                },
+                {
+                    name: 'Tickets',
+                    icon: 'ticket-alt',
+                    children: [
+                        {
+                            name: 'List',
+                            route: '/tickets'
+                        },
+                        {
+                            name: 'Users',
+                            route: '/tickets/settings/users'
+                        },
+                        {
+                            name: 'Categories',
+                            route: '/tickets/settings/categories'
+                        },
+                    ]
+                },
+                {
+                    name: 'Tariffs',
+                    route: '/tariffs',
+                    icon: 'charging-station',
+                },
+                {
+                    name: 'Targets',
+                    route: '/targets',
+                    icon: 'bullseye',
+                },
+                {
+                    name: 'Reports',
+                    route: '/reports',
+                    icon: 'file-excel',
+                },
+                {
+                    name: 'Connection',
+                    icon: 'network-wired',
+                    children: [
+                        {
+                            name: 'Groups',
+                            route: '/connection-groups',
+                        },
+                        {
+                            name: 'Types',
+                            route: '/connection-types'
+                        }
+                    ]
+                },
+                {
+                    name: 'Sms',
+                    icon: 'sms',
+                    children: [
+                        {
+                            name: 'Sms List',
+                            route: '/sms/list'
+                        },
+                        {
+                            name: 'New Sms',
+                            route: '/sms/newsms'
+                        },
 
-                        ]
-                    },
-                    {
-                        name: 'Asset Types',
-                        route: '/assets/types/page/1',
-                        icon: 'toolbox',
-                    },
-                    {
-                        name: 'Maintenance',
-                        route: '/maintenance',
-                        icon: 'wrench',
-                    },
-                    {
-                        name: 'Locations',
-                        icon: 'map-marker',
-                        children: [
-                            {
-                                name: 'Add Cluster',
-                                route: '/locations/add-cluster',
-                            },
-                            {
-                                name: 'Add MiniGrid',
-                                route: '/locations/add-mini-grid',
-                            },
-                            {
-                                name: 'Add Village',
-                                route: '/locations/add-village',
-                            }
-                        ]
-                    }
-                ]
-            }
-        ),
-        props: {
-            title: {
-                type: String,
-                default: 'MicroPowerManager Open Source'
-            },
-            sidebarBackgroundImage: {
-                type: String,
-                default: null
-            },
-            imgLogo: {
-                type: String,
-                default: require('../../../images/Logo1.png')
-            },
-            sidebarItemColor: {
-                type: String,
-                default: 'green',
-
-            },
-
-            autoClose: {
-                type: Boolean,
-                default: true
-            }
-        },
-        provide () {
-            return {
-                autoClose: this.autoClose
-            }
-        },
-        computed: {
-            adminName () {
-                return this.$store.getters['auth/getAuthenticateUser'].name
-            },
-            remaining () {
-                let remaining_time = this.$store.getters['auth/getAuthenticateUser'].remaining_time
-                let remaining_seconds = (remaining_time % 60).toString()
-                return Math.floor(remaining_time / 60).toString() + ':' + ('0' + remaining_seconds).slice(-2)
-            },
-            sidebarStyle () {
-                return {
-
-                    background: '#2b2b2b !important'
+                    ]
+                },
+                {
+                    name: 'Asset Types',
+                    route: '/assets/types/page/1',
+                    icon: 'toolbox',
+                },
+                {
+                    name: 'Maintenance',
+                    route: '/maintenance',
+                    icon: 'wrench',
+                },
+                {
+                    name: 'Locations',
+                    icon: 'map-marker',
+                    children: [
+                        {
+                            name: 'Add Cluster',
+                            route: '/locations/add-cluster',
+                        },
+                        {
+                            name: 'Add MiniGrid',
+                            route: '/locations/add-mini-grid',
+                        },
+                        {
+                            name: 'Add Village',
+                            route: '/locations/add-village',
+                        }
+                    ]
                 }
+            ]
+        }
+    ),
+    props: {
+        title: {
+            type: String,
+            default: 'MicroPowerManager Open Source'
+        },
+        sidebarBackgroundImage: {
+            type: String,
+            default: null
+        },
+        imgLogo: {
+            type: String,
+            default: require('../../../images/Logo1.png')
+        },
+        sidebarItemColor: {
+            type: String,
+            default: 'green',
+
+        },
+
+        autoClose: {
+            type: Boolean,
+            default: true
+        }
+    },
+    provide () {
+        return {
+            autoClose: this.autoClose
+        }
+    },
+    computed: {
+        adminName () {
+            return this.$store.getters['auth/getAuthenticateUser'].name
+        },
+        remaining () {
+            let remaining_time = this.$store.getters['auth/getAuthenticateUser'].remaining_time
+            let remaining_seconds = (remaining_time % 60).toString()
+            return Math.floor(remaining_time / 60).toString() + ':' + ('0' + remaining_seconds).slice(-2)
+        },
+        sidebarStyle () {
+            return {
+
+                background: '#2b2b2b !important'
             }
         }
     }
+}
 </script>
 <style>
     .brand-column {

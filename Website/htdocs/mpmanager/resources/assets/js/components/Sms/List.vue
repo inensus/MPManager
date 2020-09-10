@@ -55,7 +55,7 @@
 
                     <div class="scrollable" style="height: 75%!important;">
                         <div class="md-layout"
-                             v-for="sms in list">
+                             v-for="sms in list" :key="sms.id">
 
                             <div class="md-layout-item md-size-95"
                                  style="padding: 20px; background-color: #f5e8e8; margin:10px;  d-webkit-border-radius: 16px;-moz-border-radius: 16px;border-radius: 16px; "
@@ -91,104 +91,103 @@
 </template>
 
 <script>
-    import Widget from '../../shared/widget'
-    import NoTableData from '../../shared/NoTableData'
-    import { EventBus } from '../../shared/eventbus'
-    import NewSms from './NewSms'
-    import { SmsService } from '../../services/SmsService'
+import Widget from '../../shared/widget'
+import NoTableData from '../../shared/NoTableData'
+import { EventBus } from '../../shared/eventbus'
+import { SmsService } from '../../services/SmsService'
 
-    const debounce = require('debounce')
+const debounce = require('debounce')
 
-    export default {
-        name: 'List',
-        components: { NewSms, Widget, NoTableData },
-        watch: {
-            filterNumber: debounce(function (e) {
-                this.searchSms(this.filterNumber)
-            }, 250),
-        },
+export default {
+    name: 'List',
+    components: {Widget, NoTableData },
+    watch: {
+        filterNumber: debounce(function () {
+            this.searchSms(this.filterNumber)
+        }, 250),
+    },
 
-        mounted () {
-            EventBus.$on('pageLoaded', this.reloadList)
-            this.senderId = this.$store.state.admin.id
-            /*  this.loadList()*/
-        },
-        beforeDestroy () {
-            EventBus.$off('pageLoaded', this.reloadList)
-        },
-        data () {
-            return {
-                smsService: new SmsService(),
-                list: [],
-                numberList: [],
-                filterNumber: '',
-                subscriber: 'smsList',
-                showModal: false,
-                selectedNumber: '',
-                senderId: '',
-                message: '',
-                headers: [],
-                tableName: 'SMS',
-                loading: false
-            }
-        },
-        methods: {
-            reloadList (subscriber, data) {
+    mounted () {
+        EventBus.$on('pageLoaded', this.reloadList)
+        this.senderId = this.$store.state.admin.id
+        /*  this.loadList()*/
+    },
+    beforeDestroy () {
+        EventBus.$off('pageLoaded', this.reloadList)
+    },
+    data () {
+        return {
+            smsService: new SmsService(),
+            list: [],
+            numberList: [],
+            filterNumber: '',
+            subscriber: 'smsList',
+            showModal: false,
+            selectedNumber: '',
+            senderId: '',
+            message: '',
+            headers: [],
+            tableName: 'SMS',
+            loading: false
+        }
+    },
+    methods: {
+        reloadList (subscriber, data) {
 
-                if (subscriber !== this.subscriber) return
-                this.numberList = this.smsService.updateList(data)
+            if (subscriber !== this.subscriber) return
+            this.numberList = this.smsService.updateList(data)
+            if (this.numberList.length > 0)
+                this.list = this.smsDetail(this.numberList[0].number)
+        },
+        async loadList () {
+            this.list = []
+            this.numberList = []
+            try {
+                this.numberList = await this.smsService.getList()
                 if (this.numberList.length > 0)
                     this.list = this.smsDetail(this.numberList[0].number)
-            },
-            async loadList () {
-                this.list = []
-                this.numberList = []
-                try {
-                    this.numberList = await this.smsService.getList()
-                    if (this.numberList.length > 0)
-                        this.list = this.smsDetail(this.numberList[0].number)
 
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-
-            },
-            async smsDetail (phone) {
-                this.selectedNumber = phone
-                this.list = await this.smsService.getDetail(phone)
-
-            },
-            async sendSms () {
-                if (this.message.length <= 3) {
-                    this.alertNotify('warn', 'Message should contain more than 3 letters')
-                    return
-                }
-                try {
-                    this.loading = true
-                    await this.smsService.sendToNumber('person', this.message, this.selectedNumber, this.senderId)
-                    this.loading = false
-                    this.alertNotify('success', 'The Sms is send out')
-                    this.message = ''
-                    this.smsDetail(this.selectedNumber)
-                } catch (e) {
-                    this.loading = false
-                    this.alertNotify('error', e.message)
-                }
-
-            },
-            alertNotify (type, message) {
-                this.$notify({
-                    group: 'notify',
-                    type: type,
-                    title: type + ' !',
-                    text: message
-                })
-            },
-            searchSms (text) {
-                this.numberList = this.smsService.searchSms(text)
+            } catch (e) {
+                this.alertNotify('error', e.message)
             }
+
+        },
+        async smsDetail (phone) {
+            this.selectedNumber = phone
+            this.list = await this.smsService.getDetail(phone)
+
+        },
+        async sendSms () {
+            if (this.message.length <= 3) {
+                this.alertNotify('warn', 'Message should contain more than 3 letters')
+                return
+            }
+            try {
+                this.loading = true
+                await this.smsService.sendToNumber('person', this.message, this.selectedNumber, this.senderId)
+                this.loading = false
+                this.alertNotify('success', 'The Sms is send out')
+                this.message = ''
+                this.smsDetail(this.selectedNumber)
+            } catch (e) {
+                this.loading = false
+                this.alertNotify('error', e.message)
+            }
+
+        },
+        alertNotify (type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message
+            })
+        },
+        searchSms (text) {
+            this.numberList = this.smsService.searchSms(text)
         }
     }
+}
 </script>
 
 <style scoped>

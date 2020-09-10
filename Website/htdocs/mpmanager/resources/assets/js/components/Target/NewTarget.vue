@@ -64,7 +64,7 @@
 
 
                 <md-table>
-                    <md-table-row v-for="(connection,index) in connectionTypes.list" :key="connection.id">
+                    <md-table-row v-for="(connection) in connectionTypes.list" :key="connection.id">
                         <md-table-cell> {{connection.name}}</md-table-cell>
                         <md-table-cell>
                             <md-field>
@@ -149,127 +149,124 @@
 </template>
 
 <script>
-    import Widget from '../../shared/widget'
-    import Datepicker from 'vuejs-datepicker'
-    import { AvailablityChecker } from '../../classes/target/AvailablityChecker'
-    import { ConnectionTypes } from '../../classes/connection/ConnectionTypes'
-    import { NumberOfCustomers } from '../../classes/connection/NumberOfCustomers'
-    import { currency } from '../../mixins/currency'
-    import { Targets } from '../../classes/target/Targets'
-    import PasswordProtection from '../PasswordProtection'
-    import LabelManagement from '../Ticket/LabelManagement'
+import Widget from '../../shared/widget'
+import { AvailablityChecker } from '../../classes/target/AvailablityChecker'
+import { ConnectionTypes } from '../../classes/connection/ConnectionTypes'
+import { NumberOfCustomers } from '../../classes/connection/NumberOfCustomers'
+import { currency } from '../../mixins/currency'
+import { Targets } from '../../classes/target/Targets'
 
-    export default {
-        name: 'NewTarget',
-        components: { LabelManagement, PasswordProtection, Datepicker, Widget },
-        mixins: [currency],
-        computed: {
-            total: {
-                cache: false,
-                deep: true,
-                get: function () {
-                    let total = {
-                        averageRevenuePerMonth: 0,
-                        connectedPower: 0,
-                        energyPerMonth: 0,
-                        newConnection: 0,
-                        totalRevenue: 0,
-                        totalCustomers: this.numberOfCustomers.total,
-                    }
+export default {
+    name: 'NewTarget',
+    components: {Widget },
+    mixins: [currency],
+    computed: {
+        total: {
+            cache: false,
+            deep: true,
+            get: function () {
+                let total = {
+                    averageRevenuePerMonth: 0,
+                    connectedPower: 0,
+                    energyPerMonth: 0,
+                    newConnection: 0,
+                    totalRevenue: 0,
+                    totalCustomers: this.numberOfCustomers.total,
+                }
 
-                    if (this.connectionTypes.list.length === 0) {
-                        return total
-                    }
-
-                    this.connectionTypes.list.reduce(
-                        function (prev, next) {
-                            prev['averageRevenuePerMonth'] += parseInt(next['target']['averageRevenuePerMonth'])
-                            prev['connectedPower'] += parseInt(next['target']['connectedPower'])
-                            prev['energyPerMonth'] += parseInt(next['target']['energyPerMonth'])
-                            prev['newConnection'] += parseInt(next['target']['newConnection'])
-                            prev['totalRevenue'] += parseInt(next['target']['totalRevenue'])
-                            return prev
-                        }, total
-                    )
+                if (this.connectionTypes.list.length === 0) {
                     return total
-
-                }
-            },
-
-        },
-        mounted () {
-            this.connectionTypes.getConnectionTypes()
-            this.numberOfCustomers.getList()
-        },
-
-        data () {
-            return {
-                dataIsLoading: false,
-                targetDestinations: [], // mini-grid or cluster list
-                targetAssignType: null, // determines if the target is whether for a mini-grip or for a cluster.
-                targetAssignId: null, //the id of the mini-grid or cluster
-                slotChecker: new AvailablityChecker(),
-                connectionTypes: new ConnectionTypes(),
-                numberOfCustomers: new NumberOfCustomers(),
-                targets: new Targets(),
-                targetValidUntil: new Date(),
-            }
-        },
-        methods: {
-            alertNotify (type, message, title = null) {
-                if (title == null) {
-                    title = type.toString().charAt(0).toUpperCase() + type.toString().slice(1)
-                }
-                this.$notify({
-                    group: 'notify',
-                    type: type,
-                    title: type + ' !',
-                    text: message
-                })
-            },
-            async submitTarget () {
-                let validation = await this.$validator.validateAll()
-                if (!validation) {
-                    this.alertNotify('Warning', 'Please fill all required field')
-                    return
                 }
 
-                if (this.targetValidUntil === '') {
-                    this.$swal('Period not selected', 'Please select the start date for the period from the date picker', 'error')
-                    return
-                }
-                if (this.targetAssignId === null) {
-                    this.$swal('Target not selected', 'Please select either a cluster or a mini-grid.', 'error')
-                    return
-                }
-
-                this.targets.store(this.targetValidUntil, this.targetAssignType, this.targetAssignId,
-                    this.connectionTypes.list
+                this.connectionTypes.list.reduce(
+                    function (prev, next) {
+                        prev['averageRevenuePerMonth'] += parseInt(next['target']['averageRevenuePerMonth'])
+                        prev['connectedPower'] += parseInt(next['target']['connectedPower'])
+                        prev['energyPerMonth'] += parseInt(next['target']['energyPerMonth'])
+                        prev['newConnection'] += parseInt(next['target']['newConnection'])
+                        prev['totalRevenue'] += parseInt(next['target']['totalRevenue'])
+                        return prev
+                    }, total
                 )
-                //success message
-                this.$swal('Success', 'Target stored successfully', 'success')
-            },
-            addCustomers (newConnections, connections) {
-                return parseInt(newConnections) + parseInt(connections)
-            },
+                return total
 
-            onTargetTypeChange (value) {
-                this.dataIsLoading = true
-                if (value === 'mini-grid') { //get list of mini-grids
-                    this.updateTargetDestination(resources.miniGrids.list)
-                } else { //get list of clusters
-                    this.updateTargetDestination(resources.clusters.list)
-                }
-            },
-
-            updateTargetDestination (url) {
-                axios.get(url).then((response) => {
-                    this.targetDestinations = response.data.data
-                    this.dataIsLoading = false // hide progress bar
-                })
             }
+        },
+
+    },
+    mounted () {
+        this.connectionTypes.getConnectionTypes()
+        this.numberOfCustomers.getList()
+    },
+
+    data () {
+        return {
+            dataIsLoading: false,
+            targetDestinations: [], // mini-grid or cluster list
+            targetAssignType: null, // determines if the target is whether for a mini-grip or for a cluster.
+            targetAssignId: null, //the id of the mini-grid or cluster
+            slotChecker: new AvailablityChecker(),
+            connectionTypes: new ConnectionTypes(),
+            numberOfCustomers: new NumberOfCustomers(),
+            targets: new Targets(),
+            targetValidUntil: new Date(),
+        }
+    },
+    methods: {
+        alertNotify (type, message, title = null) {
+            if (title == null) {
+                title = type.toString().charAt(0).toUpperCase() + type.toString().slice(1)
+            }
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message
+            })
+        },
+        async submitTarget () {
+            let validation = await this.$validator.validateAll()
+            if (!validation) {
+                this.alertNotify('Warning', 'Please fill all required field')
+                return
+            }
+
+            if (this.targetValidUntil === '') {
+                this.$swal('Period not selected', 'Please select the start date for the period from the date picker', 'error')
+                return
+            }
+            if (this.targetAssignId === null) {
+                this.$swal('Target not selected', 'Please select either a cluster or a mini-grid.', 'error')
+                return
+            }
+
+            this.targets.store(this.targetValidUntil, this.targetAssignType, this.targetAssignId,
+                this.connectionTypes.list
+            )
+            //success message
+            this.$swal('Success', 'Target stored successfully', 'success')
+        },
+        addCustomers (newConnections, connections) {
+            return parseInt(newConnections) + parseInt(connections)
+        },
+
+        onTargetTypeChange (value) {
+            this.dataIsLoading = true
+            if (value === 'mini-grid') { //get list of mini-grids
+                this.updateTargetDestination(resources.miniGrids.list)
+            } else { //get list of clusters
+                this.updateTargetDestination(resources.clusters.list)
+            }
+        },
+
+        updateTargetDestination (url) {
+            axios.get(url).then((response) => {
+                this.targetDestinations = response.data.data
+                this.dataIsLoading = false // hide progress bar
+            })
         }
     }
+}
 </script>
 
 <style scoped>

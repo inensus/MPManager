@@ -10,7 +10,7 @@
                 <h4 class="chic-title" v-text="title"></h4>
                 <div class="search-area">
                     <md-button
-                        :class="_btnClass"
+                        :class="setButtonColor()"
                         @click="_callback"
                         class="md-dense md-primary chic-button"
                         style="position: absolute; right: 10px; top:10px"
@@ -66,102 +66,103 @@
 </template>
 
 <script>
-    import {Paginator} from '../classes/paginator'
-    import {EventBus} from './eventbus'
-    import Paginate from './Paginate'
+import {Paginator} from '../classes/paginator'
+import {EventBus} from './eventbus'
+import Paginate from './Paginate'
 
-    const debounce = require('debounce');
-    export default {
-        name: 'Widget',
-        components: {Paginate},
-        props: {
-            color: {
-                type: String,
-                default: 'default'
-            },
-            title: String,
-            id: String,
-            callback: {},
-            button: Boolean,
-            buttonText: String,
-            buttonColor: String,
-            paginator: Paginator,
-            search: {},
-            subscriber: String,
-            route_name: String,
-            headless: {
-                type: Boolean,
-                default: false
-            },
-            show_per_page: {
-                type: Boolean,
-                default: false
-            },
-            resetKey:{
-                default:0
-            }
+const debounce = require('debounce')
+export default {
+    name: 'Widget',
+    components: {Paginate},
+    props: {
+        color: {
+            type: String,
+            default: 'default'
         },
-        mounted() {
-            //listen for a remote trigger for ending the search
-            EventBus.$on('search.end', this.cancelSearching)
+        title: String,
+        id: String,
+        callback: {},
+        button: Boolean,
+        buttonText: String,
+        buttonColor: String,
+        paginator: Paginator,
+        search: {},
+        subscriber: String,
+        route_name: String,
+        headless: {
+            type: Boolean,
+            default: false
         },
-        beforeDestroy() {
-            EventBus.$off('search.end', this.cancelSearching)
+        show_per_page: {
+            type: Boolean,
+            default: false
         },
-        data() {
-            return {
-                searching: false,
-                searchTerm: ''
-            }
-        },
-        methods: {
-            defaultCallback() {
-                alert('default button click')
-            },
-            doSearch(data) {
-                this.searching = true;
-                EventBus.$emit('searching', data)
-            },
-            showAllEntries() {
-                this.searching = false;
-                this.searchTerm = '';
-                EventBus.$emit('end_searching')
-            },
-            cancelSearching() {
-                this.searching = false;
-                this.searchTerm = ''
-            }
-        },
-        computed: {
-            _callback: function () {
-                if (this.callback === undefined) return this.defaultCallback;
-                else return this.callback
-            },
-            _btnClass: function () {
-                if (this.buttonColor === undefined) {
-                    return 'btn-primary'
-                } else if (this.buttonColor === 'green') {
-                    return 'btn-success'
-                } else if (this.buttonColor === 'yellow') {
-                    return 'btn-warning'
-                } else if (this.buttonColor === 'red') {
-                    return 'btn-danger'
-                } else if (this.buttonColor === 'blue') {
-                    return 'btn-info'
-                }
-            }
-        },
-        watch: {
-            searchTerm: debounce(function (e) {
-                if (this.searchTerm.length > 0) {
-                    this.doSearch(this.searchTerm)
-                }
-                if (this.searching && this.searchTerm.length == 0) {
-                    this.showAllEntries()
-                }
-            }, 1000)
+        resetKey:{
+            default:0
         }
+    },
+    mounted() {
+        //listen for a remote trigger for ending the search
+        EventBus.$on('search.end', this.cancelSearching)
+    },
+    beforeDestroy() {
+        EventBus.$off('search.end', this.cancelSearching)
+    },
+    data() {
+        return {
+            searching: false,
+            searchTerm: ''
+        }
+    },
+    methods: {
+        defaultCallback() {
+            alert('default button click')
+        },
+        doSearch(data) {
+            this.searching = true
+            EventBus.$emit('searching', data)
+        },
+        showAllEntries() {
+            this.searching = false
+            this.searchTerm = ''
+            EventBus.$emit('end_searching')
+        },
+        cancelSearching() {
+            this.searching = false
+            this.searchTerm = ''
+        },
+        setButtonColor(){
+            if (this.buttonColor === undefined) {
+                return 'btn-primary'
+            } else if (this.buttonColor === 'green') {
+                return 'btn-success'
+            } else if (this.buttonColor === 'yellow') {
+                return 'btn-warning'
+            } else if (this.buttonColor === 'red') {
+                return 'btn-danger'
+            } else if (this.buttonColor === 'blue') {
+                return 'btn-info'
+            }
+        }
+    },
+    computed: {
+        _callback: function () {
+            if (this.callback === undefined) return this.defaultCallback
+            else return this.callback
+        },
+
+    },
+    watch: {
+        searchTerm: debounce(function () {
+            if (this.searchTerm.length > 0) {
+                this.doSearch(this.searchTerm)
+            }
+            if (this.searching && this.searchTerm.length == 0) {
+                this.showAllEntries()
+            }
+        }, 1000)
     }
+}
 </script>
 
 <style lang="scss" scoped>

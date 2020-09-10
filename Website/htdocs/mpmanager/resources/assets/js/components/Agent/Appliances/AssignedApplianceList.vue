@@ -35,100 +35,100 @@
 
 </template>
 <script>
-    import Widget from '../../../shared/widget'
-    import { AgentAssignedApplianceService } from '../../../services/AgentAssignedApplianceService'
-    import { AgentService } from '../../../services/AgentService'
-    import AssignAppliance from './AssignAppliance'
-    import { EventBus } from '../../../shared/eventbus'
-    import NoTableData from '../../../shared/NoTableData'
+import Widget from '../../../shared/widget'
+import { AgentAssignedApplianceService } from '../../../services/AgentAssignedApplianceService'
+import { AgentService } from '../../../services/AgentService'
+import AssignAppliance from './AssignAppliance'
+import { EventBus } from '../../../shared/eventbus'
+import NoTableData from '../../../shared/NoTableData'
 
-    export default {
-        name: 'AssignedApplianceList',
-        data () {
-            return {
-                assignedApplianceService: new AgentAssignedApplianceService(),
-                agentService: new AgentService(),
+export default {
+    name: 'AssignedApplianceList',
+    data () {
+        return {
+            assignedApplianceService: new AgentAssignedApplianceService(),
+            agentService: new AgentService(),
 
-                showNewAppliance: false,
-                agent: {},
-                newAppliance: {
-                    id: null,
-                    name: null,
-                    cost: null
-                },
-                loading: false,
-                assignedApplianceTypes: [],
-                applianceTypes: [],
-                headers: ['Name', 'Cost'],
-                tableName: 'Assigned Appliance'
+            showNewAppliance: false,
+            agent: {},
+            newAppliance: {
+                id: null,
+                name: null,
+                cost: null
+            },
+            loading: false,
+            assignedApplianceTypes: [],
+            applianceTypes: [],
+            headers: ['Name', 'Cost'],
+            tableName: 'Assigned Appliance'
+        }
+    },
+    props: {
+        agentId: {
+            default: null
+        }
+    },
+    mounted () {
+
+        this.getAgentDetail()
+        this.getAssignedAppliances(this.agentId)
+
+        EventBus.$on('applianceAssigned', this.closeAssignAppliance)
+        EventBus.$on('assignApplianceClosed', () => {
+            this.showNewAppliance = false
+        })
+    },
+    destroyed () {
+        EventBus.$off('applianceAssigned', this.closeAssignAppliance)
+    },
+    components: {
+        AssignAppliance,
+        Widget,
+        NoTableData
+    },
+    methods: {
+        async closeAssignAppliance () {
+            this.showNewAppliance = false
+
+            if (this.agent.id !== undefined) {
+
+                await this.getAssignedAppliances(this.agent.id)
             }
+
         },
-        props: {
-            agentId: {
-                default: null
+        async getAgentDetail () {
+            try {
+                this.agent = await this.agentService.getAgent(Number(this.agentId))
+
+            } catch (e) {
+                this.alertNotify('error', e.message)
             }
+
         },
-        mounted () {
+        async getAssignedAppliances (agentId) {
+            try {
+                this.assignedApplianceTypes = await this.assignedApplianceService.getAssignedAppliances(agentId)
+            } catch (e) {
+                this.alertNotify('error', e.message)
+            }
 
-            this.getAgentDetail()
-            this.getAssignedAppliances(this.agentId)
+        },
 
-            EventBus.$on('applianceAssigned', this.closeAssignAppliance)
-            EventBus.$on('assignApplianceClosed', () => {
-                this.showNewAppliance = false
+        async hide () {
+            this.showNewAppliance = false
+            await this.getAssignedAppliances(this.agent)
+        },
+        alertNotify (type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message
             })
         },
-        destroyed () {
-            EventBus.$off('applianceAssigned', this.closeAssignAppliance)
-        },
-        components: {
-            AssignAppliance,
-            Widget,
-            NoTableData
-        },
-        methods: {
-            async closeAssignAppliance () {
-                this.showNewAppliance = false
-
-                if (this.agent.id !== undefined) {
-
-                    await this.getAssignedAppliances(this.agent.id)
-                }
-
-            },
-            async getAgentDetail () {
-                try {
-                    this.agent = await this.agentService.getAgent(Number(this.agentId))
-
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-
-            },
-            async getAssignedAppliances (agentId) {
-                try {
-                    this.assignedApplianceTypes = await this.assignedApplianceService.getAssignedAppliances(agentId)
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-
-            },
-
-            async hide () {
-                this.showNewAppliance = false
-                await this.getAssignedAppliances(this.agent)
-            },
-            alertNotify (type, message) {
-                this.$notify({
-                    group: 'notify',
-                    type: type,
-                    title: type + ' !',
-                    text: message
-                })
-            },
-        }
-
     }
+
+}
 
 </script>
 <style scoped>
