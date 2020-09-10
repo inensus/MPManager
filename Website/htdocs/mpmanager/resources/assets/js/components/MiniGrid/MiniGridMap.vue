@@ -14,6 +14,7 @@
             :edit="true"
             :markingInfos="markingInfos"
             :isMeter="true"
+            :parentName="'MiniGrid'"
         />
 
     </widget>

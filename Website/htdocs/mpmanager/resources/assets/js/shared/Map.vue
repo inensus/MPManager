@@ -65,7 +65,7 @@
             },
             center: {
                 type: Array,
-                default: function(){return this.appConfig.mapStartingPoint}
+                default: function () {return this.appConfig.mapStartingPoint}
 
             },
             filtered_types: {
@@ -100,6 +100,10 @@
             isMeter: {
                 type: Boolean,
                 default: false
+            },
+            parentName: {
+                type: String,
+                default: ''
             }
         },
         data () {
@@ -308,6 +312,7 @@
                 this.geoDataItems = []
                 this.editableLayers.clearLayers()
                 let editableLayer = this.editableLayers
+                let nonEditableLayers = new L.FeatureGroup()
                 for (let i = 0; i < geoData.length; i++) {
                     let geoType = geoData[i].geojson.type
                     let coordinatesClone = []
@@ -342,6 +347,8 @@
                     let polygonColor = this.mappingService.strToHex(geoData[i].display_name)
                     let geoDataItems = this.geoDataItems
                     let router = this.$router
+                    let map = this.map
+                    let parent = this.parentName
                     L.geoJson(drawing,
                         {
                             style: { fillColor: polygonColor, color: polygonColor },
@@ -354,7 +361,12 @@
                                         router.push({ path: '/clusters/' + clusterId })
                                     })
                                 }
-                                editableLayer.addLayer(layer)
+                                if (parent === 'MiniGrid') {
+                                    nonEditableLayers.addLayer(layer)
+                                    map.addLayer(nonEditableLayers)
+                                } else {
+                                    editableLayer.addLayer(layer)
+                                }
                                 let geoDataItem = {
                                     leaflet_id: layer._leaflet_id,
                                     type: 'manual',
