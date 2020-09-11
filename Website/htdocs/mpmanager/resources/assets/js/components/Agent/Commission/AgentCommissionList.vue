@@ -122,81 +122,81 @@
     </div>
 </template>
 <script>
-    import Widget from '../../../shared/widget'
-    import { EventBus } from '../../../shared/eventbus'
-    import NoTableData from '../../../shared/NoTableData'
-    import { AgentCommissionService } from '../../../services/AgentCommissionService'
-    import NewCommission from '../Commission/NewCommission'
+import Widget from '../../../shared/widget'
+import { EventBus } from '../../../shared/eventbus'
+import NoTableData from '../../../shared/NoTableData'
+import { AgentCommissionService } from '../../../services/AgentCommissionService'
+import NewCommission from '../Commission/NewCommission'
 
-    export default {
-        name: 'AgentCommissionList',
-        data () {
-            return {
-                agentCommissionService: new AgentCommissionService(),
-                showNewCommission: false,
-                headers: ['ID', 'Name', 'Energy Commission', 'Appliance Commission', 'Risk Balance', '#'],
-                tableName: 'Agent Commission Types',
-                editCommission: null,
-                loading: false
+export default {
+    name: 'AgentCommissionList',
+    data () {
+        return {
+            agentCommissionService: new AgentCommissionService(),
+            showNewCommission: false,
+            headers: ['ID', 'Name', 'Energy Commission', 'Appliance Commission', 'Risk Balance', '#'],
+            tableName: 'Agent Commission Types',
+            editCommission: null,
+            loading: false
+        }
+    },
+    components: {
+        Widget,
+        NoTableData,
+        NewCommission
+    },
+    mounted () {
+        this.getAgentCommissions()
+        EventBus.$on('commissionAdded', this.closeNewCommission)
+        EventBus.$on('newCommissionClosed', () => {
+            this.showNewCommission = false
+        })
+    },
+    beforeDestroy () {
+        EventBus.$off('commissionAdded', this.closeNewCommission)
+    },
+    methods: {
+
+        async closeNewCommission () {
+            await this.getAgentCommissions()
+            this.showNewCommission = false
+        },
+        async newCommission () {
+            this.agentCommissionService.resetAgentCommission()
+            this.showNewCommission = true
+        },
+        async getAgentCommissions () {
+            try {
+                await this.agentCommissionService.getAgentCommissions()
+
+            } catch (e) {
+                this.loading = false
+                this.alertNotify('error', e.message)
             }
         },
-        components: {
-            Widget,
-            NoTableData,
-            NewCommission
-        },
-        mounted () {
-            this.getAgentCommissions()
-            EventBus.$on('commissionAdded', this.closeNewCommission)
-            EventBus.$on('newCommissionClosed', () => {
-                this.showNewCommission = false
-            })
-        },
-        beforeDestroy () {
-            EventBus.$off('commissionAdded', this.closeNewCommission)
-        },
-        methods: {
-
-            async closeNewCommission () {
+        async updateCommission (commission) {
+            try {
+                this.loading = true
+                await this.agentCommissionService.updateAgentCommission(commission)
+                this.alertNotify('success', 'Agent commission updated!')
                 await this.getAgentCommissions()
-                this.showNewCommission = false
-            },
-            async newCommission () {
-                this.agentCommissionService.resetAgentCommission()
-                this.showNewCommission = true
-            },
-            async getAgentCommissions () {
-                try {
-                    await this.agentCommissionService.getAgentCommissions()
+                this.loading = false
+            } catch (e) {
+                this.loading = false
+                this.alertNotify('error', e.message)
+            }
+        },
+        async confirmDelete (commission) {
 
-                } catch (e) {
-                    this.loading = false
-                    this.alertNotify('error', e.message)
-                }
-            },
-            async updateCommission (commission) {
-                try {
-                    this.loading = true
-                    await this.agentCommissionService.updateAgentCommission(commission)
-                    this.alertNotify('success', 'Agent commission updated!')
-                    await this.getAgentCommissions()
-                    this.loading = false
-                } catch (e) {
-                    this.loading = false
-                    this.alertNotify('error', e.message)
-                }
-            },
-            async confirmDelete (commission) {
-
-                this.$swal({
-                    type: 'question',
-                    title: 'Delete Agent Commission',
-                    width: '35%',
-                    confirmButtonText: 'Confirm',
-                    showCancelButton: true,
-                    cancelButtonText: 'Cancel',
-                    focusCancel: true,
-                    html:
+            this.$swal({
+                type: 'question',
+                title: 'Delete Agent Commission',
+                width: '35%',
+                confirmButtonText: 'Confirm',
+                showCancelButton: true,
+                cancelButtonText: 'Cancel',
+                focusCancel: true,
+                html:
                         '<div style="text-align: left; padding-left: 5rem" class="checkbox">' +
                         '  <label>' +
                         '    <input type="checkbox" name="confirmation" id="confirmation" >' +
@@ -206,39 +206,39 @@
                         ' will be deleted' +
                         '  </label>' +
                         '</div>'
-                }).then(result => {
-                    let answer = document.getElementById('confirmation').checked
-                    if ('value' in result) {
-                        if (answer) {
-                            this.deleteCommission(commission.id)
-                        }
+            }).then(result => {
+                let answer = document.getElementById('confirmation').checked
+                if ('value' in result) {
+                    if (answer) {
+                        this.deleteCommission(commission.id)
                     }
-                })
-
-            },
-
-            async deleteCommission (commissionId) {
-                try {
-                    this.loading = true
-                    await this.agentCommissionService.deleteAgentCommission(commissionId)
-                    this.alertNotify('success', 'Agent commission deleted!')
-                    await this.getAgentCommissions()
-                    this.loading = false
-                } catch (e) {
-                    this.loading = false
-                    this.alertNotify('error', e.message)
                 }
-            },
-            alertNotify (type, message) {
-                this.$notify({
-                    group: 'notify',
-                    type: type,
-                    title: type + ' !',
-                    text: message
-                })
-            },
+            })
+
         },
-    }
+
+        async deleteCommission (commissionId) {
+            try {
+                this.loading = true
+                await this.agentCommissionService.deleteAgentCommission(commissionId)
+                this.alertNotify('success', 'Agent commission deleted!')
+                await this.getAgentCommissions()
+                this.loading = false
+            } catch (e) {
+                this.loading = false
+                this.alertNotify('error', e.message)
+            }
+        },
+        alertNotify (type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message
+            })
+        },
+    },
+}
 
 </script>
 <style scoped>

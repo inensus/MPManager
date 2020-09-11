@@ -64,62 +64,62 @@
 </template>
 <script>
 
-    import { EventBus } from '../../../shared/eventbus'
-    import { AgentCommissionService } from '../../../services/AgentCommissionService'
+import { EventBus } from '../../../shared/eventbus'
+import { AgentCommissionService } from '../../../services/AgentCommissionService'
 
-    export default {
-        name: 'NewCommission',
-        data () {
-            return {
-                agentCommissionService: new AgentCommissionService(),
-                loading: false,
+export default {
+    name: 'NewCommission',
+    data () {
+        return {
+            agentCommissionService: new AgentCommissionService(),
+            loading: false,
 
-            }
-        },
-        components: {},
-        props: {
-
-            addNewCommission: {
-                type: Boolean,
-                default: false,
-
-            }
-        },
-        methods: {
-
-            async saveCommission () {
-                let validator = await this.$validator.validateAll('Commission-Form')
-
-                if (validator) {
-                    this.loading = true
-                    try {
-                        await this.agentCommissionService.createAgentCommission()
-                        this.loading = false
-                        this.commissionAdded()
-                        this.alertNotify('success', 'Agent commission added successfully')
-                    } catch (e) {
-                        this.loading = false
-                        this.alertNotify('error', e.message)
-                    }
-                }
-
-            },
-            hide () {
-                EventBus.$emit('newCommissionClosed')
-            },
-            commissionAdded () {
-                EventBus.$emit('commissionAdded')
-            },
-            alertNotify (type, message) {
-                this.$notify({
-                    group: 'notify',
-                    type: type,
-                    title: type + ' !',
-                    text: message
-                })
-            },
         }
+    },
+    components: {},
+    props: {
+
+        addNewCommission: {
+            type: Boolean,
+            default: false,
+
+        }
+    },
+    methods: {
+
+        async saveCommission () {
+            let validator = await this.$validator.validateAll('Commission-Form')
+
+            if (validator) {
+                this.loading = true
+                try {
+                    await this.agentCommissionService.createAgentCommission()
+                    this.loading = false
+                    this.commissionAdded()
+                    this.alertNotify('success', 'Agent commission added successfully')
+                } catch (e) {
+                    this.loading = false
+                    this.alertNotify('error', e.message)
+                }
+            }
+
+        },
+        hide () {
+            EventBus.$emit('newCommissionClosed')
+        },
+        commissionAdded () {
+            EventBus.$emit('commissionAdded')
+        },
+        alertNotify (type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message
+            })
+        },
     }
+}
 
 </script>
 <style scoped>
