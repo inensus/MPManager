@@ -1,9 +1,10 @@
-import {resources} from "../../resources";
+import {resources} from '../../resources'
+import moment from 'moment'
 
 export class AvailablityChecker {
 
     constructor() {
-        this.takenSlots = [];
+        this.takenSlots = []
     }
 
 
@@ -13,11 +14,11 @@ export class AvailablityChecker {
             {'date': targetDate}
         ).then((response) => {
             for (let t in response.data.data) {
-                let takenSlot = response.data.data[t];
+                let takenSlot = response.data.data[t]
 
-                this.takenSlots.push(moment(takenSlot.target_date).toDate());
+                this.takenSlots.push(moment(takenSlot.target_date).toDate())
             }
-        });
+        })
 
     }
 }

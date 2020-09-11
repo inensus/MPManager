@@ -50,21 +50,21 @@
 
 <script>
 export default {
-  data() {
-    return {
-      open: false,
-      toggleCard: false
-    };
-  },
-  methods: {
-    logout() {
-      this.$router.replace("/login");
+    data() {
+        return {
+            open: false,
+            toggleCard: false
+        }
     },
-    toggle() {
-      this.toggleCard = !this.toggleCard;
+    methods: {
+        logout() {
+            this.$router.replace('/login')
+        },
+        toggle() {
+            this.toggleCard = !this.toggleCard
+        }
     }
-  }
-};
+}
 </script>
 
 <style lang="css" scoped>

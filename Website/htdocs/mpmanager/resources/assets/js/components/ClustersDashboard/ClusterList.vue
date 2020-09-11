@@ -28,48 +28,46 @@
 </template>
 
 <script>
-    import { EventBus } from '../../shared/eventbus'
-    import '../../shared/TableList'
+import { EventBus } from '../../shared/eventbus'
+import '../../shared/TableList'
+import BoxGroup from './BoxGroup'
+import FinancialOverview from './FinancialOverview'
+import { resources } from '../../resources'
+import ClusterMap from './ClusterMap'
 
-    import Widget from '../../shared/widget'
-    import BoxGroup from './BoxGroup'
-    import FinancialOverview from './FinancialOverview'
-    import { resources } from '../../resources'
-    import ClusterMap from './ClusterMap'
+export default {
+    name: 'ClusterList',
 
-    export default {
-        name: 'ClusterList',
-
-        components: { ClusterMap, FinancialOverview, BoxGroup, Widget },
-        data () {
-            return {
-                bcd: {
-                    'Home': {
-                        'href': '/'
-                    },
-                    'Clusters': {
-                        'href': null,
-                    },
+    components: { ClusterMap, FinancialOverview, BoxGroup },
+    data () {
+        return {
+            bcd: {
+                'Home': {
+                    'href': '/'
                 },
-                clusters: null,
-
-            }
-        },
-        mounted () {
-            EventBus.$emit('bread', this.bcd)
-            this.getClusterList()
-
-        },
-        methods: {
-            getClusterList () {
-                axios.get(resources.clusters.list).then((response) => {
-                    this.clusters = response.data.data
-                })
+                'Clusters': {
+                    'href': null,
+                },
             },
+            clusters: null,
 
+        }
+    },
+    mounted () {
+        EventBus.$emit('bread', this.bcd)
+        this.getClusterList()
+
+    },
+    methods: {
+        getClusterList () {
+            axios.get(resources.clusters.list).then((response) => {
+                this.clusters = response.data.data
+            })
         },
 
-    }
+    },
+
+}
 </script>
 
 <style>

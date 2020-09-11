@@ -10,21 +10,21 @@
 </template>
 
 <script>
-const default_layout = "default";
+const default_layout = 'default'
 
 export default {
-  name:'Appp.vue',
-  computed: {
-    layout() {
-     if (this.$route.meta.layout==default_layout) {
-       return default_layout
-     }
+    name:'Appp.vue',
+    computed: {
+        layout() {
+            if (this.$route.meta.layout==default_layout) {
+                return default_layout
+            }
 
-      return 'div';
-    }
-  },
+            return 'div'
+        }
+    },
 
-};
+}
 </script>
 
 

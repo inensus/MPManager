@@ -12,7 +12,7 @@ export class ConnectionTypes {
 
 
     reSetConnection() {
-        this.connection = new ConnectionsType();
+        this.connection = new ConnectionsType()
     }
 
     getConnectionTypes () {
@@ -44,11 +44,11 @@ export class ConnectionTypes {
     }
 
     async updateList(data) {
-        this.list = [];
+        this.list = []
 
         for (let c in data) {
-            let connectionType = new ConnectionsType();
-            this.list.push(connectionType.fromJson(data[c]));
+            let connectionType = new ConnectionsType()
+            this.list.push(connectionType.fromJson(data[c]))
         }
     }
 }

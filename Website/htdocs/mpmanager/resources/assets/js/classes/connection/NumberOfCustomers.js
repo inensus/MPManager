@@ -2,7 +2,7 @@ import { resources } from '../../resources'
 
 export class NumberOfCustomers {
 
-    constructor (props) {
+    constructor () {
         this.list = []
         this.total = 0
     }

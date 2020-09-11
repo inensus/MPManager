@@ -40,60 +40,60 @@
 </template>
 
 <script>
-    import Widget from '../../shared/widget'
-    import {EventBus} from '../../shared/eventbus'
-    import {ConnectionGroupService} from '../../services/ConnectionGroupService'
+import Widget from '../../shared/widget'
+import {EventBus} from '../../shared/eventbus'
+import {ConnectionGroupService} from '../../services/ConnectionGroupService'
 
-    export default {
-        name: 'NewConnectionGroup',
-        components: {Widget},
-        data() {
-            return {
-                connectionGroupService: new ConnectionGroupService(),
-                connectionGroup: null,
-                showAdd: false,
-            }
-        },
-        created() {
-            this.connectionGroup = this.connectionGroupService.connectionGroup
-        },
-        mounted() {
-            EventBus.$on('showNewConnectionGroup', this.show)
-        },
-        methods: {
-            async store() {
-                let validator = await this.$validator.validateAll()
-                if (!validator) {
-
-                    return
-                }
-                this.hide()
-                try {
-
-                    await this.connectionGroupService.createConnectionGroup(this.connectionGroup.name)
-                    this.alertNotify('success', 'ConnectionGroup has registered.')
-                    EventBus.$emit('connectionGroupAdded', this.connectionGroup)
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-
-            },
-            hide() {
-                this.showAdd = false
-            },
-            show() {
-                this.showAdd = true
-            },
-            alertNotify(type, message) {
-                this.$notify({
-                    group: 'notify',
-                    type: type,
-                    title: type + ' !',
-                    text: message
-                })
-            },
+export default {
+    name: 'NewConnectionGroup',
+    components: {Widget},
+    data() {
+        return {
+            connectionGroupService: new ConnectionGroupService(),
+            connectionGroup: null,
+            showAdd: false,
         }
+    },
+    created() {
+        this.connectionGroup = this.connectionGroupService.connectionGroup
+    },
+    mounted() {
+        EventBus.$on('showNewConnectionGroup', this.show)
+    },
+    methods: {
+        async store() {
+            let validator = await this.$validator.validateAll()
+            if (!validator) {
+
+                return
+            }
+            this.hide()
+            try {
+
+                await this.connectionGroupService.createConnectionGroup(this.connectionGroup.name)
+                this.alertNotify('success', 'ConnectionGroup has registered.')
+                EventBus.$emit('connectionGroupAdded', this.connectionGroup)
+            } catch (e) {
+                this.alertNotify('error', e.message)
+            }
+
+        },
+        hide() {
+            this.showAdd = false
+        },
+        show() {
+            this.showAdd = true
+        },
+        alertNotify(type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message
+            })
+        },
     }
+}
 </script>
 
 <style scoped>

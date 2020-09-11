@@ -15,15 +15,15 @@
                     <md-table-head>Status</md-table-head>
                     <md-table-head>Date</md-table-head>
                 </md-table-row>
-                <template v-for="(ticket,index) in tickets.list">
-                    <md-table-row @click="openTicket(index)">
+                <template v-for="(ticket,index) in tickets.list" >
+                    <md-table-row @click="openTicket(index)" :key="index">
                         <md-table-cell><md-icon>{{showTicket === index ? 'keyboard_arrow_down' : 'keyboard_arrow_right'}}</md-icon>{{ticket.name}}</md-table-cell>
                         <md-table-cell v-if="ticket.category">{{ticket.category.label_name}}</md-table-cell>
                         <md-table-cell v-else>-</md-table-cell>
                         <md-table-cell><span  :class="[ticket.closed ? 'open-ticket': 'closed-ticket']">{{ticket.closed ? "Open" : "Closed"}}</span></md-table-cell>
                         <md-table-cell>{{formatDate(ticket.created_at)}}</md-table-cell>
                     </md-table-row>
-                    <md-table-row v-if="showTicket === index">
+                    <md-table-row v-if="showTicket === index" :key="index">
                         <md-table-cell colspan="4">
 
                             <div class="ticket-desc">
@@ -167,207 +167,203 @@
 </template>
 
 <script>
-    import Widget from "../../shared/widget";
-
-    import { Ticket, UserTickets } from "../../classes/person/ticket";
-    import { resources } from "../../resources";
-    import { EventBus } from "../../shared/eventbus";
-    import { Paginator } from "../../classes/paginator";
-    import TicketItem from "../Ticket/TicketItem";
-    import Paginate from "../../shared/Paginate";
-    import Modal from "../../modal/modal";
-
-    export default {
-        name: "Ticket",
-        components: { Paginate, TicketItem, Widget, Modal },
-        data() {
-            return {
-                subscriber: "userTickets",
-                tickets: new UserTickets(this.$store.getters.person.id),
-                showPriceInput: false,
-                paginator: null,
-                // tickets: [],
-                currentPage: 0,
-                totalPages: 0,
-                perPage: 0,
-                showTicket: null,
-                currentFrom: 0,
-                currentTo: 0,
-                total: 0,
-                loaded: false,
-                showModal: false,
-                users: {},
-                labels: [],
-                newTicket: {
-                    title: "",
-                    description: "",
-                    dueDate: "",
-                    label: 1,
-                    assignedPerson: "",
-                    owner_id: this.$store.getters.person.id, //current person id
-                    owner_type: "person",
-                    creator: "",
-                    outsourcing: 0
-                }
-            };
-        },
-        beforeDestroy() {
-            EventBus.$off("pageLoaded", this.reloadList);
-        },
-
-        mounted() {
-            EventBus.$on("pageLoaded", this.reloadList);
-            //this.getTickets();
-            this.getUsers();
-            this.getLabels();
-            this.getCreator();
-            this.$on("close", function() {
-                this.showModal = false;
-            });
-        },
-        methods: {
-            getTimeAgo(date){
-                return moment(date).fromNow()
-
-            },
-            formatDate(date){
-                let d = new Date(date)
-                return d.toLocaleDateString();
-            },
-            openTicket(index){
-                if(this.showTicket === index){
-                    this.showTicket = null
-                }else{
-                    this.showTicket = index;
-                }
-
-            },
-            ticketCategoryChange(label) {
-                // is needed for outsourcing.
-
-                let category = this.labels.filter(l => {
-                    return l.id == label.target.value;
-                });
-
-                if (category.length === 0) {
-                    return;
-                }
-
-                category = category[0];
-
-                if (category.out_source === 1) {
-                    this.showPriceInput = true;
-                }
-            },
-            reloadList(sub, data) {
-                if (sub !== this.subscriber) return;
-                this.tickets.updateList(data);
-                this.loaded = true;
-            },
-            closeModal() {
-                this.showModal = false;
-            },
-            openModal() {
-                this.showModal = true;
-            },
-            async getCreator() {
-                this.newTicket.creator = await this.$store.state.admin.getId();
-            },
-            setToday() {
-                let date = new Date();
-                let year = date.getUTCFullYear();
-                let month =
-                    date.getUTCMonth() + 1 < 10
-                        ? "0" + (date.getUTCMonth() + 1)
-                        : date.getUTCMonth() + 1;
-                let day =
-                    date.getUTCDate() < 10 ? "0" + date.getUTCDate() : date.getUTCDate();
-                this.newTicket.dueDate = day + "." + month + "." + year;
-            },
-            getTickets(pageNumber = 1) {
-                let personId = this.$store.getters.person.id;
-                this.loaded = false;
-
-                if (this.paginator === null)
-                    this.paginator = new Paginator(resources.ticket.getUser + personId);
-
-                this.paginator.loadPage(pageNumber).then(response => {
-                    this.loaded = true;
-                    this.tickets = [];
-
-                    for (let i in response.data) {
-                        let t = new Ticket();
-                        let data = response.data[i];
-
-                        this.tickets.push(t.fromJson(data));
-                    }
-                });
-            },
-            closeTicket(ticket) {
-                ticket.close();
-            },
-            fetchTicket() {},
-            dateForHumans(date, format = "YYYY-MM-DD HH:mm:ss") {
-                return moment(date, format).fromNow();
-            },
-            showComment(ticket) {
-                Vue.set(ticket, "newComment", true);
-                Vue.set(ticket, "commentMessage", "");
-            },
-            saveComment(ticket) {
-                let comment = {
-                    comment: ticket.commentMessage,
-                    date: new Date(),
-                    fullName: this.$store.getters.admin.name,
-                    username: this.$store.getters.admin.email,
-                    cardId: ticket.id
-                };
-                ticket.newComment = false;
-                ticket.comments.push(comment);
-
-                this.tickets.newComment(comment);
-            },
-            getUsers() {
-                axios.get(resources.ticket.users).then(response => {
-                    let data = response.data.data;
-                    for (let _user in data) {
-                        let user = data[_user];
-                        this.users[user.id] = {
-                            id: user.extern_id,
-                            name: user.user_name,
-                            tag: user.user_tag,
-                            created_at: user.created_at
-                        };
-                    }
-                });
-            },
-            getLabels() {
-                axios.get(resources.ticket.labels).then(response => {
-                    this.labels = response.data.data;
-                });
-            },
-
-            saveTicket() {
-                //validate ticket
-                if (this.showPriceInput && this.newTicket.outsourcing == 0) {
-                    this.$swal({
-                        type: "error",
-                        title: "Value Error!",
-                        text: 'Please enter the amount in the "Amount" field.'
-                    });
-                    return;
-                }
-                axios.post(resources.ticket.create, this.newTicket).then(response => {
-                    let data = response.data.data[0];
-                    let t = new Ticket();
-
-                    this.tickets.list.unshift(t.fromJson(data));
-                });
-
-                this.$emit("close");
+import Widget from '../../shared/widget'
+import { Ticket, UserTickets } from '../../classes/person/ticket'
+import { resources } from '../../resources'
+import { EventBus } from '../../shared/eventbus'
+import { Paginator } from '../../classes/paginator'
+import moment from 'moment'
+export default {
+    name: 'Ticket',
+    components: { Widget },
+    data() {
+        return {
+            subscriber: 'userTickets',
+            tickets: new UserTickets(this.$store.getters.person.id),
+            showPriceInput: false,
+            paginator: null,
+            // tickets: [],
+            currentPage: 0,
+            totalPages: 0,
+            perPage: 0,
+            showTicket: null,
+            currentFrom: 0,
+            currentTo: 0,
+            total: 0,
+            loaded: false,
+            showModal: false,
+            users: {},
+            labels: [],
+            newTicket: {
+                title: '',
+                description: '',
+                dueDate: '',
+                label: 1,
+                assignedPerson: '',
+                owner_id: this.$store.getters.person.id, //current person id
+                owner_type: 'person',
+                creator: '',
+                outsourcing: 0
             }
         }
-    };
+    },
+    beforeDestroy() {
+        EventBus.$off('pageLoaded', this.reloadList)
+    },
+
+    mounted() {
+        EventBus.$on('pageLoaded', this.reloadList)
+        //this.getTickets();
+        this.getUsers()
+        this.getLabels()
+        this.getCreator()
+        this.$on('close', function() {
+            this.showModal = false
+        })
+    },
+    methods: {
+        getTimeAgo(date){
+            return moment(date).fromNow()
+
+        },
+        formatDate(date){
+            let d = new Date(date)
+            return d.toLocaleDateString()
+        },
+        openTicket(index){
+            if(this.showTicket === index){
+                this.showTicket = null
+            }else{
+                this.showTicket = index
+            }
+
+        },
+        ticketCategoryChange(label) {
+            // is needed for outsourcing.
+
+            let category = this.labels.filter(l => {
+                return l.id == label.target.value
+            })
+
+            if (category.length === 0) {
+                return
+            }
+
+            category = category[0]
+
+            if (category.out_source === 1) {
+                this.showPriceInput = true
+            }
+        },
+        reloadList(sub, data) {
+            if (sub !== this.subscriber) return
+            this.tickets.updateList(data)
+            this.loaded = true
+        },
+        closeModal() {
+            this.showModal = false
+        },
+        openModal() {
+            this.showModal = true
+        },
+        async getCreator() {
+            this.newTicket.creator = await this.$store.state.admin.getId()
+        },
+        setToday() {
+            let date = new Date()
+            let year = date.getUTCFullYear()
+            let month =
+                    date.getUTCMonth() + 1 < 10
+                        ? '0' + (date.getUTCMonth() + 1)
+                        : date.getUTCMonth() + 1
+            let day =
+                    date.getUTCDate() < 10 ? '0' + date.getUTCDate() : date.getUTCDate()
+            this.newTicket.dueDate = day + '.' + month + '.' + year
+        },
+        getTickets(pageNumber = 1) {
+            let personId = this.$store.getters.person.id
+            this.loaded = false
+
+            if (this.paginator === null)
+                this.paginator = new Paginator(resources.ticket.getUser + personId)
+
+            this.paginator.loadPage(pageNumber).then(response => {
+                this.loaded = true
+                this.tickets = []
+
+                for (let i in response.data) {
+                    let t = new Ticket()
+                    let data = response.data[i]
+
+                    this.tickets.push(t.fromJson(data))
+                }
+            })
+        },
+        closeTicket(ticket) {
+            ticket.close()
+        },
+        fetchTicket() {},
+        dateForHumans(date, format = 'YYYY-MM-DD HH:mm:ss') {
+            return moment(date, format).fromNow()
+        },
+        showComment(ticket) {
+            Vue.set(ticket, 'newComment', true)
+            Vue.set(ticket, 'commentMessage', '')
+        },
+        saveComment(ticket) {
+            let comment = {
+                comment: ticket.commentMessage,
+                date: new Date(),
+                fullName: this.$store.getters.admin.name,
+                username: this.$store.getters.admin.email,
+                cardId: ticket.id
+            }
+            ticket.newComment = false
+            ticket.comments.push(comment)
+
+            this.tickets.newComment(comment)
+        },
+        getUsers() {
+            axios.get(resources.ticket.users).then(response => {
+                let data = response.data.data
+                for (let _user in data) {
+                    let user = data[_user]
+                    this.users[user.id] = {
+                        id: user.extern_id,
+                        name: user.user_name,
+                        tag: user.user_tag,
+                        created_at: user.created_at
+                    }
+                }
+            })
+        },
+        getLabels() {
+            axios.get(resources.ticket.labels).then(response => {
+                this.labels = response.data.data
+            })
+        },
+
+        saveTicket() {
+            //validate ticket
+            if (this.showPriceInput && this.newTicket.outsourcing == 0) {
+                this.$swal({
+                    type: 'error',
+                    title: 'Value Error!',
+                    text: 'Please enter the amount in the "Amount" field.'
+                })
+                return
+            }
+            axios.post(resources.ticket.create, this.newTicket).then(response => {
+                let data = response.data.data[0]
+                let t = new Ticket()
+
+                this.tickets.list.unshift(t.fromJson(data))
+            })
+
+            this.$emit('close')
+        }
+    }
+}
 </script>
 
 <style scoped>

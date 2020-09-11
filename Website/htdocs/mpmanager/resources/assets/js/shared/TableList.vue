@@ -11,9 +11,9 @@
 </template>
 
 <script>
-    export default {
-        name: "TableList"
-    }
+export default {
+    name: 'TableList'
+}
 </script>
 
 <style scoped>

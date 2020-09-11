@@ -1,5 +1,3 @@
-import {EventBus} from '../shared/eventbus'
-
 export class Paginator {
 
     constructor(url) {
@@ -48,8 +46,8 @@ export class Paginator {
 
         if (this.method === 'GET') {
             return axios.get(this.url, {
-                    params: param
-                }
+                params: param
+            }
             ).then(response => {
                 let data = response.data
                 this.from = data.from

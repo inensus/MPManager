@@ -112,44 +112,42 @@
 </template>
 
 <script>
-    import Datepicker from 'vuejs-datepicker'
-    import Widget from '../../shared/widget'
-    import { PersonService } from '../../services/PersonService'
+import Widget from '../../shared/widget'
+import { PersonService } from '../../services/PersonService'
 
-    export default {
-        name: 'ClientPersonalData',
-        components: {
-            Widget,
-            Datepicker
-        },
-        props: {
-            person: {
-                required: true
-            }
-        },
+export default {
+    name: 'ClientPersonalData',
+    components: {
+        Widget,
+    },
+    props: {
+        person: {
+            required: true
+        }
+    },
 
-        data () {
-            return {
-                personService: new PersonService(),
-                editPerson: false
-            }
-        },
-        methods: {
-            updatePerson () {
-                this.editPerson = false
-                this.personService.updatePerson(this.person)
+    data () {
+        return {
+            personService: new PersonService(),
+            editPerson: false
+        }
+    },
+    methods: {
+        updatePerson () {
+            this.editPerson = false
+            this.personService.updatePerson(this.person)
 
-            },
-            confirmDelete () {
-                this.$swal({
-                    type: 'question',
-                    title: 'Delete Customer',
-                    width: '35%',
-                    confirmButtonText: 'Confirm',
-                    showCancelButton: true,
-                    cancelButtonText: 'Cancel',
-                    focusCancel: true,
-                    html:
+        },
+        confirmDelete () {
+            this.$swal({
+                type: 'question',
+                title: 'Delete Customer',
+                width: '35%',
+                confirmButtonText: 'Confirm',
+                showCancelButton: true,
+                cancelButtonText: 'Cancel',
+                focusCancel: true,
+                html:
                         '<div style="text-align: left; padding-left: 5rem" class="checkbox">' +
                         '  <label>' +
                         '    <input type="checkbox" name="confirmation" id="confirmation" >' +
@@ -160,45 +158,49 @@
                         ' will be deleted' +
                         '  </label>' +
                         '</div>'
-                }).then(result => {
-                    let answer = document.getElementById('confirmation').checked
-                    if ('value' in result) {
-                        //delete customer
-                        if (answer) {
-                            this.deletePerson()
-                        } else {
-                            //not confirmed
-                        }
+            }).then(result => {
+                let answer = document.getElementById('confirmation').checked
+                if ('value' in result) {
+                    //delete customer
+                    if (answer) {
+                        this.deletePerson()
+                    } else {
+                        //not confirmed
                     }
-                })
-            },
-            deletePerson () {
-                axios.delete(resources.person.delete + this.person.id).then(response => {
+                }
+            })
+        },
+        deletePerson () {
+            axios.delete(resources.person.delete + this.person.id).then(response => {
+                if(response.status === 200){
                     this.showConfirmation()
-                })
-            },
-            showConfirmation () {
-                const Toast = this.$swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    timerProgressBar: true,
-                    onOpen: toast => {
-                        toast.addEventListener('mouseenter', this.$swal.stopTimer)
-                        toast.addEventListener('mouseleave', this.$swal.resumeTimer)
-                    }
-                })
+                }
 
-                Toast.fire({
-                    type: 'success',
-                    title: 'Customer Deleted successfully'
-                }).then(x => {
-                    window.history.back()
-                })
-            }
+            })
+        },
+        showConfirmation () {
+            const Toast = this.$swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                onOpen: toast => {
+                    toast.addEventListener('mouseenter', this.$swal.stopTimer)
+                    toast.addEventListener('mouseleave', this.$swal.resumeTimer)
+                }
+            })
+
+            Toast.fire({
+                type: 'success',
+                title: 'Customer Deleted successfully'
+            }).then(x => {
+                console.log(x)
+                window.history.back()
+            })
         }
     }
+}
 </script>
 
 <style>

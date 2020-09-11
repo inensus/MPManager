@@ -89,136 +89,133 @@
 </template>
 
 <script>
-    import Widget from '../../shared/widget'
-    import Paginate from '../../shared/Paginate'
-    import TicketItem from './TicketItem'
-    import { EventBus } from '../../shared/eventbus'
-    import Filtering from './Filtering'
-    import { resources } from '../../resources'
-    import { TicketService } from '../../services/TicketService'
-    import { Paginator } from '../../classes/paginator'
+import Widget from '../../shared/widget'
+import Paginate from '../../shared/Paginate'
+import TicketItem from './TicketItem'
+import { EventBus } from '../../shared/eventbus'
+import Filtering from './Filtering'
+import { resources } from '../../resources'
+import { TicketService } from '../../services/TicketService'
+import { Paginator } from '../../classes/paginator'
+import { Ticket } from '../../classes/Ticket'
 
-    export default {
-        name: 'TicketList',
-        components: { Filtering, Widget, Paginate, TicketItem },
-        data () {
-            return {
+export default {
+    name: 'TicketList',
+    components: { Filtering, Widget, Paginate, TicketItem },
+    data () {
+        return {
 
-                ticketService: new TicketService(),
-                loading: true,
-                filterTicket: false,
-                resetKey: 0,
-                subscriber: {
-                    opened: 'ticketListOpened',
-                    closed: 'ticketListClosed'
-                },
+            ticketService: new TicketService(),
+            loading: true,
+            filterTicket: false,
+            resetKey: 0,
+            subscriber: {
+                opened: 'ticketListOpened',
+                closed: 'ticketListClosed'
+            },
 
-            }
-        },
-        mounted () {
+        }
+    },
+    mounted () {
 
-            EventBus.$on('pageLoaded', this.reloadList)
-            EventBus.$on('listChanged', () => {
+        EventBus.$on('pageLoaded', this.reloadList)
+        EventBus.$on('listChanged', () => {
 
-                this.resetKey += 1
-                this.ticketService.openedPaginator = new Paginator(resources.ticket.list + '?status=0')
-                this.ticketService.closedPaginator = new Paginator(resources.ticket.list + '?status=1')
+            this.resetKey += 1
+            this.ticketService.openedPaginator = new Paginator(resources.ticket.list + '?status=0')
+            this.ticketService.closedPaginator = new Paginator(resources.ticket.list + '?status=1')
 
-            })
-            window.Echo.private(`histories`).listen('HistoryEvent', event => {
-                let data = event.historyModel
-                //its a ticket event so we are interested about the content
-                if (data.target_type === 'Inensus\\Ticket\\Models\\Ticket') {
-                    if (data.action !== 'create') {
-                        // the ticket is been updated
-                        if (data.field === 'closed') {
-                            //ticket is been closed
-                            //get ticket details if the ticket is not on the recently opened tickets
-                            let foundTicket = this.tickets.openedList.filter(ticket => {
-                                return ticket.id === data.target.ticket_id
-                            })
-                            if (foundTicket.length === 0) {
-                                //ticket is not been displayed in the opened list.
-                                let t = new Ticket()
-                                t.getDetail(data.target.ticket_id).then(response => {
-                                    this.tickets.closedList.unshift(t.fromJson(response.data))
-                                    if (this.tickets.closedList.length > 5) {
-                                        this.tickets.closedList.pop()
-                                    }
-                                })
-                            } else {
-                                this.tickets.closedList.unshift(foundTicket[0])
+        })
+        window.Echo.private('histories').listen('HistoryEvent', event => {
+            let data = event.historyModel
+            //its a ticket event so we are interested about the content
+            if (data.target_type === 'Inensus\\Ticket\\Models\\Ticket') {
+                if (data.action !== 'create') {
+                    // the ticket is been updated
+                    if (data.field === 'closed') {
+                        //ticket is been closed
+                        //get ticket details if the ticket is not on the recently opened tickets
+                        let foundTicket = this.tickets.openedList.filter(ticket => {
+                            return ticket.id === data.target.ticket_id
+                        })
+                        if (foundTicket.length === 0) {
+                            //ticket is not been displayed in the opened list.
+                            let t = new Ticket()
+                            t.getDetail(data.target.ticket_id).then(response => {
+                                this.tickets.closedList.unshift(t.fromJson(response.data))
                                 if (this.tickets.closedList.length > 5) {
                                     this.tickets.closedList.pop()
                                 }
-                                this.tickets.openedList = this.tickets.openedList.filter(
-                                    ticket => {
-                                        return ticket.id !== data.target.ticket_id
-                                    }
-                                )
-                            }
-                        } else {
-                            //show alert box what recently happened
-                            this.$notify({
-                                group: 'information',
-                                title: 'New ticketing action',
-                                text: data.content,
-                                duration: 15000
                             })
-                            window.audio.play()
+                        } else {
+                            this.tickets.closedList.unshift(foundTicket[0])
+                            if (this.tickets.closedList.length > 5) {
+                                this.tickets.closedList.pop()
+                            }
+                            this.tickets.openedList = this.tickets.openedList.filter(
+                                ticket => {
+                                    return ticket.id !== data.target.ticket_id
+                                }
+                            )
                         }
                     } else {
-                        //created event, add the ticket to the list.
-                        let t = new TicketS()
-
-                        t.getDetail(data.target.ticket_id).then(response => {
-
-                            let x = t.fromJson(response.data)
-                            if (typeof x['owner'] === 'undefined') {
-                                x['owner'] = { id: data.target.owner_id, name: 'X' }
-                            }
-                            this.tickets.openedList.unshift(x)
-                            if (this.tickets.openedList.length > 5) {
-                                this.tickets.openedList.pop()
-                            }
+                        //show alert box what recently happened
+                        this.$notify({
+                            group: 'information',
+                            title: 'New ticketing action',
+                            text: data.content,
+                            duration: 15000
                         })
+                        window.audio.play()
                     }
+                } else {
+                    //created event, add the ticket to the list.
+                    let t = new Ticket()
+
+                    t.getDetail(data.target.ticket_id).then(response => {
+
+                        let x = t.fromJson(response.data)
+                        if (typeof x['owner'] === 'undefined') {
+                            x['owner'] = { id: data.target.owner_id, name: 'X' }
+                        }
+                        this.tickets.openedList.unshift(x)
+                        if (this.tickets.openedList.length > 5) {
+                            this.tickets.openedList.pop()
+                        }
+                    })
                 }
-            })
-        },
-        beforeDestroy () {
-            EventBus.$off('pageLoaded', this.reloadList)
-        },
-        methods: {
-            reloadList (subscriber, data) {
-                if (
-                    subscriber !== 'ticketListOpened' &&
-                    subscriber !== 'ticketListClosed'
-                )
-                    return
-                this.loading = false
-                this.ticketService.updateList(data, subscriber)
-            },
-            searching (searchTerm) {
-            },
-            endSearching () {
-            },
-            filtered (data) {
-                this.ticketService.openedPaginator.setPaginationBaseUrl(
-                    resources.ticket.list + '?status=0' + data
-                )
-                this.ticketService.openedPaginator.loadPage(1).then(response => {
-                    this.reloadList(this.subscriber.opened, response.data)
-                })
-                this.ticketService.closedPaginator.setPaginationBaseUrl(
-                    resources.ticket.list + '?status=1' + data
-                )
-                this.ticketService.closedPaginator.loadPage(1).then(response => {
-                    this.reloadList(this.subscriber.closed, response.data)
-                })
             }
+        })
+    },
+    beforeDestroy () {
+        EventBus.$off('pageLoaded', this.reloadList)
+    },
+    methods: {
+        reloadList (subscriber, data) {
+            if (
+                subscriber !== 'ticketListOpened' &&
+                    subscriber !== 'ticketListClosed'
+            )
+                return
+            this.loading = false
+            this.ticketService.updateList(data, subscriber)
+        },
+        filtered (data) {
+            this.ticketService.openedPaginator.setPaginationBaseUrl(
+                resources.ticket.list + '?status=0' + data
+            )
+            this.ticketService.openedPaginator.loadPage(1).then(response => {
+                this.reloadList(this.subscriber.opened, response.data)
+            })
+            this.ticketService.closedPaginator.setPaginationBaseUrl(
+                resources.ticket.list + '?status=1' + data
+            )
+            this.ticketService.closedPaginator.loadPage(1).then(response => {
+                this.reloadList(this.subscriber.closed, response.data)
+            })
         }
     }
+}
 </script>
 
 <style scoped>

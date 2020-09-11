@@ -61,69 +61,69 @@
 </template>
 
 <script>
-    import Box from '../Box'
-    import { currency } from '../../mixins/currency'
-    import { ClusterService } from '../../services/ClusterService'
+import Box from '../Box'
+import { currency } from '../../mixins/currency'
+import { ClusterService } from '../../services/ClusterService'
 
-    export default {
-        name: 'BoxGroup',
-        components: { Box },
-        mixins: [currency],
-        props: {
-            cluster: {
-                type: Object,
-                required: true,
-            },
+export default {
+    name: 'BoxGroup',
+    components: { Box },
+    mixins: [currency],
+    props: {
+        cluster: {
+            type: Object,
+            required: true,
+        },
+
+    },
+    mounted () {
+        this.getClusterData()
+    },
+    data: () => ({
+        boxData: [],
+        clusterService: new ClusterService(),
+        clusterData: [],
+    }),
+    methods: {
+        async getClusterData () {
+            this.clusterData = await this.clusterService.getClusterRevenues(this.cluster.id, 'monthly')
 
         },
-        mounted () {
-            this.getClusterData()
-        },
-        data: () => ({
-            boxData: [],
-            clusterService: new ClusterService(),
-            clusterData: [],
-        }),
-        methods: {
-            async getClusterData () {
-                this.clusterData = await this.clusterService.getClusterRevenues(this.cluster.id, 'monthly')
-
-            },
-        },
-        computed: {
-            population () {
-                return 0
-                let population = 0
-                for (let c in this.clusters) {
-                    for (let city in this.clusters[c].cities) {
-                        population += this.clusters[c].cities[city].population
-                    }
+    },
+    computed: {
+        population () {
+            return 0
+            /*let population = 0
+            for (let c in this.clusters) {
+                for (let city in this.clusters[c].cities) {
+                    population += this.clusters[c].cities[city].population
                 }
-                return population
-            },
-            connections() {
-                let connections = 0
-                return connections
-                for (let c in this.clusters) {
-                    for (let city in this.clusters[c].cities) {
-                        connections += this.clusters[c].cities[city].metersCount
-                    }
-                }
-                return connections
-            },
-            revenue() {
-                let revenue = 0
-                return revenue
-                for (let c in this.clusters) {
-                    for (let city in this.clusters[c].cities) {
-                        revenue += this.clusters[c].cities[city].revenue
-                    }
-                }
-                return revenue
-            },
+            }
+            return population*/
         },
+        connections() {
+            let connections = 0
+            return connections
+            /*for (let c in this.clusters) {
+                for (let city in this.clusters[c].cities) {
+                    connections += this.clusters[c].cities[city].metersCount
+                }
+            }
+            return connections*/
+        },
+        revenue() {
+            let revenue = 0
+            return revenue
+            /*for (let c in this.clusters) {
+                for (let city in this.clusters[c].cities) {
+                    revenue += this.clusters[c].cities[city].revenue
+                }
+            }
+            return revenue*/
+        },
+    },
 
-    }
+}
 </script>
 
 <style>

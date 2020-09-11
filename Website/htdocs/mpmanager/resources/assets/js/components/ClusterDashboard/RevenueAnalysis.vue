@@ -23,7 +23,7 @@
             </thead>
             <tbody slot="body">
 
-            <tr v-for="revenue in revenues">
+            <tr v-for="(revenue,index) in revenues" :key="index">
                 <td>{{revenue.tariff}}</td>
                 <td class="hidden-xs"><span class="base-color">
                                 {{revenue.totalConnections}}
@@ -93,34 +93,32 @@
 </template>
 
 <script>
-    import { resources } from '../../resources'
+export default {
+    name: 'RevenueAnalysis',
+    props: {
+        clusterId: {
+            type: String,
+            required: true,
+        },
+    },
+    mounted () {
+        this.getMiniGridsAnalysis()
+    },
+    data () {
+        return {
+            clusterTrends: null,
+            period: {},
+        }
+    },
+    methods: {
+        getMiniGridsAnalysis () {
 
-    export default {
-        name: 'RevenueAnalysis',
-        props: {
-            clusterId: {
-                type: String,
-                required: true,
-            },
         },
-        mounted () {
-            this.getMiniGridsAnalysis()
-        },
-        data () {
-            return {
-                clusterTrends: null,
-                period: {},
-            }
-        },
-        methods: {
-            getMiniGridsAnalysis () {
+        fillAnalysis () {
 
-            },
-            fillAnalysis () {
-
-            },
         },
-    }
+    },
+}
 </script>
 
 <style scoped>

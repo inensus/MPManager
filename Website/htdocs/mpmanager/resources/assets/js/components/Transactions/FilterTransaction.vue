@@ -79,130 +79,129 @@
 </template>
 
 <script>
-    import Datepicker from 'vuejs-datepicker'
-    import { TransactionService } from '../../services/TransactionService'
-    import { TariffService } from '../../services/TariffService'
-    import { EventBus } from '../../shared/eventbus'
+import { TransactionService } from '../../services/TransactionService'
+import { TariffService } from '../../services/TariffService'
+import { EventBus } from '../../shared/eventbus'
 
-    export default {
-        name: 'FilterTransaction',
-        components: { Datepicker },
-        mounted () {
-            this.getTariffs()
-            this.getSearch()
-            EventBus.$on('dataLoaded', e => {
-                this.loading = false
-            })
+export default {
+    name: 'FilterTransaction',
+    mounted () {
+        this.getTariffs()
+        this.getSearch()
+        EventBus.$on('dataLoaded', this.dataLoaded)
+    },
+
+    data () {
+        return {
+            transactionService: new TransactionService(),
+            tariffService: new TariffService(),
+            tariffs: [],
+            tarrif_: '',
+            loading: false,
+            provider_: 'All Network Providers',
+            transaction_: 'All Transactions',
+            filter: {
+                status: null,
+                serial_number: null,
+                tariff: null,
+                provider: null,
+                from: null,
+                to: null
+            }
+        }
+    },
+
+    methods: {
+        dataLoaded(){
+            this.loading = false
         },
-
-        data () {
-            return {
-                transactionService: new TransactionService(),
-                tariffService: new TariffService(),
-                tariffs: [],
-                tarrif_: '',
-                loading: false,
-                provider_: 'All Network Providers',
-                transaction_: 'All Transactions',
-                filter: {
-                    status: null,
-                    serial_number: null,
-                    tariff: null,
-                    provider: null,
-                    from: null,
-                    to: null
+        async getTariffs () {
+            let tariffs = await this.tariffService.getTariffs()
+            tariffs.forEach((e) => {
+                let tariff = {
+                    id: e.id,
+                    name: e.name
                 }
+                this.tariffs.push(tariff)
+            })
+            this.tariffs.unshift({ id: 'all', name: 'All Tariffs' })
+            this.tarrif_ = this.tariffs[0].id
+
+        },
+        setTariff (tariff) {
+            this.filter.tariff = tariff
+        },
+        setProvider (provider) {
+            switch (provider) {
+            case 'All Network Providers':
+                this.filter.provider = '-1'
+                break
+            case 'Airtel':
+                this.filter.provider = 'airtel_transaction'
+                break
+            case 'Vodacom':
+                this.filter.provider = 'vodacom_transaction'
+                break
+            default:
+                break
             }
         },
+        seTransaction (transaction) {
+            switch (transaction) {
+            case 'All Transactions':
+                this.filter.status = 'all'
+                break
+            case 'Only Approved':
+                this.filter.status = '1'
+                break
+            case 'Only Rejected':
+                this.filter.status = '-1'
+                break
 
-        methods: {
-            async getTariffs () {
-                let tariffs = await this.tariffService.getTariffs()
-                tariffs.forEach((e) => {
-                    let tariff = {
-                        id: e.id,
-                        name: e.name
-                    }
-                    this.tariffs.push(tariff)
-                })
-                this.tariffs.unshift({ id: 'all', name: 'All Tariffs' })
-                this.tarrif_ = this.tariffs[0].id
+            default:
+                break
+            }
+        },
+        submitFilter () {
+            this.loading = true
+            if (this.filter.serial_number === '') {
+                this.filter.serial_number = null
+            }
+            if (this.filter.provider === -1 || this.filter.provider === '-1') {
+                this.filter.provider = null
+            }
+            if (this.filter.tariff === 'all') {
+                this.filter.tariff = null
+            }
+            if (this.filter.status === 'all') {
+                this.filter.status = null
+            }
+            if (this.filter.from !== null) {
+                this.filter.from += ' 00:00:00'
+            }
+            if (this.filter.to !== null) {
+                this.filter.to += ' 23:59:59'
+            }
+            this.$emit('searchSubmit', this.filter)
+        },
 
-            },
-            setTariff (tariff) {
-                this.filter.tariff = tariff
-            },
-            setProvider (provider) {
-                switch (provider) {
-                    case 'All Network Providers':
-                        this.filter.provider = '-1'
-                        break
-                    case 'Airtel':
-                        this.filter.provider = 'airtel_transaction'
-                        break
-                    case 'Vodacom':
-                        this.filter.provider = 'vodacom_transaction'
-                        break
-                    default:
-                        break
-                }
-            },
-            seTransaction (transaction) {
-                switch (transaction) {
-                    case 'All Transactions':
-                        this.filter.status = 'all'
-                        break
-                    case 'Only Approved':
-                        this.filter.status = '1'
-                        break
-                    case 'Only Rejected':
-                        this.filter.status = '-1'
-                        break
+        getSearch () {
+            let search = this.$store.getters.search
 
-                    default:
-                        break
+            if (Object.keys(search).length) {
+                if ('serial_number' in search) {
+                    this.filter['serial_number'] = search['serial_number']
                 }
-            },
-            submitFilter () {
-                 this.loading = true
-                if (this.filter.serial_number === '') {
-                    this.filter.serial_number = null
+                if ('from' in search) {
+                    this.filter['from'] = search['from']
                 }
-                if (this.filter.provider === -1 || this.filter.provider === '-1') {
-                    this.filter.provider = null
-                }
-                if (this.filter.tariff === 'all') {
-                    this.filter.tariff = null
-                }
-                if (this.filter.status === 'all') {
-                    this.filter.status = null
-                }
-                if (this.filter.from !== null) {
-                    this.filter.from += ' 00:00:00'
-                }
-                if (this.filter.to !== null) {
-                    this.filter.to += ' 23:59:59'
-                }
-                this.$emit('searchSubmit', this.filter)
-            },
-
-            getSearch () {
-                let search = this.$store.getters.search
-
-                if (Object.keys(search).length) {
-                    if ('serial_number' in search) {
-                        this.filter['serial_number'] = search['serial_number']
-                    }
-                    if ('from' in search) {
-                        this.filter['from'] = search['from']
-                    }
-                    if ('to' in search) {
-                        this.filter['to'] = search['to']
-                    }
+                if ('to' in search) {
+                    this.filter['to'] = search['to']
                 }
             }
         }
     }
+}
 </script>
 
 <style scoped>

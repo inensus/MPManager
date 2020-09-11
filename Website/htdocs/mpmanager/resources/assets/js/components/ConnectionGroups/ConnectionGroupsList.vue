@@ -18,7 +18,7 @@
                     <md-table-head>Name</md-table-head>
                     <md-table-head></md-table-head>
                 </md-table-row>
-                <md-table-row v-for="Group,index in connectionGroups" :key="Group.id">
+                <md-table-row v-for="(Group,index) in connectionGroups" :key="Group.id">
                     <md-table-cell> {{ index+1 }}</md-table-cell>
                     <md-table-cell> {{ Group.id}}</md-table-cell>
                     <md-table-cell>
@@ -67,94 +67,93 @@
 </template>
 
 <script>
-    import Widget from '../../shared/widget'
-    import {EventBus} from '../../shared/eventbus'
-    import TableList from '../../shared/TableList'
-    import {ConnectionGroupService} from '../../services/ConnectionGroupService'
-    import NewConnectionGroup from './NewConnectionGroup'
+import Widget from '../../shared/widget'
+import {EventBus} from '../../shared/eventbus'
+import {ConnectionGroupService} from '../../services/ConnectionGroupService'
+import NewConnectionGroup from './NewConnectionGroup'
 
-    export default {
-        name: 'ConnectionGroupsList',
-        components: {TableList, Widget, NewConnectionGroup},
-        mounted() {
-            EventBus.$on('pageLoaded', this.reloadList)
-            EventBus.$on('searching', this.searching)
-            EventBus.$on('end_searching', this.endSearching)
-            EventBus.$on('connectionGroupAdded', this.getConnectionGroups)
+export default {
+    name: 'ConnectionGroupsList',
+    components: {Widget, NewConnectionGroup},
+    mounted() {
+        EventBus.$on('pageLoaded', this.reloadList)
+        EventBus.$on('searching', this.searching)
+        EventBus.$on('end_searching', this.endSearching)
+        EventBus.$on('connectionGroupAdded', this.getConnectionGroups)
 
-            this.getConnectionGroups()
+        this.getConnectionGroups()
+    },
+
+    data() {
+        return {
+            connectionGroupService: new ConnectionGroupService(),
+            subscriber: 'connection-Groups-list',
+            connectionGroups: [],
+            editConnectionGroup:null
+        }
+    },
+    methods: {
+        alertNotify(type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message
+            })
         },
+        checkConfirm(result){
+            return 'value' in result
+        },
+        async updateConnectionGroup(connectionGroup){
+            let validator = await this.$validator.validateAll()
+            if (!validator) {
 
-        data() {
-            return {
-                connectionGroupService: new ConnectionGroupService(),
-                subscriber: 'connection-Groups-list',
-                connectionGroups: [],
-                editConnectionGroup:null
+                return
             }
-        },
-        methods: {
-            alertNotify(type, message) {
-                this.$notify({
-                    group: 'notify',
-                    type: type,
-                    title: type + ' !',
-                    text: message
-                })
-            },
-            checkConfirm(result){
-                return 'value' in result
-            },
-            async updateConnectionGroup(connectionGroup){
-                let validator = await this.$validator.validateAll()
-                if (!validator) {
-
+            this.$swal({
+                type: 'question',
+                title: 'Edit Connection Group ',
+                text: 'Are you sure to changing this sub connection group name ',
+                showCancelButton: true,
+                cancelButtonText: 'No',
+                confirmButtonText: 'Yes'
+            }).then(response => {
+                if(this.checkConfirm(response)){
+                    try {
+                        this.connectionGroupService.updateConnectionGroup(connectionGroup)
+                        this.editConnectionGroup = null
+                        this.alertNotify('success', 'Connection Group Updated Successfully')
+                    }catch (e) {
+                        this.alertNotify('error', e)
+                    }
+                }else{
                     return
                 }
-                this.$swal({
-                    type: 'question',
-                    title: 'Edit Connection Group ',
-                    text: 'Are you sure to changing this sub connection group name ',
-                    showCancelButton: true,
-                    cancelButtonText: 'No',
-                    confirmButtonText: 'Yes'
-                }).then(response => {
-                    if(this.checkConfirm(response)){
-                        try {
-                            this.connectionGroupService.updateConnectionGroup(connectionGroup)
-                            this.editConnectionGroup = null
-                            this.alertNotify('success', 'Connection Group Updated Successfully')
-                        }catch (e) {
-                            this.alertNotify('error', e)
-                        }
-                    }else{
-                        return
-                    }
 
 
-                })
-
-            },
-            reloadList(subscriber, data) {
-                if (subscriber !== this.subscriber) return
-                this.connectionGroups = this.connectionGroupService.updateList(data)
-            },
-            async getConnectionGroups() {
-                try {
-                    this.connectionGroups = await this.connectionGroupService.getConnectionGroups()
-
-                } catch (e) {
-
-                    this.alertNotify('error', e.message)
-                }
-            },
-            addNew() {
-                EventBus.$emit('showNewConnectionGroup')
-            },
+            })
 
         },
+        reloadList(subscriber, data) {
+            if (subscriber !== this.subscriber) return
+            this.connectionGroups = this.connectionGroupService.updateList(data)
+        },
+        async getConnectionGroups() {
+            try {
+                this.connectionGroups = await this.connectionGroupService.getConnectionGroups()
 
-    }
+            } catch (e) {
+
+                this.alertNotify('error', e.message)
+            }
+        },
+        addNew() {
+            EventBus.$emit('showNewConnectionGroup')
+        },
+
+    },
+
+}
 </script>
 
 <style scoped>

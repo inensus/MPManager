@@ -62,7 +62,7 @@
                                        tabindex="0" @click="getTransactions(--currentPage)">Previous</a>
                                 </li>
 
-                                <li v-for="page in totalPages" :class="page==currentPage?' active':''"><a
+                                <li v-for="(page,index) in totalPages" :class="page === currentPage ? 'active' : ''" :key="index"><a
                                     href="javascript:void(0);"
                                     @click="getTransactions(page)">{{page}}</a>
                                 </li>
@@ -84,65 +84,64 @@
 </template>
 
 <script>
-    import { currency } from '../../mixins/currency'
-    import { timing } from '../../mixins/timing'
-    import Widget from '../../shared/widget'
-    import Modal from '../../modal/modal'
-    import NoTableData from '../../shared/NoTableData'
-    export default {
-        name: 'Transactions',
-        components: { Widget, Modal,NoTableData },
-        mixins: [currency, timing],
-        data () {
-            return {
-                articleClass: 'col-sm-12',
-                personId: null,
-                transactions: [],
-                currentPage: 1,
-                from: 0,
-                to: 0,
-                total: 0,
-                totalPages: 0,
-                headers: ['Payment Type', 'Sender', 'Amount','Paid For','Payment Service','Created At'],
-                tableName: 'Transactions'
-            }
-        },
-        mounted () {
-            this.personId = this.$store.getters.person.id
-            this.getTransactions(0)
-            pageSetUp()
-            window.addEventListener('resize', this.handleResize)
-        },
+import { currency } from '../../mixins/currency'
+import { timing } from '../../mixins/timing'
+import Widget from '../../shared/widget'
+import NoTableData from '../../shared/NoTableData'
+export default {
+    name: 'Transactions',
+    components: { Widget,NoTableData },
+    mixins: [currency, timing],
+    data () {
+        return {
+            articleClass: 'col-sm-12',
+            personId: null,
+            transactions: [],
+            currentPage: 1,
+            from: 0,
+            to: 0,
+            total: 0,
+            totalPages: 0,
+            headers: ['Payment Type', 'Sender', 'Amount','Paid For','Payment Service','Created At'],
+            tableName: 'Transactions'
+        }
+    },
+    mounted () {
+        this.personId = this.$store.getters.person.id
+        this.getTransactions(0)
+        //pageSetUp()
+        window.addEventListener('resize', this.handleResize)
+    },
 
-        methods: {
-            handleResize () {
-                console.log('resize')
-            },
-            toggleArticleClass () {
-                if (this.articleClass === 'col-sm-6') {
-                    this.articleClass = 'col-sm-12'
-                } else {
-                    this.articleClass = 'col-sm-6'
-                }
-            },
-            getTransactions (page = 1) {
-                if (page > this.totalPages) return
-                axios.get(resources.person.list + '/' + this.personId + '/transactions?page=' + page)
-                    .then(response => {
-                        let responseData = response.data
-                        this.transactions = responseData.data
-                        this.currentPage = responseData.current_page
-                        this.from = responseData.from
-                        this.to = responseData.to
-                        this.total = responseData.total
-                        this.totalPages = responseData.last_page
-                    })
-            },
-            loadTransaction (transactionId) {
-                this.$router.push({ path: '/transactions/' + transactionId })
+    methods: {
+        handleResize () {
+            console.log('resize')
+        },
+        toggleArticleClass () {
+            if (this.articleClass === 'col-sm-6') {
+                this.articleClass = 'col-sm-12'
+            } else {
+                this.articleClass = 'col-sm-6'
             }
+        },
+        getTransactions (page = 1) {
+            if (page > this.totalPages) return
+            axios.get(resources.person.list + '/' + this.personId + '/transactions?page=' + page)
+                .then(response => {
+                    let responseData = response.data
+                    this.transactions = responseData.data
+                    this.currentPage = responseData.current_page
+                    this.from = responseData.from
+                    this.to = responseData.to
+                    this.total = responseData.total
+                    this.totalPages = responseData.last_page
+                })
+        },
+        loadTransaction (transactionId) {
+            this.$router.push({ path: '/transactions/' + transactionId })
         }
     }
+}
 </script>
 <style scoped lang="scss">
     .pagination {

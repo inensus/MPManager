@@ -1,7 +1,6 @@
 <template>
-    <div v-if="paginator">
-        <vue-grid justify="around">
-            <vue-cell width="4of12">
+        <div v-if="paginator" class="md-layout md-gutter md-size-100 paginate-area" justify="around">
+            <div class="md-layout-item md-size-33" width="4of12">
                 <div
                     class="col-xs-12 hidden-xs"
                     :class="show_per_page === true ? 'col-sm-4 col-lg-5':'col-sm-6 col-lg-6'"
@@ -16,11 +15,12 @@
                         of {{paginator.totalEntries}} entries
                     </div>
                 </div>
-            </vue-cell>
+            </div>
 
-            <vue-cell style="float:right" width="4of12">
+            <div class="md-layout-item md-size-33" width="4of12">
                 <div class="col-sm-2 col-lg-1 col-xs-6" v-if="show_per_page===true">
                     <div
+                        style="float:right"
                         class="dataTables_info"
                         id="datatable_col_reorder_info"
                         role="status"
@@ -38,9 +38,9 @@
                         </select>
                     </div>
                 </div>
-            </vue-cell>
+            </div>
 
-            <vue-cell width="4of12">
+            <div class="md-layout-item md-size-33" width="4of12">
                 <div class="col-sm-6 col-xs-12">
                     <div
                         class="dataTables_paginate paging_simple_numbers"
@@ -61,27 +61,29 @@
                                 >Previous</a>
                                 <a href="javascript:void(0);" disabled="disabled" v-else>Previous</a>
                             </li>
-                            <li
-                                v-for="(page, index) in paginator.totalPage"
-                                :key="index"
-                                :class="page===paginator.currentPage?' active':''"
-                                v-if="paginator.currentPage - index <4 && paginator.currentPage - index  > 0 "
-                            >
+                            <template v-for="(page, index) in paginator.totalPage">
+                                <li
+                                    :key="index"
+                                    :class="page===paginator.currentPage?' active':''"
+                                    v-if="paginator.currentPage - index <4 && paginator.currentPage - index  > 0 "
+                                >
 
-                                <a
-                                    v-if="(index < paginator.currentPage+2) && index > paginator.currentPage-4"
-                                    href="javascript:void(0);"
-                                    @click="loadPage(page)"
-                                >{{page}}</a>
+                                    <a
+                                        v-if="(index < paginator.currentPage+2) && index > paginator.currentPage-4"
+                                        href="javascript:void(0);"
+                                        @click="loadPage(page)"
+                                    >{{page}}</a>
 
-                                <a v-else-if="index === (2+ paginator.currentPage)">...</a>
-                                <a
-                                    v-else-if="(index > Math.abs(paginator.totalPage -3)) "
-                                    href="javascript:void(0);"
-                                    @click="loadPage(page)"
-                                >{{page}}</a>
+                                    <a v-else-if="index === (2+ paginator.currentPage)">...</a>
+                                    <a
+                                        v-else-if="(index > Math.abs(paginator.totalPage -3)) "
+                                        href="javascript:void(0);"
+                                        @click="loadPage(page)"
+                                    >{{page}}</a>
 
-                            </li>
+                                </li>
+                            </template>
+
                             <li
                                 :class="(paginator.currentPage < paginator.totalPage ? 'paginate_button next':'paginate_button next disabled')"
                                 id="datatable_col_reorder_next"
@@ -100,100 +102,104 @@
                         <!-- <span v-if="loading">Loading new page</span> -->
                     </div>
                 </div>
-            </vue-cell>
-        </vue-grid>
-    </div>
+            </div>
+        </div>
 </template>
 
 <script>
-    import { Paginator } from '../classes/paginator'
-    import { EventBus } from './eventbus'
+import { Paginator } from '../classes/paginator'
+import { EventBus } from './eventbus'
 
-    export default {
-        name: 'Paginate',
-        props: {
-            paginatorReference: Paginator,
-            callback: {},
-            subscriber: String,
-            route_name: String,
-            show_per_page: {
-                type: Boolean,
-                default: false
+export default {
+    name: 'Paginate',
+    props: {
+        paginatorReference: Paginator,
+        callback: {},
+        subscriber: String,
+        route_name: String,
+        show_per_page: {
+            type: Boolean,
+            default: false
+        }
+    },
+    data () {
+        return {
+            loading: false,
+            currentFrom: 0,
+            currentTo: 0,
+            total: 0,
+            currentPage: 0,
+            totalPages: 0,
+            paginator: this.paginatorReference,
+            term: {},
+            threeDots: false,
+            perPage: 15
+        }
+    },
+    mounted () {
+        //load the first page
+
+        if (this.$route.params.page_number !== undefined) {
+            this.loadPage(this.$route.params.page_number)
+        } else {
+            this.loadPage(1)
+        }
+        EventBus.$on('loadPage', this.eventLoadPage)
+    },
+    destroyed () {
+        this.paginator = null
+
+    },
+    methods: {
+        eventLoadPage (paginator, term = {}) {
+            this.term = term
+            let totalPage = this.paginator.totalPage
+            this.paginator = paginator
+            this.paginator.totalPage = totalPage
+            this.loadPage(1)
+        },
+        defaultItemsPerPage (data) {
+            this.paginator.perPage = data.target.value
+
+            this.loadPage(this.paginator.currentPage)
+        },
+
+        defaultCallback (data = null) {
+            console.log('default callback with', data)
+        },
+        loadPage (pageNumber = 1) {
+            if (this.loading) {
+                return
             }
-        },
-        data () {
-            return {
-                loading: false,
-                currentFrom: 0,
-                currentTo: 0,
-                total: 0,
-                currentPage: 0,
-                totalPages: 0,
-                paginator: this.paginatorReference,
-                term: {},
-                threeDots: false,
-                perPage: 15
-            }
-        },
-        mounted () {
-            //load the first page
 
-            if (this.$route.params.page_number !== undefined) {
-                this.loadPage(this.$route.params.page_number)
-            } else {
-                this.loadPage(1)
-            }
-            EventBus.$on('loadPage', this.eventLoadPage)
-        },
-        destroyed () {
-            this.paginator = null
+            this.loading = true
+            this.paginator.loadPage(pageNumber, this.term).then(response => {
+                if (this.route_name !== undefined && !this.route_name.includes('/page/1')) {
+                    //TODO: düzelt
 
-        },
-        methods: {
-            eventLoadPage (paginator, term = {}) {
-                this.term = term
-                let totalPage = this.paginator.totalPage
-                this.paginator = paginator
-                this.paginator.totalPage = totalPage
-                this.loadPage(1)
-            },
-            defaultItemsPerPage (data) {
-                this.paginator.perPage = data.target.value
-
-                this.loadPage(this.paginator.currentPage)
-            },
-
-            defaultCallback (data = null) {
-                console.log('default callback with', data)
-            },
-            loadPage (pageNumber = 1) {
-                if (this.loading) {
-                    return
+                    this.$router.push(this.route_name + '/page/' + pageNumber).catch(err => {
+                        console.log(err)
+                    })
+                    //this.loading = false;
                 }
-
-                this.loading = true
-                this.paginator.loadPage(pageNumber, this.term).then(response => {
-                    if (this.route_name !== undefined && !this.route_name.includes('/page/1')) {
-                        //TODO: düzelt
-
-                        this.$router.push(this.route_name + '/page/' + pageNumber).catch(err => {})
-                        //this.loading = false;
-                    }
-                    this.loading = false
-                    EventBus.$emit('pageLoaded', this.subscriber, response.data)
-                })
-            }
-        },
-        computed: {
-            _callBack: function () {
-                if (this.callback === undefined) return this.defaultCallback
-                return this.callback
-            }
+                this.loading = false
+                EventBus.$emit('pageLoaded', this.subscriber, response.data)
+            })
+        }
+    },
+    computed: {
+        _callBack: function () {
+            if (this.callback === undefined) return this.defaultCallback
+            return this.callback
         }
     }
+}
 </script>
 
 <style scoped lang="scss">
+    .paginate-area {
+        width: 100%!important;
+    }
     .pagination {
         color: #ac2925;
         list-style: none;

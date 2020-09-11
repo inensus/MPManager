@@ -24,51 +24,51 @@
 </template>
 
 <script>
-  export default {
+export default {
     name: 'modal',
     props: {
-      title: {
-        type: String,
-        required: true
-      },
-      show: {
-        type: Boolean,
-        default: false,
-        required: true
-      },
-      confirm_text: {
-        type: String,
-        default: 'Save'
-      },
-      show_confirm: {
-        type: Boolean,
-        default: true
-      }
+        title: {
+            type: String,
+            required: true
+        },
+        show: {
+            type: Boolean,
+            default: false,
+            required: true
+        },
+        confirm_text: {
+            type: String,
+            default: 'Save'
+        },
+        show_confirm: {
+            type: Boolean,
+            default: true
+        }
     },
     data () {
-      return {
-          selectedCountry: null,
-          countries: [
-        'Algeria',
-        'Argentina',
-        'Brazil',
-        'Canada',
-        'Italy',
-        'Japan',
-        'United Kingdom',
-        'United States'
-      ]
-      }
+        return {
+            selectedCountry: null,
+            countries: [
+                'Algeria',
+                'Argentina',
+                'Brazil',
+                'Canada',
+                'Italy',
+                'Japan',
+                'United Kingdom',
+                'United States'
+            ]
+        }
     },
     methods: {
-      onSave () {
-        this.$emit('onSave', null)
-      },
-      onClose () {
-        this.$emit('onClose')
-      }
+        onSave () {
+            this.$emit('onSave', null)
+        },
+        onClose () {
+            this.$emit('onClose')
+        }
     }
-  }
+}
 </script>
 
 <style lang="scss">

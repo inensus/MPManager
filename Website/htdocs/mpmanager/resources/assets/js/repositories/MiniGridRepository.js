@@ -22,7 +22,7 @@ export default {
         return axios.get(`${resource}`+'?data_stream='+dataStream)
     },
     transactions(miniGridId,period){
-       return axios.post(`${resource}/${miniGridId}/transactions`,period)
+        return axios.post(`${resource}/${miniGridId}/transactions`,period)
     },
     soldEnergy(miniGridId,period){
         return axios.post(`${resource}/${miniGridId}/energy`,period)

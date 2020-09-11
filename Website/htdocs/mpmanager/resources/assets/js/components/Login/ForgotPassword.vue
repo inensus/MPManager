@@ -46,64 +46,64 @@
 
 <script>
 
-    import {Admin} from "../../classes/admin";
+import {Admin} from '../../classes/admin'
 
-    export default {
-        name: 'ForgotPassword',
-        data: () => ({
+export default {
+    name: 'ForgotPassword',
+    data: () => ({
 
-            form: {
-                email: null,
-                password: null
-            },
+        form: {
+            email: null,
+            password: null
+        },
 
-            sending: false,
-            adminService: new Admin()
-        }),
-        methods: {
+        sending: false,
+        adminService: new Admin()
+    }),
+    methods: {
 
-            validateUser() {
-                this.$validator.validateAll("form-forgot").then(result => {
-                    if (result) {
-                        this.sending = true;
-                        this.saveUser();
-                    }
-                    if (!result) {
-                    }
-                });
-            },
-            async saveUser() {
-                try {
-                    let response = await this.adminService.sendEmail(this.form.email);
-
-                    if (response.status_code === 200) {
-                        this.alertNotify("success", "New password has sended to your email.");
-                        setTimeout(() => {
-                            this.$router.push('/')
-                        }, 1500)
-                    } else {
-
-                        this.alertNotify("error", response.message.email);
-                    }
-                    this.sending = false;
-                } catch (error) {
-
-                    this.alertNotify("error", error);
-                    this.sending = false;
+        validateUser() {
+            this.$validator.validateAll('form-forgot').then(result => {
+                if (result) {
+                    this.sending = true
+                    this.saveUser()
+                }else {
+                    return
                 }
+            })
+        },
+        async saveUser() {
+            try {
+                let response = await this.adminService.sendEmail(this.form.email)
 
-            },
-            alertNotify(type, message) {
-                this.$notify({
-                    group: "notify",
-                    type: type,
-                    title: type + " !",
-                    text: message
-                });
-            },
-        }
+                if (response.status_code === 200) {
+                    this.alertNotify('success', 'New password has sended to your email.')
+                    setTimeout(() => {
+                        this.$router.push('/')
+                    }, 1500)
+                } else {
 
+                    this.alertNotify('error', response.message.email)
+                }
+                this.sending = false
+            } catch (error) {
+
+                this.alertNotify('error', error)
+                this.sending = false
+            }
+
+        },
+        alertNotify(type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message
+            })
+        },
     }
+
+}
 </script>
 
 <style lang="css"></style>

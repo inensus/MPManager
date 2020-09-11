@@ -30,31 +30,31 @@
 </template>
 <script>
 
-    export default {
+export default {
 
-        data () {
-            return {}
+    data () {
+        return {}
+    },
+    props: {
+        redirectionUrl: {
+            type: String,
+            default: '/'
         },
-        props: {
-            redirectionUrl: {
-                type: String,
-                default: '/'
-            },
-            imperativeItem: {
-                type: String,
-                default: ''
-            },
-            dialogActive: {
-                type: Boolean,
-                default: false
-            },
+        imperativeItem: {
+            type: String,
+            default: ''
         },
-        methods: {
-            async redirect () {
-                await this.$router.replace(this.redirectionUrl)
-            }
+        dialogActive: {
+            type: Boolean,
+            default: false
+        },
+    },
+    methods: {
+        async redirect () {
+            await this.$router.replace(this.redirectionUrl)
         }
     }
+}
 </script>
 <style lang="scss">
     .success-span {

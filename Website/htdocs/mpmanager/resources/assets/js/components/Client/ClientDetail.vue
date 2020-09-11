@@ -41,90 +41,85 @@
 </template>
 
 <script>
-    import PaymentFlow from './PaymentFlow'
-    import Transactions from './Transactions'
-    import PaymentDetail from './PaymentDetail'
-    import Mapiko from './Map'
-    import Ticket from './Ticket'
-    import Widget from '../../shared/widget'
-    import Addresses from './Addresses'
-    import Datepicker from 'vuejs-datepicker'
-    import ClientMeterList from './ClientMeterList'
-    import SmsHistory from './SmsHistory'
-    import ClientPersonalData from './ClientPersonalData'
-    import DeferredPayments from './DeferredPayments'
-    import { PersonService } from '../../services/PersonService'
-    import ClientMap from './ClientMap'
+import PaymentFlow from './PaymentFlow'
+import Transactions from './Transactions'
+import PaymentDetail from './PaymentDetail'
+import Ticket from './Ticket'
+import Addresses from './Addresses'
+import ClientMeterList from './ClientMeterList'
+import SmsHistory from './SmsHistory'
+import ClientPersonalData from './ClientPersonalData'
+import DeferredPayments from './DeferredPayments'
+import { PersonService } from '../../services/PersonService'
+import ClientMap from './ClientMap'
+import moment from 'moment'
 
-    export default {
-        name: 'ClientDetail',
-        data () {
-            return {
-                personService: new PersonService(),
-                personId: null,
-                isLoaded: false,
-                editPerson: false,
-                person: null,
-                meters: [],
+export default {
+    name: 'ClientDetail',
+    data () {
+        return {
+            personService: new PersonService(),
+            personId: null,
+            isLoaded: false,
+            editPerson: false,
+            person: null,
+            meters: [],
 
-            }
-        },
-        components: {
-            DeferredPayments,
-            ClientPersonalData,
-            SmsHistory,
-            ClientMeterList,
-            Widget,
-            PaymentFlow,
-            Transactions,
-            PaymentDetail,
-            Mapiko,
-            Ticket,
-            Addresses,
-            Datepicker,
-            ClientMap
-        },
-        created () {
-            this.personId = this.$route.params.id
-            this.getDetails(this.personId)
-        },
-        mounted () {
+        }
+    },
+    components: {
+        DeferredPayments,
+        ClientPersonalData,
+        SmsHistory,
+        ClientMeterList,
+        PaymentFlow,
+        Transactions,
+        PaymentDetail,
+        Ticket,
+        Addresses,
+        ClientMap
+    },
+    created () {
+        this.personId = this.$route.params.id
+        this.getDetails(this.personId)
+    },
+    mounted () {
 
-        },
-        destroyed () {
-            this.$store.state.person = null
-            this.$store.state.meters = null
-        },
+    },
+    destroyed () {
+        this.$store.state.person = null
+        this.$store.state.meters = null
+    },
 
-        methods: {
-            async getDetails (id) {
-                try {
+    methods: {
+        async getDetails (id) {
+            try {
 
-                    this.person = await this.personService.getPerson(id)
-                    this.isLoaded = true
-                    this.$store.state.person = this.person
-                    this.meters = []
+                this.person = await this.personService.getPerson(id)
+                this.isLoaded = true
+                this.$store.state.person = this.person
+                this.meters = []
 
-                    for (let i in this.person.meters) {
-                        this.meters.push(this.person.meters[i].meter.id)
-                    }
-                } catch (e) {
-                    this.alertNotify('error', e.message)
+                for (let i in this.person.meters) {
+                    this.meters.push(this.person.meters[i].meter.id)
                 }
-            },
-            dateForHumans (date) {
-                return moment(date, 'YYYY-MM-DD HH:mm:ss').fromNow()
-            },
-            alertNotify (type, message) {
-                this.$notify({
-                    group: 'notify',
-                    type: type,
-                    title: type + ' !',
-                    text: message
-                })
+            } catch (e) {
+                this.alertNotify('error', e.message)
             }
+        },
+        dateForHumans (date) {
+            return moment(date, 'YYYY-MM-DD HH:mm:ss').fromNow()
+        },
+        alertNotify (type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message
+            })
         }
     }
+}
 </script>
 <style>
     .asd__inner-wrapper {

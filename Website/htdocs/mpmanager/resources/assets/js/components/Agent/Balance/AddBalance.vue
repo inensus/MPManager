@@ -30,73 +30,73 @@
     </div>
 </template>
 <script>
-    import { AgentChargeService } from '../../../services/AgentChargeService'
-    import { EventBus } from '../../../shared/eventbus'
+import { AgentChargeService } from '../../../services/AgentChargeService'
+import { EventBus } from '../../../shared/eventbus'
 
-    export default {
-        name: 'addAgentBalance',
-        data () {
-            return {
-                agentChargeService: new AgentChargeService(),
+export default {
+    name: 'addAgentBalance',
+    data () {
+        return {
+            agentChargeService: new AgentChargeService(),
 
-                loading: false,
-            }
-        },
-        props: {
-            agentId: {
-                default: null
-            },
-            addNewBalance: {
-                default: false,
-
-            }
-        },
-
-        mounted () {
-        }, beforeDestroy () {
-
-        },
-
-        methods: {
-
-            async saveBalance () {
-                let validator = await this.$validator.validateAll('Balance-Form')
-
-                if (validator) {
-
-                    this.loading = true
-                    try {
-                        this.agentChargeService.newBalance.userId = this.$store.getters['auth/authenticationService'].authenticateUser.id
-                        this.agentChargeService.newBalance.agentId = this.agentId
-                        await this.agentChargeService.addNewBalance()
-                        this.loading = false
-                        this.balanceAdded()
-                        this.alertNotify('success', 'Agent added successfully')
-                    } catch (e) {
-                        this.loading = false
-                        this.alertNotify('error', e.message)
-                    }
-
-                }
-            },
-            balanceAdded () {
-                EventBus.$emit('balanceAdded')
-            },
-            hide () {
-                EventBus.$emit('addBalanceClosed')
-            },
-
-            alertNotify (type, message) {
-                this.$notify({
-                    group: 'notify',
-                    type: type,
-                    title: type + ' !',
-                    text: message
-                })
-            },
+            loading: false,
         }
+    },
+    props: {
+        agentId: {
+            default: null
+        },
+        addNewBalance: {
+            default: false,
 
+        }
+    },
+
+    mounted () {
+    }, beforeDestroy () {
+
+    },
+
+    methods: {
+
+        async saveBalance () {
+            let validator = await this.$validator.validateAll('Balance-Form')
+
+            if (validator) {
+
+                this.loading = true
+                try {
+                    this.agentChargeService.newBalance.userId = this.$store.getters['auth/authenticationService'].authenticateUser.id
+                    this.agentChargeService.newBalance.agentId = this.agentId
+                    await this.agentChargeService.addNewBalance()
+                    this.loading = false
+                    this.balanceAdded()
+                    this.alertNotify('success', 'Agent added successfully')
+                } catch (e) {
+                    this.loading = false
+                    this.alertNotify('error', e.message)
+                }
+
+            }
+        },
+        balanceAdded () {
+            EventBus.$emit('balanceAdded')
+        },
+        hide () {
+            EventBus.$emit('addBalanceClosed')
+        },
+
+        alertNotify (type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message
+            })
+        },
     }
+
+}
 </script>
 <style scoped>
 

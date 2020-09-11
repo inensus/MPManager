@@ -66,95 +66,95 @@
 </template>
 
 <script>
-    import Widget from '../../shared/widget'
-    import AddAssetType from './AddAssetType'
-    import { EventBus } from '../../shared/eventbus'
-    import { AssetService } from '../../services/AssetService'
-    import NoTableData from '../../shared/NoTableData'
+import Widget from '../../shared/widget'
+import AddAssetType from './AddAssetType'
+import { EventBus } from '../../shared/eventbus'
+import { AssetService } from '../../services/AssetService'
+import NoTableData from '../../shared/NoTableData'
 
-    export default {
-        name: 'AssetTypeList',
-        components: { Widget, AddAssetType, NoTableData },
+export default {
+    name: 'AssetTypeList',
+    components: { Widget, AddAssetType, NoTableData },
 
-        data () {
-            return {
-                addNewAssetType: false,
-                subscriber: 'asset-list',
-                assetService: new AssetService(),
-                assetTypes: [],
-                headers: ['ID', 'Asset Type', 'Price', 'Last Update', '#'],
-                tableName: 'Asset Type',
-                resetKey: 0,
-                loading: false
+    data () {
+        return {
+            addNewAssetType: false,
+            subscriber: 'asset-list',
+            assetService: new AssetService(),
+            assetTypes: [],
+            headers: ['ID', 'Asset Type', 'Price', 'Last Update', '#'],
+            tableName: 'Asset Type',
+            resetKey: 0,
+            loading: false
+        }
+    },
+    mounted () {
+        EventBus.$on('assetTypeAdded', () => {
+            this.resetKey++
+        })
+        EventBus.$on('pageLoaded', this.reloadList)
+        EventBus.$on('addAssetTypeClosed', this.closeAddComponent)
+    },
+    beforeDestroy () {
+        EventBus.$off('assetTypeAdded', this.addToList)
+        EventBus.$off('pageLoaded', this.reloadList)
+
+    },
+    methods: {
+        reloadList (subscriber, data) {
+            if (subscriber !== this.subscriber) return
+            this.assetService.updateList(data)
+        },
+        addToList (asset_type) {
+            let asset_t = {
+                id: asset_type.id,
+                name: asset_type.name,
+                edit: false,
+                asset_type_name: asset_type.name
+            }
+            this.assetService.list.push(asset_t)
+        },
+
+        async updateAssetType (asset_type) {
+            asset_type.edit = false
+            try {
+                await this.assetService.updateAsset(asset_type)
+                this.alertNotify('success', asset_type.name + ' has updated.')
+                this.alertNotify('success', asset_type.name + ' has deleted.')
+                this.resetKey++
+            } catch (e) {
+                this.alertNotify('error', e.message)
             }
         },
-        mounted () {
-            EventBus.$on('assetTypeAdded', () => {
+
+        async deleteAssetType (asset_type) {
+            try {
+                this.loading = true
+                await this.assetService.deleteAsset(asset_type)
+                this.loading = false
+                this.alertNotify('success', asset_type.name + ' has deleted.')
                 this.resetKey++
+            } catch (e) {
+                this.loading = false
+                this.alertNotify('error', e.message)
+            }
+        },
+
+        closeAddComponent (data) {
+
+            this.addNewAssetType = data
+        },
+        alertNotify (type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message
             })
-            EventBus.$on('pageLoaded', this.reloadList)
-            EventBus.$on('addAssetTypeClosed', this.closeAddComponent)
         },
-        beforeDestroy () {
-            EventBus.$off('assetTypeAdded', this.addToList)
-            EventBus.$off('pageLoaded', this.reloadList)
 
-        },
-        methods: {
-            reloadList (subscriber, data) {
-                if (subscriber !== this.subscriber) return
-                this.assetService.updateList(data)
-            },
-            addToList (asset_type) {
-                let asset_t = {
-                    id: asset_type.id,
-                    name: asset_type.name,
-                    edit: false,
-                    asset_type_name: asset_type.name
-                }
-                this.assetService.list.push(asset_t)
-            },
-
-            async updateAssetType (asset_type) {
-                asset_type.edit = false
-                try {
-                    await this.assetService.updateAsset(asset_type)
-                    this.alertNotify('success', asset_type.name + ' has updated.')
-                    this.alertNotify('success', asset_type.name + ' has deleted.')
-                    this.resetKey++
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-            },
-
-            async deleteAssetType (asset_type) {
-                try {
-                    this.loading = true
-                    await this.assetService.deleteAsset(asset_type)
-                    this.loading = false
-                    this.alertNotify('success', asset_type.name + ' has deleted.')
-                    this.resetKey++
-                } catch (e) {
-                    this.loading = false
-                    this.alertNotify('error', e.message)
-                }
-            },
-
-            closeAddComponent (data) {
-
-                this.addNewAssetType = data
-            },
-            alertNotify (type, message) {
-                this.$notify({
-                    group: 'notify',
-                    type: type,
-                    title: type + ' !',
-                    text: message
-                })
-            },
-
-        }
     }
+}
 </script>
 
 <style scoped>
