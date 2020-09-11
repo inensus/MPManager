@@ -130,14 +130,13 @@ Route::group([
         Route::get('/{agent}', 'AgentSoldApplianceController@indexWeb');
     });
     Route::group(['prefix' => 'commissions'], function () {
+
         Route::get('/', 'AgentCommissionController@index');
-    });
-    Route::group(['prefix' => 'agent-commissions'], function () {
-        Route::get('/', 'AgentCommissionController@index');
-        Route::get('/{commission}', 'AgentCommissionController@show');
         Route::post('/', 'AgentCommissionController@store');
+        Route::delete('/{commission}', 'AgentCommissionController@destroy');
         Route::put('/{commission}', 'AgentCommissionController@update');
     });
+
     Route::group(['prefix' => 'receipt'], function () {
         Route::get('/', 'AgentReceiptController@listByUsers');
         Route::get('/{agent}', 'AgentReceiptController@index');
@@ -376,7 +375,7 @@ Route::group(['prefix' => 'connection-types'], static function () {
     Route::put('/{connectionType}', 'ConnectionTypeController@update');
 
 });
-Route::group(['prefix' => 'sub-connection-types'], static function (){
+Route::group(['prefix' => 'sub-connection-types'], static function () {
     Route::get('/{connectionTypeId?}', 'SubConnectionTypeController@index');
     Route::post('/', 'SubConnectionTypeController@store');
     Route::get('/{id}', 'SubConnectionTypeController@show');
@@ -423,3 +422,4 @@ Route::post('/restrictions', 'RestrictionController@store');
 Route::group(['prefix' => 'generation-assets'], static function () {
     Route::post('/grid', 'MiniGridFrequencyController@store');
 });
+
