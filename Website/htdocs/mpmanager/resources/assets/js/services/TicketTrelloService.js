@@ -1,6 +1,5 @@
 import Repository from '../repositories/RepositoryFactory'
 import { ErrorHandler } from '../Helpers/ErrorHander'
-import { resources } from '../resources'
 
 export class TicketTrelloService {
 

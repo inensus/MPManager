@@ -107,7 +107,7 @@
                                     <md-field>
                                         <label for="commission">Commission Type :</label>
                                         <md-select name="commission" id="commission" v-model="agent.commissionTypeId">
-                                            <md-option v-for="(commission,index) in agentCommissions"
+                                            <md-option v-for="(commission) in agentCommissions"
                                                        :value="commission.id" :key="commission.id">{{commission.name}}
                                             </md-option>
                                         </md-select>
@@ -143,67 +143,67 @@
 
 </template>
 <script>
-    import Widget from '../../shared/widget'
-    import { AgentService } from '../../services/AgentService'
-    import Datepicker from 'vuejs-datepicker'
-    import { AgentCommissionService } from '../../services/AgentCommissionService'
-    import { EventBus } from '../../shared/eventbus'
+import Widget from '../../shared/widget'
+import { AgentService } from '../../services/AgentService'
+import { AgentCommissionService } from '../../services/AgentCommissionService'
+import { EventBus } from '../../shared/eventbus'
 
-    export default {
-        name: 'AgentDetail',
-        data () {
-            return {
-                agentService: new AgentService(),
-                agentCommissionService: new AgentCommissionService(),
-                agent: {},
-                agentCommissions: [],
-                editAgent: false,
-                loading: false,
-            }
-        },
-        props: {
-            agentId: {
-                default: null
-            }
-        },
-        mounted () {
+export default {
+    name: 'AgentDetail',
+    components: { Widget },
+    data () {
+        return {
+            agentService: new AgentService(),
+            agentCommissionService: new AgentCommissionService(),
+            agent: {},
+            agentCommissions: [],
+            editAgent: false,
+            loading: false,
+        }
+    },
+    props: {
+        agentId: {
+            default: null
+        }
+    },
+    mounted () {
+        this.getAgentDetail()
+        this.getAgentCommissions()
+        EventBus.$on('balanceAdded', () => {
             this.getAgentDetail()
-            this.getAgentCommissions()
-            EventBus.$on('balanceAdded', () => {
-                this.getAgentDetail()
-            })
-            EventBus.$on('receiptAdded', () => {
-                this.getAgentDetail()
-            })
+        })
+        EventBus.$on('receiptAdded', () => {
+            this.getAgentDetail()
+        })
+    },
+
+    methods: {
+        async getAgentCommissions () {
+            try {
+                this.agentCommissions = await this.agentCommissionService.getAgentCommissions()
+            } catch (e) {
+                this.alertNotify('error', e.message)
+            }
         },
+        async getAgentDetail () {
+            try {
+                this.agent = await this.agentService.getAgent(Number(this.agentId))
 
-        methods: {
-            async getAgentCommissions () {
-                try {
-                    this.agentCommissions = await this.agentCommissionService.getAgentCommissions()
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-            },
-            async getAgentDetail () {
-                try {
-                    this.agent = await this.agentService.getAgent(Number(this.agentId))
+            } catch (e) {
+                this.alertNotify('error', e.message)
+            }
 
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-
-            },
-            confirmDelete () {
-                this.$swal({
-                    type: 'question',
-                    title: 'Delete Agent',
-                    width: '35%',
-                    confirmButtonText: 'Confirm',
-                    showCancelButton: true,
-                    cancelButtonText: 'Cancel',
-                    focusCancel: true,
-                    html:
+        },
+        confirmDelete () {
+            this.$swal({
+                type: 'question',
+                title: 'Delete Agent',
+                width: '35%',
+                confirmButtonText: 'Confirm',
+                showCancelButton: true,
+                cancelButtonText: 'Cancel',
+                focusCancel: true,
+                html:
                         '<div style="text-align: left; padding-left: 5rem" class="checkbox">' +
                         '  <label>' +
                         '    <input type="checkbox" name="confirmation" id="confirmation" >' +
@@ -214,55 +214,50 @@
                         ' will be deleted' +
                         '  </label>' +
                         '</div>'
-                }).then(result => {
-                    let answer = document.getElementById('confirmation').checked
-                    if ('value' in result) {
-                        if (answer) {
-                            this.deleteAgent()
-                        } else {
-
-                        }
+            }).then(result => {
+                let answer = document.getElementById('confirmation').checked
+                if ('value' in result) {
+                    if (answer) {
+                        this.deleteAgent()
                     }
-                })
-            },
-            async updateAgent () {
-
-                try {
-                    this.loading = true
-                    await this.agentService.updateAgent(this.agent)
-                    this.alertNotify('success', 'Agent edited successfully')
-                    this.loading = false
-                    this.editAgent = false
-                } catch (e) {
-                    this.loading = false
-                    this.alertNotify('error', e.message)
                 }
+            })
+        },
+        async updateAgent () {
 
-            },
-            async deleteAgent () {
-                try {
-                    await this.agentService.deleteAgent(this.agent)
-                    this.alertNotify('success', 'Agent deleted successfully')
-                    window.history.back()
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-            },
-            alertNotify (type, message) {
-                this.$notify({
-                    group: 'notify',
-                    type: type,
-                    title: type + ' !',
-                    text: message
-                })
-            },
+            try {
+                this.loading = true
+                await this.agentService.updateAgent(this.agent)
+                this.alertNotify('success', 'Agent edited successfully')
+                this.loading = false
+                this.editAgent = false
+            } catch (e) {
+                this.loading = false
+                this.alertNotify('error', e.message)
+            }
 
         },
-        components: {
-            Widget,
-            Datepicker
-        }
-    }
+        async deleteAgent () {
+            try {
+                await this.agentService.deleteAgent(this.agent)
+                this.alertNotify('success', 'Agent deleted successfully')
+                window.history.back()
+            } catch (e) {
+                this.alertNotify('error', e.message)
+            }
+        },
+        alertNotify (type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message
+            })
+        },
+
+    },
+
+}
 
 </script>
 <style scoped>

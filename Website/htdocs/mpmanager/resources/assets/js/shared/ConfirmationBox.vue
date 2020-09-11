@@ -1,43 +1,43 @@
 <template>
-
+<div></div>
 </template>
 
 <script>
-  import { EventBus } from './eventbus'
+import { EventBus } from './eventbus'
 
-  export default {
+export default {
     name: 'ConfirmationBox',
     props: {
-      title: {
-        required: true,
-        type: String,
-      }
+        title: {
+            required: true,
+            type: String,
+        }
     },
     data () {
-      return {}
+        return {}
     },
     created () {
-      EventBus.$on('show.confirm', this.showConfirmation)
+        EventBus.$on('show.confirm', this.showConfirmation)
     },
     methods: {
-      showConfirmation (data = null) {
-          this.$swal({
-          type: 'question',
-          title: this.title,
-          text: 'Are you sure to do this action?',
-          showCancelButton: true,
-          confirmButtonText: 'I\'m sure',
-          cancelButtonText: 'Cancel',
-        }).then((result) => {
+        showConfirmation (data = null) {
+            this.$swal({
+                type: 'question',
+                title: this.title,
+                text: 'Are you sure to do this action?',
+                showCancelButton: true,
+                confirmButtonText: 'I\'m sure',
+                cancelButtonText: 'Cancel',
+            }).then((result) => {
 
-          if (result.value) {
-            this.$emit('confirmed', data)
-          }
+                if (result.value) {
+                    this.$emit('confirmed', data)
+                }
 
-        })
-      }
+            })
+        }
     },
-  }
+}
 </script>
 
 <style scoped>

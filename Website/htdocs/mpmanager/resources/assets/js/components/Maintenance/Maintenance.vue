@@ -36,12 +36,16 @@
                                                v-validate="'required'"
                                                v-model="maintenanceData.assigned">
                                         <md-option value="" disabled selected>-- Select --</md-option>
-                                        <md-option v-for="employee in employees" :key="employee.person.id"
-                                                   v-if="employee.person"
-                                                   :value="employee.person.id">
-                                            {{employee.person.name}}
-                                            {{employee.person.surname}}
-                                        </md-option>
+                                        <template v-for="employee in employees" >
+                                            <md-option :key="employee.person.id"
+                                                       v-if="employee.person"
+                                                       :value="employee.person.id"
+                                            >
+                                                {{employee.person.name}}
+                                                {{employee.person.surname}}
+                                            </md-option>
+                                        </template>
+
                                     </md-select>
                                     <span class="md-error">{{ errors.first('form-maintain.title') }}</span>
                                 </md-field>
@@ -106,102 +110,102 @@
 </template>
 
 <script>
-    import Widget from '../../shared/widget'
-    import Datepicker from 'vuejs-datepicker'
-    import NewUser from './NewUser'
-    import { EventBus } from '../../shared/eventbus'
-    import { TicketService } from '../../services/TicketService'
-    import { MaintenanceService } from '../../services/MaintenanceService'
-    import { SmsService } from '../../services/SmsService'
+import Widget from '../../shared/widget'
+import NewUser from './NewUser'
+import { EventBus } from '../../shared/eventbus'
+import { TicketService } from '../../services/TicketService'
+import { MaintenanceService } from '../../services/MaintenanceService'
+import { SmsService } from '../../services/SmsService'
 
-    export default {
-        name: 'Maintenance',
-        components: { NewUser, Datepicker, Widget },
-        data () {
-            return {
-                newUser: false,
-                categories: [],
-                employees: [],
-                maintenanceData: null,
-                ticketService: new TicketService(),
-                maintenanceService: new MaintenanceService(),
-                smsService: new SmsService(),
-                selectedDue: null,
-                loading: false
-            }
-        },
-        watch: {
-            selectedDue: function (date) {
-                this.dueDateSelected(date)
-            }
-        },
-        created () {
-            this.maintenanceData = this.maintenanceService.personData
-            this.maintenanceData.creator = this.$store.getters['auth/authenticationService'].authenticateUser.id
-        },
-        mounted () {
-            this.getCategories()
+export default {
+    name: 'Maintenance',
+    components: { NewUser, Widget },
+    data () {
+        return {
+            newUser: false,
+            categories: [],
+            employees: [],
+            maintenanceData: null,
+            ticketService: new TicketService(),
+            maintenanceService: new MaintenanceService(),
+            smsService: new SmsService(),
+            selectedDue: null,
+            loading: false
+        }
+    },
+    watch: {
+        selectedDue: function (date) {
+            this.dueDateSelected(date)
+        }
+    },
+    created () {
+        this.maintenanceData = this.maintenanceService.personData
+        this.maintenanceData.creator = this.$store.getters['auth/authenticationService'].authenticateUser.id
+    },
+    mounted () {
+        this.getCategories()
+        this.getEmployees()
+        EventBus.$on('newUserClosed', this.newUserClose)
+    },
+    methods: {
+        newUserClose(){
+            this.newUser = false
             this.getEmployees()
-            EventBus.$on('newUserClosed', (e) => {
-                this.newUser = false
-                this.getEmployees()
+        },
+        async getCategories () {
+            try {
+                this.categories = await this.ticketService.getCategories()
+            } catch (e) {
+                this.alertNotify('error', e.message)
+            }
+        },
+        async getEmployees () {
+            try {
+                this.employees = await this.maintenanceService.getEmployees()
+            } catch (e) {
+                this.alertNotify('error', e.message)
+            }
+
+        },
+        dueDateSelected (date) {
+            if (date === null) {
+                return
+            }
+            this.maintenanceService.setDueDate(date)
+        },
+        async submitMaintainForm () {
+            let validator = await this.$validator.validateAll('form-maintain')
+            if (validator) {
+                await this.saveTicket()
+            }
+        },
+        async saveTicket () {
+            try {
+                this.loading = true
+                await this.ticketService.createMaintenanceTicket(this.maintenanceData)
+                await this.smsService.sendMaintenanceSms(this.maintenanceData)
+                this.alertNotify('success', 'The Task created successfully. The Person will also be notified by sms')
+                this.maintenanceService.resetMaintenance()
+                this.loading = false
+            } catch (e) {
+                this.alertNotify('error', 'e.message')
+                this.loading = false
+            }
+        },
+        openNewUser () {
+            EventBus.$emit('getLists')
+            this.newUser = true
+        },
+        alertNotify (type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message
             })
         },
-        methods: {
-            async getCategories () {
-                try {
-                    this.categories = await this.ticketService.getCategories()
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-            },
-            async getEmployees () {
-                try {
-                    this.employees = await this.maintenanceService.getEmployees()
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-
-            },
-            dueDateSelected (date) {
-                if (date === null) {
-                    return
-                }
-                this.maintenanceService.setDueDate(date)
-            },
-            async submitMaintainForm () {
-                let validator = await this.$validator.validateAll('form-maintain')
-                if (validator) {
-                    await this.saveTicket()
-                }
-            },
-            async saveTicket () {
-                try {
-                    this.loading = true
-                    await this.ticketService.createMaintenanceTicket(this.maintenanceData)
-                    await this.smsService.sendMaintenanceSms(this.maintenanceData)
-                    this.alertNotify('success', 'The Task created successfully. The Person will also be notified by sms')
-                    this.maintenanceService.resetMaintenance()
-                    this.loading = false
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                    this.loading = false
-                }
-            },
-            openNewUser () {
-                EventBus.$emit('getLists')
-                this.newUser = true
-            },
-            alertNotify (type, message) {
-                this.$notify({
-                    group: 'notify',
-                    type: type,
-                    title: type + ' !',
-                    text: message
-                })
-            },
-        }
     }
+}
 </script>
 
 <style scoped>

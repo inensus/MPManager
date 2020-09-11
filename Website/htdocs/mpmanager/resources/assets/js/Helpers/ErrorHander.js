@@ -4,11 +4,11 @@ export class ErrorHandler {
             message: _message,
             type: _type,
             status_code: _status_code,
-        };
+        }
         this.throwException()
     }
 
     throwException() {
-        throw this.exception;
+        throw this.exception
     }
 }

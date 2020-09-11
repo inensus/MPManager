@@ -45,61 +45,64 @@
 
 </template>
 <script>
-    import Widget from '../../shared/widget'
-    import { AssetService } from '../../services/AssetService'
-    import { EventBus } from '../../shared/eventbus'
+import Widget from '../../shared/widget'
+import { AssetService } from '../../services/AssetService'
+import { EventBus } from '../../shared/eventbus'
 
-    export default {
-        name: 'AddAssetType',
-        components: { Widget },
-        props: {
-            addNewAssetType: false,
-        },
-        data () {
-            return {
-                assetService: new AssetService(),
-                loading: false
-            }
-        },
-        created () {
-            this.asset = this.assetService.asset
-        },
-        mounted () {
-
-        },
-        methods: {
-            async saveAsset () {
-                let validation = await this.$validator.validateAll()
-                if (!validation) {
-                    return
-                }
-
-                try {
-                    this.loading = true
-                    await this.assetService.createAsset()
-                    this.loading = false
-                    this.alertNotify('success', 'AssetType has registered.')
-                    EventBus.$emit('AssetTypeAdded', )
-                } catch (e) {
-                    this.loading = false
-                    this.alertNotify('error', e.message)
-                }
-
-                this.closeAddComponent()
-            },
-
-            closeAddComponent () {
-                EventBus.$emit('addAssetTypeClosed', false)
-            },
-            alertNotify (type, message) {
-                this.$notify({
-                    group: 'notify',
-                    type: type,
-                    title: type + ' !',
-                    text: message
-                })
-            },
-
+export default {
+    name: 'AddAssetType',
+    components: { Widget },
+    props: {
+        addNewAssetType:{
+            type:Boolean,
+            default:false
         }
+    },
+    data () {
+        return {
+            assetService: new AssetService(),
+            loading: false
+        }
+    },
+    created () {
+        this.asset = this.assetService.asset
+    },
+    mounted () {
+
+    },
+    methods: {
+        async saveAsset () {
+            let validation = await this.$validator.validateAll()
+            if (!validation) {
+                return
+            }
+
+            try {
+                this.loading = true
+                await this.assetService.createAsset()
+                this.loading = false
+                this.alertNotify('success', 'AssetType has registered.')
+                EventBus.$emit('AssetTypeAdded', )
+            } catch (e) {
+                this.loading = false
+                this.alertNotify('error', e.message)
+            }
+
+            this.closeAddComponent()
+        },
+
+        closeAddComponent () {
+            EventBus.$emit('addAssetTypeClosed', false)
+        },
+        alertNotify (type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message
+            })
+        },
+
     }
+}
 </script>

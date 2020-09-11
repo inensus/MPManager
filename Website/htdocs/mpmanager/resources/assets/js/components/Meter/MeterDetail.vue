@@ -242,226 +242,225 @@
 </template>
 
 <script>
-    import Widget from '../../shared/widget'
-    import { Transactions } from '../../classes/meter/transactions'
-    import { EventBus } from '../../shared/eventbus'
-    import { Consumptions } from '../../classes/meter/Consumptions'
-    import { Meter } from '../../classes/meter/meter'
-    import Modal from '../../modal/modal'
-    import { resources } from '../../resources'
-    import { ConnectionTypes } from '../../classes/connection/ConnectionTypes'
-    import { currency } from '../../mixins/currency'
-    import NoTableData from '../../shared/NoTableData'
+import Widget from '../../shared/widget'
+import { Transactions } from '../../classes/meter/transactions'
+import { EventBus } from '../../shared/eventbus'
+import { Consumptions } from '../../classes/meter/Consumptions'
+import { Meter } from '../../classes/meter/meter'
+import { resources } from '../../resources'
+import { ConnectionTypes } from '../../classes/connection/ConnectionTypes'
+import { currency } from '../../mixins/currency'
+import NoTableData from '../../shared/NoTableData'
+import moment from 'moment'
 
-    const debounce = require('debounce')
 
-    export default {
-        name: 'MeterDetail',
-        components: { Modal, Widget, NoTableData },
-        mixins: [currency],
-        created () {
-            EventBus.$on('pageLoaded', this.reloadList)
-            //initialize dates
-            let baseDate = moment()
-            this.dates.today = baseDate.format('YYYY-MM-DD')
-            this.dates.dateTwo = baseDate.add(-1, 'days').format('YYYY-MM-DD')
-            this.dates.dateOne = baseDate.add(-1, 'weeks').format('YYYY-MM-DD')
-        },
-        mounted () {
-            EventBus.$emit('bread', this.bcd)
-            this.transactions = new Transactions(this.$route.params.id)
-            this.consumptions = new Consumptions(this.$route.params.id)
-            this.meter = new Meter(this.$route.params.id)
-            this.meter.detail().then(() => {
-                this.meter.revenue()
-            })
+export default {
+    name: 'MeterDetail',
+    components: { Widget, NoTableData },
+    mixins: [currency],
+    created () {
+        EventBus.$on('pageLoaded', this.reloadList)
+        //initialize dates
+        let baseDate = moment()
+        this.dates.today = baseDate.format('YYYY-MM-DD')
+        this.dates.dateTwo = baseDate.add(-1, 'days').format('YYYY-MM-DD')
+        this.dates.dateOne = baseDate.add(-1, 'weeks').format('YYYY-MM-DD')
+    },
+    mounted () {
+        EventBus.$emit('bread', this.bcd)
+        this.transactions = new Transactions(this.$route.params.id)
+        this.consumptions = new Consumptions(this.$route.params.id)
+        this.meter = new Meter(this.$route.params.id)
+        this.meter.detail().then(() => {
+            this.meter.revenue()
+        })
 
-            this.getConsumptions()
-            this.getTariffs()
-            this.connectionTypes.getSubConnectionTypes()
-        },
-        data () {
-            return {
-                subscriber: 'meter.transactions',
-                transactions: null,
-                consumptions: null,
-                meter: null,
-                chartData: [],
-                hideSearch: true,
-                showModal: false,
-                searchTerm: '',
-                customerSearchTerm: '',
-                newOwner: null,
-                searchNames: [],
-                editTariff: false,
-                newTariff: null,
-                newConnectionType: null,
-                tariffs: [],
-                showOwnerEdit:false,
-                //meter connection controlller
-                connectionTypes: new ConnectionTypes(),
-                //re-assing connection flag
-                editConnection: false,
+        this.getConsumptions()
+        this.getTariffs()
+        this.connectionTypes.getSubConnectionTypes()
+    },
+    data () {
+        return {
+            subscriber: 'meter.transactions',
+            transactions: null,
+            consumptions: null,
+            meter: null,
+            chartData: [],
+            hideSearch: true,
+            showModal: false,
+            searchTerm: '',
+            customerSearchTerm: '',
+            newOwner: null,
+            searchNames: [],
+            editTariff: false,
+            newTariff: null,
+            newConnectionType: null,
+            tariffs: [],
+            showOwnerEdit:false,
+            //meter connection controlller
+            connectionTypes: new ConnectionTypes(),
+            //re-assing connection flag
+            editConnection: false,
 
-                bcd: {
-                    Home: {
-                        href: '/'
-                    },
-                    Meters: {
-                        href: '/meters'
-                    },
-                    Detail: {
-                        href: null
-                    }
+            bcd: {
+                Home: {
+                    href: '/'
                 },
-                chartOptions: {
-                    chart: {
-                        title: 'Company Performance',
-                        subtitle: 'Sales, Expenses, and Profit: 2014-2017'
-                    },
-                    height: 400,
-                    colors: ['#1b9e77', '#d95f02', '#7570b3']
+                Meters: {
+                    href: '/meters'
                 },
-                dates: {
-                    dateTwo: null,
-                    dateOne: null,
-                    today: null,
-                    difference: 0
-                },
-                loading: true,
-                headers: ['ID', 'Provider', 'Amount', 'Paid for', 'In Return', 'Date'],
-                tableName: 'Meter Transactions'
-            }
-        },
-        watch: {
-            //   searchTerm: debounce(function(e) {
-            //     if (this.searchTerm.length < 3) {
-            //       this.hideSearch = true;
-            //       return;
-            //     }
-            //     this.searchFor(this.searchTerm);
-            //   }, 250)
-        },
-
-        methods: {
-            navigateOwner (ownerId) {
-                this.$router.push('/people/' + ownerId)
-            },
-
-            getTariffs () {
-                axios.get(resources.tariff.list).then(response => {
-                    this.tariffs = response.data.data
-                })
-            },
-            reloadList (subscriber, data) {
-                if (subscriber !== this.subscriber) return
-                this.transactions.updateList(data)
-            },
-            getConsumptions () {
-                this.loading = true
-
-                this.chartData = []
-                this.consumptions
-                    .getData(this.dates.dateOne, this.dates.dateTwo)
-                    .then(response => {
-                        this.loading = false
-                        if (this.consumptions.data.length === 0) {
-                            this.chartData = []
-                            return
-                        }
-                        this.chartData.push(['Date', 'Consumption', 'Credit'])
-                        this.chartData = this.chartData.concat(this.consumptions.data)
-                    })
-            },
-            selectCustomer (c) {
-                this.customerSearchTerm = c.name
-                this.newOwner = c
-            },
-            searchFor (term) {
-                if (term != undefined && term.length > 2) {
-                    return axios
-                        .get(resources.person.search, { params: { term: term, paginate: 0 } })
-                        .then(response => {
-                            this.searchNames = []
-                            for (let i in response.data.data) {
-                                let person = response.data.data[i]
-                                this.searchNames.push({
-                                    id: person.id,
-                                    name: person.name + ' ' + person.surname
-                                })
-                            }
-                            this.hideSearch = false
-
-                            return this.searchNames.map(x => ({
-                                id: x.id,
-                                name: x.name,
-                                toLowerCase: () => x.name.toLowerCase(),
-                                toString: () => x.name
-                            }))
-                            // return this.searchNames;
-                        })
-                } else {
-                    this.hideSearch = true
+                Detail: {
+                    href: null
                 }
             },
-            resetOwner () {
-                this.searchTerm = ''
-                this.hideSearch = true
-                this.newOwner = null
-                this.searchNames = []
+            chartOptions: {
+                chart: {
+                    title: 'Company Performance',
+                    subtitle: 'Sales, Expenses, and Profit: 2014-2017'
+                },
+                height: 400,
+                colors: ['#1b9e77', '#d95f02', '#7570b3']
             },
-            setOwner (owner) {
-                this.newOwner = owner
+            dates: {
+                dateTwo: null,
+                dateOne: null,
+                today: null,
+                difference: 0
             },
-            closeOwnerEdit () {
-                this.resetOwner()
-                this.showOwnerEdit = false
-            },
-            updateTariff (tariffId) {
-                this.updateParameter(this.meter.id, { tariffId: tariffId })
-            },
-            updateConnection (connectionId) {
-                let data = { connectionId: connectionId }
-                this.updateParameter(this.meter.id, data)
-            },
+            loading: true,
+            headers: ['ID', 'Provider', 'Amount', 'Paid for', 'In Return', 'Date'],
+            tableName: 'Meter Transactions'
+        }
+    },
+    watch: {
+        //   searchTerm: debounce(function(e) {
+        //     if (this.searchTerm.length < 3) {
+        //       this.hideSearch = true;
+        //       return;
+        //     }
+        //     this.searchFor(this.searchTerm);
+        //   }, 250)
+    },
 
-            updateParameter (meterId, params) {
-                axios
-                    .put(
-                        resources.meterparameters.update + this.meter.id + '/parameters',
-                        params
-                    )
+    methods: {
+        navigateOwner (ownerId) {
+            this.$router.push('/people/' + ownerId)
+        },
+
+        getTariffs () {
+            axios.get(resources.tariff.list).then(response => {
+                this.tariffs = response.data.data
+            })
+        },
+        reloadList (subscriber, data) {
+            if (subscriber !== this.subscriber) return
+            this.transactions.updateList(data)
+        },
+        getConsumptions () {
+            this.loading = true
+
+            this.chartData = []
+            this.consumptions
+                .getData(this.dates.dateOne, this.dates.dateTwo)
+                .then(() => {
+                    this.loading = false
+                    if (this.consumptions.data.length === 0) {
+                        this.chartData = []
+                        return
+                    }
+                    this.chartData.push(['Date', 'Consumption', 'Credit'])
+                    this.chartData = this.chartData.concat(this.consumptions.data)
+                })
+        },
+        selectCustomer (c) {
+            this.customerSearchTerm = c.name
+            this.newOwner = c
+        },
+        searchFor (term) {
+            if (term != undefined && term.length > 2) {
+                return axios
+                    .get(resources.person.search, { params: { term: term, paginate: 0 } })
                     .then(response => {
-                        if (response.status === 200) {
-                            if ('tariff' in response.data.data) {
-                                this.meter.tariff = response.data.data.tariff
-                            } else if ('connection_type' in response.data.data) {
-                                this.meter.connection = response.data.data.connection_type
-                            }
-                        } else {
-                            this.$swal({
-                                type: 'error',
-                                title: 'Unexpected error',
-                                text: 'Please get in touch with your system admin.'
+                        this.searchNames = []
+                        for (let i in response.data.data) {
+                            let person = response.data.data[i]
+                            this.searchNames.push({
+                                id: person.id,
+                                name: person.name + ' ' + person.surname
                             })
                         }
-                        this.editTariff = false
-                        this.editConnection = false
+                        this.hideSearch = false
+
+                        return this.searchNames.map(x => ({
+                            id: x.id,
+                            name: x.name,
+                            toLowerCase: () => x.name.toLowerCase(),
+                            toString: () => x.name
+                        }))
+                        // return this.searchNames;
                     })
-            },
-            saveNewOwner () {
-                if (this.newOwner === null) {
-                    this.$swal({
-                        type: 'error',
-                        title: 'New Owner is required!',
-                        text: 'Please select a new owner.'
-                    })
-                    return
-                }
+            } else {
+                this.hideSearch = true
+            }
+        },
+        resetOwner () {
+            this.searchTerm = ''
+            this.hideSearch = true
+            this.newOwner = null
+            this.searchNames = []
+        },
+        setOwner (owner) {
+            this.newOwner = owner
+        },
+        closeOwnerEdit () {
+            this.resetOwner()
+            this.showOwnerEdit = false
+        },
+        updateTariff (tariffId) {
+            this.updateParameter(this.meter.id, { tariffId: tariffId })
+        },
+        updateConnection (connectionId) {
+            let data = { connectionId: connectionId }
+            this.updateParameter(this.meter.id, data)
+        },
+
+        updateParameter (meterId, params) {
+            axios
+                .put(
+                    resources.meterparameters.update + this.meter.id + '/parameters',
+                    params
+                )
+                .then(response => {
+                    if (response.status === 200) {
+                        if ('tariff' in response.data.data) {
+                            this.meter.tariff = response.data.data.tariff
+                        } else if ('connection_type' in response.data.data) {
+                            this.meter.connection = response.data.data.connection_type
+                        }
+                    } else {
+                        this.$swal({
+                            type: 'error',
+                            title: 'Unexpected error',
+                            text: 'Please get in touch with your system admin.'
+                        })
+                    }
+                    this.editTariff = false
+                    this.editConnection = false
+                })
+        },
+        saveNewOwner () {
+            if (this.newOwner === null) {
                 this.$swal({
-                    type: 'success',
-                    title: 'Re-Assigning Meter?',
-                    text:
+                    type: 'error',
+                    title: 'New Owner is required!',
+                    text: 'Please select a new owner.'
+                })
+                return
+            }
+            this.$swal({
+                type: 'success',
+                title: 'Re-Assigning Meter?',
+                text:
                         'Are you sure to assign the meter from ' +
                         this.newOwner.name +
                         ' ' +
@@ -470,37 +469,37 @@
                         this.meter.owner.name +
                         ' ' +
                         this.meter.owner.surname,
-                    showCancelButton: true,
-                    confirmButtonText: 'I\'m sure',
-                    cancelButtonText: 'Cancel'
-                }).then(result => {
-                    console.log(result)
-                    if (result.value) {
-                        axios
-                            .put(
-                                resources.meterparameters.update + this.meter.id + '/parameters',
-                                {
-                                    personId: this.newOwner.id
-                                }
-                            )
-                            .then(response => {
-                                if (response.status === 200) {
-                                    this.meter.owner = response.data.data.owner
-                                    this.showOwnerEdit = false
-                                    this.resetOwner()
-                                } else {
-                                    this.$swal({
-                                        type: 'error',
-                                        title: 'Unexpected error',
-                                        text: 'Please get in touch with your system admin.'
-                                    })
-                                }
-                            })
-                    }
-                })
-            }
+                showCancelButton: true,
+                confirmButtonText: 'I\'m sure',
+                cancelButtonText: 'Cancel'
+            }).then(result => {
+                console.log(result)
+                if (result.value) {
+                    axios
+                        .put(
+                            resources.meterparameters.update + this.meter.id + '/parameters',
+                            {
+                                personId: this.newOwner.id
+                            }
+                        )
+                        .then(response => {
+                            if (response.status === 200) {
+                                this.meter.owner = response.data.data.owner
+                                this.showOwnerEdit = false
+                                this.resetOwner()
+                            } else {
+                                this.$swal({
+                                    type: 'error',
+                                    title: 'Unexpected error',
+                                    text: 'Please get in touch with your system admin.'
+                                })
+                            }
+                        })
+                }
+            })
         }
     }
+}
 </script>
 
 <style lang="scss">

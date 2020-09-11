@@ -1,5 +1,5 @@
 import Client from './Client/AxiosClient'
-const  resource = 'api/agents/transactions';
+const  resource = 'api/agents/transactions'
 
 export default {
 

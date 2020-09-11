@@ -63,122 +63,117 @@
 
 <script>
 
-    import '../../shared/TableList'
-    import Map from '../../shared/Map'
-    import Widget from '../../shared/widget'
-    import BoxGroup from './BoxGroup'
-    import FinancialOverview from './FinancialOverview'
-    import ClusterMap from './ClusterMap'
-    import RevenueAnalysis from './RevenueAnalysis'
-    import RevenueTrends from './RevenueTrends'
-    import TargetList from '../MiniGrid/TargetList'
-    import { ClusterService } from '../../services/ClusterService'
-    import { MappingService } from '../../services/MappingService'
-    import miniGridIcon from '../../../icons/miniGrid.png'
+import '../../shared/TableList'
+import Map from '../../shared/Map'
+import BoxGroup from './BoxGroup'
+import FinancialOverview from './FinancialOverview'
+import RevenueTrends from './RevenueTrends'
+import TargetList from '../MiniGrid/TargetList'
+import { ClusterService } from '../../services/ClusterService'
+import { MappingService } from '../../services/MappingService'
+import miniGridIcon from '../../../icons/miniGrid.png'
+import moment from 'moment'
 
-    export default {
-        name: 'ClusterList',
+export default {
+    name: 'ClusterList',
 
-        components: {
-            TargetList,
-            RevenueTrends,
-            RevenueAnalysis,
-            ClusterMap,
-            FinancialOverview,
-            BoxGroup,
-            Widget,
-            Map
-        },
-        data () {
-            return {
-                clusterService: new ClusterService(),
-                mappingService: new MappingService(),
-                miniGridIcon: miniGridIcon,
-                clusterId: null,
-                clusterData: null,
-                clusters: null,
-                geoData: null,
-                constantLocations: [],
-                markingInfos: [],
-                center: this.appConfig.mapStartingPoint,
-                base: {},
-                compared: {},
-                boxData: {
-                    'revenue': {
-                        'period': '-',
-                        'total': '-',
-                    },
-                    'people': '-',
-                    'meters': '-',
+    components: {
+        TargetList,
+        RevenueTrends,
+        FinancialOverview,
+        BoxGroup,
+        Map
+    },
+    data () {
+        return {
+            clusterService: new ClusterService(),
+            mappingService: new MappingService(),
+            miniGridIcon: miniGridIcon,
+            clusterId: null,
+            clusterData: null,
+            clusters: null,
+            geoData: null,
+            constantLocations: [],
+            markingInfos: [],
+            center: this.appConfig.mapStartingPoint,
+            base: {},
+            compared: {},
+            boxData: {
+                'revenue': {
+                    'period': '-',
+                    'total': '-',
                 },
+                'people': '-',
+                'meters': '-',
+            },
+
+        }
+    },
+    created () {
+        this.clusterId = this.$route.params.id
+    },
+
+    mounted () {
+
+        this.initDates()
+        this.getMiniGridList()
+
+    },
+
+    methods: {
+        initDates() {
+            this.base = {
+                from: moment().startOf('month').format('YYYY-MM-DD hh:mm'),
+                to: moment().endOf('month').format('YYYY-MM-DD hh:mm')
+            }
+            this.compared = {
+                from: moment().add(1, 'months').startOf('month').format('YYYY-MM-DD hh:mm'),
+                to: moment().add(1, 'months').endOf('month').format('YYYY-MM-DD hh:mm')
+            }
+        },
+        async getMiniGridList () {
+            this.clusterData = await this.clusterService.getDetails(this.clusterId)
+
+            let clusterGeoData = await this.clusterService.getClusterGeoLocation(this.clusterId)
+            this.center = [clusterGeoData.lat, clusterGeoData.lon]
+            this.geoData = this.mappingService.focusLocation(clusterGeoData)
+            this.boxData['mini_grids'] = this.clusterData.mini_grids.length
+            for (let i in this.clusterData.mini_grids) {
+                let miniGrids = this.clusterData.mini_grids
+
+                let points = miniGrids[i].location.points.split(',')
+                let lat = points[0]
+                let lon = points[1]
+
+                let markingInfo = this.mappingService.createMarkinginformation(miniGrids[i].id, miniGrids[i].name, null,lat, lon)
+
+                this.markingInfos.push(markingInfo)
+                this.constantLocations.push([lat, lon])
 
             }
         },
-        created () {
-            this.clusterId = this.$route.params.id
+
+        addRevenue(data) {
+            this.boxData['revenue'] = {
+                'total': data['sum'],
+                'period': data['period']
+            }
         },
-
-        mounted () {
-
-            this.initDates()
-            this.getMiniGridList()
-
+        addConnections(data) {
+            this.boxData['people'] = data
+            this.boxData['meters'] = data
         },
-
-        methods: {
-            initDates() {
-                this.base = {
-                    from: moment().startOf('month').format('YYYY-MM-DD hh:mm'),
-                    to: moment().endOf('month').format('YYYY-MM-DD hh:mm')
-                }
-                this.compared = {
-                    from: moment().add(1, 'months').startOf('month').format('YYYY-MM-DD hh:mm'),
-                    to: moment().add(1, 'months').endOf('month').format('YYYY-MM-DD hh:mm')
-                }
-            },
-            async getMiniGridList () {
-                this.clusterData = await this.clusterService.getDetails(this.clusterId)
-
-                let clusterGeoData = await this.clusterService.getClusterGeoLocation(this.clusterId)
-                this.center = [clusterGeoData.lat, clusterGeoData.lon]
-                this.geoData = this.mappingService.focusLocation(clusterGeoData)
-                this.boxData['mini_grids'] = this.clusterData.mini_grids.length
-                for (let i in this.clusterData.mini_grids) {
-                    let miniGrids = this.clusterData.mini_grids
-
-                    let points = miniGrids[i].location.points.split(',')
-                    let lat = points[0]
-                    let lon = points[1]
-
-                    let markingInfo = this.mappingService.createMarkinginformation(miniGrids[i].id, miniGrids[i].name, null,lat, lon)
-
-                    this.markingInfos.push(markingInfo)
-                    this.constantLocations.push([lat, lon])
-
-                }
-            },
-
-            addRevenue(data) {
-                this.boxData['revenue'] = {
-                    'total': data['sum'],
-                    'period': data['period']
-                }
-            },
-            addConnections(data) {
-                this.boxData['people'] = data
-                this.boxData['meters'] = data
-            },
-            alertNotify (type, message) {
-                this.$notify({
-                    group: 'notify',
-                    type: type,
-                    title: type + ' !',
-                    text: message
-                })
-            },
+        alertNotify (type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message
+            })
         },
+    },
 
-    }
+}
 </script>
 
 <style>

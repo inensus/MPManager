@@ -14,21 +14,20 @@
 
 </template>
 <script>
-    export default {
-        name: 'NoTableData',
-        data () {
-            return {}
+export default {
+    name: 'NoTableData',
+    data () {
+        return {}
+    },
+    props: {
+        headers: {
+            type: Array,
         },
-        props: {
-            headers: {
-                type: Array,
-                default: []
-            },
-            tableName: {
-                type: String,
-            }
+        tableName: {
+            type: String,
         }
     }
+}
 </script>
 <style scoped>
 

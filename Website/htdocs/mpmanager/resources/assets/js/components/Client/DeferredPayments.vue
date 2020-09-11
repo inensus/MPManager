@@ -182,144 +182,143 @@
 </template>
 
 <script>
-    import { AssetService } from '../../services/AssetService'
-    import { AssetRateService } from '../../services/AssetRateService'
-    import { AssetPersonService } from '../../services/AssetPersonService'
-    import { currency } from '../../mixins/currency'
-    import ConfirmationBox from '../../shared/ConfirmationBox'
-    import { EventBus } from '../../shared/eventbus'
-    import Widget from '../../shared/widget'
-    import NoTableData from '../../shared/NoTableData'
-    import { resources } from '../../resources'
-    import Modal from '../../modal/modal'
-    import moment from 'moment'
+import { AssetService } from '../../services/AssetService'
+import { AssetRateService } from '../../services/AssetRateService'
+import { AssetPersonService } from '../../services/AssetPersonService'
+import { currency } from '../../mixins/currency'
+import ConfirmationBox from '../../shared/ConfirmationBox'
+import { EventBus } from '../../shared/eventbus'
+import Widget from '../../shared/widget'
+import NoTableData from '../../shared/NoTableData'
+import moment from 'moment'
 
-    export default {
-        name: 'DeferredPayments',
-        mixins: [currency],
-        components: { Modal, ConfirmationBox, Widget, NoTableData },
-        props: {
-            personId: Number
-        },
-        mounted () {
-            this.getAssetTypesList()
-            this.getAssetList()
-        },
-        data () {
-            return {
-                assetService: new AssetService(),
-                assetRateService: new AssetRateService(),
-                assetPersonService: new AssetPersonService(),
-                adminId: this.$store.getters['auth/authenticationService'].authenticateUser.id,
-                selectedAsset: null,
-                selectedAssetId: null,
-                showModal: false,
-                editRow: null,
-                showNewAsset: false,
-                newAsset: {
-                    id: null,
-                    cost: 1,
-                    rate: 1
-                },
-                headers: ['Name', 'Cost', 'Rates'],
-                tableName: 'Sold Assets'
+export default {
+    name: 'DeferredPayments',
+    mixins: [currency],
+    components: { ConfirmationBox, Widget, NoTableData },
+    props: {
+        personId: Number
+    },
+    mounted () {
+        this.getAssetTypesList()
+        this.getAssetList()
+    },
+    data () {
+        return {
+            assetService: new AssetService(),
+            assetRateService: new AssetRateService(),
+            assetPersonService: new AssetPersonService(),
+            adminId: this.$store.getters['auth/authenticationService'].authenticateUser.id,
+            selectedAsset: null,
+            selectedAssetId: null,
+            showModal: false,
+            editRow: null,
+            showNewAsset: false,
+            newAsset: {
+                id: null,
+                cost: 1,
+                rate: 1
+            },
+            headers: ['Name', 'Cost', 'Rates'],
+            tableName: 'Sold Assets'
 
+        }
+    },
+
+    methods: {
+        toggleModal () {
+            this.showModal = !this.showModal
+        },
+        formatReadableDate (date) {
+            return moment(date).format('MMMM Do YYYY, h:mm:ss a')
+        },
+        changeRateAmount (rate_id) {
+            this.editRow = 'rate_' + rate_id
+        },
+        showDetails (index) {
+            this.toggleModal()
+
+            this.selectedAsset = this.assetPersonService.list[index]
+        },
+        showConfirm (data) {
+            EventBus.$emit('show.confirm', data)
+        },
+        async editRate (data) {
+            try {
+                await this.assetRateService.editAssetRate(data.id, data.remaining, this.adminId)
+                this.editRow = null
+                this.alertNotify('success', 'Asset Rate updated successfully.')
+            } catch (e) {
+                this.alertNotify('error', e.message)
             }
         },
+        async getAssetTypesList () {
+            try {
+                await this.assetService.getAssets()
+            } catch (e) {
+                this.alertNotify('error', e.message)
+            }
 
-        methods: {
-            toggleModal () {
-                this.showModal = !this.showModal
-            },
-            formatReadableDate (date) {
-                return moment(date).format('MMMM Do YYYY, h:mm:ss a')
-            },
-            changeRateAmount (rate_id) {
-                this.editRow = 'rate_' + rate_id
-            },
-            showDetails (index) {
-                this.toggleModal()
-
-                this.selectedAsset = this.assetPersonService.list[index]
-            },
-            showConfirm (data) {
-                EventBus.$emit('show.confirm', data)
-            },
-            async editRate (data) {
-                try {
-                    await this.assetRateService.editAssetRate(data.id, data.remaining, this.adminId)
-                    this.editRow = null
-                    this.alertNotify('success', 'Asset Rate updated successfully.')
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-            },
-            async getAssetTypesList () {
-                try {
-                    await this.assetService.getAssets()
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-
-            },
-            async getAssetList () {
-                try {
-                    await this.assetPersonService.getPersonAssets(this.personId)
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-            },
-            async saveAsset () {
-                if (this.newAsset.id === null) {
-                    this.$swal({
-                        type: 'error',
-                        title: 'Asset not selected',
-                        text:
-                            'Please select an asset type from the list before you can sell/store it.'
-                    })
-
-                    return
-                }
-                this.$swal({
-                    type: 'question',
-                    title: 'Save Asset',
-                    text: 'Are you sure to sell the asset for ' + this.newAsset.cost + '?',
-                    showCancelButton: true,
-                    cancelButtonText: 'Cancel',
-                    confirmButtonText: 'Sell'
-                }).then(async response => {
-                    try {
-                        let validator = await this.$validator.validateAll()
-                        if (validator) {
-                            await this.assetPersonService.saveAsset(this.newAsset.id, this.personId, this.newAsset)
-                            this.showNewAsset = false
-                            this.alertNotify('success', 'New asset sold successfully.')
-                            await this.getAssetList()
-                        }
-
-                    } catch (e) {
-                        this.alertNotify('error', e.message)
-                    }
-                })
-            },
-            getRate (index, rateCount, cost) {
-                if (index === parseInt(rateCount)) {
-                    return cost - (rateCount - 1) * Math.floor(cost / rateCount)
-                } else {
-                    return Math.floor(cost / rateCount)
-                }
-            },
-            alertNotify (type, message) {
-                this.$notify({
-                    group: 'notify',
-                    type: type,
-                    title: type + ' !',
-                    text: message
-                })
-            },
         },
+        async getAssetList () {
+            try {
+                await this.assetPersonService.getPersonAssets(this.personId)
+            } catch (e) {
+                this.alertNotify('error', e.message)
+            }
+        },
+        async saveAsset () {
+            if (this.newAsset.id === null) {
+                this.$swal({
+                    type: 'error',
+                    title: 'Asset not selected',
+                    text:
+                            'Please select an asset type from the list before you can sell/store it.'
+                })
 
-    }
+                return
+            }
+            this.$swal({
+                type: 'question',
+                title: 'Save Asset',
+                text: 'Are you sure to sell the asset for ' + this.newAsset.cost + '?',
+                showCancelButton: true,
+                cancelButtonText: 'Cancel',
+                confirmButtonText: 'Sell'
+            }).then(async response => {
+                console.log(response)
+                try {
+                    let validator = await this.$validator.validateAll()
+                    if (validator) {
+                        await this.assetPersonService.saveAsset(this.newAsset.id, this.personId, this.newAsset)
+                        this.showNewAsset = false
+                        this.alertNotify('success', 'New asset sold successfully.')
+                        await this.getAssetList()
+                    }
+
+                } catch (e) {
+                    this.alertNotify('error', e.message)
+                }
+            })
+        },
+        getRate (index, rateCount, cost) {
+            if (index === parseInt(rateCount)) {
+                return cost - (rateCount - 1) * Math.floor(cost / rateCount)
+            } else {
+                return Math.floor(cost / rateCount)
+            }
+        },
+        alertNotify (type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message
+            })
+        },
+    },
+
+}
 </script>
 
 <style scoped>

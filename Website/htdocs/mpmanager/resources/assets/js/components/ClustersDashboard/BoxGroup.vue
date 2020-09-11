@@ -58,52 +58,51 @@
 </template>
 
 <script>
-    import Box from '../Box'
-    import ChartistBox from '../ChartistBox'
-    import { currency } from '../../mixins/currency'
+import Box from '../Box'
+import { currency } from '../../mixins/currency'
 
-    export default {
-        name: 'BoxGroup',
-        components: { Box, ChartistBox },
-        mixins: [currency],
-        props: {
-            clusters: {
-                type: Array,
-                required: true,
-            },
+export default {
+    name: 'BoxGroup',
+    components: { Box },
+    mixins: [currency],
+    props: {
+        clusters: {
+            type: Array,
+            required: true,
         },
-        computed: {
-            population () {
-                let population = 0
-                for (let c in this.clusters) {
-                    population += this.clusters[c].population
+    },
+    computed: {
+        population () {
+            let population = 0
+            for (let c in this.clusters) {
+                population += this.clusters[c].population
 
-                }
-                return population
-            },
-
-            connections () {
-                let connections = 0
-                for (let c in this.clusters) {
-                    connections += this.clusters[c].meterCount
-                }
-                return connections
-            },
-            revenue () {
-                let revenue = 0
-                for (let c in this.clusters) {
-                    revenue += parseInt(this.clusters[c].revenue)
-
-                }
-                return revenue
-            },
+            }
+            return population
         },
-        methods: {
-            newCluster () {
-                this.$router.push('/clusters/add')
-            },
+
+        connections () {
+            let connections = 0
+            for (let c in this.clusters) {
+                connections += this.clusters[c].meterCount
+            }
+            return connections
         },
-    }
+        revenue () {
+            let revenue = 0
+            for (let c in this.clusters) {
+                revenue += parseInt(this.clusters[c].revenue)
+
+            }
+            return revenue
+        },
+    },
+    methods: {
+        newCluster () {
+            this.$router.push('/clusters/add')
+        },
+    },
+}
 </script>
 
 <style>

@@ -106,75 +106,75 @@
 <script>
 
 
-    import { RestrictionService } from '../services/RestrictionService'
-    import { EventBus } from './eventbus'
+import { RestrictionService } from '../services/RestrictionService'
+import { EventBus } from './eventbus'
 
-    export default {
-        name: 'Stepper',
+export default {
+    name: 'Stepper',
 
-        props: {
-            purchasingType: String,
-            watchingMiniGrids: Array
-        },
-        data () {
-            return {
-                loadingNextStep: false,
-                restrictionService: new RestrictionService(),
-                activeStep: 'firstStep',
-                firstStep: false,
-                secondStep: false,
-                thirdStep: false,
-                purchaseCode: '',
-                PaymentProcess: false,
-            }
-        },
-        methods: {
-            async nextStep (id, index) {
-                this[id] = true
-                this.loadingNextStep = true
+    props: {
+        purchasingType: String,
+        watchingMiniGrids: Array
+    },
+    data () {
+        return {
+            loadingNextStep: false,
+            restrictionService: new RestrictionService(),
+            activeStep: 'firstStep',
+            firstStep: false,
+            secondStep: false,
+            thirdStep: false,
+            purchaseCode: '',
+            PaymentProcess: false,
+        }
+    },
+    methods: {
+        async nextStep (id, index) {
+            this[id] = true
+            this.loadingNextStep = true
 
-                if (id === 'firstStep' && index === 'secondStep') {
-                    if (this.purchasingType === 'logger') {
-                        window.open('https://micropowermanager.com/logger', '_blank')
-                    } else {
-                        window.open('https://micropowermanager.com/maintainer', '_blank')
-                    }
-                    if (index) {
-                        this.activeStep = index
-                    }
-
-                } else if (id === 'secondStep' && index === 'thirdStep') {
-
-                    let email = this.$store.state.admin.email
-                    try {
-                        let data = await this.restrictionService.sendPurchaseCode(this.purchaseCode, email)
-                        let productCode = data.display_items[0].custom.description
-                        let type = this.purchasingType === 'logger' ? 'mini-grid' : 'maintenance'
-
-                        let codeIsValid = await this.restrictionService.purchaseCodeIsValid(this.purchaseCode, productCode, type)
-                        if (codeIsValid) {
-                            this.PaymentProcess = true
-                        }
-                    } catch (e) {
-
-                        this.PaymentProcess = false
-
-                    }
-                    if (index) {
-                        this.activeStep = index
-                    }
+            if (id === 'firstStep' && index === 'secondStep') {
+                if (this.purchasingType === 'logger') {
+                    window.open('https://micropowermanager.com/logger', '_blank')
+                } else {
+                    window.open('https://micropowermanager.com/maintainer', '_blank')
+                }
+                if (index) {
+                    this.activeStep = index
                 }
 
-                this.loadingNextStep = false
+            } else if (id === 'secondStep' && index === 'thirdStep') {
 
-            },
+                let email = this.$store.state.admin.email
+                try {
+                    let data = await this.restrictionService.sendPurchaseCode(this.purchaseCode, email)
+                    let productCode = data.display_items[0].custom.description
+                    let type = this.purchasingType === 'logger' ? 'mini-grid' : 'maintenance'
 
-            closeStepper () {
+                    let codeIsValid = await this.restrictionService.purchaseCodeIsValid(this.purchaseCode, productCode, type)
+                    if (codeIsValid) {
+                        this.PaymentProcess = true
+                    }
+                } catch (e) {
 
-                EventBus.$emit('closeModal', this.PaymentProcess)
+                    this.PaymentProcess = false
+
+                }
+                if (index) {
+                    this.activeStep = index
+                }
             }
+
+            this.loadingNextStep = false
+
         },
-    }
+
+        closeStepper () {
+
+            EventBus.$emit('closeModal', this.PaymentProcess)
+        }
+    },
+}
 </script>
 
 <style scoped>

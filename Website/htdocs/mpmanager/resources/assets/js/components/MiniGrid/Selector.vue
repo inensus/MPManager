@@ -39,52 +39,52 @@
 
 <script>
 
-    import {MiniGridService} from '../../services/MiniGridService'
+import {MiniGridService} from '../../services/MiniGridService'
 
-    export default {
-        name: 'Selector',
-        created() {
-            this.getMiniGridList()
-        },
-        mounted() {
+export default {
+    name: 'Selector',
+    created() {
+        this.getMiniGridList()
+    },
+    mounted() {
 
-        },
-        data() {
-            return {
-                miniGridService: new MiniGridService(),
-                modalVisibility: false,
-                miniGrids: [],
-                selectedMiniGrid: null
-            }
-        },
-        methods: {
-            async getMiniGridList() {
-                try {
-                    this.miniGrids = await this.miniGridService.getMiniGrids()
-                    this.showSelector()
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-
-            },
-
-            showSelector() {
-                this.modalVisibility = true
-            },
-            setMiniGrid(miniGridId) {
-                this.modalVisibility = true
-                this.$router.replace('/dashboards/mini-grid/' + miniGridId)
-            },
-            alertNotify(type, message) {
-                this.$notify({
-                    group: 'notify',
-                    type: type,
-                    title: type + ' !',
-                    text: message
-                })
-            },
+    },
+    data() {
+        return {
+            miniGridService: new MiniGridService(),
+            modalVisibility: false,
+            miniGrids: [],
+            selectedMiniGrid: null
         }
+    },
+    methods: {
+        async getMiniGridList() {
+            try {
+                this.miniGrids = await this.miniGridService.getMiniGrids()
+                this.showSelector()
+            } catch (e) {
+                this.alertNotify('error', e.message)
+            }
+
+        },
+
+        showSelector() {
+            this.modalVisibility = true
+        },
+        setMiniGrid(miniGridId) {
+            this.modalVisibility = true
+            this.$router.replace('/dashboards/mini-grid/' + miniGridId)
+        },
+        alertNotify(type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message
+            })
+        },
     }
+}
 </script>
 
 <style scoped>

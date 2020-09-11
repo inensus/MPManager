@@ -248,99 +248,98 @@
 </template>
 
 <script>
-    import { EventBus } from '../../shared/eventbus'
-    import PasswordProtection from '../PasswordProtection'
-    import Widget from '../../shared/widget'
-    import { TariffService } from '../../services/TariffService'
+import { EventBus } from '../../shared/eventbus'
+import Widget from '../../shared/widget'
+import { TariffService } from '../../services/TariffService'
 
-    export default {
-        name: 'Add',
-        components: { Widget, PasswordProtection },
-        data () {
-            return {
-                showAdd: false,
-                tariff: null,
-                accessRate: null,
-                hasAccessRate: false,
-                tariffService: new TariffService(),
-                components: [],
-                socialOptions: false,
-                socialTariff: null,
-                loading: false,
-            }
-        },
-        created () {
-            this.tariff = this.tariffService.tariff
-            this.socialTariff = this.tariffService.socialTariff
-        },
-        mounted () {
-            EventBus.$on('showNewTariff', this.show)
-        },
-        methods: {
-            hide () {
-                this.showAdd = false
-            },
-            show () {
-                this.showAdd = true
-                this.tariffService.tariff = this.tariffService.initTariff()
-                this.tariff = this.tariffService.tariff
-                this.accessRate = this.tariffService.accessRate
-            },
-            async saveTariff () {
-                let validatorTariff = true
-                let validatorAccessRate = true
-                let validatorComponent = true
-                let validatorSocial = true
-
-                if (this.hasAccessRate)
-                    validatorAccessRate = await this.$validator.validateAll('Access-Rate-Form')
-
-                if (this.socialOptions)
-                    validatorSocial = await this.$validator.validateAll('Social-Form')
-                if (this.components.length > 0)
-                    validatorComponent = await this.$validator.validateAll('Component-Form')
-
-                validatorTariff = await this.$validator.validateAll('Tariff-Form')
-
-                if (validatorTariff && validatorAccessRate && validatorComponent && validatorSocial) {
-                    try {
-                        this.loading = true
-
-                        this.tariffService.setCurrency(this.appConfig.currency)
-                        this.tariffService.setAccessRate(this.hasAccessRate, this.accessRate)
-                        this.tariff = await this.tariffService.createTariff()
-                        this.loading = false
-                        this.hide()
-                        EventBus.$emit('tariffAdded', this.tariff)
-                        this.alertNotify('success', 'New tariff registered successfully.')
-
-                    } catch (e) {
-                        this.loading = false
-                        this.alertNotify('error', e.message)
-                    }
-                }
-
-            },
-            addComponent () {
-                this.components = this.tariffService.addAdditionalCostComponent()
-            },
-            removeComponent (id) {
-                this.components = this.tariffService.removeAdditionalComponent(id)
-            },
-            showSocialOptions () {
-                this.socialOptions = !this.socialOptions
-            },
-            alertNotify (type, message) {
-                this.$notify({
-                    group: 'notify',
-                    type: type,
-                    title: type + ' !',
-                    text: message
-                })
-            },
+export default {
+    name: 'Add',
+    components: { Widget },
+    data () {
+        return {
+            showAdd: false,
+            tariff: null,
+            accessRate: null,
+            hasAccessRate: false,
+            tariffService: new TariffService(),
+            components: [],
+            socialOptions: false,
+            socialTariff: null,
+            loading: false,
         }
+    },
+    created () {
+        this.tariff = this.tariffService.tariff
+        this.socialTariff = this.tariffService.socialTariff
+    },
+    mounted () {
+        EventBus.$on('showNewTariff', this.show)
+    },
+    methods: {
+        hide () {
+            this.showAdd = false
+        },
+        show () {
+            this.showAdd = true
+            this.tariffService.tariff = this.tariffService.initTariff()
+            this.tariff = this.tariffService.tariff
+            this.accessRate = this.tariffService.accessRate
+        },
+        async saveTariff () {
+            let validatorTariff = true
+            let validatorAccessRate = true
+            let validatorComponent = true
+            let validatorSocial = true
 
+            if (this.hasAccessRate)
+                validatorAccessRate = await this.$validator.validateAll('Access-Rate-Form')
+
+            if (this.socialOptions)
+                validatorSocial = await this.$validator.validateAll('Social-Form')
+            if (this.components.length > 0)
+                validatorComponent = await this.$validator.validateAll('Component-Form')
+
+            validatorTariff = await this.$validator.validateAll('Tariff-Form')
+
+            if (validatorTariff && validatorAccessRate && validatorComponent && validatorSocial) {
+                try {
+                    this.loading = true
+
+                    this.tariffService.setCurrency(this.appConfig.currency)
+                    this.tariffService.setAccessRate(this.hasAccessRate, this.accessRate)
+                    this.tariff = await this.tariffService.createTariff()
+                    this.loading = false
+                    this.hide()
+                    EventBus.$emit('tariffAdded', this.tariff)
+                    this.alertNotify('success', 'New tariff registered successfully.')
+
+                } catch (e) {
+                    this.loading = false
+                    this.alertNotify('error', e.message)
+                }
+            }
+
+        },
+        addComponent () {
+            this.components = this.tariffService.addAdditionalCostComponent()
+        },
+        removeComponent (id) {
+            this.components = this.tariffService.removeAdditionalComponent(id)
+        },
+        showSocialOptions () {
+            this.socialOptions = !this.socialOptions
+        },
+        alertNotify (type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message
+            })
+        },
     }
+
+}
 </script>
 
 <style scoped>

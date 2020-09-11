@@ -8,31 +8,31 @@
 </template>
 
 <script>
-    import { resources } from '../../resources'
+import { resources } from '../../resources'
 
-    export default {
-        name: 'UserList',
-        mounted () {
-            this.getUserList()
+export default {
+    name: 'UserList',
+    mounted () {
+        this.getUserList()
+    },
+    data () {
+        return {
+            users: null,
+            selectedUser: null,
+        }
+    },
+    methods: {
+        selectUser (user) {
+            this.selectedUser = user
+            this.$emit('userSelected', user)
         },
-        data () {
-            return {
-                users: null,
-                selectedUser: null,
-            }
-        },
-        methods: {
-            selectUser (user) {
-                this.selectedUser = user
-                this.$emit('userSelected', user)
-            },
-            getUserList () {
-                axios.get(resources.admin.list).then((response) => {
-                    this.users = response.data.data
-                })
-            }
+        getUserList () {
+            axios.get(resources.admin.list).then((response) => {
+                this.users = response.data.data
+            })
         }
     }
+}
 </script>
 
 <style scoped>

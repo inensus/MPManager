@@ -24,7 +24,8 @@
                 <li class="list-group-item"
                     style="cursor: pointer"
                     :class="selectedLocationIndex === index ? 'active': ''"
-                    v-for="geo,index in geoData"
+                    v-for="(geo,index) in geoData"
+                    :key="index"
                     @click="locationSelected(index,geo)"
                 >{{geo.display_name}}
 
@@ -36,7 +37,7 @@
 
             </ul>
             <ul class="list-group" v-else>
-                <li class="list-group-item" v-for="coordinate,index in polygonCoordinates">
+                <li class="list-group-item" v-for="(coordinate,index) in polygonCoordinates" :key="index" >
                     <i
                             @click="removeCoordinate(index)"
                             class="fa fa-close"
@@ -59,254 +60,248 @@
 </template>
 
 <script>
-  import { LMap, LTileLayer, LMarker, LGeoJson, LPolygon } from 'vue2-leaflet'
-  import { layerGroup } from 'leaflet'
+import { layerGroup } from 'leaflet'
 
-  export default {
+export default {
     name: 'MapWithDrawer',
     components: {
-      LMap,
-      LTileLayer,
-      LGeoJson,
-      LMarker,
-      LPolygon
     },
     props: {
-      cluster_name: {
-        type: String,
-        required: true
-      },
-      filtered_types: {
-        type: Object,
-        default: function () {return {}}
-      }
+        cluster_name: {
+            type: String,
+            required: true
+        },
+        filtered_types: {
+            type: Object,
+            default: function () {return {}}
+        }
     },
     mounted () {this.initMap()},
     data () {
-      return {
-        drawCluster: false,
-        polygonCoordinates: [],
-        polygon: null,
-        drawnPolygons: {
-          'polygon': null,
-          'geoJson': null,
-          'initialized': false,
-        },
-        selectedLocationIndex: null,
-        manualLayer: null,
-        map: null,
-        geoData: null,
-        mapInitialized: false,
-        geoLayer: null,
-      }
+        return {
+            drawCluster: false,
+            polygonCoordinates: [],
+            polygon: null,
+            drawnPolygons: {
+                'polygon': null,
+                'geoJson': null,
+                'initialized': false,
+            },
+            selectedLocationIndex: null,
+            manualLayer: null,
+            map: null,
+            geoData: null,
+            mapInitialized: false,
+            geoLayer: null,
+        }
     },
     methods: {
-      emitLocationSelected (location) {
-        let data = {}
-        if (!('geojson' in location)) {
-          data['geojson'] = location
-        } else {
-          data = location
-        }
+        emitLocationSelected (location) {
+            let data = {}
+            if (!('geojson' in location)) {
+                data['geojson'] = location
+            } else {
+                data = location
+            }
 
-        this.$emit('locationSelected', data)
-      },
+            this.$emit('locationSelected', data)
+        },
 
-      focusLocation (geo) {
-        let tmp = []
-        this.geoLayer.clearLayers()
-        tmp.push(geo)
-        this.setGeoLocation(tmp)
+        focusLocation (geo) {
+            let tmp = []
+            this.geoLayer.clearLayers()
+            tmp.push(geo)
+            this.setGeoLocation(tmp)
 
-      },
-      setMapView (location) {
-        this.map.setView(location, 9)
-      },
-      selectManual () {
-        this.selectedLocationIndex = 'manual'
-        if (!this.manualLayer.getLayers().length) {
-          this.drawnPolygons.polygon = new L.geoJSON(this.drawnPolygons.geoJson)
-          this.drawnPolygons.polygon.addTo(this.manualLayer)
-          this.drawnPolygons.polygon.bringToFront()
-        }
+        },
+        setMapView (location) {
+            this.map.setView(location, 9)
+        },
+        selectManual () {
+            this.selectedLocationIndex = 'manual'
+            if (!this.manualLayer.getLayers().length) {
+                this.drawnPolygons.polygon = new L.geoJSON(this.drawnPolygons.geoJson)
+                this.drawnPolygons.polygon.addTo(this.manualLayer)
+                this.drawnPolygons.polygon.bringToFront()
+            }
 
-        this.emitLocationSelected(this.drawnPolygons.geoJson.geometry)
-        this.geoLayer.clearLayers()
-        this.setMapView({
-          lat: this.drawnPolygons.geoJson.geometry.coordinates[0][0][1],
-          lon: this.drawnPolygons.geoJson.geometry.coordinates[0][0][0]
-        })
-      },
-      locationSelected (index, location) {
-        this.manualLayer.clearLayers()
-        this.selectedLocationIndex = index
-        this.setMapView([location.lat, location.lon])
-        this.emitLocationSelected(location.geojson)
-        this.focusLocation(location)
-      },
-      removeCoordinate (index) {
-        this.polygonCoordinates.splice(index, 1)
-        this.polygon.setLatLngs(this.polygonCoordinates)
-      },
-
-      redrawConfirmation () {
-        return this.$swal({
-          title: 'Only one polygon is supported',
-          text: 'Do you want to remove the current polygon and draw another one',
-          type: 'question',
-          showCancelButton: true,
-          confirmButtonColor: '#3085d6',
-          cancelButtonColor: '#d33',
-          confirmButtonText: 'Redraw',
-          cancelButtonText: 'Dismiss'
-        })
-      },
-
-      async manualDrawwing () {
-        if (this.polygon === null) {
-          this.polygon = L.polyline([]).addTo(this.map)
-        }
-
-        if (this.drawnPolygons.initialized) {
-
-          let result = await this.redrawConfirmation()
-          if (result.value === true) {
-
-            //convert poly line to polygon+
-            this.drawnPolygons.polygon.remove()
+            this.emitLocationSelected(this.drawnPolygons.geoJson.geometry)
+            this.geoLayer.clearLayers()
+            this.setMapView({
+                lat: this.drawnPolygons.geoJson.geometry.coordinates[0][0][1],
+                lon: this.drawnPolygons.geoJson.geometry.coordinates[0][0][0]
+            })
+        },
+        locationSelected (index, location) {
             this.manualLayer.clearLayers()
-            this.drawnPolygons.polygon = null
-            this.drawnPolygons.geoJson = null
-            this.drawnPolygons.initialized = false
-          } else {
-            return
-          }
+            this.selectedLocationIndex = index
+            this.setMapView([location.lat, location.lon])
+            this.emitLocationSelected(location.geojson)
+            this.focusLocation(location)
+        },
+        removeCoordinate (index) {
+            this.polygonCoordinates.splice(index, 1)
+            this.polygon.setLatLngs(this.polygonCoordinates)
+        },
 
-        }
+        redrawConfirmation () {
+            return this.$swal({
+                title: 'Only one polygon is supported',
+                text: 'Do you want to remove the current polygon and draw another one',
+                type: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Redraw',
+                cancelButtonText: 'Dismiss'
+            })
+        },
 
-        this.drawCluster = !this.drawCluster
-        if (this.drawCluster) {
-          //clear layer
-          this.geoLayer.clearLayers()
-        } else if (this.polygonCoordinates.length > 1) {
-
-          //convert poly line to polygon+
-          this.drawnPolygons.polygon = new L.Polygon(this.polygon.getLatLngs())
-          this.drawnPolygons.polygon.addTo(this.manualLayer)
-
-          this.drawnPolygons.geoJson = this.drawnPolygons.polygon.toGeoJSON()
-          this.drawnPolygons.initialized = true
-
-          this.polygon.remove()
-          this.polygon = null
-          this.polygonCoordinates = []
-
-          this.selectedLocationIndex = 'manual'
-          this.emitLocationSelected(this.drawnPolygons.geoJson.geometry)
-
-        }
-
-      },
-
-      getClusterGeoData () {
-        if (this.cluster_name.length === 0) {
-          this.$swal({
-            title: 'Name required',
-            text: 'Please enter the name first',
-            type: 'warning',
-            showCancelButton: false,
-
-          })
-          return
-        }
-        axios.get('https://nominatim.openstreetmap.org/search.php?q=' + this.cluster_name + '&polygon_geojson=1&format=json')
-          .then((response) => {
-            this.geoData = this.filterResultsOut(response.data)
-            if (!this.mapInitialized) {
-              this.initMap()
+        async manualDrawwing () {
+            if (this.polygon === null) {
+                this.polygon = L.polyline([]).addTo(this.map)
             }
 
-            this.setGeoLocation(response.data)
-          })
-      },
+            if (this.drawnPolygons.initialized) {
 
-      filterResultsOut (data) {
-        let result = []
-        for (let i in data) {
-          let geoType = data[i].geojson.type
-          if (Object.keys(this.filtered_types).length > 0 && !(geoType.toLowerCase() in this.filtered_types)) {
-            continue
-          }
-          result.push(data[i])
-        }
-        return result
-      },
+                let result = await this.redrawConfirmation()
+                if (result.value === true) {
 
-      setGeoLocation (data) {
-        let locations = []
-        this.geoLayer.clearLayers()
-        for (let i in data) {
-          let geoType = data[i].geojson.type
+                    //convert poly line to polygon+
+                    this.drawnPolygons.polygon.remove()
+                    this.manualLayer.clearLayers()
+                    this.drawnPolygons.polygon = null
+                    this.drawnPolygons.geoJson = null
+                    this.drawnPolygons.initialized = false
+                } else {
+                    return
+                }
 
-          locations.push({
-            'type': 'Feature',
-            'properties': {'popupContent': data[i].display_name,},
-
-            'geometry': {
-              'type': geoType,
-              'coordinates': data[i].geojson.coordinates
             }
-          })
 
-          let geoJsonLayer = L.geoJSON(locations)
+            this.drawCluster = !this.drawCluster
+            if (this.drawCluster) {
+                //clear layer
+                this.geoLayer.clearLayers()
+            } else if (this.polygonCoordinates.length > 1) {
 
-          geoJsonLayer.addTo(this.geoLayer)
+                //convert poly line to polygon+
+                this.drawnPolygons.polygon = new L.Polygon(this.polygon.getLatLngs())
+                this.drawnPolygons.polygon.addTo(this.manualLayer)
 
-          this.map.setView([data[i].lat, data[i].lon], 12)
-        }
-      },
+                this.drawnPolygons.geoJson = this.drawnPolygons.polygon.toGeoJSON()
+                this.drawnPolygons.initialized = true
 
-      initMap () {
-        this.mapInitialized = true
-        //create map
-        this.map = L.map('map')
-          .setView([-2.500381, 32.889060], 6)
-        //set tile
-        this.tileLayer = L.tileLayer(
-          //'https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png',
-          'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
-          {
-            maxZoom: 18,
-            attribution: ' <span style="cursor:pointer">&copy; MpManager</span>',
-          }
-        )
+                this.polygon.remove()
+                this.polygon = null
+                this.polygonCoordinates = []
 
-        this.tileLayer.addTo(this.map)
+                this.selectedLocationIndex = 'manual'
+                this.emitLocationSelected(this.drawnPolygons.geoJson.geometry)
 
-        this.geoLayer = layerGroup().addTo(this.map)
-        this.manualLayer = layerGroup().addTo(this.map)
-        var parent = this
-        this.map.on('click', function (e) {
-          if (parent.drawCluster === true) {
-            var coord = e.latlng
-            var lat = coord.lat
-            var lng = coord.lng
-
-            parent.polygonCoordinates.push([lat, lng])
-
-            if (parent.polygon === null) {
-              parent.polygon = L.polyline([[lat, lng]
-              ]).addTo(parent.map)
             }
-            parent.polygon.setLatLngs(parent.polygonCoordinates)
 
-          }
-        })
-        this.$emit('mapInitialized', this.map)
-      },
+        },
+
+        getClusterGeoData () {
+            if (this.cluster_name.length === 0) {
+                this.$swal({
+                    title: 'Name required',
+                    text: 'Please enter the name first',
+                    type: 'warning',
+                    showCancelButton: false,
+
+                })
+                return
+            }
+            axios.get('https://nominatim.openstreetmap.org/search.php?q=' + this.cluster_name + '&polygon_geojson=1&format=json')
+                .then((response) => {
+                    this.geoData = this.filterResultsOut(response.data)
+                    if (!this.mapInitialized) {
+                        this.initMap()
+                    }
+
+                    this.setGeoLocation(response.data)
+                })
+        },
+
+        filterResultsOut (data) {
+            let result = []
+            for (let i in data) {
+                let geoType = data[i].geojson.type
+                if (Object.keys(this.filtered_types).length > 0 && !(geoType.toLowerCase() in this.filtered_types)) {
+                    continue
+                }
+                result.push(data[i])
+            }
+            return result
+        },
+
+        setGeoLocation (data) {
+            let locations = []
+            this.geoLayer.clearLayers()
+            for (let i in data) {
+                let geoType = data[i].geojson.type
+
+                locations.push({
+                    'type': 'Feature',
+                    'properties': {'popupContent': data[i].display_name,},
+
+                    'geometry': {
+                        'type': geoType,
+                        'coordinates': data[i].geojson.coordinates
+                    }
+                })
+
+                let geoJsonLayer = L.geoJSON(locations)
+
+                geoJsonLayer.addTo(this.geoLayer)
+
+                this.map.setView([data[i].lat, data[i].lon], 12)
+            }
+        },
+
+        initMap () {
+            this.mapInitialized = true
+            //create map
+            this.map = L.map('map')
+                .setView([-2.500381, 32.889060], 6)
+            //set tile
+            this.tileLayer = L.tileLayer(
+                //'https://cartodb-basemaps-{s}.global.ssl.fastly.net/rastertiles/voyager/{z}/{x}/{y}.png',
+                'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
+                {
+                    maxZoom: 18,
+                    attribution: ' <span style="cursor:pointer">&copy; MpManager</span>',
+                }
+            )
+
+            this.tileLayer.addTo(this.map)
+
+            this.geoLayer = layerGroup().addTo(this.map)
+            this.manualLayer = layerGroup().addTo(this.map)
+            var parent = this
+            this.map.on('click', function (e) {
+                if (parent.drawCluster === true) {
+                    var coord = e.latlng
+                    var lat = coord.lat
+                    var lng = coord.lng
+
+                    parent.polygonCoordinates.push([lat, lng])
+
+                    if (parent.polygon === null) {
+                        parent.polygon = L.polyline([[lat, lng]
+                        ]).addTo(parent.map)
+                    }
+                    parent.polygon.setLatLngs(parent.polygonCoordinates)
+
+                }
+            })
+            this.$emit('mapInitialized', this.map)
+        },
 
     }
-  }
+}
 </script>
 
 <style scoped>

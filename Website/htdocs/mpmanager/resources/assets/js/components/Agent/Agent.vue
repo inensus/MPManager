@@ -35,34 +35,34 @@
     </div>
 </template>
 <script>
-    import AgentDetail from './AgentDetail'
-    import AssignedApplianceList from './Appliances/AssignedApplianceList'
-    import AgentReceiptList from './Receipt/AgentReceiptList'
-    import SoldApplianceList from './Appliances/SoldApplianceList'
-    import AgentTransactionList from './AgentTransactionList'
-    import AgentTicketList from './AgentTicketList'
-    import AgentBalanceHistoryList from './Balance/AgentBalanceHistory'
+import AgentDetail from './AgentDetail'
+import AssignedApplianceList from './Appliances/AssignedApplianceList'
+import AgentReceiptList from './Receipt/AgentReceiptList'
+import SoldApplianceList from './Appliances/SoldApplianceList'
+import AgentTransactionList from './AgentTransactionList'
+import AgentTicketList from './AgentTicketList'
+import AgentBalanceHistoryList from './Balance/AgentBalanceHistory'
 
-    export default {
-        name: 'Agent',
-        data () {
-            return {
-                agentId: null
-            }
-        },
-        components: {
-            AgentBalanceHistoryList,
-            AgentTicketList,
-            AgentTransactionList,
-            SoldApplianceList,
-            AgentReceiptList,
-            AssignedApplianceList,
-            AgentDetail
-        },
-        created () {
-            this.agentId = this.$route.params.id
+export default {
+    name: 'Agent',
+    data () {
+        return {
+            agentId: null
         }
+    },
+    components: {
+        AgentBalanceHistoryList,
+        AgentTicketList,
+        AgentTransactionList,
+        SoldApplianceList,
+        AgentReceiptList,
+        AssignedApplianceList,
+        AgentDetail
+    },
+    created () {
+        this.agentId = this.$route.params.id
     }
+}
 
 </script>
 <style scoped>

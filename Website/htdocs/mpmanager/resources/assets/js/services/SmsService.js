@@ -61,12 +61,8 @@ export class SmsService {
         }
         return this.numberList.filter((n) => {
             return n.number.includes(text) ||
-                (n.owner !== null && n.owner !== undefined && n.owner.name !== undefined && n.owner.surname !== undefined
-                    (
-                        n.owner.name.toLowerCase().includes(text.toLowerCase()) ||
-                        n.owner.surname.toLowerCase().includes(text.toLowerCase())
-                    )
-                )
+                (n.owner !== null && n.owner !== undefined && n.owner.name !== undefined && n.owner.surname !== undefined) ||
+                (n.owner.name.toLowerCase().includes(text.toLowerCase()) || n.owner.surname.toLowerCase().includes(text.toLowerCase()))
         })
 
     }
@@ -81,7 +77,7 @@ export class SmsService {
                 found = true
                 break
             }
-            if (!stored && this.receiverList[r].receiver === receiver) {
+            if (!stored && this.receiverList[index].receiver === receiver) {
                 found = true
                 break
             }
@@ -105,7 +101,7 @@ export class SmsService {
                 this.receiverList.splice(index, 1)
                 break
             } else if (!receiver.stored && receiver === this.receiverList[index]) {
-                this.receiverList.splice(r, 1)
+                this.receiverList.splice(index, 1)
                 break
             }
         }
@@ -184,7 +180,7 @@ export class SmsService {
     async sendToPerson (message, personId, senderId) {
         let sendSmsPM = {
             'message': message,
-            'phone': phone,
+            'person_id': personId,
             'senderId': senderId,
         }
         try {

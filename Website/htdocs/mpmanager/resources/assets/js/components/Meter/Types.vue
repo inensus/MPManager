@@ -58,15 +58,17 @@
                         <md-table-head>ID</md-table-head>
                         <md-table-head>Name</md-table-head>
                         <md-table-head>Max Current</md-table-head>
-                        <md-table-head>Online</md-table-head>
+                        <md-table-head>Connectivity</md-table-head>
                     </md-table-row>
-                    <md-table-row v-for="(type,index) in meterTypesList">
+                    <md-table-row v-for="(type,index) in meterTypesList" :key="index">
                         <md-table-cell>{{index+1}}</md-table-cell>
                         <md-table-cell>{{type.name}}</md-table-cell>
                         <md-table-cell>{{type.max_current}}</md-table-cell>
-                        <md-table-cell><md-checkbox
-                            v-model="type.online === 0 ? true : false"
-                            disabled>{{type.online === 0 ? 'Online' : 'Offline'}}</md-checkbox></md-table-cell>
+                        <md-table-cell>
+                            <md-icon>{{type.online === 0 ? 'check_box' : 'check_box_outline_blank'}}
+                            </md-icon>
+                            <span>{{ connectivity[index] }}</span>
+                            </md-table-cell>
                     </md-table-row>
 
 
@@ -95,13 +97,12 @@
 
 <script>
 
-  import Widget from '../../shared/widget'
-  import NoTableData from '../../shared/NoTableData'
-  import { MeterTypeService } from '../../services/MeterTypeService'
+import Widget from '../../shared/widget'
+import { MeterTypeService } from '../../services/MeterTypeService'
 
-  export default {
+export default {
     name: 'Types',
-    components: { Widget, NoTableData},
+    components: { Widget},
     data(){
         return {
             meterTypeService: new MeterTypeService(),
@@ -116,14 +117,25 @@
 
         }
     },
-      mounted () {
+    mounted () {
         this.getMeterTypes()
-      },
-      methods:{
+    },
+    computed:{
+        connectivity: function(){
+            return this.meterTypesList.map(function (type){
+                return type.online === 0 ? 'Online' : 'Offline'
+            })
+
+        }
+    },
+    methods:{
+        getMeterIsOnline(type){
+            return type.online === 0
+        },
         showNewType(){
             this.toggleNewType = !this.toggleNewType
         },
-       async saveMeterType(){
+        async saveMeterType(){
             let validation = await this.$validator.validateAll()
             if (!validation) {
                 return
@@ -143,22 +155,22 @@
 
         },
         async getMeterTypes () {
-              try {
-                  this.meterTypesList = await this.meterTypeService.getMeterTypes()
-              } catch (e) {
-                  this.alertNotify('error', e.message)
-              }
-          },
-          alertNotify (type, message) {
-              this.$notify({
-                  group: 'notify',
-                  type: type,
-                  title: type + ' !',
-                  text: message
-              })
-          }
+            try {
+                this.meterTypesList = await this.meterTypeService.getMeterTypes()
+            } catch (e) {
+                this.alertNotify('error', e.message)
+            }
+        },
+        alertNotify (type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message
+            })
+        }
     }
-  }
+}
 </script>
 
 <style scoped>

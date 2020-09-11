@@ -93,51 +93,48 @@
 
 </template>
 <script>
-    import Widget from '../../shared/widget'
-    import { AgentTicketService } from '../../services/AgentTicketService'
-    import { EventBus } from '../../shared/eventbus'
+import Widget from '../../shared/widget'
+import { AgentTicketService } from '../../services/AgentTicketService'
+import { EventBus } from '../../shared/eventbus'
 
-    export default {
-        name: 'AgentTicketList',
-        data () {
-            return {
-                loaded: false,
-                agentTicketService: new AgentTicketService(this.agentId),
-                subscriber: 'AgentTickets',
-            }
-        },
-        components: {
-            Widget
-        },
-        props: {
-            agentId: {
-                default: null
-            }
-        },
-        mounted () {
-
-            EventBus.$on('pageLoaded', this.reloadList)
-
-        },
-        beforeDestroy () {
-
-            EventBus.$off('pageLoaded', this.reloadList)
-        },
-        methods: {
-            reloadList (subscriber, data) {
-                if (subscriber !== this.subscriber) return
-                this.agentTicketService.updateList(data)
-                this.loaded = true
-            },
-            saveComment (ticket) {
-
-            },
-            showComment (ticket) {
-                Vue.set(ticket, 'newComment', !ticket.newComment)
-
-            },
+export default {
+    name: 'AgentTicketList',
+    data () {
+        return {
+            loaded: false,
+            agentTicketService: new AgentTicketService(this.agentId),
+            subscriber: 'AgentTickets',
         }
+    },
+    components: {
+        Widget
+    },
+    props: {
+        agentId: {
+            default: null
+        }
+    },
+    mounted () {
+
+        EventBus.$on('pageLoaded', this.reloadList)
+
+    },
+    beforeDestroy () {
+
+        EventBus.$off('pageLoaded', this.reloadList)
+    },
+    methods: {
+        reloadList (subscriber, data) {
+            if (subscriber !== this.subscriber) return
+            this.agentTicketService.updateList(data)
+            this.loaded = true
+        },
+        showComment (ticket) {
+            Vue.set(ticket, 'newComment', !ticket.newComment)
+
+        },
     }
+}
 
 </script>
 <style scoped>

@@ -19,7 +19,7 @@
                         <md-table-head>ID
                         </md-table-head>
                         <md-table-head>
-                            <font-awesome-icon icon icon="barcode"/>
+                            <font-awesome-icon  icon="barcode"/>
                             Date
                         </md-table-head>
                         <md-table-head>File</md-table-head>
@@ -138,66 +138,66 @@
 <script>
 
 
-    import Widget from '../../shared/widget'
-    import { BookKeepingList } from '../../classes/BookKeeping/BookKeeping'
-    import { EventBus } from '../../shared/eventbus'
-    import { Monthly } from '../../classes/Reports/Monthly'
-    import { Weekly } from '../../classes/Reports/Weekly'
-    import { resources } from '../../resources'
+import Widget from '../../shared/widget'
+import { BookKeepingList } from '../../classes/BookKeeping/BookKeeping'
+import { EventBus } from '../../shared/eventbus'
+import { Monthly } from '../../classes/Reports/Monthly'
+import { Weekly } from '../../classes/Reports/Weekly'
+import { resources } from '../../resources'
 
-    export default {
-        name: 'BookKeepingReportList',
-        components: { Widget },
-        mounted () {
-            EventBus.$emit('bread', this.bcd)
-            EventBus.$on('pageLoaded', this.reloadList)
+export default {
+    name: 'BookKeepingReportList',
+    components: { Widget },
+    mounted () {
+        EventBus.$emit('bread', this.bcd)
+        EventBus.$on('pageLoaded', this.reloadList)
 
-        },
-        beforeDestroy () {
-            EventBus.$off('pageLoaded', this.reloadList)
-        },
-        data () {
-            return {
-                bookKeeping: new BookKeepingList(),
-                monthlyReport: new Monthly(),
-                weeklyReport: new Weekly(),
-                subscriberBookKeeping: 'bookKeeping',
-                subscriberMonthlyReport: 'monthlyReport',
-                subscriberWeeklyReport: 'weeklyReport',
-                bcd: {
-                    'Home': {
-                        'href': '/'
-                    },
-                    'Reports': {
-                        'href': null
-                    },
+    },
+    beforeDestroy () {
+        EventBus.$off('pageLoaded', this.reloadList)
+    },
+    data () {
+        return {
+            bookKeeping: new BookKeepingList(),
+            monthlyReport: new Monthly(),
+            weeklyReport: new Weekly(),
+            subscriberBookKeeping: 'bookKeeping',
+            subscriberMonthlyReport: 'monthlyReport',
+            subscriberWeeklyReport: 'weeklyReport',
+            bcd: {
+                'Home': {
+                    'href': '/'
                 },
+                'Reports': {
+                    'href': null
+                },
+            },
+        }
+    },
+    methods: {
+
+        reloadList (subscriber, data) {
+            if (subscriber === this.subscriberBookKeeping) {
+                this.bookKeeping.updateList(data)
+            } else if (subscriber === this.subscriberWeeklyReport) {
+                this.weeklyReport.updateList(data)
+            } else if (subscriber === this.subscriberMonthlyReport) {
+                this.monthlyReport.updateList(data)
             }
         },
-        methods: {
 
-            reloadList (subscriber, data) {
-                if (subscriber === this.subscriberBookKeeping) {
-                    this.bookKeeping.updateList(data)
-                } else if (subscriber === this.subscriberWeeklyReport) {
-                    this.weeklyReport.updateList(data)
-                } else if (subscriber === this.subscriberMonthlyReport) {
-                    this.monthlyReport.updateList(data)
-                }
-            },
-
-            endSearching () {
-                this.bookKeeping.showAll()
-            },
-            download (id, reference) {
-                if (reference === 'bookKeeping') {
-                    window.open(resources.bookKeeping.download + id + '/book-keeping', '_blank')
-                } else if (reference === 'report') {
-                    window.open(resources.reports.download + id + '/download')
-                }
+        endSearching () {
+            this.bookKeeping.showAll()
+        },
+        download (id, reference) {
+            if (reference === 'bookKeeping') {
+                window.open(resources.bookKeeping.download + id + '/book-keeping', '_blank')
+            } else if (reference === 'report') {
+                window.open(resources.reports.download + id + '/download')
             }
         }
     }
+}
 </script>
 
 <style scoped>

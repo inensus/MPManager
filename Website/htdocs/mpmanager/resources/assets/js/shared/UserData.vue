@@ -15,25 +15,28 @@
 </template>
 
 <script>
-  import { EventBus } from './eventbus'
+import { EventBus } from './eventbus'
 
-  export default {
+export default {
     name: 'UserData',
     data () {
-      return {
-        adminName: '',
-        adminId: '',
-        adminEmail: '',
-      }
+        return {
+            adminName: '',
+            adminId: '',
+            adminEmail: '',
+        }
     },
     created () {
-      EventBus.$on('adminGot', data => {
-        this.adminName = this.$store.state.admin.name
-        this.adminId = this.$store.state.admin.id
-        this.adminEmail = this.$store.state.admin.email
-      })
+        EventBus.$on('adminGot', this.getAdmin)
     },
-  }
+    methods:{
+        getAdmin(){
+            this.adminName = this.$store.state.admin.name
+            this.adminId = this.$store.state.admin.id
+            this.adminEmail = this.$store.state.admin.email
+        }
+    }
+}
 </script>
 
 <style scoped>

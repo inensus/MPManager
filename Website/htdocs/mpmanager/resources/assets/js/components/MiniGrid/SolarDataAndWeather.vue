@@ -60,61 +60,58 @@
 </template>
 
 <script>
-    import Widget from '../../shared/widget'
-    import Box from '../Box'
 
-    export default {
-        name: 'SolarDataAndWeather',
-        components: {Box, Widget},
-        data() {
-            return {
-                solar_data: null,
-                weather: null,
-            }
+export default {
+    name: 'SolarDataAndWeather',
+    data() {
+        return {
+            solar_data: null,
+            weather: null,
+        }
+    },
+    props: {
+        mini_grid_id: {
+            type: String,
+            required: true,
         },
-        props: {
-            mini_grid_id: {
-                type: String,
-                required: true,
-            },
-            mini_grid_coordinates: {
-                type: String,
-                required: true
-            }
-        },
-        created() {
-            this.getSolarData()
-            this.getWeatherData()
-        },
-        filters: {
-            momento: function (date) {
-                return new Date(date * 1000).toLocaleTimeString('en-GB').slice(0, 5)
-            }
-        },
-        methods: {
-            getSolarData() {
-                axios.get(resources.solar.detail + this.mini_grid_id + '/solar')
-                    .then((response) => {
-                        this.solar_data = response.data.data
-                    })
-            },
-            getWeatherData() {
-                let points = this.mini_grid_coordinates.split(',')
-
-                let req = new Request('https://api.openweathermap.org/data/2.5/weather?APPID=4a84b68e24abd9d99758a67f8d1d984b&units=metric&lat=' + points[0] + '&lon=' + points[1], {
-                    method: 'GET',
+        mini_grid_coordinates: {
+            type: String,
+            required: true
+        }
+    },
+    created() {
+        this.getSolarData()
+        this.getWeatherData()
+    },
+    filters: {
+        momento: function (date) {
+            return new Date(date * 1000).toLocaleTimeString('en-GB').slice(0, 5)
+        }
+    },
+    methods: {
+        getSolarData() {
+            axios.get(resources.solar.detail + this.mini_grid_id + '/solar')
+                .then((response) => {
+                    this.solar_data = response.data.data
                 })
-                fetch(req).then((response) => {
-                    return response.json()
-                }).then((response) => {
-                    this.weather = response
-                }).catch(function (e) {
-                    console.log(e)
-                })
+        },
+        getWeatherData() {
+            let points = this.mini_grid_coordinates.split(',')
 
-            }
+            let req = new Request('https://api.openweathermap.org/data/2.5/weather?APPID=4a84b68e24abd9d99758a67f8d1d984b&units=metric&lat=' + points[0] + '&lon=' + points[1], {
+                method: 'GET',
+            })
+            fetch(req).then((response) => {
+                return response.json()
+            }).then((response) => {
+                this.weather = response
+            }).catch(function (e) {
+                console.log(e)
+            })
+
         }
     }
+}
 </script>
 
 <style scoped>

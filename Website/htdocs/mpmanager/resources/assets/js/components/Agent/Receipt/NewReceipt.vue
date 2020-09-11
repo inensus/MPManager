@@ -66,73 +66,73 @@
 </template>
 <script>
 
-    import { EventBus } from '../../../shared/eventbus'
-    import { AgentReceiptService } from '../../../services/AgentReceiptService'
-    import { AgentService } from '../../../services/AgentService'
+import { EventBus } from '../../../shared/eventbus'
+import { AgentReceiptService } from '../../../services/AgentReceiptService'
+import { AgentService } from '../../../services/AgentService'
 
-    export default {
-        name: 'NewReceipt',
-        data () {
-            return {
-                agentReceiptService: new AgentReceiptService(),
-                loading: false,
-                agentService: new AgentService(),
-            }
-        },
-        components: {},
-        props: {
-            agent: {},
-            addNewReceipt: {
-                type: Boolean,
-                default: false,
+export default {
+    name: 'NewReceipt',
+    data () {
+        return {
+            agentReceiptService: new AgentReceiptService(),
+            loading: false,
+            agentService: new AgentService(),
+        }
+    },
+    components: {},
+    props: {
+        agent: {},
+        addNewReceipt: {
+            type: Boolean,
+            default: false,
 
-            }
-        },
-        methods: {
+        }
+    },
+    methods: {
 
-            async saveReceipt () {
-                if (this.agentReceiptService.newReceipt.amount > this.agent.dueToEnergySupplier) {
-                    this.alertNotify('warn', 'Max receipt amount must be equal to ' + this.agent.dueToEnergySupplier)
-                    this.agentReceiptService.newReceipt.amount = this.agent.dueToEnergySupplier
-                } else {
-                    let validator = await this.$validator.validateAll('Receipt-Form')
-                    if (validator) {
+        async saveReceipt () {
+            if (this.agentReceiptService.newReceipt.amount > this.agent.dueToEnergySupplier) {
+                this.alertNotify('warn', 'Max receipt amount must be equal to ' + this.agent.dueToEnergySupplier)
+                this.agentReceiptService.newReceipt.amount = this.agent.dueToEnergySupplier
+            } else {
+                let validator = await this.$validator.validateAll('Receipt-Form')
+                if (validator) {
+                    try {
+                        this.loading = true
                         try {
-                            this.loading = true
-                            try {
 
-                                this.agentReceiptService.newReceipt.agentId = this.agent.id
-                                await this.agentReceiptService.addNewReceipt()
-                                this.loading = false
-                                this.receiptAdded()
-                                this.alertNotify('success', 'Agent added successfully')
-                            } catch (e) {
-                                this.loading = false
-                                this.alertNotify('error', e.message)
-                            }
+                            this.agentReceiptService.newReceipt.agentId = this.agent.id
+                            await this.agentReceiptService.addNewReceipt()
+                            this.loading = false
+                            this.receiptAdded()
+                            this.alertNotify('success', 'Agent added successfully')
                         } catch (e) {
-
+                            this.loading = false
+                            this.alertNotify('error', e.message)
                         }
+                    } catch (e) {
+                        this.alertNotify('error', e.message)
                     }
                 }
+            }
 
-            },
-            hide () {
-                EventBus.$emit('newReceiptClosed')
-            },
-            receiptAdded () {
-                EventBus.$emit('receiptAdded')
-            },
-            alertNotify (type, message) {
-                this.$notify({
-                    group: 'notify',
-                    type: type,
-                    title: type + ' !',
-                    text: message
-                })
-            },
-        }
+        },
+        hide () {
+            EventBus.$emit('newReceiptClosed')
+        },
+        receiptAdded () {
+            EventBus.$emit('receiptAdded')
+        },
+        alertNotify (type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message
+            })
+        },
     }
+}
 
 </script>
 <style scoped>
