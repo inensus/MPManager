@@ -98,8 +98,18 @@
                     },
                     {
                         name: 'Agents',
-                        route: '/agents/page/1',
+
                         icon: 'user',
+                        children: [
+                            {
+                                name: 'List',
+                                route: '/agents/page/1',
+                            },
+                            {
+                                name: 'Commission Types',
+                                route: '/commissions'
+                            },
+                        ]
                     },
                     {
                         name: 'Meters',
@@ -371,3 +381,4 @@
         padding-left: 0.7rem;
     }
 </style>
+
