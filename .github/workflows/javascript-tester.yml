@@ -27,9 +27,16 @@ jobs:
           node-version: 14.3
       - run: npm install
         working-directory: ./Website/htdocs/mpmanager
+      
+      - name: Eslint for Javascript files
+        run: ./node_modules/.bin/eslint ./resources/assets/js/**/*.js
+        working-directory: ./Website/htdocs/mpmanager
+      
+      - name: Eslint for Vue files
+        run: ./node_modules/.bin/eslint ./resources/assets/js/**/*.vue
+        working-directory: ./Website/htdocs/mpmanager
+      
       - name: Build npm on production mode
         run: npm run production
-        working-directory: ./Website/htdocs/mpmanager
-      - run: ./node_modules/.bin/eslint ./resources/assets/js/**/*.js
         working-directory: ./Website/htdocs/mpmanager
         
