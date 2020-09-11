@@ -67,8 +67,6 @@
     </div>
 </template>
 <script>
-
-
 export default {
 
     data: () => (
@@ -97,8 +95,18 @@ export default {
                 },
                 {
                     name: 'Agents',
-                    route: '/agents/page/1',
+
                     icon: 'user',
+                    children: [
+                        {
+                            name: 'List',
+                            route: '/agents/page/1',
+                        },
+                        {
+                            name: 'Commission Types',
+                            route: '/commissions'
+                        },
+                    ]
                 },
                 {
                     name: 'Meters',
@@ -370,3 +378,4 @@ export default {
         padding-left: 0.7rem;
     }
 </style>
+

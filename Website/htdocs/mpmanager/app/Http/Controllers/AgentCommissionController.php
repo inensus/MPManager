@@ -5,30 +5,30 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateAgentCommissionRequest;
 use App\Http\Resources\ApiResource;
 use App\Models\AgentCommission;
+use App\Services\AgentCommissionService;
 use Illuminate\Http\Request;
 
 class AgentCommissionController extends Controller
 {
+
+    private $agentCommissionService;
+
+    public function __construct(AgentCommissionService $agentCommissionService)
+    {
+        $this->agentCommissionService = $agentCommissionService;
+    }
+
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(): ApiResource
     {
         $commissions = AgentCommission::query()->paginate(config('settings.paginate'));
         return new ApiResource($commissions);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -38,55 +38,35 @@ class AgentCommissionController extends Controller
      */
     public function store(CreateAgentCommissionRequest $request)
     {
-        $commission = AgentCommission::query()->create(request()->only('name',
-            'energy_commission',
-            'appliance_commission',
-            'risk_balance'));
+        $commission = $this->agentCommissionService->create($request);
         return new ApiResource($commission);
     }
 
-    /**
-     * Display the specified resourc
-     *
-     * @param AgentCommission $commission
-     * @return void
-     */
-    public function show(AgentCommission $commission)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param \App\Models\Commission $commission
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Commission $commission)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Commission $commission
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param AgentCommission $commission
+     * @return void
      */
-    public function update(Request $request, Commission $commission)
+    public function update(CreateAgentCommissionRequest $request, AgentCommission $commission): ApiResource
     {
-        //
+        $updatedAgentCommission = $this->agentCommissionService->update($commission, $request->all());
+        return new ApiResource($updatedAgentCommission);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\Models\Commission $commission
-     * @return \Illuminate\Http\Response
+     * @param AgentCommission $commission
+     * @return void
      */
-    public function destroy(Commission $commission)
+    public function destroy(AgentCommission $commission): ApiResource
     {
-        //
+        return new ApiResource($this->agentCommissionService->delete($commission));
     }
+
+
 }
+

@@ -10,8 +10,8 @@
         "axios": false,
         "global": false,
         "Vue": false,
-        "google": false
-
+        "google": false,
+        "L": false
     },
     "extends": [
         "eslint:recommended",
