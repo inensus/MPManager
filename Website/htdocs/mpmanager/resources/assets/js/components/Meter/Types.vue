@@ -14,7 +14,7 @@
                                 <md-input v-model="meterType.max_current"
                                           id="max_current"
                                           name="max_current"
-                                          v-validate="'required|numeric'" ></md-input>
+                                          v-validate="'required|numeric'"></md-input>
                                 <span class="md-error">{{ errors.first('max_current') }}</span>
                                 <span class="md-suffix">Amper</span>
                             </md-field>
@@ -68,7 +68,7 @@
                             <md-icon>{{type.online === 0 ? 'check_box' : 'check_box_outline_blank'}}
                             </md-icon>
                             <span>{{ connectivity[index] }}</span>
-                            </md-table-cell>
+                        </md-table-cell>
                     </md-table-row>
 
 
@@ -82,12 +82,11 @@
                     md-label="Create your first Meter Type"
                 >
                     <md-button
-                               @click="showNewType"
-                               class="md-primary md-raised">Add New Type</md-button>
+                        @click="showNewType"
+                        class="md-primary md-raised">Add New Type
+                    </md-button>
                 </md-empty-state>
             </div>
-
-
 
 
         </widget>
@@ -98,44 +97,34 @@
 <script>
 
 import Widget from '../../shared/widget'
+
 import { MeterTypeService } from '../../services/MeterTypeService'
 
 export default {
     name: 'Types',
-    components: { Widget},
-    data(){
+    components: { Widget },
+    data () {
         return {
             meterTypeService: new MeterTypeService(),
-            toggleNewType:false,
-            meterType:{
+            toggleNewType: false,
+            meterType: {
                 max_current: null,
                 phase: null,
                 online: 0,
             },
-            online:false,
-            meterTypesList:null,
+            online: false,
+            meterTypesList: null,
 
         }
     },
     mounted () {
         this.getMeterTypes()
     },
-    computed:{
-        connectivity: function(){
-            return this.meterTypesList.map(function (type){
-                return type.online === 0 ? 'Online' : 'Offline'
-            })
-
-        }
-    },
-    methods:{
-        getMeterIsOnline(type){
-            return type.online === 0
-        },
-        showNewType(){
+    methods: {
+        showNewType () {
             this.toggleNewType = !this.toggleNewType
         },
-        async saveMeterType(){
+        async saveMeterType () {
             let validation = await this.$validator.validateAll()
             if (!validation) {
                 return
@@ -149,7 +138,7 @@ export default {
                 this.meterType.online = 0
                 this.online = false
                 this.alertNotify('success', 'Meter Type Added Successful ')
-            }catch (e) {
+            } catch (e) {
                 this.alertNotify('error', e.message)
             }
 
@@ -169,7 +158,14 @@ export default {
                 text: message
             })
         }
-    }
+    },
+    computed:{
+        connectivity: function(){
+            return this.meterTypesList.map(function (type){
+                return type.online === 0 ? 'Online' : 'Offline'
+            })
+        }
+    },
 }
 </script>
 
