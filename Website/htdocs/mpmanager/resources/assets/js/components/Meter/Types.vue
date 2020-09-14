@@ -58,17 +58,16 @@
                         <md-table-head>ID</md-table-head>
                         <md-table-head>Name</md-table-head>
                         <md-table-head>Max Current</md-table-head>
-                        <md-table-head>Online</md-table-head>
+                        <md-table-head>Connectivity</md-table-head>
                     </md-table-row>
                     <md-table-row v-for="(type,index) in meterTypesList" :key="index">
                         <md-table-cell>{{index+1}}</md-table-cell>
                         <md-table-cell>{{type.name}}</md-table-cell>
                         <md-table-cell>{{type.max_current}}</md-table-cell>
                         <md-table-cell>
-                            <md-checkbox
-                                :v-model="type.online === 0 ? true : false"
-                                disabled>{{type.online === 0 ? 'Online' : 'Offline'}}
-                            </md-checkbox>
+                            <md-icon>{{type.online === 0 ? 'check_box' : 'check_box_outline_blank'}}
+                            </md-icon>
+                            <span>{{ connectivity[index] }}</span>
                         </md-table-cell>
                     </md-table-row>
 
@@ -159,7 +158,14 @@ export default {
                 text: message
             })
         }
-    }
+    },
+    computed:{
+        connectivity: function(){
+            return this.meterTypesList.map(function (type){
+                return type.online === 0 ? 'Online' : 'Offline'
+            })
+        }
+    },
 }
 </script>
 
