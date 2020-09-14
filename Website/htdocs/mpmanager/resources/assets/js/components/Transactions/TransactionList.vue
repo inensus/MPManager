@@ -197,132 +197,132 @@
 <script>
 
 
-    import { timing } from '../../mixins/timing'
-    import { currency } from '../../mixins/currency'
-    import { EventBus } from '../../shared/eventbus'
-    import Widget from '../../shared/widget'
-    import FilterTransaction from './FilterTransaction'
-    import Box from '../Box'
-    import { TransactionService } from '../../services/TransactionService'
-    import NoTableData from '../../shared/NoTableData'
+import { timing } from '../../mixins/timing'
+import { currency } from '../../mixins/currency'
+import { EventBus } from '../../shared/eventbus'
+import Widget from '../../shared/widget'
+import FilterTransaction from './FilterTransaction'
+import Box from '../Box'
+import { TransactionService } from '../../services/TransactionService'
+import NoTableData from '../../shared/NoTableData'
 
-    export default {
-        name: 'transactionList',
-        mixins: [timing, currency],
-        components: { Box, FilterTransaction, Widget, NoTableData },
-        data () {
-            return {
-                transactionService: new TransactionService(),
-                period: 'Yesterday',
-                filter: [],
-                loading: false,
-                subscriber: 'transactionList',
-                tab: 'all',
-                paginator: null,
-                analyticsData: null,
-                analyticsPeriod: null,
-                analyticsPeriods: [
-                    'Yesterday',
-                    'Same day last week',
-                    'Past 7 days',
-                    'Past 30 days'
-                ],
-                headers: ['ID', 'Service', 'Sender', 'Amount', 'Type', 'Message', 'Sent Date', 'Process Time'],
-                tableName: 'Transaction'
+export default {
+    name: 'transactionList',
+    mixins: [timing, currency],
+    components: { Box, FilterTransaction, Widget, NoTableData },
+    data () {
+        return {
+            transactionService: new TransactionService(),
+            period: 'Yesterday',
+            filter: [],
+            loading: false,
+            subscriber: 'transactionList',
+            tab: 'all',
+            paginator: null,
+            analyticsData: null,
+            analyticsPeriod: null,
+            analyticsPeriods: [
+                'Yesterday',
+                'Same day last week',
+                'Past 7 days',
+                'Past 30 days'
+            ],
+            headers: ['ID', 'Service', 'Sender', 'Amount', 'Type', 'Message', 'Sent Date', 'Process Time'],
+            tableName: 'Transaction'
+        }
+    },
+
+    mounted () {
+        this.getTransactions()
+        this.loadAnalytics()
+        this.getPeriod()
+        EventBus.$on('pageLoaded', this.reloadList)
+    },
+    beforeDestroy () {
+        EventBus.$off('pageLoaded', this.reloadList)
+        EventBus.$off('searching', this.searching)
+
+    },
+    methods: {
+        filterTransaction (filterData) {
+            let data = {}
+            for (let i in filterData) {
+                if (filterData[i] === null) {
+                    continue
+                }
+                data[i] = filterData[i]
+            }
+
+            this.filter = data
+            this.transactionService.searchAdvanced(data)
+
+        },
+        reloadList (sub, data) {
+
+            if (sub !== this.subscriber) return
+            this.transactionService.updateList(data)
+            EventBus.$emit('dataLoaded')
+        },
+        transactionDetail (id) {
+            this.$router.push({ path: '/transactions/' + id })
+        },
+
+        async getTransactions () {
+            try {
+                await this.transactionService.getTransactions()
+
+            } catch (e) {
+                this.alertNotify('error', e.message)
             }
         },
-
-        mounted () {
-            this.getTransactions()
-            this.loadAnalytics()
-            this.getPeriod()
-            EventBus.$on('pageLoaded', this.reloadList)
-        },
-        beforeDestroy () {
-            EventBus.$off('pageLoaded', this.reloadList)
-            EventBus.$off('searching', this.searching)
-
-        },
-        methods: {
-            filterTransaction (filterData) {
-                let data = {}
-                for (let i in filterData) {
-                    if (filterData[i] === null) {
-                        continue
-                    }
-                    data[i] = filterData[i]
-                }
-
-                this.filter = data
-                this.transactionService.searchAdvanced(data)
-
-            },
-            reloadList (sub, data) {
-
-                if (sub !== this.subscriber) return
-                this.transactionService.updateList(data)
-                EventBus.$emit('dataLoaded')
-            },
-            transactionDetail (id) {
-                this.$router.push({ path: '/transactions/' + id })
-            },
-
-            async getTransactions () {
-                try {
-                    await this.transactionService.getTransactions()
-
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-            },
-            async loadAnalytics () {
-                this.loading = true
-                this.analyticsPeriod =
+        async loadAnalytics () {
+            this.loading = true
+            this.analyticsPeriod =
                     this.analyticsPeriod === null ? 0 : this.analyticsPeriod
-                try {
-                    this.analyticsData = await this.transactionService.getAnalytics(this.analyticsPeriod)
+            try {
+                this.analyticsData = await this.transactionService.getAnalytics(this.analyticsPeriod)
 
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
+            } catch (e) {
+                this.alertNotify('error', e.message)
+            }
 
-            },
-            getPeriod (period = 'Yesterday') {
+        },
+        getPeriod (period = 'Yesterday') {
 
-                switch (period) {
-                    case 'Yesterday':
-                        this.analyticsPeriod = 0
-                        break
+            switch (period) {
+            case 'Yesterday':
+                this.analyticsPeriod = 0
+                break
 
-                    case 'Same day last week':
-                        this.analyticsPeriod = 1
-                        break
+            case 'Same day last week':
+                this.analyticsPeriod = 1
+                break
 
-                    case 'Past 7 days':
-                        this.analyticsPeriod = 2
-                        break
+            case 'Past 7 days':
+                this.analyticsPeriod = 2
+                break
 
-                    case 'Past 30 days':
-                        this.analyticsPeriod = 3
-                        break
+            case 'Past 30 days':
+                this.analyticsPeriod = 3
+                break
 
-                    default:
-                        break
-                }
+            default:
+                break
+            }
 
-                this.loadAnalytics()
-            },
-            alertNotify (type, message) {
-                this.$notify({
-                    group: 'notify',
-                    type: type,
-                    title: type + ' !',
-                    text: message,
-                    speed: 0
-                })
-            },
-        }
+            this.loadAnalytics()
+        },
+        alertNotify (type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message,
+                speed: 0
+            })
+        },
     }
+}
 </script>
 
 <style scoped>

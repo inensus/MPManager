@@ -47,56 +47,56 @@
 </template>
 
 <script>
-    import {resources} from "../../resources";
+import {resources} from '../../resources'
 
-    export default {
-        name: "Filtering",
-        created() {
+export default {
+    name: 'Filtering',
+    created() {
+    },
+    mounted() {
+        this.getCategories()
+        this.getPeople()
+    },
+    data() {
+        return {
+            categories: [],
+            people: [],
+            selectedCategory: '',
+            selectedPerson: ''
+        }
+    },
+    methods: {
+        setCategory(category) {
+            this.selectedCategory = category
         },
-        mounted() {
-            this.getCategories();
-            this.getPeople();
+        setPerson(person) {
+            this.selectedPerson = person
         },
-        data() {
-            return {
-                categories: [],
-                people: [],
-                selectedCategory: "",
-                selectedPerson: ""
-            };
+        getCategories() {
+            axios.get(resources.ticket.labels).then(response => {
+                this.categories = response.data.data
+            })
         },
-        methods: {
-            setCategory(category) {
-                this.selectedCategory = category
-            },
-            setPerson(person) {
-                this.selectedPerson = person
-            },
-            getCategories() {
-                axios.get(resources.ticket.labels).then(response => {
-                    this.categories = response.data.data;
-                });
-            },
-            getPeople() {
-                axios.get(resources.ticket.users).then(response => {
-                    this.people = response.data.data;
-                });
-            },
-            filterTickets() {
-                let query = "";
-                if (this.selectedCategory !== "") {
-                    query += "&category=" + this.selectedCategory;
-                }
-                if (this.selectedPerson !== "") {
-                    query += "&person=" + this.selectedPerson;
-                }
+        getPeople() {
+            axios.get(resources.ticket.users).then(response => {
+                this.people = response.data.data
+            })
+        },
+        filterTickets() {
+            let query = ''
+            if (this.selectedCategory !== '') {
+                query += '&category=' + this.selectedCategory
+            }
+            if (this.selectedPerson !== '') {
+                query += '&person=' + this.selectedPerson
+            }
 
-                if (query !== "") {
-                    this.$emit("filtering", query);
-                }
+            if (query !== '') {
+                this.$emit('filtering', query)
             }
         }
-    };
+    }
+}
 </script>
 
 <style scoped>

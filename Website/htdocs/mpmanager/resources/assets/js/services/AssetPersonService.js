@@ -1,6 +1,5 @@
 import Repository from '../repositories/RepositoryFactory'
-import {Paginator} from "../classes/paginator"
-import {ErrorHandler} from "../Helpers/ErrorHander"
+import {ErrorHandler} from '../Helpers/ErrorHander'
 
 export class AssetPersonService {
     constructor() {

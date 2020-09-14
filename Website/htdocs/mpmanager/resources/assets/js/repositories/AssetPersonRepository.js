@@ -1,4 +1,4 @@
-const resource = '/api/assets/types';
+const resource = '/api/assets/types'
 import Client from './Client/AxiosClient'
 
 

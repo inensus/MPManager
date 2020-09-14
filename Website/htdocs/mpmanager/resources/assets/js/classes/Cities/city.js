@@ -1,5 +1,6 @@
-import '../Country'
-import '../clusters/Clusters'
+import { Country } from '../Country'
+import { Cluster } from '../clusters/Cluster'
+
 
 export class City {
     constructor () {

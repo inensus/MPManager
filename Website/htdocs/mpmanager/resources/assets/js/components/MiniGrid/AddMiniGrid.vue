@@ -27,7 +27,7 @@
                                     id="clusterName"
                                     v-validate="'required'"
                                     @md-selected="selectCluster">
-                                    <md-option v-for="(cluster,index) in clusters" :value="cluster.id"
+                                    <md-option v-for="(cluster) in clusters" :value="cluster.id"
                                                :key="cluster.id">
                                         {{cluster.name}}
                                     </md-option>
@@ -106,134 +106,132 @@
 </template>
 
 <script>
-    import marker from 'leaflet/dist/images/marker-icon.png'
-    import Widget from '../../shared/widget'
-    import PasswordProtection from '../PasswordProtection'
-    import { ClusterService } from '../../services/ClusterService'
-    import Map from '../../shared/Map'
-    import { MappingService } from '../../services/MappingService'
-    import { EventBus } from '../../shared/eventbus'
-    import { MiniGridService } from '../../services/MiniGridService'
-    import RedirectionModal from '../../shared/RedirectionModal'
+import marker from 'leaflet/dist/images/marker-icon.png'
+import Widget from '../../shared/widget'
+import { ClusterService } from '../../services/ClusterService'
+import Map from '../../shared/Map'
+import { MappingService } from '../../services/MappingService'
+import { EventBus } from '../../shared/eventbus'
+import { MiniGridService } from '../../services/MiniGridService'
+import RedirectionModal from '../../shared/RedirectionModal'
 
-    export default {
-        name: 'AddMiniGrid',
-        components: {
-            Widget,
-            PasswordProtection,
-            Map,
-            RedirectionModal
-        },
-        data () {
-            return {
-                clusterService: new ClusterService(),
-                mappingService: new MappingService(),
-                miniGridService: new MiniGridService(),
-                clusterId: null,
-                geoData: null,
-                center: this.appConfig.mapStartingPoint,
-                marker: true,
-                markerUrl: marker,
-                miniGridName: '',
-                miniGridLatLng: {
-                    lat: null,
-                    lon: null
-                },
-                loading: false,
-                clusterName: '',
-                clusters: [],
-                selectedClusterId: '',
-                miniGridId: null,
-                markerLocations: [],
-                redirectionUrl: '/locations/add-cluster',
-                imperativeItem: 'Cluster',
-                redirectDialogActive: false
+export default {
+    name: 'AddMiniGrid',
+    components: {
+        Widget,
+        Map,
+        RedirectionModal
+    },
+    data () {
+        return {
+            clusterService: new ClusterService(),
+            mappingService: new MappingService(),
+            miniGridService: new MiniGridService(),
+            clusterId: null,
+            geoData: null,
+            center: this.appConfig.mapStartingPoint,
+            marker: true,
+            markerUrl: marker,
+            miniGridName: '',
+            miniGridLatLng: {
+                lat: null,
+                lon: null
+            },
+            loading: false,
+            clusterName: '',
+            clusters: [],
+            selectedClusterId: '',
+            miniGridId: null,
+            markerLocations: [],
+            redirectionUrl: '/locations/add-cluster',
+            imperativeItem: 'Cluster',
+            redirectDialogActive: false
+        }
+    },
+    mounted () {
+        this.getClusters()
+        EventBus.$on('getDrawedMarker', (geoDataItem) => {
+            this.miniGridLatLng.lat = Number(geoDataItem.geojson.coordinates.lat.toFixed(5))
+            this.miniGridLatLng.lon = Number(geoDataItem.geojson.coordinates.lng.toFixed(5))
+        })
+        EventBus.$on('markerError', (message) => {
+            this.$swal({
+                type: 'warn',
+                text: message,
+            })
+
+        })
+    },
+    methods: {
+        async getClusters () {
+            try {
+                this.clusters = await this.clusterService.getClusters()
+                if (this.clusters.length > 0) {
+                    this.selectedClusterId = this.clusters[this.clusters.length - 1].id
+                } else {
+                    this.redirectDialogActive = true
+                }
+            } catch (e) {
+                this.alertNotify('error', e.message)
             }
         },
-        mounted () {
-            this.getClusters()
-            EventBus.$on('getDrawedMarker', (geoDataItem) => {
-                this.miniGridLatLng.lat = Number(geoDataItem.geojson.coordinates.lat.toFixed(5))
-                this.miniGridLatLng.lon = Number(geoDataItem.geojson.coordinates.lng.toFixed(5))
-            })
-            EventBus.$on('markerError', (message) => {
-                this.$swal({
-                    type: 'warn',
-                    text: message,
-                })
+        async getGeoData (clusterId) {
+            try {
+                this.clusterId = clusterId
+                let clusterGeoData = await this.clusterService.getClusterGeoLocation(clusterId)
 
+                this.center = [clusterGeoData.lat, clusterGeoData.lon]
+                this.geoData = this.mappingService.focusLocation(clusterGeoData)
+            } catch (e) {
+                this.alertNotify('error', e.message)
+            }
+        },
+        async validatePoints () {
+            let validator = await this.$validator.validateAll('Points-Form')
+            if (validator) {
+                this.setMarker()
+            }
+
+        },
+        async saveMiniGrid () {
+
+            let validator = await this.$validator.validateAll()
+            let validatorPoints = await this.$validator.validateAll('Points-Form')
+            if (validator && validatorPoints) {
+                try {
+                    this.loading = true
+                    const miniGrid = await this.miniGridService.createMiniGrid(this.miniGridName, this.clusterId, this.miniGridLatLng)
+                    this.alertNotify('success', 'The Mini-Grid you add is stored successfully.')
+                    this.loading = false
+                    await this.$router.replace('/dashboards/mini-grid/' + miniGrid.data.data.id)
+                } catch (e) {
+                    this.loading = false
+                    this.alertNotify('error', e.message)
+                }
+            }
+        },
+        selectCluster (cluster) {
+            this.miniGridLatLng = {
+                lat: null,
+                lon: null
+            }
+            this.miniGridName = ''
+            this.getGeoData(cluster)
+        },
+        setMarker () {
+            this.markerLocations = []
+            this.markerLocations.push([this.miniGridLatLng.lat, this.miniGridLatLng.lon])
+        },
+        alertNotify (type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message
             })
         },
-        methods: {
-            async getClusters () {
-                try {
-                    this.clusters = await this.clusterService.getClusters()
-                    if (this.clusters.length > 0) {
-                        this.selectedClusterId = this.clusters[this.clusters.length - 1].id
-                    } else {
-                        this.redirectDialogActive = true
-                    }
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-            },
-            async getGeoData (clusterId) {
-                try {
-                    this.clusterId = clusterId
-                    let clusterGeoData = await this.clusterService.getClusterGeoLocation(clusterId)
-
-                    this.center = [clusterGeoData.lat, clusterGeoData.lon]
-                    this.geoData = this.mappingService.focusLocation(clusterGeoData)
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-            },
-            async validatePoints () {
-                let validator = await this.$validator.validateAll('Points-Form')
-                if (validator) {
-                    this.setMarker()
-                }
-
-            },
-            async saveMiniGrid () {
-
-                let validator = await this.$validator.validateAll()
-                let validatorPoints = await this.$validator.validateAll('Points-Form')
-                if (validator && validatorPoints) {
-                    try {
-                        this.loading = true
-                        const miniGrid = await this.miniGridService.createMiniGrid(this.miniGridName, this.clusterId, this.miniGridLatLng)
-                        this.alertNotify('success', 'The Mini-Grid you add is stored successfully.')
-                        this.loading = false
-                        await this.$router.replace('/dashboards/mini-grid/' + miniGrid.data.data.id)
-                    } catch (e) {
-                        this.loading = false
-                        this.alertNotify('error', e.message)
-                    }
-                }
-            },
-            selectCluster (cluster) {
-                this.miniGridLatLng = {
-                    lat: null,
-                    lon: null
-                }
-                this.miniGridName = ''
-                this.getGeoData(cluster)
-            },
-            setMarker () {
-                this.markerLocations = []
-                this.markerLocations.push([this.miniGridLatLng.lat, this.miniGridLatLng.lon])
-            },
-            alertNotify (type, message) {
-                this.$notify({
-                    group: 'notify',
-                    type: type,
-                    title: type + ' !',
-                    text: message
-                })
-            },
-        }
     }
+}
 </script>
 
 <style scoped>

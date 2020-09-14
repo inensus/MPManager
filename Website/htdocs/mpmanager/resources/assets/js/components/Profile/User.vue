@@ -129,137 +129,136 @@
 </template>
 
 <script>
-    import Widget from '../../shared/widget'
-    import { Admin } from '../../classes/admin'
-    import { City } from '../../classes/Cities/city'
-    import Modal from '../../modal/modal'
+import Widget from '../../shared/widget'
+import { Admin } from '../../classes/admin'
+import { City } from '../../classes/Cities/city'
 
-    export default {
-        name: 'Profile',
-        components: { Widget, Modal },
+export default {
+    name: 'Profile',
+    components: { Widget },
 
-        data () {
-            return {
-                sending: false,
-                modalVisibility: false,
-                cities: [],
-                selectedCity: '',
-                changePassForm: {
-                    password: '',
-                    confirmPassword: ''
-                },
-                adminService: new Admin(),
-                cityService: new City(),
-                user: {
-                    id: null,
-                    name: '',
-                    email: '',
-                    phone: '',
-                    street: '',
-                    city_id: null
-                }
-            }
-        },
-
-        created () {
-            this.user.name = this.$store.getters.admin.name
-            this.user.email = this.$store.getters.admin.email
-            this.user.id = this.$store.getters.admin.id
-        },
-        mounted () {
-            this.fillInformation()
-        },
-        computed: {},
-        methods: {
-            async fillInformation () {
-                try {
-                    let cities = await this.cityService.getCities()
-                    cities.forEach(e => {
-                        let city = {
-                            id: e.id,
-                            name: e.name
-                        }
-                        this.cities.push(city)
-                    })
-                    let data = await this.adminService.getAddress(this.user.id)
-                    if (data.phone !== undefined) this.user.phone = data.phone
-                    if (data.street !== undefined) this.user.street = data.street
-
-                    if (data.city_id !== undefined) {
-                        this.selectedCity = this.cities
-                            .filter(x => x.id === data.city_id)
-                            .map(x => x.id)[0]
-                    }
-                } catch (error) {
-
-                }
+    data () {
+        return {
+            sending: false,
+            modalVisibility: false,
+            cities: [],
+            selectedCity: '',
+            changePassForm: {
+                password: '',
+                confirmPassword: ''
             },
-
-            async updateDetails () {
-                let validation = await this.$validator.validateAll('address')
-                if (!validation) {
-                    this.alertNotify('Warning', 'Please fill all required field')
-                    return
-                }
-                if (this.selectedCity !== undefined) {
-                    this.user.city_id = this.selectedCity
-                }
-                try {
-                    let response = await this.adminService.updateDetails(this.user)
-                    if (response.status === 200) {
-                        this.alertNotify('success', 'The update has been done.')
-                    } else {
-                        this.alertNotify('error', response.error.message)
-                    }
-                } catch (error) {
-                    this.alertNotify('error', error)
-                    this.fillInformation()
-                }
-            },
-            submitForm () {
-                this.$validator.validateAll('password').then(result => {
-                    if (result) {
-                        this.changePassword()
-                    }
-                })
-            },
-
-            async changePassword () {
-                let password = this.changePassForm.confirmPassword
-                try {
-                    let response = await this.adminService.updatePassword(
-                        this.user,
-                        password
-                    )
-                    if (response.status === 200) {
-                        this.alertNotify('success', 'Password updated.')
-                    } else {
-                        this.alertNotify('error', response.error)
-                    }
-                    this.closeModal()
-                } catch (error) {
-                    this.alertNotify('error', error)
-                    this.closeModal()
-                }
-            },
-
-            closeModal () {
-                this.modalVisibility = false
-            },
-
-            alertNotify (type, message, title = null) {
-                if (title == null) {
-                    title = type.toString().charAt(0).toUpperCase() + type.toString().slice(1)
-                }
-                this.$notify({
-                    group: 'notify',
-                    type: type,
-                    title: type + ' !',
-                    text: message
-                })
+            adminService: new Admin(),
+            cityService: new City(),
+            user: {
+                id: null,
+                name: '',
+                email: '',
+                phone: '',
+                street: '',
+                city_id: null
             }
         }
+    },
+
+    created () {
+        this.user.name = this.$store.getters.admin.name
+        this.user.email = this.$store.getters.admin.email
+        this.user.id = this.$store.getters.admin.id
+    },
+    mounted () {
+        this.fillInformation()
+    },
+    computed: {},
+    methods: {
+        async fillInformation () {
+            try {
+                let cities = await this.cityService.getCities()
+                cities.forEach(e => {
+                    let city = {
+                        id: e.id,
+                        name: e.name
+                    }
+                    this.cities.push(city)
+                })
+                let data = await this.adminService.getAddress(this.user.id)
+                if (data.phone !== undefined) this.user.phone = data.phone
+                if (data.street !== undefined) this.user.street = data.street
+
+                if (data.city_id !== undefined) {
+                    this.selectedCity = this.cities
+                        .filter(x => x.id === data.city_id)
+                        .map(x => x.id)[0]
+                }
+            } catch (error) {
+                this.alertNotify('error', error.message)
+            }
+        },
+
+        async updateDetails () {
+            let validation = await this.$validator.validateAll('address')
+            if (!validation) {
+                this.alertNotify('Warning', 'Please fill all required field')
+                return
+            }
+            if (this.selectedCity !== undefined) {
+                this.user.city_id = this.selectedCity
+            }
+            try {
+                let response = await this.adminService.updateDetails(this.user)
+                if (response.status === 200) {
+                    this.alertNotify('success', 'The update has been done.')
+                } else {
+                    this.alertNotify('error', response.error.message)
+                }
+            } catch (error) {
+                this.alertNotify('error', error)
+                this.fillInformation()
+            }
+        },
+        submitForm () {
+            this.$validator.validateAll('password').then(result => {
+                if (result) {
+                    this.changePassword()
+                }
+            })
+        },
+
+        async changePassword () {
+            let password = this.changePassForm.confirmPassword
+            try {
+                let response = await this.adminService.updatePassword(
+                    this.user,
+                    password
+                )
+                if (response.status === 200) {
+                    this.alertNotify('success', 'Password updated.')
+                } else {
+                    this.alertNotify('error', response.error)
+                }
+                this.closeModal()
+            } catch (error) {
+                this.alertNotify('error', error)
+                this.closeModal()
+            }
+        },
+
+        closeModal () {
+            this.modalVisibility = false
+        },
+
+        alertNotify (type, message, title = null) {
+            if (title == null) {
+                title = type.toString().charAt(0).toUpperCase() + type.toString().slice(1)
+            }
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message
+            })
+        }
     }
+}
 </script>
 
 <style scoped>

@@ -32,8 +32,7 @@ export class Admin {
         return axios.post(resources.admin.refresh, null, { headers: { Authorization: 'Bearer' + token } })
             .then((response) => {
                 return this._fetchData(response)
-            }).catch((error) => {
-
+            }).catch(() => {
                 return false
             })
     }
@@ -55,11 +54,11 @@ export class Admin {
             return
         axios.get(resources.user.authData)
             .then(response => {
-                    this.id = response.data.id
-                    this.name = response.data.name
-                    this.email = response.data.email
-                    EventBus.$emit('adminGot')
-                }
+                this.id = response.data.id
+                this.name = response.data.name
+                this.email = response.data.email
+                EventBus.$emit('adminGot')
+            }
             )
     }
 

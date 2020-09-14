@@ -2,7 +2,7 @@ import { PV } from '../entities/PV'
 
 export class PVService {
 
-    constructor (props) {
+    constructor () {
         this.usageList = []
         this.chartData = []
     }

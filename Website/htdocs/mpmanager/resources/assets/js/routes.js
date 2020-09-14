@@ -1,5 +1,4 @@
 import VueRouter from 'vue-router'
-import Vue from 'vue'
 import LoginFooter from './components/Login/LoginFooter'
 import LoginHeader from './components/Login/LoginHeader'
 import Login from './components/Login/Login'
@@ -179,7 +178,7 @@ let routes = [
         path: '/connection-types/:id',
         component: require('./components/ConnectionTypes/ConnectionTypeDetail').default,
         name: 'connection-type-detail',
-        meta: { layout: 'default'}
+        meta: { layout: 'default' }
     },
     {
         path: '/connection-types/new',
@@ -275,6 +274,11 @@ let routes = [
         component: require('./components/Agent/Agent').default,
         meta: { layout: 'default' },
     },
+    {
+        path: '/commissions',
+        component: require('./components/Agent/Commission/AgentCommissionList').default,
+        meta: { layout: 'default' },
+    },
 
 ]
 
@@ -283,3 +287,4 @@ export default new VueRouter({
     linkActiveClass: 'active',
     linkExactActiveClass: 'exact-active',
 })
+

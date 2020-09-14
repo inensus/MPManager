@@ -50,7 +50,7 @@
                                             v-validate="'required'"
 
                                         >
-                                            <md-option v-for="(mg,index) in miniGrids" :value="mg.id"
+                                            <md-option v-for="(mg) in miniGrids" :value="mg.id"
                                                        :key="mg.id">
                                                 {{mg.name}}
                                             </md-option>
@@ -129,7 +129,7 @@
                                         <label for="commission">Commission Type :</label>
                                         <md-select name="commission" id="commission" v-validate="'required'"
                                                    v-model="newAgent.commissionTypeId">
-                                            <md-option v-for="(commission,index) in agentCommissions"
+                                            <md-option v-for="(commission) in agentCommissions"
                                                        :value="commission.id" :key="commission.id">{{commission.name}}
                                             </md-option>
 
@@ -191,119 +191,116 @@
 
 </template>
 <script>
-    import Widget from '../../shared/widget'
-    import { AgentService } from '../../services/AgentService'
-    import { MiniGridService } from '../../services/MiniGridService'
-    import CountryService from '../../services/CountryService'
-    import { EventBus } from '../../shared/eventbus'
-    import Datepicker from 'vuejs-datepicker'
-    import { AgentCommissionService } from '../../services/AgentCommissionService'
-    import RedirectionModal from '../../shared/RedirectionModal'
+import Widget from '../../shared/widget'
+import { AgentService } from '../../services/AgentService'
+import { MiniGridService } from '../../services/MiniGridService'
+import CountryService from '../../services/CountryService'
+import { EventBus } from '../../shared/eventbus'
+import { AgentCommissionService } from '../../services/AgentCommissionService'
+import RedirectionModal from '../../shared/RedirectionModal'
 
-    export default {
-        name: 'AddAgent',
-        components: { Widget, Datepicker, RedirectionModal },
-        props: {
-            addAgent: {
-                default: false,
-                type: Boolean
-            },
+export default {
+    name: 'AddAgent',
+    components: { Widget, RedirectionModal },
+    props: {
+        addAgent: {
+            default: false,
+            type: Boolean
         },
-        data () {
-            return {
-                agentService: new AgentService(),
-                miniGridService: new MiniGridService(),
-                countryService: new CountryService(),
-                agentCommissionService: new AgentCommissionService(),
-                agentCommissions: [],
-                newAgent: {},
-                users: [],
-                selectedUser: null,
-                selectedMiniGridId: '',
-                miniGrids: [],
-                countries: [],
-                confirmPassword: null,
-                loading: false,
-                redirectionUrl: '/locations/add-mini-grid',
-                imperativeItem: 'Mini-Grid',
-                redirectDialogActive: false
+    },
+    data () {
+        return {
+            agentService: new AgentService(),
+            miniGridService: new MiniGridService(),
+            countryService: new CountryService(),
+            agentCommissionService: new AgentCommissionService(),
+            agentCommissions: [],
+            newAgent: {},
+            users: [],
+            selectedUser: null,
+            selectedMiniGridId: '',
+            miniGrids: [],
+            countries: [],
+            confirmPassword: null,
+            loading: false,
+            redirectionUrl: '/locations/add-mini-grid',
+            imperativeItem: 'Mini-Grid',
+            redirectDialogActive: false
+        }
+    },
+
+    mounted () {
+        this.getMiniGrids()
+        this.getCountries()
+        this.getAgentCommissions()
+        this.newAgent = this.agentService.agent
+
+    },
+    methods: {
+        async getMiniGrids () {
+            try {
+                this.miniGrids = await this.miniGridService.getMiniGrids()
+                if (this.miniGrids.length < 0) {
+                    this.redirectDialogActive = true
+                }
+            } catch (e) {
+                this.alertNotify('error', e.message)
             }
         },
+        async getCountries () {
+            try {
+                this.countries = await this.countryService.getCountries()
+            } catch (e) {
+                this.alertNotify('error', e.message)
+            }
+        },
+        async getAgentCommissions () {
+            try {
+                this.agentCommissions = await this.agentCommissionService.getAgentCommissions()
+            } catch (e) {
+                this.alertNotify('error', e.message)
+            }
+        },
+        async selectMiniGrid (miniGridId) {
 
-        mounted () {
-            this.getMiniGrids()
-            this.getCountries()
-            this.getAgentCommissions()
-            this.newAgent = this.agentService.agent
+            this.selectedMiniGridId = miniGridId
+        },
+        async selectNationality (miniGridId) {
+
+            this.selectedMiniGridId = miniGridId
+        },
+        async saveAgent () {
+
+            let validator = await this.$validator.validateAll('Agent-Form')
+
+            if (validator) {
+                this.loading = true
+                try {
+                    await this.agentService.createAgent()
+                    this.loading = false
+                    this.hide()
+                    this.alertNotify('success', 'Agent added successfully')
+                } catch (e) {
+                    this.loading = false
+                    this.alertNotify('error', e.message)
+                }
+            }
 
         },
-        methods: {
-            async getMiniGrids () {
-                try {
-                    this.miniGrids = await this.miniGridService.getMiniGrids()
-                    if (this.miniGrids.length < 0) {
-                        this.redirectDialogActive = true
-                    }
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-            },
-            async getCountries () {
-                try {
-                    this.countries = await this.countryService.getCountries()
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-            },
-            async getAgentCommissions () {
-                try {
-                    this.agentCommissions = await this.agentCommissionService.getAgentCommissions()
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-            },
-            async selectMiniGrid (miniGridId) {
+        hide () {
+            EventBus.$emit('closed')
+        },
 
-                let miniGrid = this.miniGrids.filter(x => x.id === miniGridId)[0]
-                this.selectedMiniGridId = miniGridId
-            },
-            async selectNationality (miniGridId) {
-
-                let miniGrid = this.miniGrids.filter(x => x.id === miniGridId)[0]
-                this.selectedMiniGridId = miniGridId
-            },
-            async saveAgent () {
-
-                let validator = await this.$validator.validateAll('Agent-Form')
-
-                if (validator) {
-                    this.loading = true
-                    try {
-                        await this.agentService.createAgent()
-                        this.loading = false
-                        this.hide()
-                        this.alertNotify('success', 'Agent added successfully')
-                    } catch (e) {
-                        this.loading = false
-                        this.alertNotify('error', e.message)
-                    }
-                }
-
-            },
-            hide () {
-                EventBus.$emit('closed')
-            },
-
-            alertNotify (type, message) {
-                this.$notify({
-                    group: 'notify',
-                    type: type,
-                    title: type + ' !',
-                    text: message
-                })
-            },
-        }
+        alertNotify (type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message
+            })
+        },
     }
+}
 </script>
 <style scoped>
 

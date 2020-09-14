@@ -80,8 +80,7 @@ export class ClusterService {
     async getClusterCitiesRevenue (clusterId, period, startDate, endDate) {
         try {
 
-            const queryString = `?period=${period}&startDate=${startDate ??
-            ''}&endDate=${endDate ?? ''}`
+            const queryString = `?period=${period}&startDate=${startDate ?? ''}&endDate=${endDate ?? ''}`
 
             let response = await this.repository.getClusterCitiesRevenue(
                 clusterId,

@@ -32,22 +32,22 @@
 </template>
 
 <script>
-  export default {
+export default {
     name: 'Login.vue',
     data () {
-      return {
-        login: {
-          email: '',
-          password: '',
+        return {
+            login: {
+                email: '',
+                password: '',
+            }
         }
-      }
     },
     methods: {
-      auth () {
+        auth () {
         //do the login
-      }
+        }
     }
-  }
+}
 </script>
 
 <style lang="scss">

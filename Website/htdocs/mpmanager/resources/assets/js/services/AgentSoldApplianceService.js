@@ -1,5 +1,4 @@
 import Repository from '../repositories/RepositoryFactory'
-import { ErrorHandler } from '../Helpers/ErrorHander'
 import { Paginator } from '../classes/paginator'
 
 export class AgentSoldApplianceService {

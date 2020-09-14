@@ -27,7 +27,7 @@ export const mutations = {
     },
 }
 export const actions = {
-    authenticate ({ commit, state, dispatch }, { email, password }) {
+    authenticate ({ commit, state }, { email, password }) {
 
         commit('AUTH_REQUEST')
         return new Promise((resolve, reject) => {
@@ -38,13 +38,13 @@ export const actions = {
                     commit('AUTH_SUCCESS', user)
                     resolve(user)
                 }).catch((e) => {
-                commit('AUTH_ERROR')
-                reject(e)
-            })
+                    commit('AUTH_ERROR')
+                    reject(e)
+                })
         })
 
     },
-    refreshToken ({ commit, state, dispatch }, token) {
+    refreshToken ({ commit, state }, token) {
 
         commit('AUTH_REQUEST')
         return new Promise((resolve, reject) => {
@@ -54,15 +54,15 @@ export const actions = {
                     commit('AUTH_SUCCESS', user)
                     resolve(user)
                 }).catch((e) => {
-                commit('AUTH_ERROR')
-                reject(e)
-            })
+                    commit('AUTH_ERROR')
+                    reject(e)
+                })
         })
 
     },
     logOut ({ commit }) {
 
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
 
             commit('SET_LOGOUT')
             localStorage.removeItem('token')

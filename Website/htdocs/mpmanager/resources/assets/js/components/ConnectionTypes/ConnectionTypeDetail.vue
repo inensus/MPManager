@@ -127,7 +127,7 @@
                                 <md-table-head></md-table-head>
 
                             </md-table-row>
-                            <md-table-row v-for="subType,index in subConnectionTypeService.subConnectionTypes" :key="subType.id">
+                            <md-table-row v-for="(subType,index) in subConnectionTypeService.subConnectionTypes" :key="subType.id">
                                 <md-table-cell>{{index+1}}</md-table-cell>
                                 <md-table-cell>{{subType.id}}</md-table-cell>
                                 <md-table-cell>
@@ -202,14 +202,13 @@
 </template>
 
 <script>
-  import Widget from '../../shared/widget'
-  import {SubConnectionTypeService} from '../../services/SubConnectionTypeService'
-  import {ConnectionTypeService} from '../../services/ConnectionTypeService'
-  import {TariffService} from '../../services/TariffService'
-  import { resources } from '../../resources'
-  import moment from 'moment'
+import Widget from '../../shared/widget'
+import {SubConnectionTypeService} from '../../services/SubConnectionTypeService'
+import {ConnectionTypeService} from '../../services/ConnectionTypeService'
+import {TariffService} from '../../services/TariffService'
+import moment from 'moment'
 
-  export default {
+export default {
     name: 'ConnectionTypeDetail',
     components: { Widget },
     data() {
@@ -233,141 +232,141 @@
 
         }
     },
-      created () {
-          this.subConnectionType.connection_type_id = this.$route.params.id
-          this.getSubConnectionTypes(this.subConnectionType.connection_type_id)
-          this.getConnectionTypeDetail(this.subConnectionType.connection_type_id)
-          this.getTariffs()
-      },
-      methods:{
-          checkConfirm(result){
-              return 'value' in result
-          },
-          formatReadableDate (date) {
-              return moment(date).format('MMMM Do YYYY, h:mm:ss a')
-          },
-          async updateSubConnectionType(subType){
-              let validator = await this.$validator.validateAll()
-              if (!validator) {
+    created () {
+        this.subConnectionType.connection_type_id = this.$route.params.id
+        this.getSubConnectionTypes(this.subConnectionType.connection_type_id)
+        this.getConnectionTypeDetail(this.subConnectionType.connection_type_id)
+        this.getTariffs()
+    },
+    methods:{
+        checkConfirm(result){
+            return 'value' in result
+        },
+        formatReadableDate (date) {
+            return moment(date).format('MMMM Do YYYY, h:mm:ss a')
+        },
+        async updateSubConnectionType(subType){
+            let validator = await this.$validator.validateAll()
+            if (!validator) {
 
-                  return
-              }
-              this.$swal({
-                  type: 'question',
-                  title: 'Edit Sub Connection Type ',
-                  text: 'Are you sure to changing this sub connection type',
-                  showCancelButton: true,
-                  cancelButtonText: 'No',
-                  confirmButtonText: 'Yes'
-              }).then(response => {
-                  if(this.checkConfirm(response)){
-                      try {
-                          this.subConnectionTypeService.updateSubConnectionType(subType)
-                          this.editSubConnectionType = null
-                          this.alertNotify('success', 'Sub Connection Updated Successfully')
-                      }catch (e) {
-                          this.alertNotify('error', e.message)
-                      }
-                  }else{
-                      return
-                  }
+                return
+            }
+            this.$swal({
+                type: 'question',
+                title: 'Edit Sub Connection Type ',
+                text: 'Are you sure to changing this sub connection type',
+                showCancelButton: true,
+                cancelButtonText: 'No',
+                confirmButtonText: 'Yes'
+            }).then(response => {
+                if(this.checkConfirm(response)){
+                    try {
+                        this.subConnectionTypeService.updateSubConnectionType(subType)
+                        this.editSubConnectionType = null
+                        this.alertNotify('success', 'Sub Connection Updated Successfully')
+                    }catch (e) {
+                        this.alertNotify('error', e.message)
+                    }
+                }else{
+                    return
+                }
 
 
-              })
-          },
-          async editConnectionTypeName(){
-          let validator = await this.$validator.validateAll()
-          if (!validator) {
+            })
+        },
+        async editConnectionTypeName(){
+            let validator = await this.$validator.validateAll()
+            if (!validator) {
 
-              return
-          }
-          this.$swal({
-              type: 'question',
-              title: 'Edit Sub Connection Type ',
-              text: 'Are you sure to change of connection type name for ' + this.connectionType.name + '?',
-              showCancelButton: true,
-              cancelButtonText: 'No',
-              confirmButtonText: 'Yes'
-          }).then(response => {
-              if(this.checkConfirm(response))
-              {
-                  try {
-                      this.connectionTypeService.updateConnectionType(this.connectionType)
-                      this.toggleEditConnectionType()
-                      this.alertNotify('success', 'Connection Type Name Updated Successfully ')
-                  }catch (e) {
-                      this.alertNotify('error', e.message)
-                  }
-              }else{
-                  return
-              }
+                return
+            }
+            this.$swal({
+                type: 'question',
+                title: 'Edit Sub Connection Type ',
+                text: 'Are you sure to change of connection type name for ' + this.connectionType.name + '?',
+                showCancelButton: true,
+                cancelButtonText: 'No',
+                confirmButtonText: 'Yes'
+            }).then(response => {
+                if(this.checkConfirm(response))
+                {
+                    try {
+                        this.connectionTypeService.updateConnectionType(this.connectionType)
+                        this.toggleEditConnectionType()
+                        this.alertNotify('success', 'Connection Type Name Updated Successfully ')
+                    }catch (e) {
+                        this.alertNotify('error', e.message)
+                    }
+                }else{
+                    return
+                }
 
-          })
+            })
 
-      },
-      toggleEditConnectionType(){
-          this.editConnectionType = !this.editConnectionType;
-          this.newConnectionTypeName = this.connectionType.name
-      },
-      toggleEditSubConnectionType(){
-          this.editSubConnectionType = !this.editConnectionType;
-      },
-      addSubType() {
-          this.showNewSubType = !this.showNewSubType
-      },
-      clearForm(){
-        this.subConnectionType.name=null,
-        this.subConnectionType.tariff_id=null
-      },
-      async saveSubType(subConnectionType) {
-          let validator = await this.$validator.validateAll()
-          if (!validator) {
+        },
+        toggleEditConnectionType(){
+            this.editConnectionType = !this.editConnectionType
+            this.newConnectionTypeName = this.connectionType.name
+        },
+        toggleEditSubConnectionType(){
+            this.editSubConnectionType = !this.editConnectionType
+        },
+        addSubType() {
+            this.showNewSubType = !this.showNewSubType
+        },
+        clearForm(){
+            this.subConnectionType.name=null,
+            this.subConnectionType.tariff_id=null
+        },
+        async saveSubType(subConnectionType) {
+            let validator = await this.$validator.validateAll()
+            if (!validator) {
 
-              return
-          }
-          try {
-              await this.subConnectionTypeService.createSubConnectionType(subConnectionType)
-              this.alertNotify('success', 'SubConnectionType has registered.')
-              this.addSubType()
-              this.clearForm()
-          }catch (e) {
-              this.alertNotify('error', e.message)
-          }
+                return
+            }
+            try {
+                await this.subConnectionTypeService.createSubConnectionType(subConnectionType)
+                this.alertNotify('success', 'SubConnectionType has registered.')
+                this.addSubType()
+                this.clearForm()
+            }catch (e) {
+                this.alertNotify('error', e.message)
+            }
 
-      },
-      async getTariffs(){
-         try {
-             this.tariff = await this.tariffService.getTariffs()
-         }catch (e) {
-             this.alertNotify('error', e.message)
-         }
-      },
-      async getConnectionTypeDetail(connectionTypeId){
-         try {
-             this.connectionType = await this.connectionTypeService.getConnectionTypeDetail(connectionTypeId)
-             this.newConnectionTypeName = this.connectionType.name
-         }catch (e) {
-             this.alertNotify('error', e.message)
-         }
-      },
-      async getSubConnectionTypes(connectionTypeId){
-          try {
-              await this.subConnectionTypeService.getSubConnectionTypes(connectionTypeId)
-          } catch (e) {
-              this.alertNotify('error', e.message)
-          }
+        },
+        async getTariffs(){
+            try {
+                this.tariff = await this.tariffService.getTariffs()
+            }catch (e) {
+                this.alertNotify('error', e.message)
+            }
+        },
+        async getConnectionTypeDetail(connectionTypeId){
+            try {
+                this.connectionType = await this.connectionTypeService.getConnectionTypeDetail(connectionTypeId)
+                this.newConnectionTypeName = this.connectionType.name
+            }catch (e) {
+                this.alertNotify('error', e.message)
+            }
+        },
+        async getSubConnectionTypes(connectionTypeId){
+            try {
+                await this.subConnectionTypeService.getSubConnectionTypes(connectionTypeId)
+            } catch (e) {
+                this.alertNotify('error', e.message)
+            }
 
-      },
-          alertNotify(type, message) {
-              this.$notify({
-                  group: 'notify',
-                  type: type,
-                  title: type + ' !',
-                  text: message
-              })
-          },
+        },
+        alertNotify(type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message
+            })
+        },
     }
-  }
+}
 </script>
 
 <style scoped>

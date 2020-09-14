@@ -66,7 +66,7 @@
                         <md-table-cell>{{type.max_current}}</md-table-cell>
                         <md-table-cell>
                             <md-checkbox
-                                v-model="type.online === 0 ? true : false"
+                                :v-model="type.online === 0 ? true : false"
                                 disabled>{{type.online === 0 ? 'Online' : 'Offline'}}
                             </md-checkbox>
                         </md-table-cell>
@@ -97,70 +97,70 @@
 
 <script>
 
-    import Widget from '../../shared/widget'
-    import NoTableData from '../../shared/NoTableData'
-    import { MeterTypeService } from '../../services/MeterTypeService'
+import Widget from '../../shared/widget'
 
-    export default {
-        name: 'Types',
-        components: { Widget, NoTableData },
-        data () {
-            return {
-                meterTypeService: new MeterTypeService(),
-                toggleNewType: false,
-                meterType: {
-                    max_current: null,
-                    phase: null,
-                    online: 0,
-                },
-                online: false,
-                meterTypesList: null,
+import { MeterTypeService } from '../../services/MeterTypeService'
 
+export default {
+    name: 'Types',
+    components: { Widget },
+    data () {
+        return {
+            meterTypeService: new MeterTypeService(),
+            toggleNewType: false,
+            meterType: {
+                max_current: null,
+                phase: null,
+                online: 0,
+            },
+            online: false,
+            meterTypesList: null,
+
+        }
+    },
+    mounted () {
+        this.getMeterTypes()
+    },
+    methods: {
+        showNewType () {
+            this.toggleNewType = !this.toggleNewType
+        },
+        async saveMeterType () {
+            let validation = await this.$validator.validateAll()
+            if (!validation) {
+                return
+            }
+            this.meterType.online = this.online ? 0 : 1
+            try {
+                this.meterTypesList = await this.meterTypeService.createMeterType(this.meterType)
+                this.showNewType()
+                this.meterType.max_current = null
+                this.meterType.phase = null
+                this.meterType.online = 0
+                this.online = false
+                this.alertNotify('success', 'Meter Type Added Successful ')
+            } catch (e) {
+                this.alertNotify('error', e.message)
+            }
+
+        },
+        async getMeterTypes () {
+            try {
+                this.meterTypesList = await this.meterTypeService.getMeterTypes()
+            } catch (e) {
+                this.alertNotify('error', e.message)
             }
         },
-        mounted () {
-            this.getMeterTypes()
-        },
-        methods: {
-            showNewType () {
-                this.toggleNewType = !this.toggleNewType
-            },
-            async saveMeterType () {
-                let validation = await this.$validator.validateAll()
-                if (!validation) {
-                    return
-                }
-                this.meterType.online = this.online ? 0 : 1
-                try {
-                    this.meterTypesList = await this.meterTypeService.createMeterType(this.meterType)
-                    this.showNewType()
-                    this.meterType.max_current = null
-                    this.meterType.phase = null
-                    this.meterType.online = 0
-                    this.online = false
-                    this.alertNotify('success', 'Meter Type Added Successful ')
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-
-            },
-            async getMeterTypes () {
-                try {
-                    this.meterTypesList = await this.meterTypeService.getMeterTypes()
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-            },
-            alertNotify (type, message) {
-                this.$notify({
-                    group: 'notify',
-                    type: type,
-                    title: type + ' !',
-                    text: message
-                })
-            }
+        alertNotify (type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message
+            })
         }
     }
+}
 </script>
 
 <style scoped>

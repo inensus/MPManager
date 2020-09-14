@@ -29,7 +29,7 @@
 
             </md-table-row>
 
-            <md-table-row v-for="asset in assets.list" style="cursor:pointer;">
+            <md-table-row v-for="asset in assets.list" :key="asset.id" style="cursor:pointer;">
                 <md-table-cell> {{ asset.id}}</md-table-cell>
 
                 <md-table-cell> {{asset.type}}
@@ -46,53 +46,53 @@
 
 <script>
 
-    import {AssetTypes} from '../../classes/asset/AssetTypes'
-    import {EventBus} from '../../shared/eventbus'
-    import Widget from '../../shared/widget'
+import {AssetTypes} from '../../classes/asset/AssetTypes'
+import {EventBus} from '../../shared/eventbus'
+import Widget from '../../shared/widget'
 
-    export default {
-        name: 'AssetTypes',
-        components: {Widget},
-        data() {
-            return {
-                assets: new AssetTypes(),
-                subscriber: 'asset-list',
-                bcd: {
-                    'Home': {
-                        'href': '/'
-                    },
-                    'Meters': {
-                        'href': null
-                    },
+export default {
+    name: 'AssetTypes',
+    components: {Widget},
+    data() {
+        return {
+            assets: new AssetTypes(),
+            subscriber: 'asset-list',
+            bcd: {
+                'Home': {
+                    'href': '/'
                 },
-            }
-        },
-        created() {
-
-        },
-        mounted() {
-
-            EventBus.$emit('bread', this.bcd)
-            EventBus.$on('pageLoaded', this.reloadList)
-            // EventBus.$on('searching', this.searching)
-            // EventBus.$on('end_searching', this.endSearching)
-
-        },
-        beforeDestroy() {
-            EventBus.$off('pageLoaded', this.reloadList)
-            //EventBus.$off('searching', this.searching)
-            //EventBus.$off('end_searching', this.endSearching)
-        },
-        methods: {
-            reloadList(subscriber, data) {
-                if (subscriber !== this.subscriber) return
-                this.assets.updateList(data)
-
+                'Meters': {
+                    'href': null
+                },
             },
-            newAsset() {
-            }
+        }
+    },
+    created() {
+
+    },
+    mounted() {
+
+        EventBus.$emit('bread', this.bcd)
+        EventBus.$on('pageLoaded', this.reloadList)
+        // EventBus.$on('searching', this.searching)
+        // EventBus.$on('end_searching', this.endSearching)
+
+    },
+    beforeDestroy() {
+        EventBus.$off('pageLoaded', this.reloadList)
+        //EventBus.$off('searching', this.searching)
+        //EventBus.$off('end_searching', this.endSearching)
+    },
+    methods: {
+        reloadList(subscriber, data) {
+            if (subscriber !== this.subscriber) return
+            this.assets.updateList(data)
+
+        },
+        newAsset() {
         }
     }
+}
 </script>
 
 <style>

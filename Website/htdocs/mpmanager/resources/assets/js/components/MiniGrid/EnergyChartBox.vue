@@ -35,50 +35,50 @@
 </template>
 
 <script>
-    import { BatteryService } from '../../services/BatteryService'
-    import ChartBox from '../ChartBox'
-    import { PVService } from '../../services/PVService'
+import { BatteryService } from '../../services/BatteryService'
+import ChartBox from '../ChartBox'
+import { PVService } from '../../services/PVService'
 
-    export default {
-        name: 'EnergyChartBox',
-        components: { ChartBox },
-        props: {
-            miniGridId: {
-                type: String,
-                required: true
-            }
+export default {
+    name: 'EnergyChartBox',
+    components: { ChartBox },
+    props: {
+        miniGridId: {
+            type: String,
+            required: true
+        }
+    },
+    created () {
+        this.initBatteryChart()
+        this.initPVChart()
+    },
+    data: () => (
+        {
+            batteryService: new BatteryService(),
+            pvService: new PVService(),
+        }
+    ),
+    methods: {
+        initBatteryChart () {
+            this.batteryService.getBatteryUsageList(this.miniGridId).then((result) => {
+                if (!result) {
+
+                    return
+                }
+                this.batteryService.prepareChartData()
+            })
         },
-        created () {
-            this.initBatteryChart()
-            this.initPVChart()
-        },
-        data: () => (
-            {
-                batteryService: new BatteryService(),
-                pvService: new PVService(),
-            }
-        ),
-        methods: {
-            initBatteryChart () {
-                this.batteryService.getBatteryUsageList(this.miniGridId).then((result) => {
-                    if (!result) {
+        initPVChart () {
+            this.pvService.getList(this.miniGridId).then((result) => {
+                if (!result) {
 
-                        return
-                    }
-                    this.batteryService.prepareChartData()
-                })
-            },
-            initPVChart () {
-                this.pvService.getList(this.miniGridId).then((result) => {
-                    if (!result) {
-
-                        return
-                    }
-                    this.pvService.prepareChartData()
-                })
-            }
+                    return
+                }
+                this.pvService.prepareChartData()
+            })
         }
     }
+}
 </script>
 
 <style scoped>

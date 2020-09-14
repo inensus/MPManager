@@ -1,5 +1,4 @@
 import Repository from '../repositories/RepositoryFactory'
-import { Paginator } from '../classes/paginator'
 import { ErrorHandler } from '../Helpers/ErrorHander'
 
 export class AssetRateService {
@@ -8,7 +7,7 @@ export class AssetRateService {
 
     }
 
-   async   editAssetRate (id, remaining, adminId) {
+    async   editAssetRate (id, remaining, adminId) {
         try {
             let terms = {
                 remaining: remaining,

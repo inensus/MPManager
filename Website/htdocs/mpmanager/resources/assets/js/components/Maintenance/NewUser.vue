@@ -112,107 +112,109 @@
 </template>
 
 <script>
-    import Modal from '../../modal/modal'
-    import widget from '../../shared/widget'
-    import Stepper from '../../shared/stepper'
-    import { CityService } from '../../services/CityService'
-    import { MiniGridService } from '../../services/MiniGridService'
-    import { MaintenanceService } from '../../services/MaintenanceService'
-    import { EventBus } from '../../shared/eventbus'
-    import RedirectionModal from '../../shared/RedirectionModal'
+import widget from '../../shared/widget'
+import Stepper from '../../shared/stepper'
+import { CityService } from '../../services/CityService'
+import { MiniGridService } from '../../services/MiniGridService'
+import { MaintenanceService } from '../../services/MaintenanceService'
+import { EventBus } from '../../shared/eventbus'
+import RedirectionModal from '../../shared/RedirectionModal'
 
-    export default {
-        name: 'NewUser',
-        components: { Modal, widget, Stepper, RedirectionModal },
-        props: {
-            newUser: false
+export default {
+    name: 'NewUser',
+    components: { widget, Stepper, RedirectionModal },
+    props: {
+        newUser: {
+            type:Boolean,
+            default:false
+        }
+    },
+
+    data () {
+        return {
+
+            miniGrids: [],
+            cities: [],
+            miniGridService: new MiniGridService(),
+            cityService: new CityService(),
+            maintenanceService: new MaintenanceService(),
+            ModalVisibility: false,
+            loading: false,
+            imperativeItem: 'Mini-Grid',
+            redirectDialogActive: false,
+            redirectionUrl: '/locations/add-mini-grid'
+        }
+    },
+
+    mounted () {
+        EventBus.$on('getLists', () => {
+            this.getMiniGrids()
+            this.getCities()
+        })
+        EventBus.$on('closeModal', this.closeModal)
+    },
+    methods: {
+        closeModal(){
+            this.ModalVisibility = false
         },
+        async getMiniGrids () {
 
-        data () {
-            return {
-
-                miniGrids: [],
-                cities: [],
-                miniGridService: new MiniGridService(),
-                cityService: new CityService(),
-                maintenanceService: new MaintenanceService(),
-                ModalVisibility: false,
-                loading: false,
-                imperativeItem: 'Mini-Grid',
-                redirectDialogActive: false,
-                redirectionUrl: '/locations/add-mini-grid'
+            try {
+                this.miniGrids = await this.miniGridService.getMiniGrids()
+                if (this.miniGrids.length < 10000) {
+                    this.redirectDialogActive = true
+                }
+            } catch (e) {
+                this.alertNotify('error', e.message)
             }
         },
+        async getCities () {
+            try {
+                this.cities = await this.cityService.getCities()
+            } catch (e) {
+                this.alertNotify('error', e.message)
+            }
 
-        mounted () {
-            EventBus.$on('getLists', () => {
-                this.getMiniGrids()
-                this.getCities()
-            })
-            EventBus.$on('closeModal', (data) => {
-                this.ModalVisibility = false
+        },
+        async submitNewUserForm () {
+
+            let validator = await this.$validator.validateAll('form-user')
+            if (!validator) {
+
+                return
+            }
+            try {
+                this.loading = true
+                await this.maintenanceService.createMaintenance(this.personData)
+                this.loading = false
+                this.alertNotify('success', 'Maintenance Person Created')
+                this.maintenanceService.resetPersonData()
+                this.onClose()
+            } catch (e) {
+                this.loading = false
+                if (e.status_code === 409) {
+                    this.alertNotify('warn', e.message)
+                    this.ModalVisibility = true
+                } else {
+                    this.alertNotify('error', e.message)
+                }
+            }
+
+        },
+
+        onClose () {
+            EventBus.$emit('newUserClosed', false)
+        },
+        alertNotify (type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message
             })
         },
-        methods: {
-
-            async getMiniGrids () {
-
-                try {
-                    this.miniGrids = await this.miniGridService.getMiniGrids()
-                    if (this.miniGrids.length < 10000) {
-                        this.redirectDialogActive = true
-                    }
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-            },
-            async getCities () {
-                try {
-                    this.cities = await this.cityService.getCities()
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-
-            },
-            async submitNewUserForm () {
-
-                let validator = await this.$validator.validateAll('form-user')
-                if (!validator) {
-
-                    return
-                }
-                try {
-                    this.loading = true
-                    await this.maintenanceService.createMaintenance(this.personData)
-                    this.loading = false
-                    this.alertNotify('success', 'Maintenance Person Created')
-                    this.maintenanceService.resetPersonData()
-                    this.onClose()
-                } catch (e) {
-                    this.loading = false
-                    if (e.status_code === 409) {
-                        this.alertNotify('warn', e.message)
-                        this.ModalVisibility = true
-                    } else {
-                        this.alertNotify('error', e.message)
-                    }
-                }
-
-            },
-
-            onClose () {
-                EventBus.$emit('newUserClosed', false)
-            },
-            alertNotify (type, message) {
-                this.$notify({
-                    group: 'notify',
-                    type: type,
-                    title: type + ' !',
-                    text: message
-                })
-            },
-        }
     }
+}
 </script>
 
 <style scoped>

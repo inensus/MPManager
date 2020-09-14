@@ -41,67 +41,67 @@
 </template>
 
 <script>
-import Widget from "../../shared/widget";
-import { resources } from "../../resources";
+import Widget from '../../shared/widget'
+import { resources } from '../../resources'
 
 export default {
-  name: "SmsHistory",
-  components: { Widget },
-  props: {
-    personId: {
-      type: String,
-      required: true
+    name: 'SmsHistory',
+    components: { Widget },
+    props: {
+        personId: {
+            type: String,
+            required: true
+        },
+        personName: {
+            type: String,
+            required: true
+        }
     },
-    personName: {
-      type: String,
-      required: true
+
+    mounted() {
+        this.getSmsList()
+    },
+    data() {
+        return {
+            smses: [],
+            message: ''
+        }
+    },
+    methods: {
+        getSmsList() {
+            axios.get(resources.sms.list + this.personId).then(response => {
+                this.smses = response.data.data
+
+                this.scrollDown()
+            })
+        },
+        sendSms() {
+            if (this.message.length <= 3) {
+                alert('Message should contain more than 3 letters')
+                return
+            }
+            axios
+                .post(resources.sms.send, {
+                    message: this.message,
+                    person_id: this.personId,
+                    senderId: this.$store.state.admin.id
+                })
+                .then(response => {
+                    this.smses.push(response.data.data)
+                    this.message = ''
+                    this.scrollDown()
+                })
+        },
+
+        scrollDown() {
+            let parent = this
+            setTimeout(function() {
+                let chat = parent.$refs.chat
+                chat.scrollTop = chat.scrollHeight
+            }, 1000)
+        }
     }
-  },
-
-  mounted() {
-    this.getSmsList();
-  },
-  data() {
-    return {
-      smses: [],
-      message: ""
-    };
-  },
-  methods: {
-    getSmsList() {
-      axios.get(resources.sms.list + this.personId).then(response => {
-        this.smses = response.data.data;
-
-        this.scrollDown();
-      });
-    },
-    sendSms() {
-      if (this.message.length <= 3) {
-        alert("Message should contain more than 3 letters");
-        return;
-      }
-      axios
-        .post(resources.sms.send, {
-          message: this.message,
-          person_id: this.personId,
-          senderId: this.$store.state.admin.id
-        })
-        .then(response => {
-          this.smses.push(response.data.data);
-          this.message = "";
-          this.scrollDown();
-        });
-    },
-
-    scrollDown() {
-      let parent = this;
-      setTimeout(function() {
-        let chat = parent.$refs.chat;
-        chat.scrollTop = chat.scrollHeight;
-      }, 1000);
-    }
-  }
-};
+}
 </script>
 
 <style scoped>

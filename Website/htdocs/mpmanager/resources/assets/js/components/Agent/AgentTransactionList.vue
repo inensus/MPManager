@@ -26,44 +26,44 @@
     </widget>
 </template>
 <script>
-    import Widget from '../../shared/widget'
-    import { AgentTransactionService } from '../../services/AgentTransactionService'
-    import { EventBus } from '../../shared/eventbus'
-    import NoTableData from '../../shared/NoTableData'
+import Widget from '../../shared/widget'
+import { AgentTransactionService } from '../../services/AgentTransactionService'
+import { EventBus } from '../../shared/eventbus'
+import NoTableData from '../../shared/NoTableData'
 
-    export default {
-        name: 'AgentTransactionList',
-        data () {
-            return {
-                subscriber: 'agent-transactions',
-                agentTransactionService: new AgentTransactionService(this.agentId),
-                headers: ['ID', 'Amount', 'Meter', 'Customer', 'Date'],
-                tableName: 'Agent Transaction'
-            }
-        },
-        mounted () {
-            EventBus.$on('pageLoaded', this.reloadList)
+export default {
+    name: 'AgentTransactionList',
+    data () {
+        return {
+            subscriber: 'agent-transactions',
+            agentTransactionService: new AgentTransactionService(this.agentId),
+            headers: ['ID', 'Amount', 'Meter', 'Customer', 'Date'],
+            tableName: 'Agent Transaction'
+        }
+    },
+    mounted () {
+        EventBus.$on('pageLoaded', this.reloadList)
 
+    },
+    beforeDestroy () {
+        EventBus.$off('pageLoaded', this.reloadList)
+    },
+    components: {
+        Widget,
+        NoTableData
+    },
+    methods: {
+        reloadList (subscriber, data) {
+            if (subscriber !== this.subscriber) return
+            this.agentTransactionService.updateList(data)
         },
-        beforeDestroy () {
-            EventBus.$off('pageLoaded', this.reloadList)
-        },
-        components: {
-            Widget,
-            NoTableData
-        },
-        methods: {
-            reloadList (subscriber, data) {
-                if (subscriber !== this.subscriber) return
-                this.agentTransactionService.updateList(data)
-            },
-        },
-        props: {
-            agentId: {
-                default: null
-            }
-        },
-    }
+    },
+    props: {
+        agentId: {
+            default: null
+        }
+    },
+}
 
 </script>
 <style scoped>

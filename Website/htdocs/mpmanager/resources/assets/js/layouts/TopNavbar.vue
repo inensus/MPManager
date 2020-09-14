@@ -50,30 +50,30 @@
 </template>
 
 <script>
-    export default {
-        data () {
-            return {
-                open: false,
-                toggleCard: false
+export default {
+    data () {
+        return {
+            open: false,
+            toggleCard: false
 
-            }
-        },
-        methods: {
-            logout () {
-                this.$store.dispatch('auth/logOut').then(() => {
-                    this.$router.replace('/login')
-                })
-
-            },
-            toggle () {
-                this.toggleCard = !this.toggleCard
-            },
-            toggleSidebar () {
-                this.$sidebar.displaySidebar(!this.$sidebar.showSidebar)
-            }
         }
+    },
+    methods: {
+        logout () {
+            this.$store.dispatch('auth/logOut').then(() => {
+                this.$router.replace('/login')
+            })
 
+        },
+        toggle () {
+            this.toggleCard = !this.toggleCard
+        },
+        toggleSidebar () {
+            this.$sidebar.displaySidebar(!this.$sidebar.showSidebar)
+        }
     }
+
+}
 </script>
 
 <style lang="css">

@@ -62,62 +62,55 @@
 </template>
 
 <script>
-    import { validationMixin } from 'vuelidate'
+import { validationMixin } from 'vuelidate'
+import { Admin } from '../../classes/admin'
+import { AuthenticationService } from '../../services/AuthenticationService'
 
-    import {
-        required,
-        email
-        // minLength,
-        // maxLength
-    } from 'vuelidate/lib/validators'
-    import { Admin } from '../../classes/admin'
-    import { AuthenticationService } from '../../services/AuthenticationService'
+export default {
+    name: 'login-card',
+    mixins: [validationMixin],
+    data: () => ({
+        authError: false,
+        form: {
+            email: null,
+            password: null
+        },
 
-    export default {
-        name: 'login-card',
-        mixins: [validationMixin],
-        data: () => ({
-            authError: false,
-            form: {
-                email: null,
-                password: null
-            },
+        userSaved: false,
+        sending: false,
+        admin: new Admin(),
+        service: new AuthenticationService()
+    }),
 
-            userSaved: false,
-            sending: false,
-            admin: new Admin(),
-            service: new AuthenticationService()
-        }),
-
-        methods: {
-            clearForm () {
-                this.$v.$reset();
-                (this.form.password = null), (this.form.email = null)
-            },
-            async authenticate () {
-                this.sending = true
-                try {
-                    let email = this.form.email
-                    let password = this.form.password
-                    await this.$store.dispatch('auth/authenticate', { email, password })
-                    this.sending = false
-                    this.$router.push('/')
-                } catch (e) {
-                    this.sending = false
-                    this.authError = true
-                }
-            },
-            async validateUser () {
-
-                let validator = await this.$validator.validateAll('Login-Form')
-
-                if (validator) {
-                    await this.authenticate()
-                }
-
+    methods: {
+        clearForm () {
+            this.$v.$reset();
+            (this.form.password = null), (this.form.email = null)
+        },
+        async authenticate () {
+            this.sending = true
+            try {
+                let email = this.form.email
+                let password = this.form.password
+                await this.$store.dispatch('auth/authenticate', { email, password })
+                this.sending = false
+                this.$router.push('/')
+            } catch (e) {
+                this.sending = false
+                this.authError = true
             }
+        },
+        async validateUser () {
+
+            let validator = await this.$validator.validateAll('Login-Form')
+
+            if (validator) {
+                await this.authenticate()
+            }
+
         }
     }
+}
 </script>
 
 <style lang="scss">

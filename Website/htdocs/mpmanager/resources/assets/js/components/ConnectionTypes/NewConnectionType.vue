@@ -39,62 +39,60 @@
 </template>
 
 <script>
-    import Widget from '../../shared/widget'
-    import {AccessRate} from '../../classes/AccessRate'
+import Widget from '../../shared/widget'
+import {ConnectionTypeService} from '../../services/ConnectionTypeService'
+import {EventBus} from '../../shared/eventbus'
 
-    import {ConnectionTypeService} from '../../services/ConnectionTypeService'
-    import {EventBus} from '../../shared/eventbus'
-
-    export default {
-        name: 'NewConnectionType',
-        components: {Widget},
-        data() {
-            return {
-                connectionTypeService: new ConnectionTypeService(),
-                connectionType: null,
-                showAdd: false,
-            }
-        },
-        created() {
-            this.connectionType = this.connectionTypeService.connectionType
-        },
-        mounted() {
-            EventBus.$on('showNewConnectionType', this.show)
-        },
-        methods: {
-            async store() {
-                let validator = await this.$validator.validateAll()
-                if (!validator) {
-
-                    return
-                }
-                this.hide()
-                try {
-
-                   await this.connectionTypeService.createConnectionType(this.connectionType.name)
-                    this.alertNotify('success', 'ConnectionType has registered.')
-                    EventBus.$emit('connectionTypeAdded', this.connectionType)
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-
-            },
-            hide() {
-                this.showAdd = false
-            },
-            show() {
-                this.showAdd = true
-            },
-            alertNotify(type, message) {
-                this.$notify({
-                    group: 'notify',
-                    type: type,
-                    title: type + ' !',
-                    text: message
-                })
-            },
+export default {
+    name: 'NewConnectionType',
+    components: {Widget},
+    data() {
+        return {
+            connectionTypeService: new ConnectionTypeService(),
+            connectionType: null,
+            showAdd: false,
         }
+    },
+    created() {
+        this.connectionType = this.connectionTypeService.connectionType
+    },
+    mounted() {
+        EventBus.$on('showNewConnectionType', this.show)
+    },
+    methods: {
+        async store() {
+            let validator = await this.$validator.validateAll()
+            if (!validator) {
+
+                return
+            }
+            this.hide()
+            try {
+
+                await this.connectionTypeService.createConnectionType(this.connectionType.name)
+                this.alertNotify('success', 'ConnectionType has registered.')
+                EventBus.$emit('connectionTypeAdded', this.connectionType)
+            } catch (e) {
+                this.alertNotify('error', e.message)
+            }
+
+        },
+        hide() {
+            this.showAdd = false
+        },
+        show() {
+            this.showAdd = true
+        },
+        alertNotify(type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message
+            })
+        },
     }
+}
 </script>
 
 <style scoped>

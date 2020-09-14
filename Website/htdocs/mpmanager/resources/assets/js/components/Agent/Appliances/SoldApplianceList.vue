@@ -35,45 +35,45 @@
 
 </template>
 <script>
-    import Widget from '../../../shared/widget'
-    import { AgentSoldApplianceService } from '../../../services/AgentSoldApplianceService'
-    import { EventBus } from '../../../shared/eventbus'
-    import NoTableData from '../../../shared/NoTableData'
+import Widget from '../../../shared/widget'
+import { AgentSoldApplianceService } from '../../../services/AgentSoldApplianceService'
+import { EventBus } from '../../../shared/eventbus'
+import NoTableData from '../../../shared/NoTableData'
 
-    export default {
-        name: 'SoldApplianceList',
-        data () {
-            return {
-                subscriber: 'agent-sold-appliances',
-                agentSoldApplianceService: new AgentSoldApplianceService(this.agentId),
-                headers: ['ID', 'Appliance', 'Amount', 'Customer', 'Sold Date'],
-                tableName: 'Sold Appliance'
-            }
-        },
-        components: {
-            Widget,
-            NoTableData
-        },
-        props: {
-            agentId: {
-                default: null
-            }
-        },
-        mounted () {
-
-            EventBus.$on('pageLoaded', this.reloadList)
-
-        },
-        beforeDestroy () {
-            EventBus.$off('pageLoaded', this.reloadList)
-        },
-        methods: {
-            reloadList (subscriber, data) {
-                if (subscriber !== this.subscriber) return
-                this.agentSoldApplianceService.updateList(data)
-            },
+export default {
+    name: 'SoldApplianceList',
+    data () {
+        return {
+            subscriber: 'agent-sold-appliances',
+            agentSoldApplianceService: new AgentSoldApplianceService(this.agentId),
+            headers: ['ID', 'Appliance', 'Amount', 'Customer', 'Sold Date'],
+            tableName: 'Sold Appliance'
         }
+    },
+    components: {
+        Widget,
+        NoTableData
+    },
+    props: {
+        agentId: {
+            default: null
+        }
+    },
+    mounted () {
+
+        EventBus.$on('pageLoaded', this.reloadList)
+
+    },
+    beforeDestroy () {
+        EventBus.$off('pageLoaded', this.reloadList)
+    },
+    methods: {
+        reloadList (subscriber, data) {
+            if (subscriber !== this.subscriber) return
+            this.agentSoldApplianceService.updateList(data)
+        },
     }
+}
 
 </script>
 <style scoped>

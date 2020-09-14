@@ -1,4 +1,4 @@
-const resource = '/api/cities';
+const resource = '/api/cities'
 
 export default {
 

@@ -115,70 +115,70 @@
 </template>
 
 <script>
-    import Widget from '../../shared/widget'
-    import { TicketLabelService } from '../../services/TicketLabelService'
-    import NoTableData from '../../shared/NoTableData'
+import Widget from '../../shared/widget'
+import { TicketLabelService } from '../../services/TicketLabelService'
+import NoTableData from '../../shared/NoTableData'
 
-    export default {
-        name: 'LabelManagement',
-        components: { Widget, NoTableData },
-        data () {
-            return {
-                ticketLabelService: new TicketLabelService(),
-                newLabel: false,
-                headers: ['ID', 'Name', 'Color', 'Outsourcing'],
-                tableName: 'Category',
-                loading: false
+export default {
+    name: 'LabelManagement',
+    components: { Widget, NoTableData },
+    data () {
+        return {
+            ticketLabelService: new TicketLabelService(),
+            newLabel: false,
+            headers: ['ID', 'Name', 'Color', 'Outsourcing'],
+            tableName: 'Category',
+            loading: false
+        }
+
+    },
+
+    created () {
+        this.getLabels()
+
+    },
+
+    mounted () {
+
+    },
+    methods: {
+        async getLabels () {
+            try {
+                await this.ticketLabelService.getLabels()
+            } catch (e) {
+                this.alertNotify('error', e.message)
+            }
+        },
+        async saveLabel () {
+
+            let validator = await this.$validator.validateAll()
+            if (validator) {
+
+                try {
+                    this.loading = true
+                    await this.ticketLabelService.createLabel(this.ticketLabelService.newLabelName, this.ticketLabelService.currentColor, this.ticketLabelService.outSourcing)
+                    this.alertNotify('success', 'New category added successfully.')
+                    this.loading = false
+                } catch (e) {
+                    this.loading = false
+                    this.alertNotify('error', e.message)
+                }
+                this.ticketLabelService.resetLabel()
+                this.newLabel = false
             }
 
         },
-
-        created () {
-            this.getLabels()
-
+        alertNotify (type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message,
+                speed: 0
+            })
         },
-
-        mounted () {
-
-        },
-        methods: {
-            async getLabels () {
-                try {
-                    await this.ticketLabelService.getLabels()
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-            },
-            async saveLabel () {
-
-                let validator = await this.$validator.validateAll()
-                if (validator) {
-
-                    try {
-                        this.loading = true
-                        await this.ticketLabelService.createLabel(this.ticketLabelService.newLabelName, this.ticketLabelService.currentColor, this.ticketLabelService.outSourcing)
-                        this.alertNotify('success', 'New category added successfully.')
-                        this.loading = false
-                    } catch (e) {
-                        this.loading = false
-                        this.alertNotify('error', e.message)
-                    }
-                    this.ticketLabelService.resetLabel()
-                    this.newLabel = false
-                }
-
-            },
-            alertNotify (type, message) {
-                this.$notify({
-                    group: 'notify',
-                    type: type,
-                    title: type + ' !',
-                    text: message,
-                    speed: 0
-                })
-            },
-        },
-    }
+    },
+}
 </script>
 
 <style lang="scss">

@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { EventBus } from '../../shared/eventbus'
 
 const baseUrl = 'http://mpmanager.local/'
 

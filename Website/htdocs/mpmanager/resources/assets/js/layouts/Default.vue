@@ -34,56 +34,54 @@
 
 
 <script>
-    import NavBar from '../layouts/NavBar.vue'
-    import FooterBar from '../layouts/FooterBar.vue'
-    import { EventBus } from '../shared/eventbus'
-    import TopNavbar from './TopNavbar.vue'
-    import SideBar from '../components/Sidebar/SideBar'
+import FooterBar from '../layouts/FooterBar.vue'
+import { EventBus } from '../shared/eventbus'
+import TopNavbar from './TopNavbar.vue'
+import SideBar from '../components/Sidebar/SideBar'
 
-    export default {
-        name: 'default',
-        components: {
-            NavBar,
-            TopNavbar,
-            FooterBar,
-            SideBar
-        },
-        mounted () {
-            //register the time extender
-            EventBus.$on('ask.for.extend', this.showExtender)
-            EventBus.$on('session.end', this.logout)
-        },
+export default {
+    name: 'default',
+    components: {
+        TopNavbar,
+        FooterBar,
+        SideBar
+    },
+    mounted () {
+        //register the time extender
+        EventBus.$on('ask.for.extend', this.showExtender)
+        EventBus.$on('session.end', this.logout)
+    },
 
-        data: () => ({
+    data: () => ({
 
-            active: false,
-            showed: false,
-            confirmed: false,
-            expires_in: null,
-            sidebarBackground: 'green',
-            sidebarBackgroundImage: null
-        }),
-        methods: {
-            showExtender (val) {
-                this.expires_in = val
-                if (this.showed === true) {
-                    return
-                }
-                this.showed = true
-                this.active = true
-            },
-            extendToken () {
-                this.confirmed = true
-                location.reload()
-            },
-            logout () {
-                this.$store.dispatch('auth/logOut').then(() => {
-                    this.$router.replace('/login')
-                })
-
+        active: false,
+        showed: false,
+        confirmed: false,
+        expires_in: null,
+        sidebarBackground: 'green',
+        sidebarBackgroundImage: null
+    }),
+    methods: {
+        showExtender (val) {
+            this.expires_in = val
+            if (this.showed === true) {
+                return
             }
+            this.showed = true
+            this.active = true
+        },
+        extendToken () {
+            this.confirmed = true
+            location.reload()
+        },
+        logout () {
+            this.$store.dispatch('auth/logOut').then(() => {
+                this.$router.replace('/login')
+            })
+
         }
     }
+}
 </script>
 
 
