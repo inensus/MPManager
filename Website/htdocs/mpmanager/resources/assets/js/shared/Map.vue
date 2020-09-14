@@ -6,9 +6,8 @@
 <script>
 
 import 'leaflet/dist/leaflet.css'
-import 'leaflet-draw/dist/leaflet.draw.css'
-import L from 'leaflet'
 import 'leaflet-draw'
+import 'leaflet-draw/dist/leaflet.draw.css'
 import { MappingService } from '../services/MappingService'
 import { EventBus } from './eventbus'
 
@@ -66,7 +65,7 @@ export default {
         },
         center: {
             type: Array,
-            default: function(){return this.appConfig.mapStartingPoint}
+            default: function () {return this.appConfig.mapStartingPoint}
 
         },
         filtered_types: {
@@ -101,6 +100,10 @@ export default {
         isMeter: {
             type: Boolean,
             default: false
+        },
+        parentName: {
+            type: String,
+            default: ''
         }
     },
     data () {
@@ -309,6 +312,7 @@ export default {
             this.geoDataItems = []
             this.editableLayers.clearLayers()
             let editableLayer = this.editableLayers
+            let nonEditableLayers = new L.FeatureGroup()
             for (let i = 0; i < geoData.length; i++) {
                 let geoType = geoData[i].geojson.type
                 let coordinatesClone = []
@@ -343,6 +347,8 @@ export default {
                 let polygonColor = this.mappingService.strToHex(geoData[i].display_name)
                 let geoDataItems = this.geoDataItems
                 let router = this.$router
+                let map = this.map
+                let parent = this.parentName
                 L.geoJson(drawing,
                     {
                         style: { fillColor: polygonColor, color: polygonColor },
@@ -355,7 +361,12 @@ export default {
                                     router.push({ path: '/clusters/' + clusterId })
                                 })
                             }
-                            editableLayer.addLayer(layer)
+                            if (parent === 'MiniGrid') {
+                                nonEditableLayers.addLayer(layer)
+                                map.addLayer(nonEditableLayers)
+                            } else {
+                                editableLayer.addLayer(layer)
+                            }
                             let geoDataItem = {
                                 leaflet_id: layer._leaflet_id,
                                 type: 'manual',

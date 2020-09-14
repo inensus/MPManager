@@ -167,7 +167,10 @@ class MeterController extends Controller
      */
     public function update(Request $request, $meter)
     {
-        $points = $request->get('points');
+
+        $points =  $request->only([
+        'lat','lng'
+    ]);
 
         if ($points) {
             $meter = $this->meter->find($meter);
