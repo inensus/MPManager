@@ -9,17 +9,21 @@ export class AgentCommissionService {
             id: null,
             name: null,
             energyCommission: null,
-            applianceCommission: null
-
+            applianceCommission: null,
+            riskBalance: null
         }
     }
 
     fromJson (data) {
-        this.agentCommission.id = data.id
-        this.agentCommission.name = data.name
-        this.agentCommission.energyCommission = data.energy_commission
-        this.agentCommission.applianceCommission = data.appliance_commission
-        return this.agentCommission
+
+        let agentCommission = {
+            id: data.id,
+            name: data.name,
+            energyCommission: data.energy_commission,
+            applianceCommission: data.appliance_commission,
+            riskBalance: data.risk_balance
+        }
+        return agentCommission
 
     }
 
@@ -27,6 +31,7 @@ export class AgentCommissionService {
         this.list = []
         for (let a in data) {
             let agentCommission = this.fromJson(data[a])
+
             this.list.push(agentCommission)
         }
         return this.list
@@ -47,4 +52,78 @@ export class AgentCommissionService {
             return new ErrorHandler(errorMessage, 'http')
         }
     }
+
+    async createAgentCommission () {
+        try {
+            let agentCommissionPM = {
+                name: this.agentCommission.name,
+                energy_commission: this.agentCommission.energyCommission,
+                appliance_commission: this.agentCommission.applianceCommission,
+                risk_balance: this.agentCommission.riskBalance
+            }
+            let response = await this.repository.create(agentCommissionPM)
+            this.resetAgentCommission()
+            if (response.status === 200 || response.status === 201) {
+                return response
+            } else {
+                return new ErrorHandler(response.error, 'http', response.status)
+            }
+
+        } catch (e) {
+            this.resetAgentCommission()
+            let errorMessage = e.response.data.data.message
+            return new ErrorHandler(errorMessage, 'http')
+        }
+
+    }
+
+    async updateAgentCommission (agentCommission) {
+        try {
+            let agentCommissionPM = {
+                id: agentCommission.id,
+                name: agentCommission.name,
+                energy_commission: agentCommission.energyCommission,
+                appliance_commission: agentCommission.applianceCommission,
+                risk_balance: agentCommission.riskBalance
+            }
+            let response = await this.repository.update(agentCommissionPM)
+            if (response.status === 200 || response.status === 201) {
+                return response
+            } else {
+                return new ErrorHandler(response.error, 'http', response.status)
+            }
+        } catch (e) {
+            let errorMessage = e.response.data.data.message
+            return new ErrorHandler(errorMessage, 'http')
+        }
+
+    }
+
+    async deleteAgentCommission (agentCommissionId) {
+        try {
+
+            let response = await this.repository.delete(agentCommissionId)
+            if (response.status === 200 || response.status === 201) {
+                return response
+            } else {
+                return new ErrorHandler(response.error, 'http', response.status)
+            }
+        } catch (e) {
+            this.resetAgentCommission()
+            let errorMessage = e.response.data.data.message
+            return new ErrorHandler(errorMessage, 'http')
+        }
+
+    }
+
+    resetAgentCommission () {
+        this.agentCommission = {
+            id: null,
+            name: null,
+            energyCommission: null,
+            applianceCommission: null,
+            riskBalance: null
+        }
+    }
 }
+
