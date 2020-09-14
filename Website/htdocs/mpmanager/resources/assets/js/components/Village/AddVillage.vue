@@ -3,7 +3,6 @@
         <widget title="Add New Village" color="green">
             <md-card class="md-layout-item md-size-100">
                 <md-card-content>
-
                     <div class="md-layout md-gutter md-size-100">
                         <div class="md-layout-item md-size-70">
                             <md-field :class="{'md-invalid': errors.has('cityName')}">
@@ -26,13 +25,12 @@
                                     v-validate="'required'"
                                     @md-selected="selectMiniGrid"
                                 >
-                                    <md-option v-for="(mg) in miniGrids" :value="mg.id"
+                                    <md-option v-for="mg in miniGrids" :value="mg.id"
                                                :key="mg.id">
                                         {{mg.name}}
                                     </md-option>
                                 </md-select>
                                 <span class="md-error">{{ errors.first('city_miniGrid') }}</span>
-
                             </md-field>
                         </div>
 
@@ -43,7 +41,6 @@
                             <form class="md-layout md-gutter" @submit.prevent="validatePoints"
                                   data-vv-scope="Points-Form" style="padding-left: 1.5rem !important;"
                             >
-
                                 <div class="md-layout-item md-size-30">
                                     <md-field :class="{'md-invalid': errors.has('Points-Form.latitude')}">
                                         <label for="latitude">Latitude</label>
@@ -210,12 +207,10 @@ export default {
                     let Points = miniGridGeoData.location.points.split(',')
                     this.miniGridLatLng.lat = Points[0]
                     this.miniGridLatLng.lon = Points[1]
-
                     await this.getGeoData(miniGridGeoData.cluster_id)
                     let markingInfo = this.mappingService.createMarkinginformation(miniGridGeoData.id, miniGridGeoData.name, null, Points[0], Points[1])
                     this.markingInfos.push(markingInfo)
                     this.constantLocations.push([this.miniGridLatLng.lat, this.miniGridLatLng.lon])
-
                 } else {
                     this.redirectDialogActive = true
                 }
@@ -237,7 +232,6 @@ export default {
         async saveVillage () {
             let validator = await this.$validator.validateAll()
             let validatorPoints = await this.$validator.validateAll('Points-Form')
-
             if (validator && validatorPoints) {
                 try {
                     this.loading = true
@@ -245,14 +239,11 @@ export default {
                     this.alertNotify('success', 'The Village you add is stored successfully.')
                     this.loading = false
                     await this.$router.replace('/dashboards/mini-grid/' + city.data.data.mini_grid.id)
-
                 } catch (e) {
                     this.loading = false
                     this.alertNotify('error', e.message)
                 }
-
             }
-
         },
         setMarker () {
             this.markerLocations = []
@@ -265,13 +256,11 @@ export default {
             }
             this.constantLocations = []
             this.markingInfos = []
-
             this.selectedMiniGridId = miniGridId
             let miniGridGeoData = await this.miniGridService.getMiniGridGeoData(this.selectedMiniGridId)
             let Points = miniGridGeoData.location.points.split(',')
             this.miniGridLatLng.lat = Points[0]
             this.miniGridLatLng.lon = Points[1]
-
             await this.getGeoData(miniGridGeoData.cluster_id)
             let markingInfo = this.mappingService.createMarkinginformation(miniGridGeoData.id, miniGridGeoData.name, Points[0], Points[1])
             this.markingInfos.push(markingInfo)
