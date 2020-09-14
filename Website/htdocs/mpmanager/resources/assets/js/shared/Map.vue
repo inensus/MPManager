@@ -6,8 +6,9 @@
 <script>
 
 import 'leaflet/dist/leaflet.css'
-import 'leaflet-draw'
 import 'leaflet-draw/dist/leaflet.draw.css'
+import L from 'leaflet'
+import 'leaflet-draw'
 import { MappingService } from '../services/MappingService'
 import { EventBus } from './eventbus'
 
