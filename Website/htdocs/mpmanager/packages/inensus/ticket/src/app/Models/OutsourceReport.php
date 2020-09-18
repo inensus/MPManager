@@ -17,5 +17,5 @@ use Illuminate\Database\Eloquent\Model;
  */
 class OutsourceReport extends Model
 {
-    protected $table = 'ticket_outsource_reports';
+    protected $table = 'outsource_reports';
 }
