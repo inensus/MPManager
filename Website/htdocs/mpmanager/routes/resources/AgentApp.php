@@ -15,6 +15,8 @@ Route::group([
         Route::group(['prefix' => 'customers'], function () {
             Route::get('/', 'AgentCustomerController@index');
             Route::get('/search', 'AgentCustomerController@search');
+            Route::get('/{customerId}/graph/{period}/{limit?}/{order?}',
+                'PaymentHistoryController@show')->where('customerId', '[0-9]+');
         });
         Route::group(['prefix' => 'transactions'], function () {
             Route::get('/', 'AgentTransactionsController@index');
@@ -39,9 +41,10 @@ Route::group([
             Route::post('/', 'AgentTicketController@store');
         });
         Route::group(['prefix' => 'dashboard'], function () {
-            Route::get('/boxes', 'AgentController@showDashboardBoxes');
-            Route::get('/graph', 'AgentController@showBalanceHistories');
-            Route::get('/revenue', 'AgentController@showRevenuesWeekly');
+            Route::get('/boxes',  'AgentController@showDashboardBoxes');
+            Route::get('/graph',  'AgentController@showBalanceHistories');
+            Route::get('/revenue','AgentController@showRevenuesWeekly');
+
         });
     });
 
