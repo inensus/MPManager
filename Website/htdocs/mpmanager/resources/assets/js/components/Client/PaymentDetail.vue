@@ -16,7 +16,7 @@
             </div>
             <div class="md-layout md-gutter">
                 <div class="md-layout-item md-size-95">
-                    <div v-if="chartData.length>1000000000000000">
+                    <div v-if="chartData.length>0">
                         <GChart
                             type="ColumnChart"
                             :data="chartData"
