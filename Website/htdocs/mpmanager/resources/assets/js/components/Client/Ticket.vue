@@ -136,7 +136,7 @@
                         <div  class="md-layout-item md-size-100 ">
                             <md-field name="ticketAssignedTo">
                                 <label for="ticketAssignedTo">Assign To</label>
-                                <md-select name="ticketAssignedTo" id="ticketAssignedTo">
+                                <md-select name="ticketAssignedTo" id="ticketAssignedTo" v-model="newTicket.assignedPerson">
                                     <md-option disabled selected>No one</md-option>
                                     <md-option v-for="user in users" :value="user.id" :key="user.id">{{user.name}}</md-option>
                                 </md-select>
@@ -353,6 +353,7 @@ export default {
                 })
                 return
             }
+
             axios.post(resources.ticket.create, this.newTicket).then(response => {
                 let data = response.data.data[0]
                 let t = new Ticket()
