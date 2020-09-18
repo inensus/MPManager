@@ -17,9 +17,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $type
  *
  */
-class Report extends Model
+class Report extends BaseModel
 {
 
-    protected $fillable = ['name', 'path', 'type'];
+
 
 }
