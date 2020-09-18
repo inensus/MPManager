@@ -7,7 +7,7 @@
  */
 
 /* Address */
-Route::group(['prefix' => 'addresses'], function () {
+Route::group(['prefix' => 'addresses', 'middleware' => 'jwt.verify'], function () {
     Route::get('/', 'AddressController@index');
     Route::get('/{id}', 'AddressController@show');
     Route::post('/', 'AddressController@store');

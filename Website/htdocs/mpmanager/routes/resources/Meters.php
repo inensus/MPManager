@@ -7,7 +7,7 @@
  */
 
 /* Meter */
-Route::group(['prefix' => 'meters'], function () {
+Route::group(['prefix' => 'meters', 'middleware' => 'jwt.verify'], function () {
     Route::get('/', 'MeterController@index');
     Route::get('/{id}', 'MeterController@show')->where('id', '[0-9]+');
     Route::post('/', 'MeterController@store');
