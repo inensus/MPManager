@@ -47,6 +47,21 @@ class PaymentHistory extends BaseModel
         return $sth->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function getFlowForAgentCustomers($payer_type, $agent_id, $period, $limit = null, $order = 'ASC')
+    {
+
+        $sql = 'SELECT sum(amount) as amount, payment_type, CONCAT_WS("/", ' . $period . ') as aperiod from payment_histories inner join addresses on payment_histories.payer_id = addresses.owner_id inner JOIN cities on addresses.city_id=cities.id inner JOIN mini_grids on cities.mini_grid_id=mini_grids.id inner JOIN agents on agents.mini_grid_id=mini_grids.id where payer_type=:payer_type and agents.id=:agent_id and addresses.is_primary=1 GROUP by concat( ' . $period . '), payment_type ORDER BY payment_histories.created_at ' . $order;;
+        if ($limit !== null) {
+            $sql .= ' limit ' . (int)$limit;
+        }
+        $sth = DB::connection()->getPdo()->prepare($sql);
+        $sth->bindValue(':agent_id', $agent_id, PDO::PARAM_INT);
+        $sth->bindValue(':payer_type', $payer_type, PDO::PARAM_STR);
+
+        $sth->execute();
+        return $sth->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function getPaymentFlow($payer_type, $payer_id, $year)
     {
         $sql = 'SELECT sum(amount) as amount, MONTH(created_at) as month from payment_histories where payer_id=:payer_id and payer_type=:payer_type and YEAR(created_at)=:year group by  MONTH(created_at) order  by  MONTH(created_at) ';

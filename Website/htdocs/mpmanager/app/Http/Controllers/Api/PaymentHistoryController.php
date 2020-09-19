@@ -56,6 +56,38 @@ class PaymentHistoryController
 
         $payments = (new PaymentHistory)->getFlow('person', $payerId, $period, $limit, $order);
 
+
+        $flowList = [];
+
+        foreach ($payments as $payment) {
+            $flowList[$payment['aperiod']][$payment['payment_type']] = $payment['amount'];
+        }
+
+        return $flowList;
+    }
+    public function showForAgentCustomers( string $period, $limit = null, $order = 'ASC')
+    {
+        $agent = request()->attributes->get('user');
+        $period = strtoupper($period);
+
+        switch ($period) {
+            case 'D':
+                $period = 'Day(payment_histories.created_at), Month(payment_histories.created_at), Year(payment_histories.created_at)';
+                break;
+            case 'W':
+                $period = 'Week(payment_histories.created_at), Year(payment_histories.created_at)';
+                break;
+            case 'M':
+                $period = 'Month(payment_histories.created_at), Year(payment_histories.created_at)';
+                break;
+            default:
+                $period = 'Year(payment_histories.created_at)';
+                break;
+        }
+
+        $payments = (new PaymentHistory)->getFlowForAgentCustomers('person', $agent->id, $period, $limit, $order);
+
+
         $flowList = [];
 
         foreach ($payments as $payment) {
