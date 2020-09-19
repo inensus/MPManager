@@ -17,6 +17,8 @@ Route::group([
             Route::get('/search', 'AgentCustomerController@search');
             Route::get('/{customerId}/graph/{period}/{limit?}/{order?}',
                 'PaymentHistoryController@show')->where('customerId', '[0-9]+');
+            Route::get('/graph/{period}/{limit?}/{order?}',
+                'PaymentHistoryController@showForAgentCustomers')->where('customerId', '[0-9]+');
         });
         Route::group(['prefix' => 'transactions'], function () {
             Route::get('/', 'AgentTransactionsController@index');
