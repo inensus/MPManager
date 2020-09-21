@@ -42,12 +42,13 @@ class ReportGenerator extends Command
      */
     public function handle():void
     {
-        $toDay = new Carbon();
+
         $startDay = Carbon::now()->format('Y-m-d');
         if ($this->option('start-date') != "") {
             $toDay = Carbon::parse($this->option('start-date'))->format('Y-m-d');
         } else {
-            $toDay = $toDay->subDays(1)->format('Y-m-d');
+
+            $toDay = Carbon::now()->subDays(1)->format('Y-m-d');
         }
         if ($this->argument('type') == "weekly") {
             $startDay = Carbon::parse($toDay)->modify("last Monday")->format('Y-m-d');
