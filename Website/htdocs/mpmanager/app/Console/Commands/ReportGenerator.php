@@ -42,23 +42,20 @@ class ReportGenerator extends Command
      */
     public function handle():void
     {
-        $dateParam = $this->option('start-date');
-        $typeParam = $this->argument('type');
         $toDay = new Carbon();
         $startDay = Carbon::now()->format('Y-m-d');
-        if ($dateParam != "") {
+        if ($this->option('start-date') != "") {
             $toDay = Carbon::parse($this->option('start-date'))->format('Y-m-d');
         } else {
             $toDay = $toDay->subDays(1)->format('Y-m-d');
         }
-        if ($typeParam == "weekly") {
+        if ($this->argument('type') == "weekly") {
             $startDay = Carbon::parse($toDay)->modify("last Monday")->format('Y-m-d');
-        } elseif ($typeParam == "monthly") {
+        } elseif ($this->argument('type') == "monthly") {
             $startDay = Carbon::parse($toDay)->modify("first day of this month")->format('Y-m-d');
+        }else{
+            var_dump("That the given parameter is not supported and end the process with that");
         }
-
-        $endDay = $toDay;
-        $this->reports->generateWithJob($startDay, $endDay, $typeParam);
-
+        $this->reports->generateWithJob($startDay, $toDay, $this->argument('type'));
     }
 }
