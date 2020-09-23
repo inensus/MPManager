@@ -241,7 +241,7 @@ class Reports
 
     }
 
-    public function generateWithJob($startDate,$endDate,$reportType):void
+    public function generateWithJob($startDate, $endDate, $reportType): void
     {
         try {
             $cities = $this->city->get();
@@ -251,13 +251,14 @@ class Reports
                 $this->getCustomerGroupEnergyUsagePerMonth([$startDate, $endDate]);
                 $this->generateReportForCity($city->id, $city->name, $startDate, $endDate, $reportType);
             }
-        }catch (\Exception $e){
-            Log::critical($reportType.' report job failed.',
+        } catch (\Exception $e) {
+            Log::critical($reportType . ' report job failed.',
                 ['Exception' => $e]
             );
         }
 
     }
+
     /**
      * @param Worksheet $sheet
      * @param String $coordinate
@@ -470,7 +471,7 @@ class Reports
                 $soldAmount['access_rate'] = $paymentHistory->amount;
             } else {
                 $soldAmount['energy'] = $paymentHistory->amount;
-                if($tariff->price!=0){
+                if ($tariff->price != 0) {
                     $unit += $paymentHistory->amount / ($tariff->price / 100);
                 }
             }
@@ -638,7 +639,7 @@ class Reports
 
         $this->initSheet();
 
-        $dateRange = $startDate . ' ' . $endDate;
+        $dateRange = $startDate . '-' . $endDate;
 
         $sheet = $this->spreadsheet->getActiveSheet();
         $sheet->setTitle('graphs' . $startDate . '-' . $endDate);
@@ -693,9 +694,10 @@ class Reports
             mkdir($dirPath, 0774, true);
         }
         try {
-            $writer->save(storage_path('./'.$reportType.'/'.$reportType . '-' . $cityName . '-' . $dateRange . '.xlsx'));
+            $fileName = str_slug($reportType . '-' . $cityName . '-' . $dateRange) . '.xlsx';
+            $writer->save(storage_path('./' . $reportType . '/' . $fileName));
             $this->report->create([
-                'path' => storage_path('./'.$reportType.'/'.$reportType . '-' . $cityName . '-' . $dateRange . '.xlsx'),
+                'path' => storage_path('./' . $reportType . '/' . $fileName),
                 'type' => $reportType,
                 'date' => $startDate . '---' . $endDate,
                 'name' => $cityName,
