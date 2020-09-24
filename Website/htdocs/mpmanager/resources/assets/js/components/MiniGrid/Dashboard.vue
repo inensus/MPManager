@@ -255,7 +255,8 @@
                     />
                 </div>
                 <div class="md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-100">
-                    <widget :id="'revenue-trends'" :title="'Revenue Trends'">
+                    <widget :id="'revenue-trends'" :title="'Revenue Trends'" :subscriber="subscriber.revenue_trends"
+                    >
                         <div class="md-layout md-gutter">
                             <div class="md-layout-item">
                                 <GChart
@@ -490,6 +491,10 @@ export default {
     },
     data () {
         return {
+            key:0,
+            subscriber:{
+                revenue_trends:'mini-grid-revenue-trends'
+            },
             miniGridService: new MiniGridService(),
             revenueService: new RevenueService(),
             revenueTrends: null,
@@ -752,6 +757,7 @@ export default {
                     }
 
                 }
+                EventBus.$emit('widgetContentLoaded',this.subscriber.revenue_trends,this.trendChartData.base.length)
 
             } catch (e) {
                 this.redirectDialogActive = true

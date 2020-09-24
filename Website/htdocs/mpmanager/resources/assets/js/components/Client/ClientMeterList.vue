@@ -2,10 +2,9 @@
 
     <div>
         <widget
-
             :title="' Meters '"
-
-
+            color="green"
+            :subscriber="subscriber"
         >
             <div class="md-layout md-gutter">
                 <div class="md-layout-item md-medium-size-100 md-large-size-100 md-small-size-100">
@@ -16,7 +15,6 @@
                                 <font-awesome-icon icon="map-marker"
                                                    @click="setMapCenter(meter.id)"
                                                    style="cursor:pointer;"/>
-
 
                             </md-table-cell>
                             <md-table-cell md-label="ID" md-sort-by="id">{{ item.id }}</md-table-cell>
@@ -35,7 +33,6 @@
 
         </widget>
     </div>
-
 
 </template>
 
@@ -58,18 +55,22 @@ export default {
         return {
             meter: new Meters(),
             meters: [],
+            subscriber:'client-meter-list'
         }
     },
     mounted: function () {
         for (let m in this.meterList) {
             this.getDetail(this.meterList[m])
         }
+        EventBus.$emit('widgetContentLoaded',this.subscriber,this.meterList.length)
+
     },
     methods: {
         getDetail (meterId) {
             this.meter.getMeterDetails(meterId).then((meter) => {
                 this.meters.push(meter)
             })
+
         },
         setMapCenter (meterId) {
             EventBus.$emit('map', meterId)

@@ -1,21 +1,20 @@
 <template>
+    <div>
+        <add-agent-balance :addNewBalance="showNewBalance" :agent-id="agentId"/>
     <widget
         :class="'col-sm-6 col-md-5'"
         :button-text="'Add Balance'"
         :button="true"
         title="Balance Histories"
         :button-color="'red'"
-        :callback="()=>{showNewBalance = true}"
+        @widgetAction="showAddBalance"
         :paginator="agentBalanceHistoryService.paginator"
         :subscriber="subscriber"
         :resetKey="resetKey"
         :show_per_page="true"
     >
 
-
         <div>
-            <add-agent-balance :addNewBalance="showNewBalance" :agent-id="agentId"/>
-            <div v-if="agentBalanceHistoryService.list.length>0">
                 <md-table md-sort="id" md-sort-order="asc">
                     <md-table-row>
                         <md-table-head v-for="(item, index) in headers" :key="index">{{item}}</md-table-head>
@@ -25,18 +24,11 @@
                         <md-table-cell md-label="Type">{{item.type}}</md-table-cell>
                         <md-table-cell md-label="Amount">{{item.amount}}</md-table-cell>
                         <md-table-cell md-label="Date">{{item.createdAt}}</md-table-cell>
-
-
                     </md-table-row>
                 </md-table>
             </div>
-            <div v-else>
-                <no-table-data :headers="headers" :tableName="tableName"/>
-            </div>
-
-        </div>
     </widget>
-
+    </div>
 </template>
 <script>
 import { AgentService } from '../../../services/AgentService'
@@ -44,7 +36,6 @@ import { AgentBalanceHistoryService } from '../../../services/AgentBalanceHistor
 import Widget from '../../../shared/widget'
 import { EventBus } from '../../../shared/eventbus'
 import AddAgentBalance from './AddBalance'
-import NoTableData from '../../../shared/NoTableData'
 
 export default {
     name: 'agentBalanceHistoryList',
@@ -91,15 +82,17 @@ export default {
         EventBus.$off('pageLoaded', this.reloadList)
     },
     components: {
-        NoTableData,
         AddAgentBalance,
         Widget
     },
     methods: {
-
+        showAddBalance(){
+            this.showNewBalance = true
+        },
         reloadList (subscriber, data) {
             if (subscriber !== this.subscriber) return
             this.agentBalanceHistoryService.updateList(data)
+            EventBus.$emit('widgetContentLoaded',this.subscriber,this.agentBalanceHistoryService.list.length)
         },
         async saveBalance () {
             let validator = await this.$validator('Balance-Form')

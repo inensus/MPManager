@@ -2,93 +2,90 @@
     <div class="col-sm-12">
         <widget
             :subscriber="subscriber"
+            color="green"
             title="User Tickets"
             :paginator="tickets.paginator"
             :button="true"
             :button-text="'New Ticket'"
-            :callback="openModal"
+            @widgetAction="openModal"
         >
-            <md-table v-if="loaded === true">
-                <md-table-row>
-                    <md-table-head class="md-subheader">Subject</md-table-head>
-                    <md-table-head >Category</md-table-head>
-                    <md-table-head>Status</md-table-head>
-                    <md-table-head>Date</md-table-head>
-                </md-table-row>
-                <template v-for="(ticket,index) in tickets.list" >
-                    <md-table-row @click="openTicket(index)" :key="index">
-                        <md-table-cell><md-icon>{{showTicket === index ? 'keyboard_arrow_down' : 'keyboard_arrow_right'}}</md-icon>{{ticket.name}}</md-table-cell>
-                        <md-table-cell v-if="ticket.category">{{ticket.category.label_name}}</md-table-cell>
-                        <md-table-cell v-else>-</md-table-cell>
-                        <md-table-cell><span  :class="[ticket.closed ? 'open-ticket': 'closed-ticket']">{{ticket.closed ? "Open" : "Closed"}}</span></md-table-cell>
-                        <md-table-cell>{{formatDate(ticket.created_at)}}</md-table-cell>
+
+                <md-table>
+                    <md-table-row>
+                        <md-table-head class="md-subheader">Subject</md-table-head>
+                        <md-table-head >Category</md-table-head>
+                        <md-table-head>Status</md-table-head>
+                        <md-table-head>Date</md-table-head>
                     </md-table-row>
-                    <md-table-row v-if="showTicket === index" :key="index">
-                        <md-table-cell colspan="4">
+                    <template v-for="(ticket,index) in tickets.list" >
+                        <md-table-row @click="openTicket(index)" :key="index">
+                            <md-table-cell><md-icon>{{showTicket === index ? 'keyboard_arrow_down' : 'keyboard_arrow_right'}}</md-icon>{{ticket.name}}</md-table-cell>
+                            <md-table-cell v-if="ticket.category">{{ticket.category.label_name}}</md-table-cell>
+                            <md-table-cell v-else>-</md-table-cell>
+                            <md-table-cell><span  :class="[ticket.closed ? 'open-ticket': 'closed-ticket']">{{ticket.closed ? "Open" : "Closed"}}</span></md-table-cell>
+                            <md-table-cell>{{formatDate(ticket.created_at)}}</md-table-cell>
+                        </md-table-row>
+                        <md-table-row v-if="showTicket === index" :key="index">
+                            <md-table-cell colspan="4">
 
-                            <div class="ticket-desc">
-                                <div class="md-layout md-gutter md-size-100">
-                                    <div class="md-layout-item md-size-70">
-                                        <span class="md-subheader">Ticket Details</span>
-                                    </div>
-                                    <div class="md-layout-item md-size-30">
-                                        <div class="md-layout-item md-size-100">
-                                            <em class="pull-right-label-primary" style="cursor:pointer">
-                                                <small @click="showComment(ticket)">Comments</small>
-                                                {{ticket.commentCount()}}
-                                            </em>
+                                <div class="ticket-desc">
+                                    <div class="md-layout md-gutter md-size-100">
+                                        <div class="md-layout-item md-size-70">
+                                            <span class="md-subheader">Ticket Details</span>
                                         </div>
-                                    </div>
-
-                                </div>
-
-                                <div class="md-layout-item md-size-100 t-text-area">
-                                    <p class="t-text" v-text="ticket.description"></p>
-                                </div>
-
-                                <div class="md-layout-item md-size-100">
-                                    <div  v-if="ticket.newComment">
-
-                                        <div
-                                            class="comment-item"
-                                            v-for="comment in ticket.comments"
-                                            :key="comment.id"
-                                        >
-                                            <md-icon>person</md-icon> {{comment.comment}}
-                                            <br/>
-                                            <md-icon>access_time</md-icon>
-                                            <small>{{getTimeAgo(comment.date)}}</small>
-                                            <div class="clearfix"></div>
+                                        <div class="md-layout-item md-size-30">
+                                            <div class="md-layout-item md-size-100">
+                                                <em class="pull-right-label-primary" style="cursor:pointer">
+                                                    <small @click="showComment(ticket)">Comments</small>
+                                                    {{ticket.commentCount()}}
+                                                </em>
+                                            </div>
                                         </div>
 
                                     </div>
+
+                                    <div class="md-layout-item md-size-100 t-text-area">
+                                        <p class="t-text" v-text="ticket.description"></p>
+                                    </div>
+
+                                    <div class="md-layout-item md-size-100">
+                                        <div  v-if="ticket.newComment">
+
+                                            <div
+                                                class="comment-item"
+                                                v-for="comment in ticket.comments"
+                                                :key="comment.id"
+                                            >
+                                                <md-icon>person</md-icon> {{comment.comment}}
+                                                <br/>
+                                                <md-icon>access_time</md-icon>
+                                                <small>{{getTimeAgo(comment.date)}}</small>
+                                                <div class="clearfix"></div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="md-layout-item md-size-95 new-comment-area"  v-if="ticket.newComment">
+
+                                        <md-field>
+                                            <label for="">New Comment</label>
+                                            <md-textarea md-autogrow v-model="ticket.commentMessage"></md-textarea>
+                                            <md-button
+                                                type="submit"
+                                                class="md-primary md-dense"
+                                                @click="saveComment(ticket)"
+                                            >Save</md-button>
+                                        </md-field>
+
+                                    </div>
                                 </div>
-                                <div class="md-layout-item md-size-95 new-comment-area"  v-if="ticket.newComment">
+                            </md-table-cell>
 
-                                    <md-field>
-                                        <label for="">New Comment</label>
-                                        <md-textarea md-autogrow v-model="ticket.commentMessage"></md-textarea>
-                                        <md-button
-                                            type="submit"
-                                            class="md-primary md-dense"
-                                            @click="saveComment(ticket)"
-                                        >Save</md-button>
-                                    </md-field>
+                        </md-table-row>
+                    </template>
 
-                                </div>
-                            </div>
-                        </md-table-cell>
+                </md-table>
 
-                    </md-table-row>
-                </template>
-
-            </md-table>
-
-            <div class="well" v-if="tickets.length === 0">No tickets found</div>
-            <div class="row" style="text-align: center" v-if="loaded === false">
-                <h5>Tickets are Loading</h5>
-                <img src="https://loading.io/spinners/dash-ring/index.dash-ring-loading-icon.svg" />
-            </div>
         </widget>
 
 
@@ -175,7 +172,7 @@ import { Paginator } from '../../classes/paginator'
 import moment from 'moment'
 export default {
     name: 'Ticket',
-    components: { Widget },
+    components: {  Widget },
     data() {
         return {
             subscriber: 'userTickets',
@@ -258,7 +255,7 @@ export default {
         reloadList(sub, data) {
             if (sub !== this.subscriber) return
             this.tickets.updateList(data)
-            this.loaded = true
+            EventBus.$emit('widgetContentLoaded',this.subscriber,this.tickets.list.length)
         },
         closeModal() {
             this.showModal = false

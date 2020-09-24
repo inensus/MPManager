@@ -5,22 +5,23 @@
             :title="'Addresses'"
             :button="true"
             :button-text="'new Address'"
-            :button-color="'red'"
-            :callback="addNewAddress"
+            color="green"
+            @widgetAction="addNewAddress"
             :paginator="addresses.paginator"
             :subscriber="subscriber"
         >
-            <md-table style="width:100%" v-model="addresses.list" md-card md-fixed-header>
-                <md-table-row @click="editAddress(item, index)" slot="md-table-row" slot-scope="{ item, index }">
-                    <md-table-cell md-label="Id" md-sort-by="id" md-numeric>{{ item.id }}</md-table-cell>
-                    <md-table-cell md-label="Street" md-sort-by="street">{{ item.street }}</md-table-cell>
-                    <md-table-cell md-label="City" md-sort-by="city">{{ item.city }}</md-table-cell>
-                    <md-table-cell md-label="Phone" md-sort-by="phone">{{ item.phone }}</md-table-cell>
-                    <md-table-cell md-label="Is Primary" md-sort-by="primary">
-                        <input type="checkbox" readonly :checked="item.primary" onclick="return false;"/>
-                    </md-table-cell>
-                </md-table-row>
-            </md-table>
+                <md-table style="width:100%" v-model="addresses.list" md-card md-fixed-header>
+                    <md-table-row @click="editAddress(item, index)" slot="md-table-row" slot-scope="{ item, index }">
+                        <md-table-cell md-label="Id" md-sort-by="id" md-numeric>{{ item.id }}</md-table-cell>
+                        <md-table-cell md-label="Street" md-sort-by="street">{{ item.street }}</md-table-cell>
+                        <md-table-cell md-label="City" md-sort-by="city">{{ item.city }}</md-table-cell>
+                        <md-table-cell md-label="Phone" md-sort-by="phone">{{ item.phone }}</md-table-cell>
+                        <md-table-cell md-label="Is Primary" md-sort-by="primary">
+                            <input type="checkbox" readonly :checked="item.primary" onclick="return false;"/>
+                        </md-table-cell>
+                    </md-table-row>
+                </md-table>
+
         </widget>
         <md-dialog class="adress-edit-container" :md-active.sync="modalVisibility">
             <md-dialog-title v-if="editFlag">Update Address</md-dialog-title>
@@ -115,6 +116,7 @@ export default {
     },
     data () {
         return {
+            componentKey:0,
             addresses: new Addresses(this.personId),
             subscriber: 'personAddresses',
             modalVisibility: false,
@@ -132,9 +134,13 @@ export default {
         EventBus.$off('pageLoaded', this.reloadList)
     },
     methods: {
+        reRenderComponents(){
+            this.componentKey += 1
+        },
         reloadList (subscriber, data) {
             if (subscriber !== this.subscriber) return
             this.addresses.updateList(data)
+            EventBus.$emit('widgetContentLoaded',this.subscriber, this.addresses.list.length)
         },
         addNewAddress () {
             this.editFlag = false

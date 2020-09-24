@@ -3,6 +3,7 @@
         <widget
             v-if="addAgent"
             title="Add New Agent"
+            :show-refresh-button="false"
         >
             <md-card>
                 <md-card-content>

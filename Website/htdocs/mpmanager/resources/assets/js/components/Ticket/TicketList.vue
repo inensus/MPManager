@@ -2,85 +2,42 @@
     <div>
         <widget :button="true"
                 :button-text="'Filter'"
-                :callback="() => {filterTicket=true}"
-                color="green"
-                title="List of Tickets">
+                @widgetAction="() => {filterTicket=true}"
+                title="List of Tickets"
+                button-icon="filter_list"
+                :show-refresh-button="false"
+                >
 
             <div class="md-layout-item" v-if="filterTicket" >
                 <filtering @filtering="filtered"></filtering>
 
             </div>
             <div class="md-layout md-gutter">
-                <div class="md-layout-item md-size-50">
-                    <div class="ticket-list-card-l">
-                        <md-card>
-                            <md-card-header><span class="o-ticket">Opened Tickets</span></md-card-header>
-                            <md-card-content>
-                                <div
-                                    class="dd"
-                                    id="nestable-opened"
-                                    style="min-height: 70vh !important; padding-bottom: 70px;"
-                                >
+                <div class="md-layout-item md-size-50 md-medium-size-100">
+                    <widget title="Opened Ticket"
+                            :subscriber="subscriber.opened"
+                            :paginator="ticketService.openedPaginator"
+                            color="green">
+                        <ticket-item
+                            :allow-comment="true"
+                            :ticket-list="ticketService.openedList"
+                        ></ticket-item>
+                    </widget>
 
-
-                                    <ticket-item
-                                        :allow-comment="true"
-                                        :ticket-list="ticketService.openedList"
-                                    ></ticket-item>
-
-                                    <md-list class="md-triple-line ticket-area">
-                                        <md-list-item class="text-center no-ticket"
-                                                      data-v-aec15928
-                                                      data-v-e03de5b4
-                                                      v-if="ticketService.openedList.length === 0 && !loading">
-                                            <h4 data-v-aec15928 data-v-e03de5b4 style="font-weight: 500;">
-                                                No opened tickets
-                                                found
-                                            </h4>
-                                        </md-list-item>
-                                    </md-list>
-
-                                </div>
-
-                                <paginate
-                                    :paginatorReference="ticketService.openedPaginator"
-                                    :subscriber="subscriber.opened"
-                                    style="position: absolute; bottom:0; width: 100%"
-
-                                ></paginate>
-                            </md-card-content>
-                        </md-card>
-                    </div>
                 </div>
-                <div class="md-layout-item md-size-50">
-                    <div class="ticket-list-card-r">
-                        <md-card>
-                            <md-card-header>
-                                <span class="c-ticket">Closed Tickets</span>
-                            </md-card-header>
-                            <md-card-content>
-                                <div
-                                    class="dd"
-                                    id="nestable-closed"
-                                    style="min-height: 70vh !important; padding-bottom: 70px;"
-                                >
+                <div class="md-layout-item md-size-50 md-medium-size-100">
+                    <widget title="Closed Ticket"
+                            :subscriber="subscriber.closed"
+                            :paginator="ticketService.closedPaginator"
+                            color="red">
+                        <ticket-item
+                            :allow-comment="true"
+                            :ticket-list="ticketService.closedList"
+                        ></ticket-item>
+                    </widget>
 
-                                    <ticket-item
-                                        :allow-comment="true"
-                                        :ticket-list="ticketService.closedList"
-
-                                    ></ticket-item>
-                                </div>
-                                <paginate
-                                    :paginatorReference="ticketService.closedPaginator"
-                                    :subscriber="subscriber.closed"
-                                    style="position: absolute; bottom:0; width: 100%"
-
-                                ></paginate>
-                            </md-card-content>
-                        </md-card>
-                    </div>
                 </div>
+
             </div>
         </widget>
 
@@ -90,7 +47,6 @@
 
 <script>
 import Widget from '../../shared/widget'
-import Paginate from '../../shared/Paginate'
 import TicketItem from './TicketItem'
 import { EventBus } from '../../shared/eventbus'
 import Filtering from './Filtering'
@@ -101,7 +57,7 @@ import { Ticket } from '../../classes/Ticket'
 
 export default {
     name: 'TicketList',
-    components: { Filtering, Widget, Paginate, TicketItem },
+    components: { Filtering, Widget, TicketItem },
     data () {
         return {
 
@@ -191,14 +147,13 @@ export default {
         EventBus.$off('pageLoaded', this.reloadList)
     },
     methods: {
-        reloadList (subscriber, data) {
-            if (
-                subscriber !== 'ticketListOpened' &&
-                    subscriber !== 'ticketListClosed'
-            )
+        async reloadList (subscriber, data) {
+            if (subscriber !== 'ticketListOpened' && subscriber !== 'ticketListClosed'){
                 return
-            this.loading = false
-            this.ticketService.updateList(data, subscriber)
+            }
+            await this.ticketService.updateList(data, subscriber)
+            EventBus.$emit('widgetContentLoaded',this.subscriber.opened,this.ticketService.openedList.length)
+            EventBus.$emit('widgetContentLoaded',this.subscriber.closed,this.ticketService.closedList.length)
         },
         filtered (data) {
             this.ticketService.openedPaginator.setPaginationBaseUrl(

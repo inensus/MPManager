@@ -39,7 +39,7 @@
 
                 <div class="md-layout-item md-size-16">
                     <md-button @click="filterTickets" class="md-raised md-primary">Filter</md-button>
-                    <md-button class="md-raised md-accent" @click="() => {filterTicket = false}">Close</md-button>
+                    <md-button class="md-raised md-accent" @click="filterTicket = false">Close</md-button>
                 </div>
 
             </div>

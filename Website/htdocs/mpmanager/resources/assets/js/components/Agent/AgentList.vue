@@ -7,36 +7,31 @@
             :subscriber="subscriber"
             :button="true"
             button-text="New Agent"
-            :callback="() => {addNewAgent=true}"
+            @widgetAction="showAddNewAgent"
             :paginator="agentService.paginator"
-            color="orange"
+            color="green"
         >
-            <div v-if="agentService.list.length>0">
-                <md-table>
-                    <md-table-row>
-                        <md-table-head v-for="(item, index) in headers" :key="index">{{item}}</md-table-head>
-                    </md-table-row>
-                    <md-table-row v-for="(agent) in agentService.list" style="cursor:pointer;" :key="agent.id"
-                                  @click="detail(agent.id)">
 
-                        <md-table-cell> {{ agent.id}}
-                        </md-table-cell>
+                    <md-table>
+                        <md-table-row>
+                            <md-table-head v-for="(item, index) in headers" :key="index">{{item}}</md-table-head>
+                        </md-table-row>
+                        <md-table-row v-for="(agent) in agentService.list" style="cursor:pointer;" :key="agent.id"
+                                      @click="detail(agent.id)">
 
-                        <md-table-cell> {{ agent.name}}
-                        </md-table-cell>
-                        <md-table-cell> {{ agent.email}}
-                        </md-table-cell>
-                        <md-table-cell> {{ agent.miniGrid}}
-                        </md-table-cell>
-                        <md-table-cell> {{ agent.balance}}
-                        </md-table-cell>
-                    </md-table-row>
-                </md-table>
-            </div>
-            <div v-else>
-                <no-table-data :headers="headers" :tableName="tableName"/>
-            </div>
+                            <md-table-cell> {{ agent.id}}
+                            </md-table-cell>
 
+                            <md-table-cell> {{ agent.name}}
+                            </md-table-cell>
+                            <md-table-cell> {{ agent.email}}
+                            </md-table-cell>
+                            <md-table-cell> {{ agent.miniGrid}}
+                            </md-table-cell>
+                            <md-table-cell> {{ agent.balance}}
+                            </md-table-cell>
+                        </md-table-row>
+                    </md-table>
         </widget>
 
     </div>
@@ -49,12 +44,10 @@ import { EventBus } from '../../shared/eventbus'
 import Widget from '../../shared/widget'
 import { AgentService } from '../../services/AgentService'
 import AddAgent from '../../components/Agent/NewAgent'
-import NoTableData from '../../shared/NoTableData'
-
 
 export default {
     name: 'AgentList',
-    components: { Widget, AddAgent, NoTableData },
+    components: { Widget, AddAgent },
     data () {
         return {
             subscriber: 'agent-list',
@@ -85,10 +78,16 @@ export default {
     },
 
     methods: {
+        showAddNewAgent(){
+            this.addNewAgent = true
+        },
         reloadList (subscriber, data) {
 
-            if (subscriber !== this.subscriber) return
+            if (subscriber !== this.subscriber){
+                return
+            }
             this.agentService.updateList(data)
+            EventBus.$emit('widgetContentLoaded',this.subscriber,this.agentService.list.length)
         },
         detail (id) {
             this.$router.push({ path: '/agents/' + id })

@@ -2,7 +2,9 @@
     <div>
         <widget
             v-if="addNewAssetType"
-            title="Add New Asset Type">
+            title="Add New Asset Type"
+            color="red"
+            :show-refresh-button="false">
             <md-card>
                 <md-card-content>
                     <md-field :class="{'md-invalid': errors.has('asset')}">

@@ -3,6 +3,8 @@
         <widget v-if="toggleNewType"
                 id="add-new-meter-type"
                 title="Add New Meter Type"
+                color="red"
+                :show-refresh-button="false"
 
         >
             <md-card>
@@ -49,44 +51,30 @@
         <widget id="meter-types-list"
                 title="Meter Types"
                 :button="true"
+                :subscriber="subscriber"
                 buttonText="Add New Type"
-                :callback="showNewType"
-                color="red">
-            <div v-if="meterTypesList !== null">
-                <md-table>
-                    <md-table-row>
-                        <md-table-head>ID</md-table-head>
-                        <md-table-head>Name</md-table-head>
-                        <md-table-head>Max Current</md-table-head>
-                        <md-table-head>Connectivity</md-table-head>
-                    </md-table-row>
-                    <md-table-row v-for="(type,index) in meterTypesList" :key="index">
-                        <md-table-cell>{{index+1}}</md-table-cell>
-                        <md-table-cell>{{type.name}}</md-table-cell>
-                        <md-table-cell>{{type.max_current}}</md-table-cell>
-                        <md-table-cell>
-                            <md-icon>{{type.online === 0 ? 'check_box' : 'check_box_outline_blank'}}
-                            </md-icon>
-                            <span>{{ connectivity[index] }}</span>
-                        </md-table-cell>
-                    </md-table-row>
+                @widgetAction="showNewType"
+                color="green"
+        >
 
-
-                </md-table>
-            </div>
-            <div v-else>
-
-                <md-empty-state
-                    md-description="There is no available Meter Type"
-                    md-icon="devices_other"
-                    md-label="Create your first Meter Type"
-                >
-                    <md-button
-                        @click="showNewType"
-                        class="md-primary md-raised">Add New Type
-                    </md-button>
-                </md-empty-state>
-            </div>
+                    <md-table>
+                        <md-table-row>
+                            <md-table-head>ID</md-table-head>
+                            <md-table-head>Name</md-table-head>
+                            <md-table-head>Max Current</md-table-head>
+                            <md-table-head>Connectivity</md-table-head>
+                        </md-table-row>
+                        <md-table-row v-for="(type,index) in meterTypesList" :key="index">
+                            <md-table-cell>{{index+1}}</md-table-cell>
+                            <md-table-cell>{{type.name}}</md-table-cell>
+                            <md-table-cell>{{type.max_current}}</md-table-cell>
+                            <md-table-cell>
+                                <md-icon>{{type.online === 0 ? 'check_box' : 'check_box_outline_blank'}}
+                                </md-icon>
+                                <span>{{ connectivity[index] }}</span>
+                            </md-table-cell>
+                        </md-table-row>
+                    </md-table>
 
 
         </widget>
@@ -97,8 +85,8 @@
 <script>
 
 import Widget from '../../shared/widget'
-
 import { MeterTypeService } from '../../services/MeterTypeService'
+import { EventBus } from '../../shared/eventbus'
 
 export default {
     name: 'Types',
@@ -107,6 +95,7 @@ export default {
         return {
             meterTypeService: new MeterTypeService(),
             toggleNewType: false,
+            subscriber:'meter-type',
             meterType: {
                 max_current: null,
                 phase: null,
@@ -146,6 +135,7 @@ export default {
         async getMeterTypes () {
             try {
                 this.meterTypesList = await this.meterTypeService.getMeterTypes()
+                EventBus.$emit('widgetContentLoaded',this.subscriber,this.meterTypesList.length)
             } catch (e) {
                 this.alertNotify('error', e.message)
             }

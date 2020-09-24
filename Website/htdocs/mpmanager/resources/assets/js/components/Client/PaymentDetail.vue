@@ -1,6 +1,8 @@
 <template>
     <div>
-        <widget :title="' Payment Overview '+ periodName">
+        <widget :title="' Payment Overview '+ periodName"
+                :subscriber="subscriber"
+                :show-refresh-button="false">
             <div slot="tabbar">
                 <md-field>
                     <label class="period-style">Period</label>
@@ -16,22 +18,14 @@
             </div>
             <div class="md-layout md-gutter">
                 <div class="md-layout-item md-size-95">
-                    <div v-if="chartData.length>1000000000000000">
+
                         <GChart
                             type="ColumnChart"
                             :data="chartData"
                             :options="chartOptions"
                             :resizeDebounce="500"
                         />
-                    </div>
-                    <div v-else>
 
-                        <div style="width: 100%!important;height: 3rem">
-                            <span>There is no payment overview.</span>
-                        </div>
-
-
-                    </div>
 
                 </div>
             </div>
@@ -43,10 +37,12 @@
 
 <script>
 import Widget from '../../shared/widget'
+import { EventBus } from '../../shared/eventbus'
 export default {
     name: 'PaymentDetail',
     data () {
         return {
+            subscriber:'payment-overview',
             contentWidth: 0,
             personId: null,
             period: 'M',
@@ -105,6 +101,7 @@ export default {
                             'deferred payment' in data[x] ? parseInt(data[x]['energy']) : 0,
                         ]
                         this.chartData.push(items)
+                        EventBus.$emit('widgetContentLoaded',this.subscriber,this.chartData.length)
                     }
                 })
 

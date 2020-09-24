@@ -2,7 +2,8 @@
 
     <widget
         :title="'Details'+ (currentMap === 0 ? '[Open Street Maps]': '[Google Maps]')"
-        id="client-map">
+        id="client-map"
+        :show-refresh-button="false">
         <div slot="tabbar">
             <md-field>
                 <label for="map">Map Provider</label>

@@ -10,8 +10,8 @@
                 :search="false"
                 :subscriber="subscriberBookKeeping"
                 color="orange"
-            >
 
+            >
 
                 <md-table>
                     <md-table-row>
@@ -179,10 +179,13 @@ export default {
         reloadList (subscriber, data) {
             if (subscriber === this.subscriberBookKeeping) {
                 this.bookKeeping.updateList(data)
+                EventBus.$emit('widgetContentLoaded',this.subscriberBookKeeping, this.bookKeeping.list.length)
             } else if (subscriber === this.subscriberWeeklyReport) {
                 this.weeklyReport.updateList(data)
+                EventBus.$emit('widgetContentLoaded',this.subscriberWeeklyReport, this.weeklyReport.list.length)
             } else if (subscriber === this.subscriberMonthlyReport) {
                 this.monthlyReport.updateList(data)
+                EventBus.$emit('widgetContentLoaded',this.subscriberMonthlyReport, this.monthlyReport.list.length)
             }
         },
 

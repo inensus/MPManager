@@ -2,7 +2,8 @@
     <div>
         <widget
             title="Add New Mini-Grid"
-            color="green">
+            color="green"
+            :show-refresh-button="false">
             <md-card>
                 <md-card-content>
                     <div class="md-layout md-gutter md-size-100">

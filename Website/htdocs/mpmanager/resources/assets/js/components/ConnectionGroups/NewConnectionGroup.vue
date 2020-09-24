@@ -3,7 +3,8 @@
         v-if="showAdd"
         :id="'new-connection-group'"
         :title="'Add New Connection Group'"
-        :color="'red'">
+        :color="'red'"
+        :show-refresh-button="false">
 
 
         <md-card>

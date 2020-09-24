@@ -1,7 +1,5 @@
 <template>
     <div>
-
-
         <new-user :newUser="newUser"
                   @stored="getEmployees"
                   @closed=" () => {this.newUser = false}"></new-user>
@@ -9,8 +7,9 @@
             title="New Maintenance Request"
             button-text="New Maintenance Service Provider"
             :button="true"
-            :callback="openNewUser"
+            @widgetAction="openNewUser"
             color="green"
+            :show-refresh-button="false"
         >
 
             <form @submit.prevent="submitMaintainForm" data-vv-scope="form-maintain">

@@ -3,6 +3,8 @@
     <widget
         v-if="showAdd"
         title="Add New Tariff"
+        color="red"
+        :show-refresh-button="false"
     >
         <md-card>
 
