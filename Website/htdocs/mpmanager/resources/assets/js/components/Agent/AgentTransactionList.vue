@@ -6,9 +6,6 @@
         :paginator="agentTransactionService.paginator"
         :subscriber="subscriber"
     >
-            <empty-state-wrapper
-            :subscriber="subscriber"
-            data-type="Agent Transaction">
                 <md-table md-sort="id" md-sort-order="asc">
                     <md-table-row>
                         <md-table-head v-for="(item, index) in headers" :key="index">{{item}}</md-table-head>
@@ -21,14 +18,12 @@
                         <md-table-cell md-label="Date">{{item.createdAt}}</md-table-cell>
                     </md-table-row>
                 </md-table>
-            </empty-state-wrapper>
     </widget>
 </template>
 <script>
 import Widget from '../../shared/widget'
 import { AgentTransactionService } from '../../services/AgentTransactionService'
 import { EventBus } from '../../shared/eventbus'
-import EmptyStateWrapper from '../../shared/EmptyStateWrapper'
 export default {
     name: 'AgentTransactionList',
     data () {
@@ -48,7 +43,6 @@ export default {
     },
     components: {
         Widget,
-        EmptyStateWrapper
     },
     methods: {
         reloadList (subscriber, data) {
