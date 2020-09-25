@@ -87,8 +87,10 @@ Route::group(['prefix' => 'pv',], static function () {
 Route::group(['middleware' => 'jwt.verify', 'prefix' => 'tariffs'], static function () {
     Route::get('/', 'TariffController@index');
     Route::post('/', 'TariffController@store');
+    Route::put('/{tariff}', 'TariffController@update');
     Route::get('/{tariff}', 'TariffController@show');
-
+    Route::delete('/{tariff}', 'TariffController@destroy');
+    Route::get('/{tariff}/usage-count', 'TariffController@usages');
 
 });
 
@@ -376,4 +378,6 @@ Route::post('/restrictions', 'RestrictionController@store');
 Route::group(['prefix' => 'generation-assets'], static function () {
     Route::post('/grid', 'MiniGridFrequencyController@store');
 });
-
+Route::group(['prefix' => 'elastic-usage-times','middleware'=>'jwt.verify'], static function () {
+    Route::delete('/{elasticUsage}', 'ElasticUsageTimeController@destroy');
+});
