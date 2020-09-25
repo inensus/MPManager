@@ -5,10 +5,13 @@ namespace App\Models\Meter;
 use App\Models\AccessRate\AccessRate;
 use App\Models\BaseModel;
 use App\Models\CustomerGroup;
+use App\Models\ElasticUsageTime;
 use App\Models\SocialTariff;
 use App\Models\TariffPricingComponent;
+use App\Models\TimeOfUsage;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Class Tariff
@@ -21,8 +24,9 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
  * @property string $currency
  * @property int|null $factor
  */
-class   MeterTariff extends BaseModel
+class MeterTariff extends BaseModel
 {
+    use SoftDeletes;
     protected $table = 'meter_tariffs';
     protected $guarded = [];
 
@@ -57,5 +61,9 @@ class   MeterTariff extends BaseModel
     public function socialTariff()
     {
         return $this->hasOne(SocialTariff::class, 'tariff_id');
+    }
+    public function elasticUsageTime()
+    {
+        return $this->hasMany(ElasticUsageTime::class, 'tariff_id');
     }
 }
