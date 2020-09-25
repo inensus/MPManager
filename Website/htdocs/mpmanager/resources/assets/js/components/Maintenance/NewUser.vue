@@ -161,7 +161,7 @@ export default {
 
             try {
                 this.miniGrids = await this.miniGridService.getMiniGrids()
-                if (this.miniGrids.length < 10000) {
+                if (this.miniGrids.length < 0) {
                     this.redirectDialogActive = true
                 }
             } catch (e) {
