@@ -9,6 +9,18 @@ export default {
     },
     create (tariff) {
         return Client.post(`${resource}`, tariff)
+    },
+    update (tariff) {
+        return Client.put(`${resource}/${tariff.id}`, tariff)
+    },
+    get(id){
+        return Client.get(`${resource}/${id}`)
+    },
+    delete(id){
+        return Client.delete(`${resource}/${id}`)
+    },
+    usages(id){
+        return Client.get(`${resource}/${id}/usage-count`)
     }
 
 }
