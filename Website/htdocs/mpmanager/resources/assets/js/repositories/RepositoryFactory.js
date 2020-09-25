@@ -33,6 +33,7 @@ import TicketUserRepository from './TicketUserRepository'
 import TicketLabelRepository from './TicketLabelRepository'
 import MeterTypeRepository from './MeterTypeRepository'
 import UserRepository from './UserRepository'
+import ElasticUsageTimeRepository from './ElasticUsageTimeRepository'
 
 const repositories = {
     'asset': AssetRepository,
@@ -64,12 +65,13 @@ const repositories = {
     'subConnectionTypes': SubConnectionTypeRepository,
     'transaction': TransactionRepository,
     'tariff': TariffRepository,
-    'ticket': TicketRepository,  
+    'ticket': TicketRepository,
     'ticketComment': TicketCommentRepository,
     'ticketTrello': TicketTrelloRepository,
     'ticketUser': TicketUserRepository,
     'ticketLabel': TicketLabelRepository,
     'user': UserRepository,
+    'elasticUsage':ElasticUsageTimeRepository
 }
 
 export default {
