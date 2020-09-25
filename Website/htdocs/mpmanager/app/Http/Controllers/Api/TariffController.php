@@ -5,7 +5,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\TariffCreateRequest;
 use App\Http\Resources\ApiResource;
+use App\Http\Services\MeterTariffService;
+use App\Jobs\TariffPricingComponentsCalculator;
+use App\Models\AccessRate\AccessRate;
+use App\Models\ElasticUsageTime;
+use App\Models\Meter\Meter;
 use App\Models\Meter\MeterTariff;
+use App\Models\SocialTariff;
+use App\Models\TariffPricingComponent;
 
 /**
  * @group Tariffs
@@ -14,6 +21,15 @@ use App\Models\Meter\MeterTariff;
  */
 class TariffController extends Controller
 {
+
+
+    private $meterTariffService;
+
+    public function __construct(MeterTariffService $meterTariffService)
+    {
+        $this->meterTariffService = $meterTariffService;
+    }
+
     /**
      * List
      * a list of all tariffs.
@@ -24,7 +40,12 @@ class TariffController extends Controller
     public function index()
     {
         return new ApiResource(
-            MeterTariff::with('accessRate')->paginate(15)
+            MeterTariff::with([
+                'accessRate',
+                'pricingComponent',
+                'socialTariff',
+                'elasticUsageTime'
+            ])->paginate(15)
         );
     }
 
@@ -37,8 +58,16 @@ class TariffController extends Controller
      */
     public function show(MeterTariff $tariff)
     {
+
+        $meterTariff = MeterTariff::with([
+            'accessRate',
+            'pricingComponent',
+            'socialTariff',
+            'elasticUsageTime'
+        ])->where('id', $tariff->id)->first();
+
         return new ApiResource(
-            $tariff
+            $meterTariff
         );
     }
 
@@ -63,9 +92,31 @@ class TariffController extends Controller
                     'total_price' => $request->input('price'),
                 ]);
 
-        $tariff = MeterTariff::with('accessRate')->find($newTariff->id);
+        $tariff = MeterTariff::with([
+            'accessRate',
+            'pricingComponent',
+            'socialTariff',
+            'elasticUsageTime'
+        ])->find($newTariff->id);
 
         return new ApiResource($tariff);
     }
 
+    public function update(MeterTariff $tariff, TariffCreateRequest $request): ApiResource
+    {
+        $result = $this->meterTariffService->update($tariff, $request);
+        return new ApiResource($result);
+    }
+
+    public function usages(MeterTariff $tariff): ApiResource
+    {
+        $count = $this->meterTariffService->meterTariffUsageCount($tariff->id);
+        return new ApiResource($count);
+    }
+
+    public function destroy(MeterTariff $tariff)
+    {
+        return $tariff->delete();
+
+    }
 }
