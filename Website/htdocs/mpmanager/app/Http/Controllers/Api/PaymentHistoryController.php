@@ -38,7 +38,6 @@ class PaymentHistoryController
     public function show(int $payerId, string $period, $limit = null, $order = 'ASC')
     {
         $period = strtoupper($period);
-
         switch ($period) {
             case 'D':
                 $period = 'Day(created_at), Month(created_at), Year(created_at)';
@@ -53,16 +52,30 @@ class PaymentHistoryController
                 $period = 'Year(created_at)';
                 break;
         }
-
         $payments = (new PaymentHistory)->getFlow('person', $payerId, $period, $limit, $order);
+        return $this->preparePaymentFlow($payments);
+    }
 
-        $flowList = [];
-
-        foreach ($payments as $payment) {
-            $flowList[$payment['aperiod']][$payment['payment_type']] = $payment['amount'];
+    public function showForAgentCustomers(string $period, $limit = null, $order = 'ASC')
+    {
+        $agent = request()->attributes->get('user');
+        $period = strtoupper($period);
+        switch ($period) {
+            case 'D':
+                $period = 'Day(payment_histories.created_at), Month(payment_histories.created_at), Year(payment_histories.created_at)';
+                break;
+            case 'W':
+                $period = 'Week(payment_histories.created_at), Year(payment_histories.created_at)';
+                break;
+            case 'M':
+                $period = 'Month(payment_histories.created_at), Year(payment_histories.created_at)';
+                break;
+            default:
+                $period = 'Year(payment_histories.created_at)';
+                break;
         }
-
-        return $flowList;
+        $payments = (new PaymentHistory)->getFlowForAgentCustomers('person', $agent->id, $period, $limit, $order);
+        return $this->preparePaymentFlow($payments);
     }
 
 
@@ -132,5 +145,16 @@ class PaymentHistoryController
             $result[$p['dato']] = ['date' => $p['dato'], 'amount' => $p['total']];
         }
         return new ApiResource(array_values($result));
+    }
+
+    public function preparePaymentFlow($payments)
+    {
+        $flowList = [];
+
+        foreach ($payments as $payment) {
+            $flowList[$payment['aperiod']][$payment['payment_type']] = $payment['amount'];
+        }
+
+        return $flowList;
     }
 }
