@@ -10,8 +10,6 @@
                 :subscriber="subscriber"
                 buttonText="New Tariff"
                 @widgetAction="showNewTariff"
-                :key="key"
-                @refreshButtonClicked="reRender"
                 color="green">
 
                 <md-table
@@ -67,7 +65,6 @@ export default {
             tariffList: [],
             headers: ['ID', 'Name', 'kWh Price', 'Access Rate', 'Access Rate Period in Days'],
             tableName: 'Tariff',
-            key:0
         }
     },
     mounted () {
@@ -76,9 +73,6 @@ export default {
     },
 
     methods: {
-        reRender(){
-            this.key += 1
-        },
         async getTariffs () {
             try {
                 this.tariffList = await this.tariffService.getTariffs()

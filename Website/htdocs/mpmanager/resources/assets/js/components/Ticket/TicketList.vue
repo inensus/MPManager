@@ -5,7 +5,6 @@
                 @widgetAction="() => {filterTicket=true}"
                 title="List of Tickets"
                 button-icon="filter_list"
-                :show-refresh-button="false"
                 >
 
             <div class="md-layout-item" v-if="filterTicket" >

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <widget title="Add New Village" color="green" :show-refresh-button="false">
+        <widget title="Add New Village" color="green" >
             <md-card class="md-layout-item md-size-100">
                 <md-card-content>
                     <div class="md-layout md-gutter md-size-100">

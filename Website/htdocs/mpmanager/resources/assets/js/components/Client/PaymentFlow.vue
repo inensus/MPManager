@@ -3,8 +3,6 @@
     <widget
         title="Payment Flow"
         icon="money"
-        :show-refresh-button="false"
-
     >
         <md-card>
             <md-card-header>

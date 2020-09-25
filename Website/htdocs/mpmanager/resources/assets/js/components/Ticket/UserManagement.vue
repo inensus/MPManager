@@ -3,7 +3,7 @@
         <widget v-if="showNewUser"
                 title="Add New Ticketing User"
                 color="red"
-                :show-refresh-button="false">
+                >
             <form class="md-layout">
                 <md-card class="md-layout-item md-size-100">
                     <md-card-content>

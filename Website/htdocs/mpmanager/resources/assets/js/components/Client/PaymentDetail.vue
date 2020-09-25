@@ -2,7 +2,7 @@
     <div>
         <widget :title="' Payment Overview '+ periodName"
                 :subscriber="subscriber"
-                :show-refresh-button="false">
+                >
             <div slot="tabbar">
                 <md-field>
                     <label class="period-style">Period</label>

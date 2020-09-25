@@ -1,7 +1,6 @@
 <template>
   <widget :title="'Sms History ('+smses.length+')' "
   color="green"
-  :refresh-button="true"
   :subscriber="subscriber">
 
           <div id="chat-body" class="chat-body chat-body-scroll" ref="chat">

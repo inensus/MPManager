@@ -3,7 +3,7 @@
         <widget
             title="Add New Cluster"
             color="green"
-            :show-refresh-button="false">
+        >
 
             <md-card class="md-layout-item md-size-100">
 

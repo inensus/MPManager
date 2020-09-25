@@ -192,7 +192,7 @@
 
         <div style="margin-top: 1rem;"></div>
 
-        <widget v-if="meter.meterType.online !== 0" :title="'Meter Readings'" class="col-sm-12" :id="'meter-readings'" :show-refresh-button="false">
+        <widget v-if="meter.meterType.online !== 0" :title="'Meter Readings'" class="col-sm-12" :id="'meter-readings'">
             <div role="menu" slot="tabbar">
                 <button
                     class="md-button dropdown-toggle btn-xs"

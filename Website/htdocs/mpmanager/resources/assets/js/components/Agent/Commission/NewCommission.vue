@@ -1,7 +1,7 @@
 <template>
     <widget v-if="addNewCommission"
             title="New Commission"
-            :show-refresh-button="false">
+    >
 
         <form novalidate class="md-layout" @submit.prevent="saveCommission"
               data-vv-scope="Commission-Form">

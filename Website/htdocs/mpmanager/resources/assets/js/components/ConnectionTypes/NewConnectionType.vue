@@ -4,7 +4,7 @@
         :id="'new-connection-type'"
         :title="'Add New Connection Type'"
         color="red"
-        :show-refresh-button="false">
+        >
 
 
         <md-card>

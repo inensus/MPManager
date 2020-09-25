@@ -3,7 +3,7 @@
         <widget v-if="newUser"
                 title="New Maintenance User"
                 color="red"
-                :show-refresh-button="false">
+              >
             <div>
 
                 <form @submit.prevent="submitNewUserForm" data-vv-scope="form-user">

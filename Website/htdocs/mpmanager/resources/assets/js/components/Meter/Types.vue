@@ -4,7 +4,7 @@
                 id="add-new-meter-type"
                 title="Add New Meter Type"
                 color="red"
-                :show-refresh-button="false"
+
 
         >
             <md-card>

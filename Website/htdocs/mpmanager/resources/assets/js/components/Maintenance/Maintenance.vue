@@ -9,7 +9,6 @@
             :button="true"
             @widgetAction="openNewUser"
             color="green"
-            :show-refresh-button="false"
         >
 
             <form @submit.prevent="submitMaintainForm" data-vv-scope="form-maintain">

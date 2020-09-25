@@ -2,7 +2,6 @@
     <widget title="Target Valid Until"
             id="new-target"
             color="red"
-            :show-refresh-button="false"
     >
         <md-card>
             <md-card-content>

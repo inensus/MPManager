@@ -3,7 +3,6 @@
         <widget
             :id="'connection-type-detail'"
             :title="'Connection Type Details'"
-            :show-refresh-button="false"
             :subscriber="subscriber"
         >
             <md-card>
@@ -71,7 +70,6 @@
             :id="'add-sub-connection-type'"
             color="red"
             v-if = "showNewSubType"
-            :show-refresh-button="false"
         >
             <md-card>
 

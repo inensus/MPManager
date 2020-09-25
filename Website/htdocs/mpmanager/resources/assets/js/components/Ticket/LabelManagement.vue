@@ -2,7 +2,6 @@
     <div class="row">
         <widget v-if="newLabel"
             title="New Category Label"
-            :show-refresh-button="false"
             color="red">
             <md-card >
                 <md-card-header>
