@@ -1,5 +1,42 @@
-<?php
+Skip to content
+Search or jump to…
 
+Pull requests
+Issues
+Marketplace
+Explore
+
+@93Kamuran
+inensus
+/
+MPManager
+3
+87
+Code
+Issues
+8
+Pull requests
+2
+Actions
+Projects
+1
+Wiki
+Security
+Insights
+MPManager/Website/htdocs/mpmanager/routes/api.php /
+@93Kamuran
+93Kamuran Jwt verification (#108)
+…
+Latest commit 863d681 yesterday
+History
+4 contributors
+@93Kamuran@alchalade@buralp@spinningrod
+321 lines (272 sloc)  13.2 KB
+
+Code navigation is available!
+Navigate your code with ease. Click on function and method calls to jump to their definitions or references in the same repository. Learn more
+
+<?php
 use App\Http\Requests\AndroidAppRequest;
 use App\Http\Resources\ApiResource;
 use App\Http\Services\PersonService;
@@ -29,22 +66,103 @@ require_once 'resources/Addresses.php';
 require_once 'api_paths/transactions.php';
 // Agent routes
 require_once 'resources/AgentApp.php';
+// Agent Web panel routes
+require_once 'resources/AgentWeb.php';
 
-Route::group(['prefix' => 'energies'], static function () {
-    Route::post('/', 'EnergyController@store');
+//               ['middleware' => 'jwt.verify', 'uses' => 'AdminController@index']
+
+
+//JWT authentication
+Route::group(['middleware' => 'api', 'prefix' => 'auth'], static function () {
+
+    Route::post('login', 'AuthController@login');
+    Route::post('logout', 'AuthController@logout');
+    Route::post('refresh', 'AuthController@refresh');
+    Route::get('me', 'AuthController@me');
 
 });
-
-
-Route::group(['prefix' => 'solar'], static function () {
-    Route::post('/', 'SolarController@store');
+// admin
+Route::group(['prefix' => 'admin', 'middleware' => 'jwt.verify'], static function () {
+    Route::post('/', 'AdminController@store');
+    Route::post('/forgot-password', 'AdminController@forgotPassword');
+    Route::put('/{user}', 'AdminController@update');
+    Route::get('/users',  'AdminController@index');
+    Route::post('{user}/addresses', 'AddressController@storeAdmin');
+    Route::put('{user}/addresses', 'AddressController@updateAdmin');
+    Route::get('{user}/addresses', 'AddressController@adminAddress');
 });
+// Assets
+Route::group(['prefix' => 'assets' ,'middleware' => 'jwt.verify'], function () {
+    Route::group(['prefix' => 'types'], function () {
+        Route::get('/', 'AssetTypeController@index');
+        Route::post('/', 'AssetTypeController@store');
+        Route::put('/{asset_type}', 'AssetTypeController@update');
+        Route::delete('/{asset_type}', 'AssetTypeController@destroy');
 
+        Route::post('/{asset_type}/people/{person}', 'AssetPersonController@store');
+        Route::get('/people/{person}', 'AssetPersonController@show');
+    });
+
+    Route::group(['prefix' => 'rates'], static function () {
+        Route::put('/{asset_rate}', 'AssetRateController@update');
+    });
+
+});
+// Batteries
 Route::group(['prefix' => 'batteries'], static function () {
     Route::post('/', 'BatteryController@store');
 });
+// Clusters
+Route::group(['prefix' => '/clusters','middleware' => 'jwt.verify'], static function () {
+    Route::post('/{id}/revenue/analysis', 'RevenueController@getRevenueAnalysisForCluster');
+    Route::get('/', 'ClusterController@index');
+    Route::get('/geo', 'ClusterController@geo');
+    Route::get('/revenue', 'RevenueController@getPeriodicClustersRevenue');
+    Route::get('/{id}/revenue', 'RevenueController@getClusterRevenue');
+    Route::post('/', 'ClusterController@store');
+    Route::get('/{id}', 'ClusterController@show');
+    Route::get('/{cluster}/geo', 'ClusterController@showGeo');
+    Route::get('/{id}/cities-revenue', 'RevenueController@getPeriodicMiniGridsRevenue');
+});
+// Connection-Groups
+Route::group(['prefix' => 'connection-groups','middleware' => 'jwt.verify'], static function () {
+    Route::get('/', 'ConnectionGroupController@index');
+    Route::post('/', 'ConnectionGroupController@store');
+    Route::put('/{connectionGroup}', 'ConnectionGroupController@update');
+});
+// Connection-Types
+Route::group(['prefix' => 'connection-types','middleware' => 'jwt.verify'], static function () {
+    Route::get('/', 'ConnectionTypeController@index');
+    Route::post('/', 'ConnectionTypeController@store');
+    Route::get('/{connectionTypeId?}', 'ConnectionTypeController@show');
+    Route::put('/{connectionType}', 'ConnectionTypeController@update');
 
-Route::group(['prefix' => 'mini-grids'], static function () {
+});
+// Energies
+Route::group(['prefix' => 'energies','middleware' => 'jwt.verify'], static function () {
+    Route::post('/', 'EnergyController@store');
+
+});
+// Generation-Assets
+Route::group(['prefix' => 'generation-assets','middleware' => 'jwt.verify'], static function () {
+    Route::post('/grid', 'MiniGridFrequencyController@store');
+});
+// Maintenance
+Route::group(['prefix' => '/maintenance','middleware' => 'jwt.verify'], static function () {
+    Route::get('/', 'MaintenanceUserController@index');
+    Route::post('/user', 'MaintenanceUserController@store')
+        ->middleware('restriction:maintenance-user');
+});
+// Manufacturers
+Route::group(['prefix' => 'manufacturers','middleware' => 'jwt.verify'], static function () {
+    Route::get('/', 'ManufacturerController@index');
+    Route::get('/{manufacturer}', 'ManufacturerController@show');
+    Route::post('/', 'ManufacturerController@store');
+    Route::put('/{id}', 'ManufacturerController@update');
+
+});
+// Mini-Grids
+Route::group(['prefix' => 'mini-grids','middleware' => 'jwt.verify'], static function () {
     Route::get('/', 'MiniGridController@index');
     Route::post('/', 'MiniGridController@store');
     Route::get('/{id}', 'MiniGridController@show');
@@ -61,129 +179,16 @@ Route::group(['prefix' => 'mini-grids'], static function () {
     Route::get('/{MiniGrid}/weather-readings', 'BatteryController@show');
 
 });
-
-Route::post('/revenue/analysis/', 'RevenueController@analysis');
-Route::post('/revenue/trends/{id}', 'RevenueController@trending');
-Route::post('/revenue', 'RevenueController@revenueData');
-Route::get('/revenue/tickets/{id}', 'RevenueController@ticketData');
-
-/*Manufacturer*/
-Route::group(['prefix' => 'manufacturers'], static function () {
-    Route::get('/', 'ManufacturerController@index');
-    Route::get('/{manufacturer}', 'ManufacturerController@show');
-    Route::post('/', 'ManufacturerController@store');
-    Route::put('/{id}', 'ManufacturerController@update');
-
+// PaymentHistories
+Route::group(['prefix' => 'paymenthistories','middleware' => 'jwt.verify'], function () {
+    Route::get('/{personId}/flow/{year?}', 'PaymentHistoryController@byYear')->where('personId', '[0-9]+');
+    Route::get('/{personId}/period', 'PaymentHistoryController@getPaymentPeriod')->where('personId', '[0-9]+');
+    Route::get('/debt/{personId}', 'PaymentHistoryController@debts')->where('personId', '[0-9]+');
+    Route::post('/overview', 'PaymentHistoryController@getPaymentRange');
+    Route::get('/{personId}/payments/{period}/{limit?}/{order?}', 'PaymentHistoryController@show')->where('personId', '[0-9]+');
 });
-
-Route::group(['prefix' => 'pv',], static function () {
-    Route::post('/', 'PVController@store')->middleware('data.controller');
-    Route::get('/{miniGridId}', 'PVController@show');
-
-}
-);
-
-/* Tariff */
-Route::group(['middleware' => 'jwt.verify', 'prefix' => 'tariffs'], static function () {
-    Route::get('/', 'TariffController@index');
-    Route::post('/', 'TariffController@store');
-    Route::put('/{tariff}', 'TariffController@update');
-    Route::get('/{tariff}', 'TariffController@show');
-    Route::delete('/{tariff}', 'TariffController@destroy');
-    Route::get('/{tariff}/usage-count', 'TariffController@usages');
-
-});
-
-
-//JWT authentication
-Route::group([
-    'middleware' => 'api',
-    'prefix' => 'auth'
-
-], static function () {
-
-    Route::post('login', 'AuthController@login');
-    Route::post('logout', 'AuthController@logout');
-    Route::post('refresh', 'AuthController@refresh');
-    Route::get('me', 'AuthController@me');
-
-});
-
-
-// Web panel  services
-Route::group([
-    'middleware' => ['api', 'jwt.verify'],
-    'prefix' => 'agents'
-
-], static function ($router) {
-    Route::post('/', 'PersonController@store');
-    Route::post('/', 'AgentController@store');
-    Route::post('/reset-password', 'AgentController@resetPassword');
-    Route::put('/{agent}', 'AgentController@update');
-    Route::get('/', 'AgentController@index');
-    Route::get('/{agent}', 'AgentController@show')->where('agent', '[0-9]+');
-    Route::get('/search', 'AgentController@search');
-    Route::delete('/{agent}', 'AgentController@destroy');
-    Route::group(['prefix' => 'assigned'], function () {
-        Route::post('/', 'AgentAssignedAppliancesController@store');
-        Route::get('/{agent}', 'AgentAssignedAppliancesController@indexWeb');
-    });
-    Route::group(['prefix' => 'sold'], function () {
-        Route::get('/{agent}', 'AgentSoldApplianceController@indexWeb');
-    });
-    Route::group(['prefix' => 'commissions'], function () {
-
-        Route::get('/', 'AgentCommissionController@index');
-        Route::post('/', 'AgentCommissionController@store');
-        Route::delete('/{commission}', 'AgentCommissionController@destroy');
-        Route::put('/{commission}', 'AgentCommissionController@update');
-    });
-
-    Route::group(['prefix' => 'receipt'], function () {
-        Route::get('/', 'AgentReceiptController@listByUsers');
-        Route::get('/{agent}', 'AgentReceiptController@index');
-        Route::get('/listAll', 'AgentReceiptController@listAllReceipts');
-        Route::post('/{agent}', 'AgentReceiptController@store');
-
-    });
-    Route::group(['prefix' => 'transactions'], function () {
-        Route::get('/{agent}', 'AgentTransactionsController@indexWeb')->where('agent', '[0-9]+');
-
-    });
-    Route::group(['prefix' => 'balance'], function () {
-        Route::group(['prefix' => 'history'], function () {
-            Route::get('/{agent}', 'AgentBalanceHistoryController@indexWeb');
-        });
-    });
-    Route::group(['prefix' => 'charge'], function () {
-        Route::post('/{agent}', 'AgentChargeController@store');
-    });
-
-});
-
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-
-Route::group(['prefix' => 'assets'], function () {
-    Route::group(['prefix' => 'types'], function () {
-        Route::get('/', 'AssetTypeController@index');
-        Route::post('/', 'AssetTypeController@store');
-        Route::put('/{asset_type}', 'AssetTypeController@update');
-        Route::delete('/{asset_type}', 'AssetTypeController@destroy');
-
-        Route::post('/{asset_type}/people/{person}', 'AssetPersonController@store');
-        Route::get('/people/{person}', 'AssetPersonController@show');
-    });
-
-    Route::group(['prefix' => 'rates'], static function () {
-        Route::put('/{asset_rate}', 'AssetRateController@update');
-    });
-
-});
-
-Route::group(['prefix' => 'people'], static function () {
+// People
+Route::group(['prefix' => 'people' ,'middleware' => 'jwt.verify'], static function () {
     Route::get('/{person}/transactions', 'PersonController@transactions');
     Route::get('/{person}/addresses', 'PersonController@addresses');
     Route::get('/{person}/meters', 'MeterController@personMeters');
@@ -200,20 +205,69 @@ Route::group(['prefix' => 'people'], static function () {
     Route::put('/{person}', 'PersonController@update');
 
 });
+// PV
+Route::group(['prefix' => 'pv'], static function () {
+    Route::post('/', 'PVController@store')->middleware('data.controller');
+    Route::get('/{miniGridId}',  ['middleware' => 'jwt.verify', 'uses' => 'PVController@show']);
 
-
-Route::group(['prefix' => 'admin'], static function () {
-    Route::post('/', 'AdminController@store');
-    Route::post('/forgot-password', 'AdminController@forgotPassword');
-    Route::put('/{user}', 'AdminController@update');
-    Route::get('/users', 'AdminController@index');
-    Route::post('{user}/addresses', 'AddressController@storeAdmin');
-    Route::put('{user}/addresses', 'AddressController@updateAdmin');
-    Route::get('{user}/addresses', 'AddressController@adminAddress');
 });
+// Reports
+Route::group(['prefix' => 'reports','middleware' => 'jwt.verify'], function () {
+    Route::get('/', 'ReportController@index');
+    Route::get('/{id}/download', 'ReportController@download');
+});
+// Revenue
+Route::group(['prefix' => 'revenue','middleware' => 'jwt.verify'], static function () {
+    Route::post('/analysis/', 'RevenueController@analysis');
+    Route::post('/trends/{id}', 'RevenueController@trending');
+    Route::post('/', 'RevenueController@revenueData');
+    Route::get('/tickets/{id}', 'RevenueController@ticketData');
+});
+// Sms
+Route::group(['prefix' => 'sms','middleware' => 'jwt.verify'], static function () {
+    Route::get('/{number}', 'SmsController@show');
+    Route::get('/phone/{number}', 'SmsController@byPhone');
+    Route::get('/{uuid}/confirm', 'SmsController@update');
+    Route::get('/', 'SmsController@index');
+    Route::get('search/{search}', 'SmsController@search');
+    Route::post('/storeandsend', 'SmsController@storeAndSend');
+    Route::post('/', 'SmsController@store');
+    Route::post('/bulk', 'SmsController@storeBulk');
+
+});
+// Solar
+Route::group(['prefix' => 'solar'], static function () {
+    Route::post('/', 'SolarController@store');
+});
+// Sub-Connection-Types
+Route::group(['prefix' => 'sub-connection-types','middleware' => 'jwt.verify'], static function () {
+    Route::get('/{connectionTypeId?}', 'SubConnectionTypeController@index');
+    Route::post('/', 'SubConnectionTypeController@store');
+    Route::get('/{id}', 'SubConnectionTypeController@show');
+    Route::put('/{subConnectionType}', 'SubConnectionTypeController@update');
+
+});
+// Targets
+Route::group(['prefix' => 'targets','middleware' => 'jwt.verify'], static function () {
+    Route::get('/', 'TargetController@index');
+    Route::post('/', 'TargetController@store');
+    Route::get('/{id}', 'TargetController@show');
+    Route::post('/slots', 'TargetController@getSlotsForDate');
+});
+// Tariffs
+Route::group(['middleware' => 'jwt.verify', 'prefix' => 'tariffs'], static function () {
+    Route::get('/', 'TariffController@index');
+    Route::post('/', 'TariffController@store');
+    Route::put('/{tariff}', 'TariffController@update');
+    Route::get('/{tariff}', 'TariffController@show');
+    Route::delete('/{tariff}', 'TariffController@destroy');
+    Route::get('/{tariff}/usage-count', 'TariffController@usages');
+
+});
+// Transactions
 Route::group(['prefix' => 'transactions', 'middleware' => ['transaction.auth', 'transaction.request']],
     static function () {
-        Route::post('/airtel', 'TransactionController@store');
+        Route::post('/airtel',  'TransactionController@store');
 
         Route::post('/vodacom', ['as' => 'vodacomTransaction', 'uses' => 'TransactionController@store']);
         Route::post('/agent',
@@ -221,12 +275,14 @@ Route::group(['prefix' => 'transactions', 'middleware' => ['transaction.auth', '
 
     });
 
-Route::get('paymenthistories/{personId}/payments/{period}/{limit?}/{order?}',
-    'PaymentHistoryController@show')->where('personId', '[0-9]+');
-Route::get('paymenthistories/{personId}/flow/{year?}', 'PaymentHistoryController@byYear')->where('personId', '[0-9]+');
-Route::get('paymenthistories/{personId}/period', 'PaymentHistoryController@getPaymentPeriod')->where('personId',
-    '[0-9]+');
-Route::get('paymenthistories/debt/{personId}', 'PaymentHistoryController@debts')->where('personId', '[0-9]+');
+Route::group(['prefix' => 'elastic-usage-times','middleware'=>'jwt.verify'], static function () {
+    Route::delete('/{elasticUsage}', 'ElasticUsageTimeController@destroy');
+});
+
+Route::middleware('auth:api')->get('/user', function (Request $request) {
+    return $request->user();
+});
+
 Route::post('androidApp', static function (AndroidAppRequest $r) {
     try {
         DB::beginTransaction();
@@ -300,84 +356,8 @@ Route::post('androidApp', static function (AndroidAppRequest $r) {
     }
 });
 
-
-Route::group(['prefix' => 'sms'], static function () {
-    Route::get('/{number}', 'SmsController@show');
-    Route::get('/phone/{number}', 'SmsController@byPhone');
-    Route::get('/{uuid}/confirm', 'SmsController@update');
-    Route::get('/', 'SmsController@index');
-    Route::get('search/{search}', 'SmsController@search');
-    Route::post('/storeandsend', 'SmsController@storeAndSend');
-    Route::post('/', 'SmsController@store');
-    Route::post('/bulk', 'SmsController@storeBulk');
-
-});
-
-
-Route::post('paymenthistories/overview', 'PaymentHistoryController@getPaymentRange');
-
-
-Route::group(['prefix' => 'targets'], static function () {
-    Route::get('/', 'TargetController@index');
-    Route::post('/', 'TargetController@store');
-    Route::get('/{id}', 'TargetController@show');
-    Route::post('/slots', 'TargetController@getSlotsForDate');
-});
-
-Route::group(['prefix' => 'connection-types'], static function () {
-    Route::get('/', 'ConnectionTypeController@index');
-    Route::post('/', 'ConnectionTypeController@store');
-    Route::get('/{connectionTypeId?}', 'ConnectionTypeController@show');
-    Route::put('/{connectionType}', 'ConnectionTypeController@update');
-
-});
-Route::group(['prefix' => 'sub-connection-types'], static function () {
-    Route::get('/{connectionTypeId?}', 'SubConnectionTypeController@index');
-    Route::post('/', 'SubConnectionTypeController@store');
-    Route::get('/{id}', 'SubConnectionTypeController@show');
-    Route::put('/{subConnectionType}', 'SubConnectionTypeController@update');
-
-});
-
-Route::group(['prefix' => '/clusters'], static function () {
-    Route::post('/{id}/revenue/analysis', 'RevenueController@getRevenueAnalysisForCluster');
-    Route::get('/', 'ClusterController@index');
-    Route::get('/geo', 'ClusterController@geo');
-    Route::get('/revenue', 'RevenueController@getPeriodicClustersRevenue');
-    Route::get('/{id}/revenue', 'RevenueController@getClusterRevenue');
-    Route::post('/', 'ClusterController@store');
-    Route::get('/{id}', 'ClusterController@show');
-    Route::get('/{cluster}/geo', 'ClusterController@showGeo');
-    Route::get('/{id}/cities-revenue', 'RevenueController@getPeriodicMiniGridsRevenue');
-});
-
 Route::get('/clusterlist', 'ClusterController@index');
-
-
-Route::get('/export/weekly', '\App\Http\Controllers\Export\Reports@generate');
-
-Route::get('/reports', 'ReportController@index');
-Route::get('/reports/{id}/download', 'ReportController@download');
-
-
-Route::group(['prefix' => 'connection-groups'], static function () {
-    Route::get('/', 'ConnectionGroupController@index');
-    Route::post('/', 'ConnectionGroupController@store');
-    Route::put('/{connectionGroup}', 'ConnectionGroupController@update');
-});
-
-
-Route::group(['prefix' => '/maintenance'], static function () {
-    Route::get('/', 'MaintenanceUserController@index');
-    Route::post('/user', 'MaintenanceUserController@store')
-        ->middleware('restriction:maintenance-user');
-});
 
 Route::post('/restrictions', 'RestrictionController@store');
 
-Route::group(['prefix' => 'generation-assets'], static function () {
-    Route::post('/grid', 'MiniGridFrequencyController@store');
-});
-Route::group(['prefix' => 'elastic-usage-times','middleware'=>'jwt.verify'], static function () {
-    Route::delete('/{elasticUsage}', 'ElasticUsageTimeController@destroy');
-});
+

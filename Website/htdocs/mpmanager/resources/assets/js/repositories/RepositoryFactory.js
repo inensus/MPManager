@@ -33,6 +33,8 @@ import TicketUserRepository from './TicketUserRepository'
 import TicketLabelRepository from './TicketLabelRepository'
 import MeterTypeRepository from './MeterTypeRepository'
 import UserRepository from './UserRepository'
+import ReportsRepository from './ReportsRepository'
+import BookKeepingRepository from './BookKeepingRepository'
 import ElasticUsageTimeRepository from './ElasticUsageTimeRepository'
 
 const repositories = {
@@ -71,6 +73,8 @@ const repositories = {
     'ticketUser': TicketUserRepository,
     'ticketLabel': TicketLabelRepository,
     'user': UserRepository,
+    'reports':ReportsRepository,
+    'bookKeeping':BookKeepingRepository,
     'elasticUsage':ElasticUsageTimeRepository
 }
 

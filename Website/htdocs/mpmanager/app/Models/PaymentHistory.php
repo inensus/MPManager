@@ -39,12 +39,17 @@ class PaymentHistory extends BaseModel
         if ($limit !== null) {
             $sql .= ' limit ' . (int)$limit;
         }
-        $sth = DB::connection()->getPdo()->prepare($sql);
-        $sth->bindValue(':payer_id', $payer_id, PDO::PARAM_INT);
-        $sth->bindValue(':payer_type', $payer_type, PDO::PARAM_STR);
 
-        $sth->execute();
-        return $sth->fetchAll(PDO::FETCH_ASSOC);
+        return $this->executeSqlCommand($sql,$payer_id,null,$payer_type);
+    }
+
+    public function getFlowForAgentCustomers($payer_type, $agent_id, $period, $limit = null, $order = 'ASC')
+    {
+        $sql = 'SELECT sum(amount) as amount, payment_type, CONCAT_WS("/", ' . $period . ') as aperiod from payment_histories inner join addresses on payment_histories.payer_id = addresses.owner_id inner JOIN cities on addresses.city_id=cities.id inner JOIN mini_grids on cities.mini_grid_id=mini_grids.id inner JOIN agents on agents.mini_grid_id=mini_grids.id where payer_type=:payer_type and agents.id=:agent_id and addresses.is_primary=1 GROUP by concat( ' . $period . '), payment_type ORDER BY payment_histories.created_at ' . $order;;
+        if ($limit !== null) {
+            $sql .= ' limit ' . (int)$limit;
+        }
+        return $this->executeSqlCommand($sql,null,$agent_id,$payer_type);
     }
 
     public function getPaymentFlow($payer_type, $payer_id, $year)
@@ -69,6 +74,18 @@ class PaymentHistory extends BaseModel
         return $results;
     }
 
-
+    private function executeSqlCommand(string $sql,$payer_id,$agent_id, $payer_type)
+    {
+        $sth = DB::connection()->getPdo()->prepare($sql);
+        if ($payer_id){
+            $sth->bindValue(':payer_id', $payer_id, PDO::PARAM_INT);
+        }
+        if($agent_id){
+            $sth->bindValue(':agent_id', $agent_id, PDO::PARAM_INT);
+        }
+        $sth->bindValue(':payer_type', $payer_type, PDO::PARAM_STR);
+        $sth->execute();
+        return $sth->fetchAll(PDO::FETCH_ASSOC);
+     }
 }
 
