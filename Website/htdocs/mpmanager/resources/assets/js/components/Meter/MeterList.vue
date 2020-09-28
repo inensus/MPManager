@@ -1,4 +1,4 @@
-<template xmlns:empty-state-wrapper="http://www.w3.org/1999/html">
+<template>
     <div class="page-container">
         <link
             rel="stylesheet"

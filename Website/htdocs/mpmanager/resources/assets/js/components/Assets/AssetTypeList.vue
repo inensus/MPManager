@@ -10,7 +10,6 @@
             @widgetAction="showAddAssetType"
             :paginator="assetService.paginator"
             color="green"
-            :key="componentKey"
             @refreshButtonClicked="reRenderComponents"
             :reset-key="resetKey">
                 <md-table>
