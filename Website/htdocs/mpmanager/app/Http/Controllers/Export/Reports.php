@@ -4,6 +4,7 @@
 namespace App\Http\Controllers\Export;
 
 
+use App\Http\Resources\ApiResource;
 use App\Jobs\ReportGenerator;
 use App\Models\City;
 use App\Models\ConnectionGroup;
@@ -14,8 +15,13 @@ use App\Models\PaymentHistory;
 use App\Models\Report;
 use App\Models\SubConnectionType;
 use App\Models\Target;
-use App\Models\Transaction\Transaction;
+use App\Models\Transaction\AirtelTransaction;
 
+
+use App\Models\Transaction\Transaction;
+use App\Models\Transaction\VodacomTransaction;
+use App\Models\Transaction\AgentTransaction;
+use Illuminate\Support\Facades\Log;
 use function count;
 use Generator;
 use Illuminate\Http\Request;
@@ -217,96 +223,8 @@ class Reports
         $this->totalSold = [];
     }
 
-    /**
-     * @param int $cityId
-     * @param $cityName
-     * @param $startDate
-     * @param $endDate
-     *
-     * @param $reportType
-     *
-     * @throws CustomerGroupNotFound
-     * @throws \PhpOffice\PhpSpreadsheet\Exception
-     */
-    private function generateReportForCity(
-        int $cityId,
-        $cityName,
-        $startDate,
-        $endDate,
-        $reportType
-    ): void {
-        $this->initSheet();
 
-        $dateRange = $startDate . ' ' . $endDate;
-
-        $sheet = $this->spreadsheet->getActiveSheet();
-        $sheet->setTitle('graphs' . $startDate . '-' . $endDate);
-
-        $transactions = $this->transaction::with('originalAirtel', 'originalVodacom',
-            'meter.meterParameter.tariff', 'meter.meterParameter.connectionType')
-            ->selectRaw('id,message,SUM(amount) as amount,GROUP_CONCAT(DISTINCT id SEPARATOR \',\') AS transaction_ids')
-            ->whereHas('meter.meterParameter.address', function ($q) use ($cityId) {
-                $q->where('city_id', $cityId);
-            })
-            ->where(static function ($q) {
-                $q->where('original_transaction_type', 'airtel_transaction');
-                $q->whereHas('originalAirtel', static function ($q) {
-                    $q->where('status', 1);
-                });
-            })
-            ->orWhere(static function ($q) {
-                $q->where('original_transaction_type', 'vodacom_transaction');
-                $q->whereHas('originalVodacom', static function ($q) {
-                    $q->where('status', 1);
-                });
-            })
-            ->whereBetween('created_at', [$startDate, $endDate])
-            ->groupBy('message')
-            ->latest()
-            ->get();
-
-        $connectionGroups = $this->connectionGroup::with('meterParameters.connectionType')->get();
-
-
-        $this->addConnectionGroupsToXLS($sheet, $connectionGroups, 'M', 5);
-
-
-        $this->generateXls($sheet, $dateRange, $transactions);
-
-        if ($reportType === 'weekly') {
-            $sheet2 = new Worksheet();
-            $sheet2 = $this->spreadsheet->addSheet($sheet2);
-            $this->addStaticText($sheet2, $dateRange);
-            $sheet2->setTitle($dateRange);
-            //Add transactions, customer name, balances to the sheet
-            $this->addTransactions($sheet2, $transactions, false);
-
-        } elseif ($reportType === 'monthly') {
-            $sheet2 = new Worksheet();
-            $sheet2 = $this->spreadsheet->addSheet($sheet2);
-            $sheet2->setTitle('monthly');
-            //Add targets
-            $this->addTargetConnectionGroups($sheet2);
-            $this->addStoredTargets($sheet2, $cityId, $endDate);
-            $this->addTargetsToXls($sheet2);
-        }
-
-        $writer = new Xlsx($this->spreadsheet);
-        try {
-            $writer->save(storage_path($reportType . ' ' . $cityName . '-' . $dateRange . '.xlsx'));
-
-            $this->report->create([
-                'path' => storage_path($reportType . ' ' . $cityName . '-' . $dateRange . '.xlsx'),
-                'type' => $reportType,
-                'date' => $dateRange . '---',
-                'name' => $reportType . ' ' . $cityName,
-            ]);
-        } catch (Exception $e) {
-            echo 'error' . $e->getMessage();
-        }
-    }
-
-    public function generate(Request $request): void
+    public function generate(Request $request): ApiResource
     {
         $startDate = $request->get('start_date');
         $endDate = $request->get('end_date');
@@ -315,34 +233,30 @@ class Reports
 
         $city = $this->city->find($city_id);
 
-
         $this->getCustomerGroupCountPerMonth($endDate);
         $this->getCustomerGroupEnergyUsagePerMonth([$startDate, $endDate]);
-        $this->generateReportForCity($city->id, $city->name, $startDate, $endDate, $reportType);
-        return;
 
+        return new ApiResource($this->generateReportForCity($city->id, $city->name, $startDate, $endDate,
+            $reportType));
 
-        $cities = $this->city->select('id', 'name')->get();
+    }
 
+    public function generateWithJob($startDate, $endDate, $reportType): void
+    {
+        try {
+            $cities = $this->city->get();
+            foreach ($cities as $city) {
 
-        foreach ($cities as $city) {
-            /* ReportGenerator::dispatch(
-                 $city->id,
-                 $city->name,
-                 $startDate,
-                 $endDate,
-                 $reportType,
-                 $this->transaction,
-                 $this->connectionGroup,
-                 $this->report,
-                 $this->paymentHistory,
-                 $this->connectionType,
-                 $this->target)
-                 ->onConnection('redis')->onQueue(env('QUEUE_REPORT'));
-             echo "oldu";
-             die;*/
-            $this->generateReportForCity($city->id, $city->name, $startDate, $endDate, $reportType);
+                $this->getCustomerGroupCountPerMonth($endDate);
+                $this->getCustomerGroupEnergyUsagePerMonth([$startDate, $endDate]);
+                $this->generateReportForCity($city->id, $city->name, $startDate, $endDate, $reportType);
+            }
+        } catch (\Exception $e) {
+            Log::critical($reportType . ' report job failed.',
+                ['Exception' => $e]
+            );
         }
+
     }
 
     /**
@@ -352,7 +266,7 @@ class Reports
      *
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      */
-    private function fillBackground(Worksheet $sheet, String $coordinate, string $color): void
+    private function fillBackground(Worksheet $sheet, string $coordinate, string $color): void
     {
         $sheet->getStyle($coordinate)->getFill()->setFillType(Fill::FILL_SOLID)->setStartColor(new Color($color));
     }
@@ -443,7 +357,7 @@ class Reports
      */
     public function generateXls(
         Worksheet $sheet,
-        String $dateRange,
+        string $dateRange,
         $transactions
     ): void {
         $this->addStaticText($sheet, $dateRange);
@@ -481,6 +395,7 @@ class Reports
     {
         $sheetIndex = 0;
         $balance = 0;
+
         foreach ($transactions as $index => $transaction) {
 
             if (!isset($transaction->meter->meterParameter)) {
@@ -556,7 +471,9 @@ class Reports
                 $soldAmount['access_rate'] = $paymentHistory->amount;
             } else {
                 $soldAmount['energy'] = $paymentHistory->amount;
-                $unit += $paymentHistory->amount / ($tariff->price / 100);
+                if ($tariff->price != 0) {
+                    $unit += $paymentHistory->amount / ($tariff->price / 100);
+                }
             }
         }
 
@@ -701,6 +618,95 @@ class Reports
 //holds the connection group and its data for the target
     private $monthlyTargetDatas = [];
 
+    /**
+     * @param int $cityId
+     * @param $cityName
+     * @param $startDate
+     * @param $endDate
+     *
+     * @param $reportType
+     *
+     * @throws CustomerGroupNotFound
+     * @throws \PhpOffice\PhpSpreadsheet\Exception
+     */
+    private function generateReportForCity(
+        int $cityId,
+        $cityName,
+        $startDate,
+        $endDate,
+        $reportType
+    ): void {
+
+        $this->initSheet();
+
+        $dateRange = $startDate . '-' . $endDate;
+
+        $sheet = $this->spreadsheet->getActiveSheet();
+        $sheet->setTitle('graphs' . $startDate . '-' . $endDate);
+
+        $transactions = $this->transaction::with(['meter.meterParameter.tariff', 'meter.meterParameter.connectionType'])
+            ->selectRaw('id,message,SUM(amount) as amount,GROUP_CONCAT(DISTINCT id SEPARATOR \',\') AS transaction_ids')
+            ->whereHas('meter.meterParameter.address', function ($q) use ($cityId) {
+                $q->where('city_id', $cityId);
+            })
+            ->whereHasMorph('originalTransaction',
+                [VodacomTransaction::class, AirtelTransaction::class, AgentTransaction::class],
+                static function ($q) {
+                    $q->where('status', 1);
+                })
+            ->whereBetween('created_at', [$startDate, $endDate])
+            ->groupBy('message')
+            ->latest()
+            ->get();
+
+        $connectionGroups = $this->connectionGroup::with('meterParameters.connectionType')->get();
+
+
+        $this->addConnectionGroupsToXLS($sheet, $connectionGroups, 'M', 5);
+
+
+        $this->generateXls($sheet, $dateRange, $transactions);
+
+        if ($reportType === 'weekly') {
+
+            $sheet2 = new Worksheet();
+            $sheet2 = $this->spreadsheet->addSheet($sheet2);
+            $this->addStaticText($sheet2, $dateRange);
+            $sheet2->setTitle($dateRange);
+            //Add transactions, customer name, balances to the sheet
+            $this->addTransactions($sheet2, $transactions, false);
+
+
+        } elseif ($reportType === 'monthly') {
+            $sheet2 = new Worksheet();
+            $sheet2 = $this->spreadsheet->addSheet($sheet2);
+            $sheet2->setTitle('monthly');
+            //Add targets
+            $this->addTargetConnectionGroups($sheet2);
+            $this->addStoredTargets($sheet2, $cityId, $endDate);
+            $this->addTargetsToXls($sheet2);
+        }
+
+
+        $writer = new Xlsx($this->spreadsheet);
+        $dirPath = storage_path('./'.$reportType);
+        if (!file_exists($dirPath)) {
+            mkdir($dirPath, 0774, true);
+        }
+        try {
+            $fileName = str_slug($reportType . '-' . $cityName . '-' . $dateRange) . '.xlsx';
+            $writer->save(storage_path('./' . $reportType . '/' . $fileName));
+            $this->report->create([
+                'path' => storage_path('./' . $reportType . '/' . $fileName),
+                'type' => $reportType,
+                'date' => $startDate . '---' . $endDate,
+                'name' => $cityName,
+            ]);
+        } catch (Exception $e) {
+            echo 'error' . $e->getMessage();
+        }
+
+    }
 
     /**
      * Total number of customer groups until given date
@@ -710,11 +716,10 @@ class Reports
     private function getCustomerGroupCountPerMonth(string $date)
     {
         //meter parameter i connection type olarak grupla ve relation dan connection type name'i al
-        $connectionGroupsCount = $this->meterParameter->selectRaw('Count(id) as total, connection_group_id')
+        $connectionGroupsCount = MeterParameter::selectRaw('Count(id) as total, connection_group_id')
             ->with('connectionGroup')
             ->where('created_at', '<', $date)
             ->groupBy('connection_group_id')->get();
-
 
         foreach ($connectionGroupsCount as $connectionGroupCount) {
             $this->monthlyTargetDatas[$connectionGroupCount->connectionGroup->name] = [
@@ -725,65 +730,58 @@ class Reports
                 'average_revenue_per_customer' => 0.0,
             ];
         }
-
+        // dump($this->monthlyTargetDatas);
     }
 
     private function getCustomerGroupEnergyUsagePerMonth(array $dates)
     {
-        //meter parameter connectiongroup id ve tariff id ye göre grouplanacak.
-        // alinan meterlarin transactionlarinin (Status=1) toplamini alacagiz.
 
         foreach ($this->monthlyTargetDatas as $connectionName => $targetData) {
 
-            $customerGroupRevenue = $this->meterParameter->selectRaw('id, meter_id, connection_group_id, tariff_id')
-                ->with('connectionGroup')->with([
-                    'meter' => function ($q) use ($dates) {
-                        $q->withCount([
-                            'transactions as revenue' => function ($q) use ($dates) {
-                                $q->select(DB::raw('sum(amount) as revenue'))
-                                    ->whereBetween(DB::raw('DATE(created_at)'), $dates);
-                            },
-                        ]);
-                    },
-                ])->where('connection_group_id', $targetData['connection_id'])
-                ->get();
-
-
+            $customerGroupRevenue = $this->sumOfTransactions($targetData['connection_id'], $dates);
             foreach ($customerGroupRevenue as $groupRevenue) {
-                if (!isset($groupRevenue->meter)) {
+
+                $this->monthlyTargetDatas[$connectionName]['revenue'] += $groupRevenue->revenue;;//$this->sumOfPayments($groupRevenue->meter, $dates);
+
+                $energyRevenue = $groupRevenue->total;
+
+                $tariffPrice = $groupRevenue->tariff_price;
+
+                if (!$tariffPrice || $tariffPrice == 0) {
                     continue;
                 }
-                if ($groupRevenue->meter->revenue === null) {
+                if (!$energyRevenue || $energyRevenue == 0) {
                     continue;
                 }
-                $this->monthlyTargetDatas[$connectionName]['revenue'] += $groupRevenue->meter->revenue;
-                $energyRevenue = $groupRevenue->meter
-                    ->transactions()
-                    ->select(DB::raw('Sum(amount) as total_amount'))
-                    ->withCount([
-                        'paymentHistories as amount' => function ($q) use ($dates) {
-                            $q->select(DB::raw('SUM(amount) as amount'))
-                                ->where('payment_type', 'energy')
-                                ->whereBetween(DB::raw('DATE(created_at)'), $dates);
-                        },
-                    ])->whereBetween(DB::raw('DATE(created_at)'), $dates)
-                    ->first();
-
-                $tariffPrice = $groupRevenue->tariff()->first();
-
-                if (!$tariffPrice) {
-                    continue;
+                $tariffPrice = $tariffPrice / 100;
+                if ($energyRevenue != 0) {
+                    $this->monthlyTargetDatas[$connectionName]['energy_per_month'] += $energyRevenue / $tariffPrice;
                 }
-                if ($targetData['connection_id'] == 20) {
-
-                }
-                $tariffPrice = $tariffPrice->price / 100;
-                $this->monthlyTargetDatas[$connectionName]['energy_per_month'] += $energyRevenue->total_amount / $tariffPrice;
                 $this->monthlyTargetDatas[$connectionName]['average_revenue_per_customer'] = $this->monthlyTargetDatas[$connectionName]['revenue'] / $this->monthlyTargetDatas[$connectionName]['connections'];
             }
 
         }
+
     }
+
+
+    public function sumOfTransactions($connectionGroupId, $dateRange)
+    {
+        return DB::select(DB::raw("select meter_parameters.connection_group_id, meters.serial_number as meter, sum(transactions.amount) as revenue, meter_tariffs.price as tariff_price,IFNULL(sum(payment_histories.amount),0) as total
+        from transactions
+        inner JOIN meters  on transactions.message = meters.serial_number
+        left JOIN  airtel_transactions   on transactions.original_transaction_id = airtel_transactions.id and transactions.original_transaction_type= 'airtel_transaction'
+        left JOIN  vodacom_transactions   on transactions.original_transaction_id = vodacom_transactions.id and transactions.original_transaction_type= 'vodacom_transaction'
+        left JOIN agent_transactions   on transactions.original_transaction_id = agent_transactions.id and transactions.original_transaction_type= 'agent_transaction'
+        inner join meter_parameters on meters.id=meter_parameters.meter_id
+        inner join meter_tariffs on meter_parameters.tariff_id=meter_tariffs.id
+        inner join `payment_histories` on transactions.id = payment_histories.transaction_id
+        where meter_parameters.connection_group_id = $connectionGroupId and transactions.created_at  >=  '$dateRange[0]'  and transactions.created_at <=  '$dateRange[1]'
+         and (vodacom_transactions . status = 1 or airtel_transactions . status = 1 or agent_transactions . status = 1)
+         GROUP by meter_parameters.meter_id"));
+
+    }
+
 
     private function addTargetsToXls(Worksheet $sheet): void
     {
