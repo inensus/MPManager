@@ -133,9 +133,7 @@ export default {
         EventBus.$off('pageLoaded', this.reloadList)
     },
     methods: {
-        reRenderComponents(){
-            this.componentKey += 1
-        },
+
         reloadList (subscriber, data) {
             if (subscriber !== this.subscriber) return
             this.addresses.updateList(data)

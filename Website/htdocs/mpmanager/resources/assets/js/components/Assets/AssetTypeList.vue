@@ -10,7 +10,6 @@
             @widgetAction="showAddAssetType"
             :paginator="assetService.paginator"
             color="green"
-            @refreshButtonClicked="reRenderComponents"
             :reset-key="resetKey">
                 <md-table>
                     <md-table-row>
@@ -97,9 +96,6 @@ export default {
 
     },
     methods: {
-        reRenderComponents(){
-            this.componentKey += 1
-        },
         showAddAssetType(){
             this.addNewAssetType = true
         },
