@@ -60,10 +60,10 @@ export default {
     methods: {
         reloadList(subscriber, data) {
             if (subscriber === this.subscriber) {
-                return
+                this.list = this.bookKeepingService.updateList(data)
+                EventBus.$emit('widgetContentLoaded',this.subscriber,this.list.length)
             }
-            this.list = this.bookKeepingService.updateList(data)
-            EventBus.$emit('widgetContentLoaded',this.subscriber,this.list.length)
+
         },
         endSearching() {
             this.bookKeeping.showAll()
