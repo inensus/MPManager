@@ -491,7 +491,6 @@ export default {
     },
     data () {
         return {
-            key:0,
             subscriber:{
                 revenue_trends:'mini-grid-revenue-trends'
             },
@@ -510,7 +509,6 @@ export default {
             thirdStep: false,
             purchaseCode: '',
             showModal: false,
-
             currentSelectedTargetCircle: 0,
             displayedTargetPercetinles: [0, 5],
             miniGridData: {},

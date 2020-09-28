@@ -81,7 +81,6 @@ export default {
             tableName: 'Asset Type',
             resetKey: 0,
             loading: false,
-            componentKey:0,
         }
     },
     mounted () {

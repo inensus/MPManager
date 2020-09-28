@@ -116,7 +116,6 @@ export default {
     },
     data () {
         return {
-            componentKey:0,
             addresses: new Addresses(this.personId),
             subscriber: 'personAddresses',
             modalVisibility: false,
