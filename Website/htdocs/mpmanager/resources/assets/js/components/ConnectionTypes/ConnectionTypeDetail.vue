@@ -1,9 +1,9 @@
 <template>
     <div>
-
         <widget
             :id="'connection-type-detail'"
             :title="'Connection Type Details'"
+            :subscriber="subscriber"
         >
             <md-card>
                 <md-card-content>
@@ -11,7 +11,7 @@
                 <div class="md-layout-item md-size-50">
                    <div class="md-layout">
                        <div class="md-layout-item md-subheader">ID</div>
-                       <div class="md-layout-item md-subheader n-font">{{connectionType.id}}</div>
+                       <div class="md-layout-item md-subheader n-font">{{subConnectionType.connection_type_id}}</div>
                    </div>
                     <hr class="hr-d">
                     <div class="md-layout">
@@ -113,11 +113,11 @@
             :id="'sub-connection-types'"
             :button="true"
             :button-text="'New Sub Connection Type'"
-            :callback="addSubType"
-            :color="'green'">
+            @widgetAction="addSubType"
+            :color="'green'"
+            :subscriber="subscriber">
             <md-card>
                 <md-card-content>
-                    <div v-if="subConnectionTypeService.subConnectionTypes.length>0">
                         <md-table>
                             <md-table-row>
                                 <md-table-head>#</md-table-head>
@@ -127,7 +127,7 @@
                                 <md-table-head></md-table-head>
 
                             </md-table-row>
-                            <md-table-row v-for="(subType,index) in subConnectionTypeService.subConnectionTypes" :key="subType.id">
+                            <md-table-row v-for="(subType,index) in subConnectionTypeService.subConnectionTypes" :key="index">
                                 <md-table-cell>{{index+1}}</md-table-cell>
                                 <md-table-cell>{{subType.id}}</md-table-cell>
                                 <md-table-cell>
@@ -181,22 +181,9 @@
                                 </md-table-cell>
                             </md-table-row>
                         </md-table>
-                    </div>
-                    <div v-else>
-                        <md-empty-state
-                            md-icon="devices_other"
-                            md-label="Create your first Sub Connection Type"
-                            md-description="There is no Sub Connection Type ">
-                            <md-button class="md-primary md-raised" @click="addSubType">New Sub Connection Type</md-button>
-                        </md-empty-state>
-                    </div>
-
                 </md-card-content>
             </md-card>
         </widget>
-
-
-
 
     </div>
 </template>
@@ -207,12 +194,14 @@ import {SubConnectionTypeService} from '../../services/SubConnectionTypeService'
 import {ConnectionTypeService} from '../../services/ConnectionTypeService'
 import {TariffService} from '../../services/TariffService'
 import moment from 'moment'
+import { EventBus } from '../../shared/eventbus'
 
 export default {
     name: 'ConnectionTypeDetail',
-    components: { Widget },
+    components: {  Widget },
     data() {
         return{
+            subscriber:'sub-connection-type',
             connectionTypeService: new ConnectionTypeService(),
             subConnectionTypeService: new SubConnectionTypeService(),
             tariffService: new TariffService(),
@@ -227,7 +216,7 @@ export default {
             },
             selectedTariff:{},
             connectionTypeId:null,
-            connectionType:null,
+            connectionType:[],
             tariff:null,
 
         }
@@ -270,14 +259,11 @@ export default {
                 }else{
                     return
                 }
-
-
             })
         },
         async editConnectionTypeName(){
             let validator = await this.$validator.validateAll()
             if (!validator) {
-
                 return
             }
             this.$swal({
@@ -321,7 +307,6 @@ export default {
         async saveSubType(subConnectionType) {
             let validator = await this.$validator.validateAll()
             if (!validator) {
-
                 return
             }
             try {
@@ -352,6 +337,7 @@ export default {
         async getSubConnectionTypes(connectionTypeId){
             try {
                 await this.subConnectionTypeService.getSubConnectionTypes(connectionTypeId)
+                EventBus.$emit('widgetContentLoaded',this.subscriber,this.subConnectionTypeService.subConnectionTypes.length)
             } catch (e) {
                 this.alertNotify('error', e.message)
             }

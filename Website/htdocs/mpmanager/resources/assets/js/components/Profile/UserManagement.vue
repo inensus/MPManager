@@ -4,7 +4,8 @@
             title="User Management"
             :button-text="'NEW USER'"
             :button="true"
-            :callback="()=>{showNewUser = true}"
+            @widgetAction="showNewUser = true"
+            :subscriber="subscriber"
         >
             <form v-if="showNewUser" @submit.prevent="submitCreateForm" data-vv-scope="form-create">
                 <div class="edit-container">
@@ -182,6 +183,7 @@
 import Widget from '../../shared/widget'
 import { Admin } from '../../classes/admin'
 import { City } from '../../classes/Cities/city'
+import { EventBus } from '../../shared/eventbus'
 
 export default {
     name: 'ProfileManagement',
@@ -189,6 +191,7 @@ export default {
 
     data () {
         return {
+            subscriber:'user-management',
             sending: false,
             modalVisibility: false,
             cities: [],
@@ -226,6 +229,7 @@ export default {
                 }
                 this.users.push(usr)
             })
+            EventBus.$emit('widgetContentLoaded',this.subscriber,this.users.length)
         },
         userDetail (user) {
             this.user.name = ''

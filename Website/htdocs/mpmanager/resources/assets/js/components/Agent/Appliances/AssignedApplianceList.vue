@@ -1,19 +1,19 @@
 <template>
-
+    <div>
+        <assign-appliance  :assignNewAppliance="showNewAppliance" :agent-id="agentId"/>
     <widget
         :class="'col-sm-6 col-md-5'"
         :button-text="'Assign new Appliance'"
         :button="true"
         title="Assigned Appliances"
         color="orange"
-        :callback="()=>{showNewAppliance = true}"
+        :subscriber="subscriber"
+        @widgetAction="addNewAppliance"
     >
 
-
         <div>
-            <assign-appliance :assignNewAppliance="showNewAppliance" :agent-id="agentId"/>
             <!-- ana tablo  -->
-            <div v-if="assignedApplianceTypes.length>0">
+
                 <md-table>
                     <md-table-row>
                         <md-table-head v-for="(item, index) in headers" :key="index">{{item}}</md-table-head>
@@ -21,17 +21,13 @@
                     <md-table-row v-for="(item, index) in assignedApplianceTypes" :key="index">
                         <md-table-cell md-label="Name" md-sort-by="name">{{item.applianceType}}</md-table-cell>
                         <md-table-cell md-label="Cost" md-sort-by="total_cost">{{item.cost}}</md-table-cell>
-
                     </md-table-row>
                 </md-table>
-            </div>
-            <div v-else>
-                <no-table-data :headers="headers" :tableName="tableName"/>
-            </div>
 
         </div>
-    </widget>
 
+    </widget>
+    </div>
 
 </template>
 <script>
@@ -40,7 +36,6 @@ import { AgentAssignedApplianceService } from '../../../services/AgentAssignedAp
 import { AgentService } from '../../../services/AgentService'
 import AssignAppliance from './AssignAppliance'
 import { EventBus } from '../../../shared/eventbus'
-import NoTableData from '../../../shared/NoTableData'
 
 export default {
     name: 'AssignedApplianceList',
@@ -48,7 +43,7 @@ export default {
         return {
             assignedApplianceService: new AgentAssignedApplianceService(),
             agentService: new AgentService(),
-
+            subscriber:'assigned-appliance-list',
             showNewAppliance: false,
             agent: {},
             newAppliance: {
@@ -84,9 +79,12 @@ export default {
     components: {
         AssignAppliance,
         Widget,
-        NoTableData
     },
     methods: {
+        addNewAppliance(){
+            this.showNewAppliance = true
+        },
+
         async closeAssignAppliance () {
             this.showNewAppliance = false
 
@@ -108,6 +106,7 @@ export default {
         async getAssignedAppliances (agentId) {
             try {
                 this.assignedApplianceTypes = await this.assignedApplianceService.getAssignedAppliances(agentId)
+                EventBus.$emit('widgetContentLoaded',this.subscriber,this.assignedApplianceTypes.length)
             } catch (e) {
                 this.alertNotify('error', e.message)
             }

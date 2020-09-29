@@ -7,10 +7,11 @@
         <widget id="tariff-list"
                 title="Tariffs"
                 :button="true"
+                :subscriber="subscriber"
                 buttonText="New Tariff"
-                :callback="showNewTariff"
-                color="red">
-            <div v-if="tariffList.length>0">
+                @widgetAction="showNewTariff"
+                color="green">
+
                 <md-table
                     v-model="tariffList"
                     md-sort="id"
@@ -40,13 +41,8 @@
                         </md-table-cell>
                     </md-table-row>
                 </md-table>
-            </div>
 
-            <div v-else>
-                <no-table-data :headers="headers" :tableName="tableName"/>
-            </div>
         </widget>
-
 
     </div>
 </template>
@@ -57,30 +53,30 @@ import { currency } from '../../mixins/currency'
 import Add from './Add'
 import { EventBus } from '../../shared/eventbus'
 import { TariffService } from '../../services/TariffService'
-import NoTableData from '../../shared/NoTableData'
 
 export default {
     name: 'TariffList',
-    components: { Widget, Add, NoTableData },
+    components: { Widget, Add },
     mixins: [currency],
     data () {
         return {
+            subscriber:'tariff-list',
             tariffService: new TariffService(),
             tariffList: [],
             headers: ['ID', 'Name', 'kWh Price', 'Access Rate', 'Access Rate Period in Days'],
-            tableName: 'Tariff'
+            tableName: 'Tariff',
         }
     },
     mounted () {
-
         this.getTariffs()
         EventBus.$on('tariffAdded', this.addToList)
     },
-    methods: {
 
+    methods: {
         async getTariffs () {
             try {
                 this.tariffList = await this.tariffService.getTariffs()
+                EventBus.$emit('widgetContentLoaded',this.subscriber,this.tariffList.length)
             } catch (e) {
                 this.alertNotify('error', e.message)
             }

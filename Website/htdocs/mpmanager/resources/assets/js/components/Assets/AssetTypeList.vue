@@ -1,6 +1,5 @@
 <template>
     <div>
-
         <add-asset-type :addNewAssetType="addNewAssetType"/>
         <widget
             :title="'Asset Types'"
@@ -8,58 +7,55 @@
             :route_name="'/assets/types'"
             :button="true"
             button-text="New Asset Type"
-            :callback="() => {addNewAssetType = true}"
+            @widgetAction="showAddAssetType"
             :paginator="assetService.paginator"
             color="green"
             :reset-key="resetKey">
-            <div v-if="assetService.list.length>0">
                 <md-table>
                     <md-table-row>
-                        <md-table-head v-for="(item, index) in headers" :key="index">{{item}}</md-table-head>
+                        <md-table-head  v-for="(item, index) in headers" :key="index">{{item}}</md-table-head>
                     </md-table-row>
-                    <md-table-row v-for="(asset_type,index) in assetService.list" style="cursor:pointer;" :key="index">
 
-                        <md-table-cell> {{ asset_type.id}}
-                        </md-table-cell>
+                <md-table-row v-for="(asset_type,index) in assetService.list" style="cursor:pointer;" :key="index">
 
-                        <md-table-cell>
-                            <div class="md-layout" v-if="!asset_type.edit">
-                                {{ asset_type.name}}&nbsp;&nbsp;
-                            </div>
-                            <div class="md-layout-item" v-else>
-                                <md-field>
-                                    <md-input type="text" v-model="asset_type.name"></md-input>
-                                </md-field>
-                            </div>
-                        </md-table-cell>
+                    <md-table-cell> {{ asset_type.id}}
+                    </md-table-cell>
 
-                        <md-table-cell>
-                            {{asset_type.price}} {{appConfig.currency}}
-                        </md-table-cell>
+                    <md-table-cell>
+                        <div class="md-layout" v-if="!asset_type.edit">
+                            {{ asset_type.name}}&nbsp;&nbsp;
+                        </div>
+                        <div class="md-layout-item" v-else>
+                            <md-field>
+                                <md-input type="text" v-model="asset_type.name"></md-input>
+                            </md-field>
+                        </div>
+                    </md-table-cell>
 
-                        <md-table-cell class="hidden-xs">{{asset_type.updated_at}}</md-table-cell>
-                        <md-table-cell>
-                            <div class="md-layout-item" style="display: inline-block; cursor: pointer; color: #2b542c"
-                                 v-if="asset_type.edit"
-                                 @click="updateAssetType(asset_type)">
-                                <font-awesome-icon icon="save"/>
-                                Save
-                            </div>
-                            <div class="md-layout-item" v-else :disabled="loading"
-                                 style="display: inline-block; cursor: pointer; color:#ac2925; float:right"
-                                 @click="deleteAssetType(asset_type)">
-                                <font-awesome-icon icon="trash"/>
-                                Delete
-                            </div>
-                        </md-table-cell>
+                    <md-table-cell>
+                        {{asset_type.price}} {{appConfig.currency}}
+                    </md-table-cell>
 
-                    </md-table-row>
-                </md-table>
+                    <md-table-cell class="hidden-xs">{{asset_type.updated_at}}</md-table-cell>
+                    <md-table-cell>
+                        <div class="md-layout-item" style="display: inline-block; cursor: pointer; color: #2b542c"
+                             v-if="asset_type.edit"
+                             @click="updateAssetType(asset_type)">
+                            <font-awesome-icon icon="save"/>
+                            Save
+                        </div>
+                        <div class="md-layout-item" v-else :disabled="loading"
+                             style="display: inline-block; cursor: pointer; color:#ac2925; float:right"
+                             @click="deleteAssetType(asset_type)">
+                            <font-awesome-icon icon="trash"/>
+                            Delete
+                        </div>
+                    </md-table-cell>
+
+                </md-table-row>
+
                 <md-progress-bar md-mode="indeterminate" v-if="loading"/>
-            </div>
-            <div v-else>
-                <no-table-data :headers="headers" :tableName="tableName"/>
-            </div>
+                </md-table>
         </widget>
     </div>
 
@@ -70,11 +66,9 @@ import Widget from '../../shared/widget'
 import AddAssetType from './AddAssetType'
 import { EventBus } from '../../shared/eventbus'
 import { AssetService } from '../../services/AssetService'
-import NoTableData from '../../shared/NoTableData'
-
 export default {
     name: 'AssetTypeList',
-    components: { Widget, AddAssetType, NoTableData },
+    components: { Widget, AddAssetType },
 
     data () {
         return {
@@ -85,7 +79,7 @@ export default {
             headers: ['ID', 'Asset Type', 'Price', 'Last Update', '#'],
             tableName: 'Asset Type',
             resetKey: 0,
-            loading: false
+            loading: false,
         }
     },
     mounted () {
@@ -94,6 +88,7 @@ export default {
         })
         EventBus.$on('pageLoaded', this.reloadList)
         EventBus.$on('addAssetTypeClosed', this.closeAddComponent)
+
     },
     beforeDestroy () {
         EventBus.$off('assetTypeAdded', this.addToList)
@@ -101,9 +96,16 @@ export default {
 
     },
     methods: {
+        showAddAssetType(){
+            this.addNewAssetType = true
+        },
         reloadList (subscriber, data) {
-            if (subscriber !== this.subscriber) return
+            if (subscriber !== this.subscriber) {
+                return
+            }
             this.assetService.updateList(data)
+            EventBus.$emit('widgetContentLoaded',this.subscriber, this.assetService.list.length)
+
         },
         addToList (asset_type) {
             let asset_t = {

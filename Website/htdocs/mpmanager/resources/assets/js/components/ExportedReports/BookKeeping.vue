@@ -8,7 +8,6 @@
             :subscriber="subscriber"
             color="orange"
         >
-            <div v-if="list.length>0">
           <md-table v-model="list" md-sort="id" md-sort-order="desc">
               <md-table-row>
                   <md-table-head v-for="(item, index) in headers" :key="index">{{item}}</md-table-head>
@@ -25,10 +24,7 @@
                     </md-table-cell>
                 </md-table-row>
             </md-table>
-            </div>
-            <div v-else>
-                <no-table-data :headers="headers" :tableName="tableName"/>
-            </div>
+
         </widget>
     </div>
 
@@ -38,12 +34,11 @@
 import Widget from '../../shared/widget'
 import {EventBus} from '../../shared/eventbus'
 import { BookKeepingService } from '../../services/BookKeepingService'
-import NoTableData from '../../shared/NoTableData'
 
 export default {
     name: 'BookKeeping',
     components: {
-        Widget,NoTableData
+        Widget
     },
     mounted() {
 
@@ -64,10 +59,11 @@ export default {
     },
     methods: {
         reloadList(subscriber, data) {
-
             if (subscriber === this.subscriber) {
                 this.list = this.bookKeepingService.updateList(data)
+                EventBus.$emit('widgetContentLoaded',this.subscriber,this.list.length)
             }
+
         },
         endSearching() {
             this.bookKeeping.showAll()

@@ -8,58 +8,57 @@
             :subscriber="subscriber"
             :button="true"
             :button-text="'New Connection Group'"
-            :callback="addNew"
+            @widgetAction="addNew"
             :color="'green'"
         >
-            <md-table md-card style="margin-left: 0">
-                <md-table-row>
-                    <md-table-head>#</md-table-head>
-                    <md-table-head>ID</md-table-head>
-                    <md-table-head>Name</md-table-head>
-                    <md-table-head></md-table-head>
-                </md-table-row>
-                <md-table-row v-for="(Group,index) in connectionGroups" :key="Group.id">
-                    <md-table-cell> {{ index+1 }}</md-table-cell>
-                    <md-table-cell> {{ Group.id}}</md-table-cell>
-                    <md-table-cell>
-                        <div v-if="editConnectionGroup === Group.id">
-                            <md-field :class="{'md-invalid': errors.has('ConnectionGroup')}">
-                                <label for="ConnectionGroup">Edit Connection Group Name</label>
-                                <md-input
-                                    id="ConnectionGroup"
-                                    name="ConnectionGroup"
-                                    v-model="Group.name"
-                                    v-validate="'required|min:3'"
-                                />
-                                <span class="md-error">{{ errors.first('ConnectionGroup') }}</span>
+                <md-table md-card style="margin-left: 0">
+                    <md-table-row>
+                        <md-table-head>#</md-table-head>
+                        <md-table-head>ID</md-table-head>
+                        <md-table-head>Name</md-table-head>
+                        <md-table-head></md-table-head>
+                    </md-table-row>
+                    <md-table-row v-for="(Group,index) in connectionGroups" :key="Group.id">
+                        <md-table-cell> {{ index+1 }}</md-table-cell>
+                        <md-table-cell> {{ Group.id}}</md-table-cell>
+                        <md-table-cell>
+                            <div v-if="editConnectionGroup === Group.id">
+                                <md-field :class="{'md-invalid': errors.has('ConnectionGroup')}">
+                                    <label for="ConnectionGroup">Edit Connection Group Name</label>
+                                    <md-input
+                                        id="ConnectionGroup"
+                                        name="ConnectionGroup"
+                                        v-model="Group.name"
+                                        v-validate="'required|min:3'"
+                                    />
+                                    <span class="md-error">{{ errors.first('ConnectionGroup') }}</span>
 
-                            </md-field>
-                        </div>
-                        <div v-else>
-                            {{ Group.name}}
-                        </div>
+                                </md-field>
+                            </div>
+                            <div v-else>
+                                {{ Group.name}}
+                            </div>
 
                         </md-table-cell>
-                    <md-table-cell>
-                        <div v-if="editConnectionGroup === Group.id">
-                            <md-button class="md-icon-button" @click="updateConnectionGroup(Group)">
-                                <md-icon>save</md-icon>
-                            </md-button>
-                            <md-button class="md-icon-button" @click="editConnectionGroup = null">
-                                <md-icon>close</md-icon>
-                            </md-button>
-                        </div>
-                        <div v-else>
-                            <md-button class="md-icon-button" @click="editConnectionGroup = Group.id">
-                                <md-icon>edit</md-icon>
-                            </md-button>
-                        </div>
-                    </md-table-cell>
+                        <md-table-cell>
+                            <div v-if="editConnectionGroup === Group.id">
+                                <md-button class="md-icon-button" @click="updateConnectionGroup(Group)">
+                                    <md-icon>save</md-icon>
+                                </md-button>
+                                <md-button class="md-icon-button" @click="editConnectionGroup = null">
+                                    <md-icon>close</md-icon>
+                                </md-button>
+                            </div>
+                            <div v-else>
+                                <md-button class="md-icon-button" @click="editConnectionGroup = Group.id">
+                                    <md-icon>edit</md-icon>
+                                </md-button>
+                            </div>
+                        </md-table-cell>
 
-                </md-table-row>
+                    </md-table-row>
 
-            </md-table>
-
+                </md-table>
 
         </widget>
     </div>
@@ -74,7 +73,7 @@ import NewConnectionGroup from './NewConnectionGroup'
 
 export default {
     name: 'ConnectionGroupsList',
-    components: {Widget, NewConnectionGroup},
+    components: {  Widget, NewConnectionGroup},
     mounted() {
         EventBus.$on('pageLoaded', this.reloadList)
         EventBus.$on('searching', this.searching)
@@ -141,7 +140,7 @@ export default {
         async getConnectionGroups() {
             try {
                 this.connectionGroups = await this.connectionGroupService.getConnectionGroups()
-
+                EventBus.$emit('widgetContentLoaded', this.subscriber, this.connectionGroups.length)
             } catch (e) {
 
                 this.alertNotify('error', e.message)

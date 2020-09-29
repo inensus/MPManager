@@ -95,98 +95,94 @@
                     class="md-layout-item  md-xlarge-size-20  md-large-size-20 md-medium-size-20  md-small-size-100 md-xsmall-size-100">
                     <filter-transaction @searchSubmit="filterTransaction"></filter-transaction>
                 </div>
-                <div v-if="transactionService.list.length>0"
-                     class="md-layout-item  md-xlarge-size-80  md-large-size-80 md-medium-size-80  md-small-size-100 md-xsmall-size-100">
-                    <md-table style="width:100%;" md-card>
-                        <md-table-row>
-                            <md-table-head>
-                                Status
-                            </md-table-head>
-                            <md-table-head>
-                                <md-icon>person</md-icon>
-                                Service
-                            </md-table-head>
-                            <md-table-head>
-                                <md-icon>phone</md-icon>
-                                Sender
-                            </md-table-head>
-                            <md-table-head>
-                                <md-icon>money</md-icon>
-                                Amount
-                            </md-table-head>
-                            <md-table-head>Type</md-table-head>
-                            <md-table-head>Message</md-table-head>
-                            <md-table-head>
-                                <md-icon>calendar_today</md-icon>
-                                Sent Date
-                            </md-table-head>
-                            <md-table-head>
-                                <md-icon>calendar_view_day</md-icon>
-                                Process Time
-                            </md-table-head>
-                        </md-table-row>
+                    <div class="md-layout-item  md-xlarge-size-80  md-large-size-80 md-medium-size-80  md-small-size-100 md-xsmall-size-100">
+                        <md-table style="width:100%;" md-card>
+                            <md-table-row>
+                                <md-table-head>
+                                    Status
+                                </md-table-head>
+                                <md-table-head>
+                                    <md-icon>person</md-icon>
+                                    Service
+                                </md-table-head>
+                                <md-table-head>
+                                    <md-icon>phone</md-icon>
+                                    Sender
+                                </md-table-head>
+                                <md-table-head>
+                                    <md-icon>money</md-icon>
+                                    Amount
+                                </md-table-head>
+                                <md-table-head>Type</md-table-head>
+                                <md-table-head>Message</md-table-head>
+                                <md-table-head>
+                                    <md-icon>calendar_today</md-icon>
+                                    Sent Date
+                                </md-table-head>
+                                <md-table-head>
+                                    <md-icon>calendar_view_day</md-icon>
+                                    Process Time
+                                </md-table-head>
+                            </md-table-row>
 
-                        <md-table-row
-                            :class="transaction.status===1 ? 'active':'danger'"
-                            v-for="transaction in transactionService.list"
-                            :key="transaction.id"
-                            style="cursor:pointer"
-                            @click="transactionDetail(transaction.id)"
-                        >
-                            <md-table-cell>
-                                <md-icon v-if="transaction.status===1" style="color:green" md-toolt>check_circle_outline
-                                    <md-tooltip md-direction="right">Confirmed</md-tooltip>
-                                </md-icon>
-                                <md-icon v-if="transaction.status===0" style="color:goldenrod">contact_support
-                                    <md-tooltip md-direction="right">Processing</md-tooltip>
-                                </md-icon>
-                                <md-icon v-if="transaction.status===-1" style="color:red">cancel
-                                    <md-tooltip md-direction="right">Rejected</md-tooltip>
-                                </md-icon>
-                            </md-table-cell>
+                            <md-table-row
+                                :class="transaction.status===1 ? 'active':'danger'"
+                                v-for="transaction in transactionService.list"
+                                :key="transaction.id"
+                                style="cursor:pointer"
+                                @click="transactionDetail(transaction.id)"
+                            >
+                                <md-table-cell>
+                                    <md-icon v-if="transaction.status===1" style="color:green" md-toolt>check_circle_outline
+                                        <md-tooltip md-direction="right">Confirmed</md-tooltip>
+                                    </md-icon>
+                                    <md-icon v-if="transaction.status===0" style="color:goldenrod">contact_support
+                                        <md-tooltip md-direction="right">Processing</md-tooltip>
+                                    </md-icon>
+                                    <md-icon v-if="transaction.status===-1" style="color:red">cancel
+                                        <md-tooltip md-direction="right">Rejected</md-tooltip>
+                                    </md-icon>
+                                </md-table-cell>
 
-                            <md-table-cell style="text-align: center !important;">
-
-
-                                <img v-if="transaction.service==='vodacom_transaction'"
-                                     src="https://vodacom.co.tz/media/logo/stores/1/logo.png"
-                                     style="max-height:18px;"
-                                />
-                                <img v-if="transaction.service==='airtel_transaction'"
-                                     src="https://upload.wikimedia.org/wikipedia/en/thumb/8/8d/Bharti_Airtel_Limited_logo.svg/361px-Bharti_Airtel_Limited_logo.svg.png"
-                                     style="max-height:18px; text-align: center"
-                                />
-                                <img v-if="transaction.service==='agent_transaction'"
-                                     src="https://image.flaticon.com/icons/svg/99/99395.svg"
-                                     style="max-height:18px;"
-                                />
+                                <md-table-cell style="text-align: center !important;">
 
 
-                            </md-table-cell>
-                            <md-table-cell>{{transaction.sender}}</md-table-cell>
-                            <md-table-cell>{{readable(transaction.amount) + appConfig.currency}}
-                            </md-table-cell>
-                            <md-table-cell>{{transaction.type}}</md-table-cell>
-                            <md-table-cell>{{transaction.message}}</md-table-cell>
-                            <md-table-cell>
-                                <div v-if="transaction!=undefined">
-                                    {{timeForHuman(transaction.sentDate)}}
-                                    <small>{{transaction.sentDate}}</small>
-                                </div>
-                            </md-table-cell>
-                            <md-table-cell>
-                                <div v-if="transaction!=undefined">
-                                    In {{timeDiffForHuman(transaction.sentDate, transaction.lastUpdate)}}
-                                    seconds
-                                </div>
-                            </md-table-cell>
-                        </md-table-row>
-                    </md-table>
-                </div>
-                <div v-else
-                     class="md-layout-item  md-xlarge-size-80  md-large-size-80 md-medium-size-80  md-small-size-100 md-xsmall-size-100">
-                    <no-table-data :headers="headers" :tableName="tableName"/>
-                </div>
+                                    <img v-if="transaction.service==='vodacom_transaction'"
+                                         src="https://vodacom.co.tz/media/logo/stores/1/logo.png"
+                                         style="max-height:18px;"
+                                    />
+                                    <img v-if="transaction.service==='airtel_transaction'"
+                                         src="https://upload.wikimedia.org/wikipedia/en/thumb/8/8d/Bharti_Airtel_Limited_logo.svg/361px-Bharti_Airtel_Limited_logo.svg.png"
+                                         style="max-height:18px; text-align: center"
+                                    />
+                                    <img v-if="transaction.service==='agent_transaction'"
+                                         src="https://image.flaticon.com/icons/svg/99/99395.svg"
+                                         style="max-height:18px;"
+                                    />
+
+
+                                </md-table-cell>
+                                <md-table-cell>{{transaction.sender}}</md-table-cell>
+                                <md-table-cell>{{readable(transaction.amount) + appConfig.currency}}
+                                </md-table-cell>
+                                <md-table-cell>{{transaction.type}}</md-table-cell>
+                                <md-table-cell>{{transaction.message}}</md-table-cell>
+                                <md-table-cell>
+                                    <div v-if="transaction!=undefined">
+                                        {{timeForHuman(transaction.sentDate)}}
+                                        <small>{{transaction.sentDate}}</small>
+                                    </div>
+                                </md-table-cell>
+                                <md-table-cell>
+                                    <div v-if="transaction!=undefined">
+                                        In {{timeDiffForHuman(transaction.sentDate, transaction.lastUpdate)}}
+                                        seconds
+                                    </div>
+                                </md-table-cell>
+                            </md-table-row>
+                        </md-table>
+                    </div>
+
             </div>
         </widget>
     </div>
@@ -204,12 +200,10 @@ import Widget from '../../shared/widget'
 import FilterTransaction from './FilterTransaction'
 import Box from '../Box'
 import { TransactionService } from '../../services/TransactionService'
-import NoTableData from '../../shared/NoTableData'
-
 export default {
     name: 'transactionList',
     mixins: [timing, currency],
-    components: { Box, FilterTransaction, Widget, NoTableData },
+    components: { Box, FilterTransaction, Widget },
     data () {
         return {
             transactionService: new TransactionService(),
@@ -262,6 +256,7 @@ export default {
             if (sub !== this.subscriber) return
             this.transactionService.updateList(data)
             EventBus.$emit('dataLoaded')
+            EventBus.$emit('widgetContentLoaded',this.subscriber,this.transactionService.list.length)
         },
         transactionDetail (id) {
             this.$router.push({ path: '/transactions/' + id })

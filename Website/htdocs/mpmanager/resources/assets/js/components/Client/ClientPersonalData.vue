@@ -4,8 +4,9 @@
         title="Details"
         :button="true"
         button-text="Delete Person"
-        color="red"
-        :callback="confirmDelete">
+        :callback="confirmDelete"
+        button-icon="delete"
+        :show-spinner="false">
 
         <md-card>
             <md-card-content>

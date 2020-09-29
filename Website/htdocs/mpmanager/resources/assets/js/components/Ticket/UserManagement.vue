@@ -1,7 +1,9 @@
 <template>
     <div class="row">
         <widget v-if="showNewUser"
-                title="Add New Ticketing User">
+                title="Add New Ticketing User"
+                color="red"
+                >
             <form class="md-layout">
                 <md-card class="md-layout-item md-size-100">
                     <md-card-content>
@@ -49,9 +51,10 @@
             title="UserList"
             :button="true"
             button-text="Add new User"
-            :callback="showAddUser"
+            @widgetAction="showAddUser"
+            color="green"
+            :subscriber="subscriber"
         >
-            <div v-if="ticketUserService.list.length>0">
                 <md-table v-model="ticketUserService.list" md-sort="name" md-sort-order="asc" md-card>
                     <md-table-row slot="md-table-row" slot-scope="{ item }">
                         <md-table-cell md-label="ID" md-sort-by="id" md-numeric>{{ item.id }}</md-table-cell>
@@ -61,12 +64,7 @@
                         </md-table-cell>
                     </md-table-row>
                 </md-table>
-            </div>
-            <div v-else>
-                <no-table-data :headers="headers" :tableName="tableName"/>
-            </div>
         </widget>
-
 
     </div>
 </template>
@@ -74,13 +72,14 @@
 <script>
 import Widget from '../../shared/widget'
 import { TicketUserService } from '../../services/TicketUserService'
-import NoTableData from '../../shared/NoTableData'
+import { EventBus } from '../../shared/eventbus'
 
 export default {
     name: 'UserManagement',
-    components: { Widget, NoTableData },
+    components: { Widget },
     data () {
         return {
+            subscriber:'ticket-user-list',
             ticketUserService: new TicketUserService(),
             showNewUser: false,
             headers: ['ID', 'Name', 'Tag', 'Registered Since'],
@@ -123,6 +122,7 @@ export default {
             try {
                 this.ticketUserService.list = []
                 await this.ticketUserService.getUsers()
+                EventBus.$emit('widgetContentLoaded',this.subscriber,this.ticketUserService.list.length)
             } catch (e) {
                 this.alertNotify('error', e.message)
             }

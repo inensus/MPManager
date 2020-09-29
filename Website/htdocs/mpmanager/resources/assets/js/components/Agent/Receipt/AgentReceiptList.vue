@@ -1,17 +1,16 @@
 <template>
     <div>
+        <new-receipt :addNewReceipt="showNewReceipt" :agent="agent"/>
         <widget
             :class="'col-sm-6 col-md-5'"
             :button-text="'Add Receipt'"
             :button="true"
             title="Last Receipts"
-            :callback="()=> newReceipt()"
+            @widgetAction="newReceipt"
             :paginator="agentReceiptService.paginator"
             :subscriber="subscriber"
             :resetKey="resetKey"
         >
-            <new-receipt :addNewReceipt="showNewReceipt" :agent="agent"/>
-            <div v-if="agentReceiptService.list.length>0">
 
                 <md-table md-sort="id" md-sort-order="asc">
                     <md-table-row>
@@ -26,10 +25,6 @@
 
                     </md-table-row>
                 </md-table>
-            </div>
-            <div v-else>
-                <no-table-data :headers="headers" :tableName="tableName"/>
-            </div>
         </widget>
     </div>
 </template>
@@ -38,7 +33,6 @@ import Widget from '../../../shared/widget'
 import NewReceipt from './NewReceipt'
 import { AgentReceiptService } from '../../../services/AgentReceiptService'
 import { EventBus } from '../../../shared/eventbus'
-import NoTableData from '../../../shared/NoTableData'
 import { AgentService } from '../../../services/AgentService'
 
 export default {
@@ -58,7 +52,6 @@ export default {
     components: {
         NewReceipt,
         Widget,
-        NoTableData
     },
     props: {
         agentId: {
@@ -81,6 +74,7 @@ export default {
         reloadList (subscriber, data) {
             if (subscriber !== this.subscriber) return
             this.agentReceiptService.updateList(data)
+            EventBus.$emit('widgetContentLoaded',this.subscriber,this.agentReceiptService.list.length)
         },
         async closeNewReceipt () {
             this.showNewReceipt = false
