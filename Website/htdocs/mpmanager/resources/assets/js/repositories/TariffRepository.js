@@ -5,7 +5,6 @@ export default {
 
     list () {
         return Client.get(`${resource}`)
-
     },
     create (tariff) {
         return Client.post(`${resource}`, tariff)
@@ -21,6 +20,8 @@ export default {
     },
     usages(id){
         return Client.get(`${resource}/${id}/usage-count`)
+    },
+    change(currentId,changeId){
+        return Client.put(`${resource}/${currentId}/change-meters-tariff/${changeId}`)
     }
-
 }
