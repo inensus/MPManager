@@ -8,7 +8,6 @@ use App\Http\Resources\ApiResource;
 use App\Http\Services\MeterTariffService;
 use App\Jobs\TariffPricingComponentsCalculator;
 use App\Models\AccessRate\AccessRate;
-use App\Models\ElasticUsageTime;
 use App\Models\Meter\Meter;
 use App\Models\Meter\MeterTariff;
 use App\Models\SocialTariff;
@@ -44,7 +43,7 @@ class TariffController extends Controller
                 'accessRate',
                 'pricingComponent',
                 'socialTariff',
-                'elasticUsageTime'
+                'tou'
             ])->paginate(15)
         );
     }
@@ -63,7 +62,7 @@ class TariffController extends Controller
             'accessRate',
             'pricingComponent',
             'socialTariff',
-            'elasticUsageTime'
+            'tou'
         ])->where('id', $tariff->id)->first();
 
         return new ApiResource(
@@ -96,7 +95,7 @@ class TariffController extends Controller
             'accessRate',
             'pricingComponent',
             'socialTariff',
-            'elasticUsageTime'
+            'tou'
         ])->find($newTariff->id);
 
         return new ApiResource($tariff);
@@ -112,6 +111,19 @@ class TariffController extends Controller
     {
         $count = $this->meterTariffService->meterTariffUsageCount($tariff->id);
         return new ApiResource($count);
+    }
+
+    /**
+     * @param MeterTariff $tariff
+     * @param int $changeId
+     * @return ApiResource
+     */
+    public function changeMetersTariff(MeterTariff $tariff, int $changeId): ApiResource
+    {
+        $currentId = $tariff->id;
+
+        $result =   $this->meterTariffService->changeMetersTariff($currentId, $changeId);
+        return new ApiResource($result);
     }
 
     public function destroy(MeterTariff $tariff)
