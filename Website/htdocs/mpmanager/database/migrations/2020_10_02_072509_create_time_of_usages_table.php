@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateElasticUsageTimesTable extends Migration
+class CreateTimeOfUsagesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateElasticUsageTimesTable extends Migration
      */
     public function up()
     {
-        Schema::create('elastic_usage_times', function (Blueprint $table) {
+        Schema::create('time_of_usages', function (Blueprint $table) {
             $table->increments('id');
             $table->unsignedInteger('tariff_id');
             $table->string('start');
@@ -30,6 +30,6 @@ class CreateElasticUsageTimesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('elastic_usage_times');
+        Schema::dropIfExists('time_of_usages');
     }
 }
