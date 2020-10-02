@@ -4,10 +4,10 @@ namespace App\Observers;
 
 use App\Jobs\TariffPricingComponentsCalculator;
 use App\Models\AccessRate\AccessRate;
-use App\Models\ElasticUsageTime;
 use App\Models\Meter\MeterTariff;
 use App\Models\SocialTariff;
 use App\Models\TariffPricingComponent;
+use App\Models\TimeOfUsage;
 use Illuminate\Support\Facades\Log;
 use function Psy\debug;
 
@@ -35,13 +35,13 @@ class MeterTariffObserver
                 ]);
             }
         }
-        if ($elasticUsageTimes = request()->input('elastic_usage_times')) {
-            foreach ($elasticUsageTimes as $key => $value) {
-                ElasticUsageTime::create([
+        if ($tous = request()->input('time_of_usage')) {
+            foreach ($tous as $key => $value) {
+                TimeOfUsage::create([
                     'tariff_id' => $tariff->id,
-                    'start' => $elasticUsageTimes[$key]['start'],
-                    'end' => $elasticUsageTimes[$key]['end'],
-                    'value' => $elasticUsageTimes[$key]['value']
+                    'start' => $tous[$key]['start'],
+                    'end' => $tous[$key]['end'],
+                    'value' => $tous[$key]['value']
                 ]);
             }
         }
