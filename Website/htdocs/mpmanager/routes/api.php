@@ -1,42 +1,5 @@
-Skip to content
-Search or jump to…
-
-Pull requests
-Issues
-Marketplace
-Explore
-
-@93Kamuran
-inensus
-/
-MPManager
-3
-87
-Code
-Issues
-8
-Pull requests
-2
-Actions
-Projects
-1
-Wiki
-Security
-Insights
-MPManager/Website/htdocs/mpmanager/routes/api.php /
-@93Kamuran
-93Kamuran Jwt verification (#108)
-…
-Latest commit 863d681 yesterday
-History
-4 contributors
-@93Kamuran@alchalade@buralp@spinningrod
-321 lines (272 sloc)  13.2 KB
-
-Code navigation is available!
-Navigate your code with ease. Click on function and method calls to jump to their definitions or references in the same repository. Learn more
-
 <?php
+
 use App\Http\Requests\AndroidAppRequest;
 use App\Http\Resources\ApiResource;
 use App\Http\Services\PersonService;
@@ -86,13 +49,13 @@ Route::group(['prefix' => 'admin', 'middleware' => 'jwt.verify'], static functio
     Route::post('/', 'AdminController@store');
     Route::post('/forgot-password', 'AdminController@forgotPassword');
     Route::put('/{user}', 'AdminController@update');
-    Route::get('/users',  'AdminController@index');
+    Route::get('/users', 'AdminController@index');
     Route::post('{user}/addresses', 'AddressController@storeAdmin');
     Route::put('{user}/addresses', 'AddressController@updateAdmin');
     Route::get('{user}/addresses', 'AddressController@adminAddress');
 });
 // Assets
-Route::group(['prefix' => 'assets' ,'middleware' => 'jwt.verify'], function () {
+Route::group(['prefix' => 'assets', 'middleware' => 'jwt.verify'], function () {
     Route::group(['prefix' => 'types'], function () {
         Route::get('/', 'AssetTypeController@index');
         Route::post('/', 'AssetTypeController@store');
@@ -113,7 +76,7 @@ Route::group(['prefix' => 'batteries'], static function () {
     Route::post('/', 'BatteryController@store');
 });
 // Clusters
-Route::group(['prefix' => '/clusters','middleware' => 'jwt.verify'], static function () {
+Route::group(['prefix' => '/clusters', 'middleware' => 'jwt.verify'], static function () {
     Route::post('/{id}/revenue/analysis', 'RevenueController@getRevenueAnalysisForCluster');
     Route::get('/', 'ClusterController@index');
     Route::get('/geo', 'ClusterController@geo');
@@ -125,13 +88,13 @@ Route::group(['prefix' => '/clusters','middleware' => 'jwt.verify'], static func
     Route::get('/{id}/cities-revenue', 'RevenueController@getPeriodicMiniGridsRevenue');
 });
 // Connection-Groups
-Route::group(['prefix' => 'connection-groups','middleware' => 'jwt.verify'], static function () {
+Route::group(['prefix' => 'connection-groups', 'middleware' => 'jwt.verify'], static function () {
     Route::get('/', 'ConnectionGroupController@index');
     Route::post('/', 'ConnectionGroupController@store');
     Route::put('/{connectionGroup}', 'ConnectionGroupController@update');
 });
 // Connection-Types
-Route::group(['prefix' => 'connection-types','middleware' => 'jwt.verify'], static function () {
+Route::group(['prefix' => 'connection-types', 'middleware' => 'jwt.verify'], static function () {
     Route::get('/', 'ConnectionTypeController@index');
     Route::post('/', 'ConnectionTypeController@store');
     Route::get('/{connectionTypeId?}', 'ConnectionTypeController@show');
@@ -139,22 +102,22 @@ Route::group(['prefix' => 'connection-types','middleware' => 'jwt.verify'], stat
 
 });
 // Energies
-Route::group(['prefix' => 'energies','middleware' => 'jwt.verify'], static function () {
+Route::group(['prefix' => 'energies', 'middleware' => 'jwt.verify'], static function () {
     Route::post('/', 'EnergyController@store');
 
 });
 // Generation-Assets
-Route::group(['prefix' => 'generation-assets','middleware' => 'jwt.verify'], static function () {
+Route::group(['prefix' => 'generation-assets', 'middleware' => 'jwt.verify'], static function () {
     Route::post('/grid', 'MiniGridFrequencyController@store');
 });
 // Maintenance
-Route::group(['prefix' => '/maintenance','middleware' => 'jwt.verify'], static function () {
+Route::group(['prefix' => '/maintenance', 'middleware' => 'jwt.verify'], static function () {
     Route::get('/', 'MaintenanceUserController@index');
     Route::post('/user', 'MaintenanceUserController@store')
         ->middleware('restriction:maintenance-user');
 });
 // Manufacturers
-Route::group(['prefix' => 'manufacturers','middleware' => 'jwt.verify'], static function () {
+Route::group(['prefix' => 'manufacturers', 'middleware' => 'jwt.verify'], static function () {
     Route::get('/', 'ManufacturerController@index');
     Route::get('/{manufacturer}', 'ManufacturerController@show');
     Route::post('/', 'ManufacturerController@store');
@@ -162,7 +125,7 @@ Route::group(['prefix' => 'manufacturers','middleware' => 'jwt.verify'], static 
 
 });
 // Mini-Grids
-Route::group(['prefix' => 'mini-grids','middleware' => 'jwt.verify'], static function () {
+Route::group(['prefix' => 'mini-grids', 'middleware' => 'jwt.verify'], static function () {
     Route::get('/', 'MiniGridController@index');
     Route::post('/', 'MiniGridController@store');
     Route::get('/{id}', 'MiniGridController@show');
@@ -180,15 +143,16 @@ Route::group(['prefix' => 'mini-grids','middleware' => 'jwt.verify'], static fun
 
 });
 // PaymentHistories
-Route::group(['prefix' => 'paymenthistories','middleware' => 'jwt.verify'], function () {
+Route::group(['prefix' => 'paymenthistories', 'middleware' => 'jwt.verify'], function () {
     Route::get('/{personId}/flow/{year?}', 'PaymentHistoryController@byYear')->where('personId', '[0-9]+');
     Route::get('/{personId}/period', 'PaymentHistoryController@getPaymentPeriod')->where('personId', '[0-9]+');
     Route::get('/debt/{personId}', 'PaymentHistoryController@debts')->where('personId', '[0-9]+');
     Route::post('/overview', 'PaymentHistoryController@getPaymentRange');
-    Route::get('/{personId}/payments/{period}/{limit?}/{order?}', 'PaymentHistoryController@show')->where('personId', '[0-9]+');
+    Route::get('/{personId}/payments/{period}/{limit?}/{order?}', 'PaymentHistoryController@show')->where('personId',
+        '[0-9]+');
 });
 // People
-Route::group(['prefix' => 'people' ,'middleware' => 'jwt.verify'], static function () {
+Route::group(['prefix' => 'people', 'middleware' => 'jwt.verify'], static function () {
     Route::get('/{person}/transactions', 'PersonController@transactions');
     Route::get('/{person}/addresses', 'PersonController@addresses');
     Route::get('/{person}/meters', 'MeterController@personMeters');
@@ -208,23 +172,23 @@ Route::group(['prefix' => 'people' ,'middleware' => 'jwt.verify'], static functi
 // PV
 Route::group(['prefix' => 'pv'], static function () {
     Route::post('/', 'PVController@store')->middleware('data.controller');
-    Route::get('/{miniGridId}',  ['middleware' => 'jwt.verify', 'uses' => 'PVController@show']);
+    Route::get('/{miniGridId}', ['middleware' => 'jwt.verify', 'uses' => 'PVController@show']);
 
 });
 // Reports
-Route::group(['prefix' => 'reports','middleware' => 'jwt.verify'], function () {
+Route::group(['prefix' => 'reports', 'middleware' => 'jwt.verify'], function () {
     Route::get('/', 'ReportController@index');
     Route::get('/{id}/download', 'ReportController@download');
 });
 // Revenue
-Route::group(['prefix' => 'revenue','middleware' => 'jwt.verify'], static function () {
+Route::group(['prefix' => 'revenue', 'middleware' => 'jwt.verify'], static function () {
     Route::post('/analysis/', 'RevenueController@analysis');
     Route::post('/trends/{id}', 'RevenueController@trending');
     Route::post('/', 'RevenueController@revenueData');
     Route::get('/tickets/{id}', 'RevenueController@ticketData');
 });
 // Sms
-Route::group(['prefix' => 'sms','middleware' => 'jwt.verify'], static function () {
+Route::group(['prefix' => 'sms', 'middleware' => 'jwt.verify'], static function () {
     Route::get('/{number}', 'SmsController@show');
     Route::get('/phone/{number}', 'SmsController@byPhone');
     Route::get('/{uuid}/confirm', 'SmsController@update');
@@ -240,7 +204,7 @@ Route::group(['prefix' => 'solar'], static function () {
     Route::post('/', 'SolarController@store');
 });
 // Sub-Connection-Types
-Route::group(['prefix' => 'sub-connection-types','middleware' => 'jwt.verify'], static function () {
+Route::group(['prefix' => 'sub-connection-types', 'middleware' => 'jwt.verify'], static function () {
     Route::get('/{connectionTypeId?}', 'SubConnectionTypeController@index');
     Route::post('/', 'SubConnectionTypeController@store');
     Route::get('/{id}', 'SubConnectionTypeController@show');
@@ -248,7 +212,7 @@ Route::group(['prefix' => 'sub-connection-types','middleware' => 'jwt.verify'], 
 
 });
 // Targets
-Route::group(['prefix' => 'targets','middleware' => 'jwt.verify'], static function () {
+Route::group(['prefix' => 'targets', 'middleware' => 'jwt.verify'], static function () {
     Route::get('/', 'TargetController@index');
     Route::post('/', 'TargetController@store');
     Route::get('/{id}', 'TargetController@show');
@@ -262,12 +226,13 @@ Route::group(['middleware' => 'jwt.verify', 'prefix' => 'tariffs'], static funct
     Route::get('/{tariff}', 'TariffController@show');
     Route::delete('/{tariff}', 'TariffController@destroy');
     Route::get('/{tariff}/usage-count', 'TariffController@usages');
+    Route::put('/{tariff}/change-meters-tariff/{changeId}', 'TariffController@changeMetersTariff');
 
 });
 // Transactions
 Route::group(['prefix' => 'transactions', 'middleware' => ['transaction.auth', 'transaction.request']],
     static function () {
-        Route::post('/airtel',  'TransactionController@store');
+        Route::post('/airtel', 'TransactionController@store');
 
         Route::post('/vodacom', ['as' => 'vodacomTransaction', 'uses' => 'TransactionController@store']);
         Route::post('/agent',
@@ -275,8 +240,8 @@ Route::group(['prefix' => 'transactions', 'middleware' => ['transaction.auth', '
 
     });
 
-Route::group(['prefix' => 'elastic-usage-times','middleware'=>'jwt.verify'], static function () {
-    Route::delete('/{elasticUsage}', 'ElasticUsageTimeController@destroy');
+Route::group(['prefix' => 'time-of-usages', 'middleware' => 'jwt.verify'], static function () {
+    Route::delete('/{timeOfUsage}', 'TimeOfUsageController@destroy');
 });
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
