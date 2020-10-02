@@ -1,7 +1,6 @@
 import Client from './Client/AxiosClient'
-const resource = '/api/elastic-usage-times'
+const resource = '/api/time-of-usages'
 export default {
-
     delete(id){
         return Client.delete(`${resource}/${id}`)
     }

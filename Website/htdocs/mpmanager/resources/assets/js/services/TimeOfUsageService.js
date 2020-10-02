@@ -1,10 +1,9 @@
 import Repository from '../repositories/RepositoryFactory'
 import { ErrorHandler } from '../Helpers/ErrorHander'
-
-export class ElasticUsageTimeService {
+export class TimeOfUsageService {
     constructor () {
-        this.repository = Repository.get('elasticUsage')
-        this.elasticUsage = {
+        this.repository = Repository.get('timeOfUsage')
+        this.tou = {
             id: null,
             tariffId: null,
             start: null,
@@ -13,7 +12,7 @@ export class ElasticUsageTimeService {
         }
     }
 
-    async deleteElasticUsage (id) {
+    async deleteTou (id) {
         try {
             let response = await this.repository.delete(id)
             if (response.status === 200) {
