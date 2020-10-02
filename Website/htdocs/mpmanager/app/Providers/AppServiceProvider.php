@@ -18,6 +18,7 @@ use App\Models\AssetType;
 use App\Models\Cluster;
 use App\Models\Manufacturer;
 use App\Models\Meter\MeterParameter;
+use App\Models\Meter\MeterTariff;
 use App\Models\Meter\MeterToken;
 use App\Models\MiniGrid;
 use App\Models\Person\Person;
@@ -68,7 +69,7 @@ class AppServiceProvider extends ServiceProvider
                 'appliance' => AssetType::class,
                 'agent_receipt' => AgentReceipt::class,
                 'agent_charge' => AgentCharge::class,
-
+                'meter_tariff'=>MeterTariff::class
             ]
         );
     }
