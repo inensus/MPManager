@@ -17,7 +17,7 @@
                     <md-table-cell md-label="Date"> {{ item.date}}</md-table-cell>
                     <md-table-cell md-label="File">
                         <div @click="download(item.id,'/book-keeping')">
-                            <font-awesome-icon icon="save" style="cursor: pointer;"/>
+                            <md-icon style="cursor: pointer;">save</md-icon>
                             <span > Download</span>
                         </div>
 

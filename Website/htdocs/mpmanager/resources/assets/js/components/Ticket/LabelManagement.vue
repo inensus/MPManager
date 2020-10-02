@@ -57,7 +57,7 @@
                     </div>
                     <div class="md-layout">
                         <span class="md-subheader">
-                            By any question please get in touch with &nbsp; <font-awesome-icon icon="envelope"/>  ako@inensus.com
+                            By any question please get in touch with &nbsp; <md-icon>email</md-icon> ako@inensus.com
                     </span>
 
                     </div>
@@ -96,8 +96,8 @@
                                     {{label.label_color}}
                                 </md-table-cell>
                                 <md-table-cell>
-                                    <font-awesome-icon v-if="label.out_source===0" icon="times"/>
-                                    <font-awesome-icon v-else icon="check"/>
+                                    <md-icon v-if="label.out_source===0">cancel</md-icon>
+                                    <md-icon v-else>check</md-icon>
                                 </md-table-cell>
                             </md-table-row>
 

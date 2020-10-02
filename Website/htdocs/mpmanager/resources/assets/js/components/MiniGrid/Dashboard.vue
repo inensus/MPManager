@@ -98,7 +98,7 @@
 
                     <span class="md-title" v-if="miniGridData">
                     MiniGrid <strong>{{ miniGridData.name}}</strong>
-                <font-awesome-icon @click="editMiniGrid" icon="wrench"/>
+                        <md-icon @click="editMiniGrid">plumbing</md-icon>
 
                 </span>
                         <md-switch v-model="enableDataStream" @change="onDataStreamChange($event)" :disabled="switching"
@@ -112,7 +112,7 @@
                     Period : {{this.startDate}} - {{this.endDate}}
                 </span>
                             <md-button class="md-raised" @click="openDatePicker">
-                                <font-awesome-icon icon="calendar"/>
+                                <md-icon>calendar_today</md-icon>
                                 Select Period
                             </md-button>
 
@@ -127,7 +127,7 @@
                         :header-text-color="'#dddddd'"
                         :sub-text="soldEnergy.toString() +'kWh'"
                         :sub-text-color="'#e3e3e3'"
-                        box-icon="solar-panel"
+                        box-icon="wb_iridescent"
                         :box-icon-color="'#578839'"
                     />
                 </div>
@@ -140,7 +140,7 @@
                          :header-text-color="'#dddddd'"
                          :sub-text="readable(currentTransaction[0].amount).toString() "
                          :sub-text-color="'#e3e3e3'"
-                         box-icon="tasks"
+                         box-icon="list"
                          :box-icon-color="'#578839'"
                     />
                 </div>
@@ -153,7 +153,7 @@
                          :header-text-color="'#dddddd'"
                          :sub-text="readable(currentTransaction[0].revenue).toString() +this.appConfig.currency"
                          :sub-text-color="'#e3e3e3'"
-                         box-icon="money-bill"
+                         box-icon="attach_money"
                          :box-icon-color="'#578839'"
                     />
                 </div>
@@ -332,7 +332,7 @@
                                 </md-card-content>
                                 <md-card-actions>
                                     <md-button class="md-raised md-accent" @click="showModal = false">
-                                        <font-awesome-icon icon="times"/>
+                                        <md-icon>cancel</md-icon>
                                         Close
                                     </md-button>
 

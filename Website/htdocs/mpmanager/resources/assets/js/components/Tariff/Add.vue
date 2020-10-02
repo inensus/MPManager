@@ -79,7 +79,7 @@
                     <div class="md-layout-item md-large-size-100 md-medium-size-100 md-small-size-100">
 
                         <md-button role="button" class="md-raised md-secondary" @click="addComponent">
-                            <font-awesome-icon icon="plus"/>
+                            <md-icon>add</md-icon>
                             Add Additional Cost Component
                         </md-button>
                     </div>

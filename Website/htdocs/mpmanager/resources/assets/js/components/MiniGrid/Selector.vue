@@ -18,7 +18,7 @@
                                         &nbsp;<span>{{miniGrid.name}}</span>
                                         <div v-show="miniGrid.data_stream === 1"
                                              class="selection-active">
-                                            <font-awesome-icon icon="check"/>
+                                            <md-icon>check</md-icon>
                                             <md-tooltip md-direction="top">MiniGrid Data-logger is active
                                             </md-tooltip>
                                         </div>

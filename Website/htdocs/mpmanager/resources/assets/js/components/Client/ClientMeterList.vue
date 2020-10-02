@@ -10,12 +10,8 @@
                 <div class="md-layout-item md-medium-size-100 md-large-size-100 md-small-size-100">
                     <md-table style="width:100%" v-model="this.meters" md-card md-fixed-header>
                         <md-table-row slot="md-table-row" slot-scope="{ item }">
-                            <md-table-cell md-label="#">
-
-                                <font-awesome-icon icon="map-marker"
-                                                   @click="setMapCenter(meter.id)"
-                                                   style="cursor:pointer;"/>
-
+                            <md-table-cell md-label="#" >
+                                <md-icon @click="setMapCenter(meter.id)" style="cursor:pointer;">place</md-icon>
                             </md-table-cell>
                             <md-table-cell md-label="ID" md-sort-by="id">{{ item.id }}</md-table-cell>
                             <md-table-cell md-label="Serial Nr" md-sort-by="serial_number">{{ item.serial_number }}
