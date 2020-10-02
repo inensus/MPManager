@@ -10,9 +10,9 @@
                 buttonText="New Tariff"
                 :callback="showNewTariff"
                 color="red">
-            <div v-if="tariffList.length>0">
+            <div v-if="tariffService.list.length>0">
                 <md-table
-                    v-model="tariffList"
+                    v-model="tariffService.list"
                     md-sort="id"
                     md-sort-order="asc"
                     md-card>
@@ -40,11 +40,11 @@
 
                         </md-table-cell>
                         <md-table-cell md-label="#">
-                            <md-button class="md-icon-button" @click="showConfirmation(item.id,'Update')">
+                            <md-button class="md-icon-button" @click="editTariff(item.id)">
                                 <md-tooltip md-direction="top">Edit</md-tooltip>
                                 <md-icon>edit</md-icon>
                             </md-button>
-                            <md-button class="md-icon-button" @click="showConfirmation(item.id,'Delete')">
+                            <md-button class="md-icon-button" @click="showConfirmation(item.id)">
                                 <md-tooltip md-direction="top">Delete</md-tooltip>
                                 <md-icon>delete</md-icon>
                             </md-button>
@@ -87,13 +87,15 @@ export default {
     mounted () {
 
         this.getTariffs()
-        EventBus.$on('tariffAdded', this.addToList)
+        EventBus.$on('tariffAdded', ()=>{
+            this.getTariffs()
+        })
     },
     methods: {
 
         async getTariffs () {
             try {
-                this.tariffList = await this.tariffService.getTariffs()
+                await this.tariffService.getTariffs()
             } catch (e) {
                 this.alertNotify('error', e.message)
             }
@@ -102,8 +104,7 @@ export default {
             EventBus.$emit('showNewTariff')
         },
         addToList (tariff) {
-            this.tariffList = this.tariffService.addToList(tariff)
-
+            this.tariffService.addToList(tariff)
         },
         editTariff(id){
             this.$router.push({ path: '/tariffs/' + id })
@@ -112,40 +113,59 @@ export default {
             try {
                 this.loading = true
                 await this.tariffService.deleteTariff(id)
-                await  this.getTariffs()
                 this.loading = false
                 this.alertNotify('success', 'Tariff deleted successfully.')
-                await this.tariffService.getTariffs()
+                await  this.getTariffs()
+            } catch (e) {
+                this.loading = false
+                this.alertNotify('error', e.message)
+            }
+        },
+        async changeUsingMeterTariff(currentId,changeId){
+            try {
+                this.loading = true
+                await this.tariffService.changeMetersTariff(currentId,changeId)
+                this.loading = false
+                this.alertNotify('success', 'Tariff changed on using meters successfully.')
             } catch (e) {
 
                 this.loading = false
                 this.alertNotify('error', e.message)
             }
         },
-
-        async showConfirmation (id,type) {
+        async showConfirmation (id) {
             let countObject = await this.tariffService.tariffUsageCount(id)
             let usageCount =countObject[0].count
-            let text=''
-            if(usageCount>0){
-                text = 'This tariff has using by '+ usageCount +' of meters. Are you sure '+type+' this tariff?'
-            }else{
-                text = 'Are you sure '+type+' this tariff?'
-            }
-            this.$swal({
+            let tariffs=this.tariffService.list
+            let tariffObj=  tariffs.reduce((acc,value)=>{
+                if (value.id !== id){
+                    acc[value.id] = value.name
+                }
+                return acc
+            },{})
+            let swalOptions={
                 type: 'question',
-                title: type,
-                text: text ,
+                title: 'Delete',
                 showCancelButton: true,
                 confirmButtonText: 'I\'m sure',
                 cancelButtonText: 'Cancel',
-            }).then((result) => {
+            }
+            if(usageCount>0){
+                swalOptions.input= 'select'
+                swalOptions.inputOptions= tariffObj
+                swalOptions.text= 'This tariff has using by '+ usageCount +' of meters.You have to decide change meters  tariffs. Are you sure delete this tariff? '
+            }else{
+                swalOptions.text= 'Are you sure delete this tariff?'
+            }
+            this.$swal(
+                swalOptions
+            ).then((result) => {
                 if (result.value) {
-                    if (type==='Update'){
-                        this.editTariff(id)
-                    }else{
-                        this.deleteTariff(id)
+                    // eslint-disable-next-line no-constant-condition
+                    if (typeof result.value == 'string'){
+                        this.changeUsingMeterTariff(id,Number(result.value))
                     }
+                    this.deleteTariff(id)
                 }
             })
         },
