@@ -42,10 +42,10 @@ class TariffCreateRequest extends FormRequest
             'components' => 'sometimes|required|array',
             'components.*.name' => 'required_with:components',
             'components.*.price' => 'required_with:components',
-            'elasticUsageTimes' => 'sometimes|required|array',
-            'elasticUsageTimes.*.start' => 'required_with:elasticUsageTimes',
-            'elasticUsageTimes.*.end' => 'required_with:elasticUsageTimes',
-            'elasticUsageTimes.*.value' => 'required_with:elasticUsageTimes',
+            'tous' => 'sometimes|required|array',
+            'tous.*.start' => 'required_with:tous',
+            'tous.*.end' => 'required_with:tous',
+            'tous.*.value' => 'required_with:tous',
         ];
     }
 

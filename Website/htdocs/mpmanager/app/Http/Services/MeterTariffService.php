@@ -7,10 +7,11 @@ namespace App\Http\Services;
 use App\Http\Requests\TariffCreateRequest;
 use App\Jobs\TariffPricingComponentsCalculator;
 use App\Models\AccessRate\AccessRate;
-use App\Models\ElasticUsageTime;
+use App\Models\Meter\MeterParameter;
 use App\Models\Meter\MeterTariff;
 use App\Models\SocialTariff;
 use App\Models\TariffPricingComponent;
+use App\Models\TimeOfUsage;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -18,7 +19,7 @@ class MeterTariffService
 {
 
 
-    public function update(MeterTariff $tariff, TariffCreateRequest $request):Model
+    public function update(MeterTariff $tariff, TariffCreateRequest $request): Model
     {
         $tariff->name = $request->input('name');
         $tariff->factor = $request->input('factor');
@@ -78,29 +79,29 @@ class MeterTariffService
                 $components)->allOnConnection('redis')->onQueue(config('services.queues.misc'));
         }
 
-        if ($elasticUsageTimes = request()->input('elastic_usage_times')) {
-            foreach ($elasticUsageTimes as $key => $value) {
-                $elasticUsage = ElasticUsageTime::find($elasticUsageTimes[$key]['id']);
-                if ($elasticUsage) {
-                    $elasticUsage->start = $elasticUsageTimes[$key]['start'];
-                    $elasticUsage->end = $elasticUsageTimes[$key]['end'];
-                    $elasticUsage->value = $elasticUsageTimes[$key]['value'];
-                    $elasticUsage->update();
+        if ($tous = request()->input('time_of_usage')) {
+            foreach ($tous as $key => $value) {
+                $tou = TimeOfUsage::find($tous[$key]['id']);
+                if ($tou) {
+                    $tou->start = $tous[$key]['start'];
+                    $tou->end = $tous[$key]['end'];
+                    $tou->value = $tous[$key]['value'];
+                    $tou->update();
                 } else {
-                    ElasticUsageTime::create([
+                    TimeOfUsage::create([
                         'tariff_id' => $tariff->id,
-                        'start' => $elasticUsageTimes[$key]['start'],
-                        'end' => $elasticUsageTimes[$key]['end'],
-                        'value' => $elasticUsageTimes[$key]['value']
+                        'start' => $tous[$key]['start'],
+                        'end' => $tous[$key]['end'],
+                        'value' => $tous[$key]['value']
                     ]);
                 }
             }
         }
-     return   $meterTariff = MeterTariff::with([
+        return $meterTariff = MeterTariff::with([
             'accessRate',
             'pricingComponent',
             'socialTariff',
-            'elasticUsageTime'
+            'tou'
         ])->find($tariff->id);
     }
 
@@ -111,6 +112,15 @@ class MeterTariffService
                inner join meter_parameters on meter_tariffs.id=meter_parameters.tariff_id
                inner join meters on meter_parameters.meter_id=meters.id
                where meters.in_use =1 and meter_tariffs.id=$tariffId"));
+    }
 
+    public function changeMetersTariff($currentId, $changeId)
+    {
+        $meterParameters = MeterParameter::query()->where('tariff_id', $currentId)->get();
+        foreach ($meterParameters as $key => $value) {
+                $value->tariff_id = $changeId;
+                $value->update();
+        }
+        return $meterParameters;
     }
 }

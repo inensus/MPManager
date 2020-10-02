@@ -5,7 +5,6 @@ namespace App\Models\Meter;
 use App\Models\AccessRate\AccessRate;
 use App\Models\BaseModel;
 use App\Models\CustomerGroup;
-use App\Models\ElasticUsageTime;
 use App\Models\SocialTariff;
 use App\Models\TariffPricingComponent;
 use App\Models\TimeOfUsage;
@@ -62,8 +61,8 @@ class MeterTariff extends BaseModel
     {
         return $this->hasOne(SocialTariff::class, 'tariff_id');
     }
-    public function elasticUsageTime()
+    public function tou()
     {
-        return $this->hasMany(ElasticUsageTime::class, 'tariff_id');
+        return $this->hasMany(TimeOfUsage::class, 'tariff_id');
     }
 }
