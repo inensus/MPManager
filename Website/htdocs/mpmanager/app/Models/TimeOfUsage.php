@@ -4,7 +4,8 @@ namespace App\Models;
 
 use App\Models\Meter\MeterTariff;
 
-class ElasticUsageTime extends BaseModel
+
+class TimeOfUsage extends BaseModel
 {
     public function tariff()
     {
