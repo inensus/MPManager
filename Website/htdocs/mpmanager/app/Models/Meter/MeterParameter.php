@@ -39,10 +39,8 @@ class MeterParameter extends BaseModel
         return $this->belongsTo(MeterTariff::class);
     }
 
-    /**
-     * @return AccessRate
-     */
-    public function tariffAccessRate(): AccessRate
+
+    public function tariffAccessRate(): ?AccessRate
     {
         return $this->tariff->accessRate;
     }
