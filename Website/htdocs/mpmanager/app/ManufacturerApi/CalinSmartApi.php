@@ -26,14 +26,14 @@ class CalinSmartApi implements IManufacturerAPI
 
 
     /**
-     * @param Meter $meter
-     * @param $energy
-     * @return MeterToken
+     * @param $transactionContainer
+     * @return array
      * @throws Exception
      */
-    public function chargeMeter(Meter $meter, $energy): array
+    public function chargeMeter($transactionContainer): array
     {
-
+        $meter = $transactionContainer->meter;
+        $energy = (float)$transactionContainer->chargedEnergy;
         $url = config('services.calinSmart.url.purchase');
         $tokenParams = [
             'company_name' => config('services.calinSmart.company_name'),
