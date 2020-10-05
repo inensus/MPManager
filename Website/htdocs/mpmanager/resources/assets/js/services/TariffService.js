@@ -85,8 +85,6 @@ export class TariffService {
                 tariff.components.push(component)
             }
         }
-        // eslint-disable-next-line no-debugger
-        debugger
         if (tariffData.tou.length > 0) {
             let price = tariffData.price / 100
             for (let i = 0; i < tariffData.tou.length; i++) {

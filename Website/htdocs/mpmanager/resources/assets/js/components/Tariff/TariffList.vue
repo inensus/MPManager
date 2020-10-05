@@ -7,10 +7,11 @@
         <widget id="tariff-list"
                 title="Tariffs"
                 :button="true"
+                :subscriber="subscriber"
                 buttonText="New Tariff"
-                :callback="showNewTariff"
-                color="red">
-            <div v-if="tariffService.list.length>0">
+                @widgetAction="showNewTariff"
+                color="green">
+
                 <md-table
                     v-model="tariffService.list"
                     md-sort="id"
@@ -24,8 +25,7 @@
                             {{ readable(item.price/100)}} {{item.currency}}
                         </md-table-cell>
                         <md-table-cell md-label="Access Rate" md-numeric md-sort-by="accessRate.amount">
-
-                            <div v-if="item.accessRate.amount|| item.accessRate.amount===0">
+                            <div v-if="item.accessRate">
                                 {{ readable(item.accessRate.amount) }} {{item.currency}}
                             </div>
                             <div v-else>-</div>
@@ -52,14 +52,8 @@
                     </md-table-row>
                 </md-table>
                 <md-progress-bar md-mode="indeterminate" v-if="loading"/>
-            </div>
 
-            <div v-else>
-                <no-table-data :headers="headers" :tableName="tableName"/>
-            </div>
         </widget>
-
-
     </div>
 </template>
 
@@ -69,14 +63,14 @@ import { currency } from '../../mixins/currency'
 import Add from './Add'
 import { EventBus } from '../../shared/eventbus'
 import { TariffService } from '../../services/TariffService'
-import NoTableData from '../../shared/NoTableData'
 
 export default {
     name: 'TariffList',
-    components: { Widget, Add, NoTableData },
+    components: { Widget, Add },
     mixins: [currency],
     data () {
         return {
+            subscriber:'tariff-list',
             tariffService: new TariffService(),
             tariffList: [],
             headers: ['ID', 'Name', 'kWh Price', 'Access Rate', 'Access Rate Period in Days','#'],
@@ -96,6 +90,7 @@ export default {
         async getTariffs () {
             try {
                 await this.tariffService.getTariffs()
+                EventBus.$emit('widgetContentLoaded',this.subscriber,this.tariffService.list.length)
             } catch (e) {
                 this.alertNotify('error', e.message)
             }

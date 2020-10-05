@@ -1,6 +1,8 @@
 <template>
     <div class="row">
-        <widget title="Profile">
+        <widget
+            title="Profile"
+        >
             <form class="md-layout" data-vv-scope="address">
                 <md-card class="md-layout-item md-size-100">
                     <md-card-content>

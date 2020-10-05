@@ -4,20 +4,10 @@
             <div class="tabs">
                 <slot name="tabbar"></slot>
             </div>
-
             <div class="md-toolbar-section-start">
                 <font-awesome-icon icon="list"/>
                 <h4 class="chic-title" v-text="title"></h4>
                 <div class="search-area">
-                    <md-button
-                        :class="setButtonColor()"
-                        @click="_callback"
-                        class="md-dense md-primary chic-button"
-                        style="position: absolute; right: 10px; top:10px"
-                        v-if="button"
-                        v-text="buttonText"
-                    />
-
                     <div class="search-input" v-if="search">
                         <div class="md-layout md-gutter">
 
@@ -29,19 +19,29 @@
                                 <span style="margin-right: 15px;">Search Results for: <u>{{searchTerm}}</u>
 
                                     <font-awesome-icon @click="showAllEntries" class="pointer" icon="times"/></span>
-
                                 </div>
                                 <md-icon style="color: white;">search</md-icon>
-
                             </md-field>
-
-
                         </div>
-
-
                     </div>
 
                 </div>
+            </div>
+            <div class="md-toolbar-section-end">
+                <md-button
+                    :class="setButtonColor()"
+                    @click="widgetAction"
+                    class="md-icon-button md-dense md-raised"
+                    v-if="button"
+                >
+                    <md-tooltip md-direction="top">{{ buttonText }}</md-tooltip>
+                    <md-icon>{{ buttonIcon }}</md-icon>
+                </md-button>
+                <md-button  v-if="showRefreshButton" @click="refreshButtonClicked" class="md-icon-button md-dense md-raised"
+                            :class="{'refresh-button' : isActive}">
+                    <md-tooltip md-direction="top">Refresh</md-tooltip>
+                    <md-icon>cached</md-icon>
+                </md-button>
             </div>
 
 
@@ -49,7 +49,25 @@
 
         <md-card>
             <md-card-content class="nopadding">
-                <slot></slot>
+            <div v-if="showData">
+                    <slot></slot>
+            </div>
+            <div v-else name="emptyState" >
+                <div v-if="showEmptyState" name="emptyState" class="empty-state">
+                    <md-empty-state
+                        :md-icon="icon"
+                        :md-description="emptyStateDescription"
+                        :md-label="getEmptyStateLabel">
+                        <md-button v-if="button" @click="widgetAction" class="md-primary md-raised">{{getEmptyStateButtonText}}</md-button>
+                    </md-empty-state>
+                </div>
+                <div v-else class="loading-state">
+                    <div>
+                        <img src="/storage/spinner/spinner.gif" alt="">
+                    </div>
+                </div>
+            </div>
+
             </md-card-content>
         </md-card>
         <md-toolbar class="md-dense" md-elevation="1" v-if="paginator">
@@ -74,20 +92,35 @@ const debounce = require('debounce')
 export default {
     name: 'Widget',
     components: {Paginate},
+
     props: {
+        emptyStateDescription:{
+            type: String,
+            default: null,
+            required: false
+        },
         color: {
             type: String,
             default: 'default'
         },
+        buttonIcon:{
+            type:String,
+            default:'add'
+        },
+        showRefreshButton:{
+            type:Boolean,
+            default:false,
+        },
         title: String,
         id: String,
-        callback: {},
         button: Boolean,
         buttonText: String,
         buttonColor: String,
         paginator: Paginator,
         search: {},
-        subscriber: String,
+        subscriber:{
+            type:String,
+        },
         route_name: String,
         headless: {
             type: Boolean,
@@ -99,11 +132,18 @@ export default {
         },
         resetKey:{
             default:0
-        }
+        },
     },
+
     mounted() {
         //listen for a remote trigger for ending the search
         EventBus.$on('search.end', this.cancelSearching)
+        if(this.subscriber === null || this.subscriber === undefined){
+            return this.showData = true
+        }else{
+            EventBus.$on('widgetContentLoaded', this.checkDataLength)
+        }
+
     },
     beforeDestroy() {
         EventBus.$off('search.end', this.cancelSearching)
@@ -111,10 +151,43 @@ export default {
     data() {
         return {
             searching: false,
-            searchTerm: ''
+            searchTerm: '',
+            icon: 'post_add',
+            showEmptyState: false,
+            showData:false,
+            isActive: false
         }
     },
     methods: {
+        refreshButtonClicked(){
+            this.isActive = true
+            this.$emit('refreshButtonClicked')
+
+
+
+        },
+        widgetAction(){
+            this.$emit('widgetAction',this.subscriber)
+        },
+        validateSubscriber(subscriber){
+            return this.subscriber === subscriber
+        },
+        checkDataLength(subscriber,dataLength)  {
+            console.log(subscriber,dataLength)
+            if(!this.validateSubscriber(subscriber)){
+                return
+            }
+            if(dataLength === 0){
+                this.showData = false
+                this.showEmptyState = true
+            }else if(dataLength === null || dataLength === undefined){
+                this.showData = false
+                this.showEmptyState = false
+            }else{
+                this.showData = true
+                this.showEmptyState = false
+            }
+        },
         defaultCallback() {
             alert('default button click')
         },
@@ -146,10 +219,20 @@ export default {
         }
     },
     computed: {
-        _callback: function () {
-            if (this.callback === undefined) return this.defaultCallback
-            else return this.callback
+        getEmptyStateLabel(){
+            if(this.title === null || this.title === undefined){
+                return 'No Data Found'
+            }else{
+                return 'No Data Found for ' + this.title
+            }
         },
+        getEmptyStateButtonText(){
+            if(this.title === null || this.title === undefined){
+                return 'Create Your First Record'
+            }else{
+                return 'Create the First ' + this.title + ' Record'
+            }
+        }
 
     },
     watch: {
@@ -166,6 +249,14 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+    .refresh-button{
+        animation: rotate 1.4s ease 0.5s ;
+    }
+    @keyframes rotate {
+        0%{
+            transform: rotate(360deg);
+        }
+    }
     .full-width-input-with-icon {
         width: calc(100% - 32px) !important;
     }
@@ -328,5 +419,11 @@ export default {
 
     .pointer {
         cursor: pointer;
+    }
+    .empty-state{
+        width: 100%; height: 20%; margin: auto;
+    }
+    .loading-state{
+        width: 30%; height: 30%; margin: auto;
     }
 </style>

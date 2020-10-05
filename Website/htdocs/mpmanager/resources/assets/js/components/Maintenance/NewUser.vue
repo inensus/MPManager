@@ -1,7 +1,9 @@
 <template>
     <div>
         <widget v-if="newUser"
-                title="New Maintenance User">
+                title="New Maintenance User"
+                color="red"
+              >
             <div>
 
                 <form @submit.prevent="submitNewUserForm" data-vv-scope="form-user">

@@ -1,5 +1,5 @@
 <template>
-    <div v-if="addNewReceipt">
+    <md-dialog :md-active.sync="addNewReceipt" :md-clicked-outside="true">
         <div v-if="agent.balance<0">
             <form novalidate class="md-layout" @submit.prevent="saveReceipt"
                   data-vv-scope="Receipt-Form">
@@ -61,7 +61,7 @@
             </md-card>
         </div>
 
-    </div>
+    </md-dialog>
 
 </template>
 <script>

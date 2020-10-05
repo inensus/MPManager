@@ -1,6 +1,9 @@
 <template>
     <div>
-        <widget title="Add New Cluster" color="green">
+        <widget
+            title="Add New Cluster"
+            color="green"
+        >
 
             <md-card class="md-layout-item md-size-100">
 

@@ -1,19 +1,49 @@
 <template>
     <div>
+
         <widget
             :class="'col-sm-6 col-md-5'"
             :button-text="'Assign new Asset'"
             :button="true"
             title="Sold Assets"
             :button-color="'red'"
-            :callback="()=>{showNewAsset = true}"
+            :subscriber="subscriber"
+            @widgetAction="soldNewAsset"
         >
             <confirmation-box title="Edit Rate" @confirmed="editRate"></confirmation-box>
             <!-- assing new asset -->
-            <form v-if="showNewAsset" novalidate class="md-layout" @submit.prevent="saveAsset">
-                <md-card class="md-layout-item">
+
+            <div>
+                    <md-table>
+                        <md-table-row>
+                            <md-table-head>Name</md-table-head>
+                            <md-table-head>Cost</md-table-head>
+                            <md-table-head>Rates</md-table-head>
+                        </md-table-row>
+                        <md-table-row v-for="(item, index) in assetPersonService.list" :key="index">
+                            <md-table-cell md-label="Name" md-sort-by="name">{{item.asset_type.name}}</md-table-cell>
+                            <md-table-cell md-label="Cost" md-sort-by="total_cost">{{item.total_cost}} TZS</md-table-cell>
+                            <md-table-cell md-label="Rates" md-sort-by="rate_count">
+                                {{ item.rate_count}}
+                                <div
+                                    :class="index=== -999?'text-danger':'text-success'"
+                                    style="cursor: pointer; display:inline-block"
+                                    @click="showDetails(index)"
+                                >
+                                    <md-icon>remove_red_eye</md-icon>
+                                    Details
+                                </div>
+                            </md-table-cell>
+                        </md-table-row>
+                    </md-table>
+            </div>
+
+        </widget>
+        <md-dialog :md-active.sync="showNewAsset" >
+            <form novalidate class="md-layout" @submit.prevent="saveAsset">
+                <md-card class="md-layout-item" scrollablez>
                     <md-card-header>
-                        <div style="float:right; cursor:pointer" @click="()=>{showNewAsset = false}">
+                        <div style="float:right; cursor:pointer" @click="soldNewAsset">
                             <md-icon>close</md-icon>&nbsp;Close
                         </div>
                     </md-card-header>
@@ -26,8 +56,6 @@
                                 <md-option
                                     :value="assetType.id"
                                     v-for="assetType in assetService.list"
-
-
                                     :key="assetType.id"
                                 >{{assetType.name}}
                                 </md-option>
@@ -68,36 +96,7 @@
                     </md-card-actions>
                 </md-card>
             </form>
-
-            <div v-if="assetPersonService.list.length>0">
-                <md-table>
-                    <md-table-row>
-                        <md-table-head>Name</md-table-head>
-                        <md-table-head>Cost</md-table-head>
-                        <md-table-head>Rates</md-table-head>
-                    </md-table-row>
-                    <md-table-row v-for="(item, index) in assetPersonService.list" :key="index">
-                        <md-table-cell md-label="Name" md-sort-by="name">{{item.asset_type.name}}</md-table-cell>
-                        <md-table-cell md-label="Cost" md-sort-by="total_cost">{{item.total_cost}} TZS</md-table-cell>
-                        <md-table-cell md-label="Rates" md-sort-by="rate_count">
-                            {{ item.rate_count}}
-                            <div
-                                :class="index=== -999?'text-danger':'text-success'"
-                                style="cursor: pointer; display:inline-block"
-                                @click="showDetails(index)"
-                            >
-                                <md-icon>remove_red_eye</md-icon>
-                                Details
-                            </div>
-                        </md-table-cell>
-                    </md-table-row>
-                </md-table>
-            </div>
-            <div v-else>
-                <no-table-data :headers="headers" :tableName="tableName"/>
-            </div>
-        </widget>
-
+        </md-dialog>
         <md-dialog v-if="selectedAsset!==null" :md-active.sync="showModal">
             <md-dialog-title>
                 Details of
@@ -189,13 +188,12 @@ import { currency } from '../../mixins/currency'
 import ConfirmationBox from '../../shared/ConfirmationBox'
 import { EventBus } from '../../shared/eventbus'
 import Widget from '../../shared/widget'
-import NoTableData from '../../shared/NoTableData'
 import moment from 'moment'
 
 export default {
     name: 'DeferredPayments',
     mixins: [currency],
-    components: { ConfirmationBox, Widget, NoTableData },
+    components: { ConfirmationBox, Widget },
     props: {
         personId: Number
     },
@@ -205,6 +203,7 @@ export default {
     },
     data () {
         return {
+            subscriber:'person-asset',
             assetService: new AssetService(),
             assetRateService: new AssetRateService(),
             assetPersonService: new AssetPersonService(),
@@ -220,12 +219,20 @@ export default {
                 rate: 1
             },
             headers: ['Name', 'Cost', 'Rates'],
-            tableName: 'Sold Assets'
+            tableName: 'Sold Assets',
 
         }
     },
 
     methods: {
+        clearForm(){
+            this.newAsset.id = null
+            this.newAsset.cost = null
+            this.newAsset.rate = null
+        },
+        soldNewAsset(){
+            this.showNewAsset = !this.showNewAsset
+        },
         toggleModal () {
             this.showModal = !this.showModal
         },
@@ -263,6 +270,7 @@ export default {
         async getAssetList () {
             try {
                 await this.assetPersonService.getPersonAssets(this.personId)
+                EventBus.$emit('widgetContentLoaded',this.subscriber,this.assetPersonService.list.length)
             } catch (e) {
                 this.alertNotify('error', e.message)
             }
@@ -292,6 +300,7 @@ export default {
                     if (validator) {
                         await this.assetPersonService.saveAsset(this.newAsset.id, this.personId, this.newAsset)
                         this.showNewAsset = false
+                        this.clearForm()
                         this.alertNotify('success', 'New asset sold successfully.')
                         await this.getAssetList()
                     }
@@ -316,6 +325,7 @@ export default {
                 text: message
             })
         },
+
     },
 
 }

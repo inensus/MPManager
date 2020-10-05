@@ -7,61 +7,52 @@
 
         <widget
             :id="'target-list'"
-            :title="'List of Targets'"
+            :title="'Target'"
             :button="true"
             :buttonText="'New Target'"
             :paginator="targets.paginator"
             :subscriber="subscriber"
-            :callback="newTarget"
+            @widgetAction="newTarget"
+            color="green"
         >
 
             <!-- list of targets -->
-            <div v-if="targets.list.length>0">
+                    <md-table>
 
-                <md-table>
-
-                    <md-table-row>
-                        <md-table-head :colspan="expandedRow>=0 ? 3:1">Period</md-table-head>
-                        <md-table-head>For</md-table-head>
-                        <md-table-head>Sub Targets</md-table-head>
-                    </md-table-row>
-
-
-                    <template v-for="(target,index) in targets.list" >
-                        <md-table-row :key="index">
-                            <md-table-cell :colspan="expandedRow>=0 ? 3:1">{{ target.target.targetDate}}</md-table-cell>
-                            <md-table-cell>{{ target.target.owner.name}} ({{target.owner}})</md-table-cell>
-                            <md-table-cell v-if="target.target.subTargets.length>0">
-
-                                <i v-if="index === expandedRow" @click="collapseTarget()"
-                                   class="fa fa-minus-square-o">
-                                    Collapse</i>
-                                <i v-else @click="expandTarget(index)" class="fa fa-plus-square-o "> Expand</i>
-
-                            </md-table-cell>
-                            <md-table-cell v-else>-</md-table-cell>
-
+                        <md-table-row>
+                            <md-table-head :colspan="expandedRow>=0 ? 3:1">Period</md-table-head>
+                            <md-table-head>For</md-table-head>
+                            <md-table-head>Sub Targets</md-table-head>
                         </md-table-row>
-                        <template v-if="index === expandedRow">
-                            <md-table-row
-                                          v-for="(subTarget, subIndex) in target.target.subTargets"
-                                          :key="subIndex">
-                                <md-table-cell>{{subTarget.connections.name}}</md-table-cell>
-                                <md-table-cell>Revenue</md-table-cell>
-                                <md-table-cell> {{subTarget.revenue}}</md-table-cell>
-                                <md-table-cell>New connections</md-table-cell>
-                                <md-table-cell>{{subTarget.newConnections}}</md-table-cell>
+                        <template v-for="(target,index) in targets.list" >
+                            <md-table-row :key="index">
+                                <md-table-cell :colspan="expandedRow>=0 ? 3:1">{{ target.target.targetDate}}</md-table-cell>
+                                <md-table-cell>{{ target.target.owner.name}} ({{target.owner}})</md-table-cell>
+                                <md-table-cell v-if="target.target.subTargets.length>0">
+
+                                    <i v-if="index === expandedRow" @click="collapseTarget()"
+                                       class="fa fa-minus-square-o">
+                                        Collapse</i>
+                                    <i v-else @click="expandTarget(index)" class="fa fa-plus-square-o "> Expand</i>
+
+                                </md-table-cell>
+                                <md-table-cell v-else>-</md-table-cell>
+
                             </md-table-row>
+                            <template v-if="index === expandedRow">
+                                <md-table-row
+                                    v-for="(subTarget, subIndex) in target.target.subTargets"
+                                    :key="subIndex">
+                                    <md-table-cell>{{subTarget.connections.name}}</md-table-cell>
+                                    <md-table-cell>Revenue</md-table-cell>
+                                    <md-table-cell> {{subTarget.revenue}}</md-table-cell>
+                                    <md-table-cell>New connections</md-table-cell>
+                                    <md-table-cell>{{subTarget.newConnections}}</md-table-cell>
+                                </md-table-row>
+                            </template>
                         </template>
 
-
-                    </template>
-
-                </md-table>
-            </div>
-            <div v-else>
-                <no-table-data :headers="headers" :tableName="tableName"/>
-            </div>
+                    </md-table>
         </widget>
     </div>
 
@@ -71,13 +62,11 @@
 import Widget from '../../shared/widget'
 import { Targets } from '../../classes/target/Targets'
 import { EventBus } from '../../shared/eventbus'
-import NoTableData from '../../shared/NoTableData'
 
 export default {
     name: 'TargetList',
     components: {
         Widget,
-        NoTableData
     },
     computed: {
         expandedTarget: function () {
@@ -105,6 +94,7 @@ export default {
         reloadList (subscriber, data) {
             if (subscriber !== this.subscriber) return
             this.targets.updateList(data)
+            EventBus.$emit('widgetContentLoaded',this.subscriber,this.targets.list.length)
         },
         expandTarget (index) {
             let subTarget = this.targets.targetAtIndex(index)

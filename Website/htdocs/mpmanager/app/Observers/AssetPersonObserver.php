@@ -26,7 +26,7 @@ class AssetPersonObserver
      */
     public function created(AssetPerson $assetPerson):void
     {
-        $base_time = $assetPerson->first_payment_date;
+        $base_time = $assetPerson->first_payment_date ?? date('Y-m-d');
 
         if ($assetPerson->down_payment > 0) {
             $this->assetRate::create([

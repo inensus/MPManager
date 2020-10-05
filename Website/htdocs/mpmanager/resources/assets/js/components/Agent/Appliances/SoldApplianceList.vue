@@ -8,8 +8,6 @@
         :subscriber="subscriber"
     >
 
-        <div v-if="agentSoldApplianceService.list.length>0">
-            <!-- ana tablo  -->
             <md-table>
                 <md-table-row>
                     <md-table-head v-for="(item, index) in headers" :key="index">{{item}}</md-table-head>
@@ -27,10 +25,6 @@
                 </md-table-row>
             </md-table>
 
-        </div>
-        <div v-else>
-            <no-table-data :headers="headers" :tableName="tableName"/>
-        </div>
     </widget>
 
 </template>
@@ -38,7 +32,6 @@
 import Widget from '../../../shared/widget'
 import { AgentSoldApplianceService } from '../../../services/AgentSoldApplianceService'
 import { EventBus } from '../../../shared/eventbus'
-import NoTableData from '../../../shared/NoTableData'
 
 export default {
     name: 'SoldApplianceList',
@@ -52,7 +45,6 @@ export default {
     },
     components: {
         Widget,
-        NoTableData
     },
     props: {
         agentId: {
@@ -71,6 +63,7 @@ export default {
         reloadList (subscriber, data) {
             if (subscriber !== this.subscriber) return
             this.agentSoldApplianceService.updateList(data)
+            EventBus.$emit('widgetContentLoaded',this.subscriber,this.agentSoldApplianceService.list.length)
         },
     }
 }

@@ -2,7 +2,9 @@
     <widget
         v-if="showAdd"
         :id="'new-connection-type'"
-        :title="'Add New Connection Type'">
+        :title="'Add New Connection Type'"
+        color="red"
+        >
 
 
         <md-card>

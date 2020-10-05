@@ -1,16 +1,13 @@
 <template>
     <div>
         <!-- new balance -->
-        <form v-if="addNewBalance" novalidate class="md-layout" @submit.prevent="saveBalance"
+        <md-dialog :md-active.sync="addNewBalance"  >
+            <md-dialog-title>
+                Add Balance
+            </md-dialog-title>
+        <form novalidate class="md-layout md-size-100" @submit.prevent="saveBalance"
               data-vv-scope="Balance-Form">
-            <md-card class="md-layout-item">
-                <md-card-header>
-                    <div style="float:right; cursor:pointer" @click="hide()">
-                        <md-icon>close</md-icon>&nbsp;Close
-                    </div>
-                </md-card-header>
-                <md-card-content>
-
+                <div class="md-layout-item md-size-90" style="margin: auto">
                     <md-field :class="{'md-invalid': errors.has('Balance-Form.amount')}">
                         <label for="amount">Amount </label>
                         <md-input name="amount" id="amount" v-model="agentChargeService.newBalance.amount"
@@ -18,15 +15,16 @@
                         <span class="md-error">{{ errors.first('Balance-Form.amount') }}</span>
                     </md-field>
                     <md-progress-bar md-mode="indeterminate" v-if="loading"/>
-                </md-card-content>
-                <md-card-actions>
+                </div>
+                <md-dialog-actions class="md-layout-item md-size-90" style="margin: auto">
                     <md-button role="button" type="submit" class="md-raised md-primary" :disabled="loading">
                         + Balance
                     </md-button>
+                    <md-button @click="hide()" class="md-raised md-accent"><md-icon>close</md-icon> Close</md-button>
 
-                </md-card-actions>
-            </md-card>
+                </md-dialog-actions>
         </form>
+        </md-dialog>
     </div>
 </template>
 <script>

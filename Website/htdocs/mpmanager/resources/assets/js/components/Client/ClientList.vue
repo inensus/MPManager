@@ -7,42 +7,44 @@
             :title="'Customer List'"
             :search="true"
             :subscriber="subscriber"
+            :button="false"
             :paginator="people.paginator"
             :route_name="'/people'"
-            color="orange"
+            color="green"
         >
 
-            <md-table md-card style="margin-left: 0">
-                <md-table-row>
-                    <md-table-head md-numeric>ID</md-table-head>
-                    <md-table-head>Name</md-table-head>
-                    <md-table-head>Phone</md-table-head>
-                    <md-table-head>City</md-table-head>
-                    <md-table-head>Meter(s)</md-table-head>
-                    <md-table-head>Last update</md-table-head>
-                </md-table-row>
+                <md-table md-card style="margin-left: 0">
+                    <md-table-row>
+                        <md-table-head  md-numeric>ID</md-table-head>
+                        <md-table-head>Name</md-table-head>
+                        <md-table-head>Phone</md-table-head>
+                        <md-table-head>City</md-table-head>
+                        <md-table-head>Meter(s)</md-table-head>
+                        <md-table-head>Last update</md-table-head>
+                    </md-table-row>
 
 
-                <md-table-row v-for="client in people.list" :key="client.id" @click="detail(client.id)"
-                              style="cursor:pointer;">
-                    <md-table-cell> {{ client.id}}</md-table-cell>
-                    <md-table-cell> {{ client.name}} {{client.surname}}</md-table-cell>
-                    <md-table-cell v-if="client.addresses.length>0"> {{ client.addresses[0].phone}}
-                    </md-table-cell>
-                    <md-table-cell class="hidden-xs" v-if="client.addresses.length>0"> {{
-                        client.addresses[0].city ?
-                        client.addresses[0].city.name: '-'}}
-                    </md-table-cell>
-                    <md-table-cell v-if="client.meters.length>0">
-                        {{meterList(client.meters)}}
-                    </md-table-cell>
-                    <md-table-cell v-if="client.meters.length==0">
-                        -
-                    </md-table-cell>
-                    <md-table-cell class="hidden-xs"> {{ dateForHumans( client.lastUpdate) }}</md-table-cell>
-                </md-table-row>
+                    <md-table-row v-for="client in people.list" :key="client.id" @click="detail(client.id)"
+                                  style="cursor:pointer;">
+                        <md-table-cell> {{ client.id}}</md-table-cell>
+                        <md-table-cell> {{ client.name}} {{client.surname}}</md-table-cell>
+                        <md-table-cell v-if="client.addresses.length>0"> {{ client.addresses[0].phone}}
+                        </md-table-cell>
+                        <md-table-cell class="hidden-xs" v-if="client.addresses.length>0"> {{
+                                client.addresses[0].city ?
+                                    client.addresses[0].city.name: '-'}}
+                        </md-table-cell>
+                        <md-table-cell v-if="client.meters.length>0">
+                            {{meterList(client.meters)}}
+                        </md-table-cell>
+                        <md-table-cell v-if="client.meters.length==0">
+                            -
+                        </md-table-cell>
+                        <md-table-cell class="hidden-xs"> {{ dateForHumans( client.lastUpdate) }}</md-table-cell>
+                    </md-table-row>
 
-            </md-table>
+                </md-table>
+
         </widget>
 
 
@@ -56,7 +58,6 @@ import { EventBus } from '../../shared/eventbus'
 import Widget from '../../shared/widget'
 import { People } from '../../classes/people'
 import moment from 'moment'
-
 const debounce = require('debounce')
 
 export default {
@@ -70,7 +71,6 @@ export default {
             tmpClientList: null,
             paginator: new Paginator(resources.person.list),
             searchTerm: '',
-
             currentFrom: 0,
             currentTo: 0,
             total: 0,
@@ -108,6 +108,7 @@ export default {
         EventBus.$on('pageLoaded', this.reloadList)
         EventBus.$on('searching', this.searching)
         EventBus.$on('end_searching', this.endSearching)
+
     },
     beforeDestroy () {
         EventBus.$off('pageLoaded', this.reloadList)
@@ -117,8 +118,11 @@ export default {
 
     methods: {
         reloadList (subscriber, data) {
-            if (subscriber !== this.subscriber) return
+            if (subscriber !== this.subscriber){
+                return
+            }
             this.people.updateList(data)
+            EventBus.$emit('widgetContentLoaded',this.subscriber, this.people.list.length)
         },
         searching (searchTerm) {
             this.people.search(searchTerm)

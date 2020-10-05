@@ -4,7 +4,8 @@
         :button="true"
         button-text="Delete Agent"
         color="red"
-        :callback="confirmDelete">
+        button-icon="delete"
+        @widgetAction="confirmDelete">
 
         <md-card>
             <md-card-content>
