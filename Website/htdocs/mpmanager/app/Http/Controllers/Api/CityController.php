@@ -14,7 +14,11 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
-
+/**
+ * @group City
+ * Class CityController
+ * @package App\Http\Controllers
+ */
 class CityController extends Controller
 {
     /**
@@ -81,6 +85,7 @@ class CityController extends Controller
     }
 
     /**
+     * Create
      * @param Request $request
      *
      * @return ApiResource
