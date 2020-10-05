@@ -6,6 +6,12 @@ use App\Models\Agent;
 use App\Services\AgentService;
 use Illuminate\Http\JsonResponse;
 
+/**
+ * @group Agent-Authenticator
+ * Class AgentAuthController
+ * Responsible for AgentAPP-API-Call authentications.
+ * @package App\Http\Controllers
+ */
 class AgentAuthController extends Controller
 {
 
@@ -24,8 +30,9 @@ class AgentAuthController extends Controller
     }
 
     /**
-     * Get a JWT via given credentials.
-     *
+     * Get JWT via given credentials.
+     * @bodyParam email string required
+     * @bodyParam password string required
      * @return JsonResponse
      */
     public function login()
@@ -66,7 +73,7 @@ class AgentAuthController extends Controller
 
     /**
      * Refresh a token.
-     *
+     * A valid JWT token has to be sent to refresh the token.
      * @return JsonResponse
      */
     public function refresh()
