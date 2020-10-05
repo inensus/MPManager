@@ -26,7 +26,10 @@ services:
     restart: unless-stopped
     volumes:
       - ./Website/htdocs/mpmanager:/var/www/app
+    depends_on:
+      - maria
     links:
+      - maria:db
       - redis:redis
     environment:
       - LARAVEL_HORIZON=true

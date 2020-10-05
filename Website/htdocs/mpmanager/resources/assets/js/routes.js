@@ -103,6 +103,11 @@ let routes = [
         meta: { layout: 'default' },
     },
     {
+        path: '/tariffs/:id',
+        component: require('./components/Tariff/TariffDetail').default,
+        meta: { layout: 'default' },
+    },
+    {
         path: '/meters/list',
         component: require('./components/Meter/MeterList').default,
         meta: { layout: 'default' },

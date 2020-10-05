@@ -35,6 +35,7 @@ import MeterTypeRepository from './MeterTypeRepository'
 import UserRepository from './UserRepository'
 import ReportsRepository from './ReportsRepository'
 import BookKeepingRepository from './BookKeepingRepository'
+import TimeOfUsageRepository from './TimeOfUsageRepository'
 
 const repositories = {
     'asset': AssetRepository,
@@ -73,7 +74,8 @@ const repositories = {
     'ticketLabel': TicketLabelRepository,
     'user': UserRepository,
     'reports':ReportsRepository,
-    'bookKeeping':BookKeepingRepository
+    'bookKeeping':BookKeepingRepository,
+    'timeOfUsage':TimeOfUsageRepository
 }
 
 export default {
