@@ -41,13 +41,13 @@
                         <div class="md-layout-item" style="display: inline-block; cursor: pointer; color: #2b542c"
                              v-if="asset_type.edit"
                              @click="updateAssetType(asset_type)">
-                            <font-awesome-icon icon="save"/>
+                            <md-icon>save</md-icon>
                             Save
                         </div>
                         <div class="md-layout-item" v-else :disabled="loading"
                              style="display: inline-block; cursor: pointer; color:#ac2925; float:right"
                              @click="deleteAssetType(asset_type)">
-                            <font-awesome-icon icon="trash"/>
+                            <md-icon>delete</md-icon>
                             Delete
                         </div>
                     </md-table-cell>

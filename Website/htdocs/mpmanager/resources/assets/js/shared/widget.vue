@@ -4,8 +4,9 @@
             <div class="tabs">
                 <slot name="tabbar"></slot>
             </div>
+            <md-icon style="color: white;">list</md-icon>
             <div class="md-toolbar-section-start">
-                <font-awesome-icon icon="list"/>
+
                 <h4 class="chic-title" v-text="title"></h4>
                 <div class="search-area">
                     <div class="search-input" v-if="search">
@@ -17,8 +18,7 @@
                                 <md-input style="color: white!important;" v-model="searchTerm"></md-input>
                                 <div v-if="searching">
                                 <span style="margin-right: 15px;">Search Results for: <u>{{searchTerm}}</u>
-
-                                    <font-awesome-icon @click="showAllEntries" class="pointer" icon="times"/></span>
+                                    <md-icon @click="showAllEntries"  class="pointer">cancel</md-icon></span>
                                 </div>
                                 <md-icon style="color: white;">search</md-icon>
                             </md-field>

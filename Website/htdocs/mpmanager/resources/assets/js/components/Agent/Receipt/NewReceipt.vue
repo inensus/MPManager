@@ -11,11 +11,11 @@
                     </md-card-header>
                     <md-card-content>
                         <div class="exclamation">
-                        <span class="success-span"> <font-awesome-icon class="success-icon"
-                                                                       icon="exclamation"/></span>
+                        <span class="success-span">
+                            <md-icon style="color: green">done</md-icon>
+                        </span>
                             <div class="md-layout-item md-size-100 exclamation-div">
-                                <span>Suggested receipt amount is  {{agent.dueToEnergySupplier}} </span>
-
+                                <span>Suggested receipt amount is  {{ agent.dueToEnergySupplier }} </span>
                             </div>
                         </div>
                         <md-field :class="{'md-invalid': errors.has('Receipt-Form.amount')}">
@@ -46,11 +46,11 @@
                 </md-card-header>
                 <md-card-content>
                     <div class="exclamation">
-                        <span class="success-span"> <font-awesome-icon class="success-icon"
-                                                                       icon="bell"/></span>
+                        <span class="success-span">
+                            <md-icon style="color: green">notifications</md-icon>
+                        </span>
                         <div class="md-layout-item md-size-100 exclamation-div">
                             <span>This agent does not owe the energy provider. </span>
-
                         </div>
                     </div>
 
@@ -139,26 +139,26 @@ export default {
 
 </style>
 <style scoped>
-    .success-span {
-        font-size: large;
-        font-weight: 700;
-        color: green;
-    }
+.success-span {
+    font-size: large;
+    font-weight: 700;
+    color: green;
+}
 
-    .exclamation-div {
-        margin-top: 2% !important;
-    }
+.exclamation-div {
+    margin-top: 2% !important;
+}
 
-    .exclamation {
-        width: 100% !important;
-        margin: auto;
-        align-items: center;
-        display: inline-grid;
-        text-align: center;
+.exclamation {
+    width: 100% !important;
+    margin: auto;
+    align-items: center;
+    display: inline-grid;
+    text-align: center;
 
-    }
+}
 
-    .exclamation-div span {
-        font-size: medium !important
-    }
+.exclamation-div span {
+    font-size: medium !important
+}
 </style>

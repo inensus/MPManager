@@ -25,7 +25,7 @@
                     :header-text-color="'#dddddd'"
                     :sub-text="analyticsData.current.total + '/' + analyticsData.past.total"
                     :sub-text-color="'#e3e3e3'"
-                    box-icon="plus"
+                    box-icon="add"
                     :box-icon-color="'#578839'"
                     :additional-text="analyticsData.analytics.totalPercentage.percentage + '%' + analyticsPeriods[analyticsPeriod]"
                 />
@@ -53,7 +53,7 @@
                     :header-text-color="'#dddddd'"
                     :sub-text="analyticsData.current.cancelled + '/' +  analyticsData.past.cancelled"
                     :sub-text-color="'#e3e3e3'"
-                    box-icon="ban"
+                    box-icon="cancel"
                     :box-icon-color="'#578839'"
                     :additional-text="analyticsData.analytics.cancelationPercentage.percentage + '%' + analyticsPeriods[analyticsPeriod]"
                 />
@@ -67,7 +67,7 @@
                     :header-text-color="'#dddddd'"
                     :sub-text="readable(analyticsData.current.amount) +                                    appConfig.currency"
                     :sub-text-color="'#e3e3e3'"
-                    box-icon="money-bill"
+                    box-icon="attach_money"
                     :box-icon-color="'#578839'"
                     :additional-text="analyticsData.analytics.amountPercentage.percentage + '%' + analyticsPeriods[analyticsPeriod]"
                 />

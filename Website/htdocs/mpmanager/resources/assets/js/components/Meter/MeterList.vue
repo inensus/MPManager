@@ -1,10 +1,5 @@
 <template>
     <div class="page-container">
-        <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-        />
-
         <widget
             :id="'meter-list'"
             :title="'Meters'"
@@ -19,11 +14,11 @@
                         <md-table-row>
                             <md-table-head>ID</md-table-head>
                             <md-table-head>
-                                <font-awesome-icon icon="plus"/>
+                                <md-icon>add</md-icon>
                                 Serial Number
                             </md-table-head>
                             <md-table-head>
-                                <font-awesome-icon icon="plus"/>
+                                <md-icon>add</md-icon>
                                 Tariff
                             </md-table-head>
                             <md-table-head>Manufacturer</md-table-head>

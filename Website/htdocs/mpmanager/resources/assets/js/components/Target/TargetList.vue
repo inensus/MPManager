@@ -1,10 +1,5 @@
 <template>
     <div>
-        <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-        />
-
         <widget
             :id="'target-list'"
             :title="'Target'"
@@ -28,12 +23,15 @@
                             <md-table-row :key="index">
                                 <md-table-cell :colspan="expandedRow>=0 ? 3:1">{{ target.target.targetDate}}</md-table-cell>
                                 <md-table-cell>{{ target.target.owner.name}} ({{target.owner}})</md-table-cell>
-                                <md-table-cell v-if="target.target.subTargets.length>0">
-
-                                    <i v-if="index === expandedRow" @click="collapseTarget()"
-                                       class="fa fa-minus-square-o">
-                                        Collapse</i>
-                                    <i v-else @click="expandTarget(index)" class="fa fa-plus-square-o "> Expand</i>
+                                <md-table-cell v-if="target.target.subTargets.length>0" style="cursor: pointer">
+                                    <div v-if="index === expandedRow" @click="collapseTarget()">
+                                        <md-icon>arrow_drop_down</md-icon>
+                                        Collapse
+                                    </div>
+                                    <div v-else @click="expandTarget(index)">
+                                        <md-icon>arrow_right</md-icon>
+                                        Expand
+                                    </div>
 
                                 </md-table-cell>
                                 <md-table-cell v-else>-</md-table-cell>

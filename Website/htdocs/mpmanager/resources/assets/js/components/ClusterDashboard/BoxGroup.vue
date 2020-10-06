@@ -10,7 +10,7 @@
                 :header-text-color="'#dddddd'"
                 :sub-text="cluster.mini_grids.length.toString()"
                 :sub-text-color="'#e3e3e3'"
-                :box-icon="'sitemap'"
+                :box-icon="'map'"
                 :box-icon-color="'#578839'"
             />
         </div>
@@ -24,7 +24,7 @@
                 :header-text-color="'#dddddd'"
                 header-text="People"
                 :sub-text-color="'#e3e3e3'"
-                :box-icon="'user'"
+                :box-icon="'supervisor_account'"
                 :box-icon-color="'#385a76'"
 
             />

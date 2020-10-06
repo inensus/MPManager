@@ -25,7 +25,7 @@
                                         name="name"
                                         id="name"
                                     />
-                                    <font-awesome-icon icon="pen"/>
+                                    <md-icon>create</md-icon>
                                     <span class="md-error">{{ errors.first('form-create.name') }}</span>
                                 </md-field>
                             </div>
@@ -40,7 +40,7 @@
                                         v-model="user.email"
                                         v-validate="'required|email'"
                                     />
-                                    <font-awesome-icon icon="envelope"/>
+                                    <md-icon>email</md-icon>
                                     <span class="md-error">{{ errors.first('form-create.email') }}</span>
                                 </md-field>
                             </div>
@@ -131,7 +131,7 @@
                                 name="name"
                                 id="name"
                             />
-                            <font-awesome-icon icon="pen"/>
+                            <md-icon>create</md-icon>
                             <span class="md-error">{{ errors.first('form-edit.name') }}</span>
                         </md-field>
                     </div>
@@ -140,14 +140,14 @@
                         <md-field>
                             <label>Phone</label>
                             <md-input type="text" name="phone" id="phone" v-model="user.phone"/>
-                            <font-awesome-icon icon="phone"/>
+                            <md-icon>phone</md-icon>
                         </md-field>
                     </div>
                     <div class="md-layout-item md-size-50 md-small-size-100">
                         <md-field>
                             <label>street</label>
                             <md-input v-model="user.street" name="street" id="street"/>
-                            <font-awesome-icon icon="address-card"/>
+                            <md-icon>contacts</md-icon>
                         </md-field>
                     </div>
                     <div class="md-layout-item md-size-50 md-small-size-100">

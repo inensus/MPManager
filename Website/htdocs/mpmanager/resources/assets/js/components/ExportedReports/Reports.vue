@@ -18,12 +18,10 @@
                         <md-table-cell md-label="Date">{{item.date}}</md-table-cell>
                         <md-table-cell md-label="Name">{{item.name}}</md-table-cell>
                         <md-table-cell md-label="File">
-                            <div @click="download(item.id, '/download')">
-                                <font-awesome-icon icon="save" style="cursor: pointer"/>
+                            <div  style="cursor: pointer;" @click="download(item.id, '/download')">
+                                <md-icon>save</md-icon>
                                 <span> Download</span>
-
                             </div>
-
                         </md-table-cell>
                     </md-table-row>
 

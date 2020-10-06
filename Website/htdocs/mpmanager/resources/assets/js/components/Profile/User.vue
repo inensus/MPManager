@@ -17,7 +17,7 @@
                                         name="name"
                                         id="name"
                                     />
-                                    <font-awesome-icon icon="pen"/>
+                                    <md-icon>create</md-icon>
                                     <span class="md-error">{{ errors.first('address.name') }}</span>
                                 </md-field>
                             </div>
@@ -32,7 +32,7 @@
                                         name="email"
                                         id="email"
                                     />
-                                    <font-awesome-icon icon="envelope"/>
+                                    <md-icon>sms</md-icon>
 
                                 </md-field>
                             </div>
@@ -41,7 +41,7 @@
                                 <md-field>
                                     <label>Phone</label>
                                     <md-input type="number" v-model="user.phone"/>
-                                    <font-awesome-icon icon="phone"/>
+                                    <md-icon>phone</md-icon>
                                 </md-field>
                             </div>
                             <div
@@ -49,7 +49,7 @@
                                 <md-field>
                                     <label>street</label>
                                     <md-input v-model="user.street"/>
-                                    <font-awesome-icon icon="address-card"/>
+                                    <md-icon>contacts</md-icon>
                                 </md-field>
                             </div>
 

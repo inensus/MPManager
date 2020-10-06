@@ -10,8 +10,9 @@
 
 
                 <div class="exclamation">
-                        <span class="success-span"> <font-awesome-icon class="success-icon"
-                                                                       icon="exclamation"/></span>
+                        <span class="success-span">
+                            <md-icon style="color: green">priority_high</md-icon>
+                        </span>
                     <div class="md-layout-item md-size-100 exclamation-div">
                         <span>You have to add {{imperativeItem}} for using this place. </span>
                     </div>

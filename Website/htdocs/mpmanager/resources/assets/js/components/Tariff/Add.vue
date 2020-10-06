@@ -9,10 +9,9 @@
 
             <md-card-content>
                 <div class="md-layout md-gutter">
-                    <!--Tariff-->
-                    <div class="md-layout-item  md-xlarge-size-100 md-large-size-100 md-medium-size-100 md-small-size-100">
+                    <div class="md-layout-item md-large-size-100 md-medium-size-100 md-small-size-100">
                         <form class="md-layout md-gutter" data-vv-scope="Tariff-Form">
-                            <div class="md-layout-item  md-xlarge-size-100 md-large-size-50 md-medium-size-50 md-small-size-50 ">
+                            <div class="md-layout-item md-large-size-50 md-medium-size-50 md-small-size-50 ">
                                 <md-field :class="{'md-invalid': errors.has('Tariff-Form.tariff_name')}"
                                 >
                                     <label for="tariff_name">Tariff Name</label>
@@ -25,7 +24,7 @@
                                     <span class="md-error">{{ errors.first('Tariff-Form.tariff_name') }}</span>
                                 </md-field>
                             </div>
-                            <div class="md-layout-item md-xlarge-size-50 md-large-size-50 md-medium-size-50 md-small-size-50 ">
+                            <div class="md-layout-item md-large-size-50 md-medium-size-50 md-small-size-50 ">
                                 <md-field :class="{'md-invalid': errors.has('Tariff-Form.kwh_price')}">
                                     <label for="kwh_price">kWh Price (last two digits represents two decimals ex: 100 =
                                         1.00)</label>
@@ -42,13 +41,11 @@
                         </form>
 
                     </div>
-
-                   <!--Access-Rate-->
-                    <div class="md-layout-item md-xlarge-size-100 md-large-size-100 md-medium-size-100 md-small-size-100"
+                    <div class="md-layout-item md-large-size-100 md-medium-size-100 md-small-size-100"
                          v-if="hasAccessRate">
                         <form class="md-layout md-gutter" data-vv-scope="Access-Rate-Form">
 
-                            <div class="md-layout-item md-xlarge-size-50 md-large-size-50 md-medium-size-50 md-small-size-50 ">
+                            <div class="md-layout-item md-large-size-50 md-medium-size-50 md-small-size-50 ">
                                 <md-field :class="{'md-invalid': errors.has('Access-Rate-Form.access_rate_price')}">
                                     <label for="access_rate_price">Access Rate Price </label>
                                     <md-input id="access_rate_price"
@@ -60,7 +57,7 @@
                                         class="md-error">{{ errors.first('Access-Rate-Form.access_rate_price') }}</span>
                                 </md-field>
                             </div>
-                            <div class="md-layout-item md-xlarge-size-50 md-large-size-50 md-medium-size-50 md-small-size-50 ">
+                            <div class="md-layout-item md-large-size-50 md-medium-size-50 md-small-size-50 ">
                                 <md-field
                                     :class="{'md-invalid': errors.has('Access-Rate-Form.access_rate_period')}">
                                     <label for="ar_period">Access Rate Period in days </label>
@@ -77,22 +74,21 @@
 
 
                     </div>
-                    <div class="md-layout-item md-xlarge-size-100 md-large-size-100 md-medium-size-100 md-small-size-100">
-                        <md-checkbox v-model="hasAccessRate" @change="accessRateChange($event)">Enable access rate?</md-checkbox>
+                    <div class="md-layout-item md-large-size-100 md-medium-size-100 md-small-size-100">
+                        <md-checkbox v-model="hasAccessRate">Enable access rate?</md-checkbox>
                     </div>
+                    <div class="md-layout-item md-large-size-100 md-medium-size-100 md-small-size-100">
 
-                   <!--Additional-Components-->
-                    <div class="md-layout-item  md-xlarge-size-100 md-large-size-100 md-medium-size-100 md-small-size-100">
-
-                        <md-button role="button" class="md-raised md-secondary" @click="addComponent('component')">
-                            <font-awesome-icon icon="plus"/>
+                        <md-button role="button" class="md-raised md-secondary" @click="addComponent">
+                            <md-icon>add</md-icon>
                             Add Additional Cost Component
                         </md-button>
                     </div>
-                    <div class="md-layout-item md-xlarge-size-100 md-large-size-100 md-medium-size-100 md-small-size-100"
-                         v-for="(component,index) in tariffService.tariff.components" :key="'component'+index">
+
+                    <div class="md-layout-item md-large-size-100 md-medium-size-100 md-small-size-100"
+                         v-for="(component,index) in tariffService.tariff.components" :key="index">
                         <form class="md-layout md-gutter" data-vv-scope="Component-Form">
-                            <div class="md-layout-item md-xlarge-size-45 md-large-size-45 md-medium-size-45 md-small-size-45">
+                            <div class="md-layout-item md-large-size-45 md-medium-size-45 md-small-size-45">
 
                                 <md-field :class="{'md-invalid': errors.has('Component-Form.name')}">
                                     <label for="name">Name</label>
@@ -105,7 +101,7 @@
                                     <span class="md-error">{{ errors.first('Component-Form.name') }}</span>
                                 </md-field>
                             </div>
-                            <div class="md-layout-item md-xlarge-size-45 md-large-size-45 md-medium-size-45 md-small-size-45">
+                            <div class="md-layout-item md-large-size-45 md-medium-size-45 md-small-size-45">
 
                                 <md-field :class="{'md-invalid': errors.has('Component-Form.price')}">
                                     <label for="price">Component Price</label>
@@ -131,7 +127,7 @@
                     <!--TOUS-->
                     <div class="md-layout-item  md-xlarge-size-100 md-large-size-100 md-medium-size-100 md-small-size-100">
                         <md-button role="button" :disabled="tariffService.conflicts.length>0" class="md-raised md-secondary" @click="addComponent('usage')">
-                            <font-awesome-icon icon="plus"/>
+                           <md-icon>add</md-icon>
                             Add TOU
                         </md-button>
                         <div v-if="tariffService.tariff.tous.length>0" role="alert" class="alert alert-info">
@@ -212,16 +208,16 @@
                             tariff options</a>
                         <a @click="showSocialOptions()" v-else class="show-tariff-link">Hide social tariff options</a>
                     </div>
-                    <div class="md-layout-item  md-xlarge-size-100 md-large-size-100 md-medium-size-100 md-small-size-100"
+                    <div class="md-layout-item md-large-size-100 md-medium-size-100 md-small-size-100"
                          v-if="socialOptions">
                         <form class="md-layout md-gutter" data-vv-scope="Social-Form">
-                            <div class="md-layout-item md-xlarge-size-30 md-large-size-30 md-medium-size-30 md-small-size-30 ">
+                            <div class="md-layout-item md-large-size-30 md-medium-size-30 md-small-size-30 ">
 
                                 <h3>Daily allowance at social tariff</h3>
 
 
                             </div>
-                            <div class="md-layout-item md-xlarge-size-20 md-large-size-20 md-medium-size-20 md-small-size-20 ">
+                            <div class="md-layout-item md-large-size-20 md-medium-size-20 md-small-size-20 ">
                                 <md-field :class="{'md-invalid': errors.has('Social-Form.daily_allowance')}">
 
                                     <md-input id="daily_allowance"
@@ -238,15 +234,15 @@
                                 </md-field>
 
                             </div>
-                            <div class="md-layout-item md-xlarge-size-50 md-large-size-50 md-medium-size-50 md-small-size-50 "></div>
+                            <div class="md-layout-item md-large-size-50 md-medium-size-50 md-small-size-50 "></div>
 
-                            <div class="md-layout-item md-xlarge-size-30 md-large-size-30 md-medium-size-30 md-small-size-30 "
+                            <div class="md-layout-item md-large-size-30 md-medium-size-30 md-small-size-30 "
                             >
 
                                 <h3>Social tariff</h3>
 
                             </div>
-                            <div class="md-layout-item md-xlarge-size-20 md-large-size-20 md-medium-size-20 md-small-size-20 "
+                            <div class="md-layout-item md-large-size-20 md-medium-size-20 md-small-size-20 "
                             >
                                 <md-field :class="{'md-invalid': errors.has('Social-Form.social_price')}">
                                     <label for="social_price">Price per kWh </label>
@@ -262,16 +258,16 @@
                                     <span class="md-suffix">{{appConfig.currency}}</span>
                                 </md-field>
                             </div>
-                            <div class="md-layout-item md-xlarge-size-50 md-large-size-50 md-medium-size-50 md-small-size-50 "></div>
+                            <div class="md-layout-item md-large-size-50 md-medium-size-50 md-small-size-50 "></div>
 
-                            <div class="md-layout-item md-xlarge-size-50 md-large-size-30 md-medium-size-30 md-small-size-30 "
+                            <div class="md-layout-item md-large-size-30 md-medium-size-30 md-small-size-30 "
                             >
 
                                 <h3>Initial energy budget</h3>
 
 
                             </div>
-                            <div class="md-layout-item md-xlarge-size-20 md-large-size-20 md-medium-size-20 md-small-size-20 "
+                            <div class="md-layout-item md-large-size-20 md-medium-size-20 md-small-size-20 "
                             >
                                 <md-field :class="{'md-invalid': errors.has('Social-Form.initial_energy_budget')}">
 
@@ -288,16 +284,16 @@
                                     <span class="md-suffix">Wh.</span>
                                 </md-field>
                             </div>
-                            <div class="md-layout-item md-xlarge-size-50 md-large-size-50 md-medium-size-50 md-small-size-50 "></div>
+                            <div class="md-layout-item md-large-size-50 md-medium-size-50 md-small-size-50 "></div>
 
-                            <div class="md-layout-item md-xlarge-size-30 md-large-size-30 md-medium-size-30 md-small-size-30"
+                            <div class="md-layout-item md-large-size-30 md-medium-size-30 md-small-size-30"
                             >
 
                                 <h3>Maximum stacked energy</h3>
 
 
                             </div>
-                            <div class="md-layout-item md-xlarge-size-20 md-large-size-20 md-medium-size-20 md-small-size-20 "
+                            <div class="md-layout-item md-large-size-20 md-medium-size-20 md-small-size-20 "
                             >
                                 <md-field :class="{'md-invalid': errors.has('Social-Form.maximum_stacked_energy')}">
 
@@ -314,7 +310,7 @@
                                     <span class="md-suffix">Wh.</span>
                                 </md-field>
                             </div>
-                            <div class="md-layout-item md-xlarge-size-50 md-large-size-50 md-medium-size-50 md-small-size-50 "></div>
+                            <div class="md-layout-item md-large-size-50 md-medium-size-50 md-small-size-50 "></div>
                         </form>
 
                     </div>
@@ -395,6 +391,7 @@ export default {
                     this.alertNotify('error', e.message)
                 }
             }
+
         },
         addComponent (addedType) {
             this.tariffService.addAdditionalCostComponent(addedType)

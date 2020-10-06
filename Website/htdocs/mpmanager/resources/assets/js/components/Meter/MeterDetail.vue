@@ -1,9 +1,5 @@
 <template>
     <div class="page-container" id="widget-grid">
-        <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-        />
         <div class="md-layout md-gutter">
             <div class="md-layout-item md-size-35 md-small-size-100">
                 <widget :title="'Overview'" class="col-sm-5" :id="'meter-overview'">
@@ -201,7 +197,7 @@
                     style="color:white"
                 >
                     Period
-                    <font-awesome-icon icon="caret-down"/>
+                    <md-icon>calendar_today</md-icon>
                 </button>
             </div>
 

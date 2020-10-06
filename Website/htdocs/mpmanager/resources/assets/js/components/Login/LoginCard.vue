@@ -51,7 +51,7 @@
             </form>
             <div class="forgot-password">
                 <router-link :to="{path: '/forgot-password'}" class="link">
-                    <font-awesome-icon icon="fish"/>
+                    <md-icon>lock</md-icon>
                     Forgot Password
                 </router-link>
 

@@ -14,7 +14,7 @@
 
                     <div
                         class="md-layout-item md-large-size-25 md-medium-size-25 md-small-size-25 md-xsmall-size-25">
-                        <font-awesome-icon icon="user" class="fa-4x"/>
+                        <md-icon class="md-size-3x">account_circle</md-icon>
                     </div>
                     <div
                         class="md-layout-item md-large-size-25 md-medium-size-25 md-small-size-25 md-xsmall-size-25">
@@ -24,7 +24,7 @@
                     <div
                         class="md-layout-item md-large-size-25 md-medium-size-25 md-small-size-25 md-xsmall-size-25">
                         <h3>
-                            <font-awesome-icon icon="balance-scale"/>
+                            <md-icon>account_balance_wallet</md-icon>
                             Balance:
                             {{agent.balance}}
                         </h3>
@@ -32,7 +32,7 @@
                     <div
                         class="md-layout-item md-large-size-25 md-medium-size-25 md-small-size-25 md-xsmall-size-25">
                         <md-button @click="editAgent=true" class="md-icon-button" style="float: right">
-                            <font-awesome-icon icon="pen"/>
+                            <md-icon>create</md-icon>
                         </md-button>
                     </div>
 
@@ -44,21 +44,21 @@
                         class="md-layout-item md-large-size-25 md-medium-size-25 md-small-size-25 detail-card-second-row">
 
                         <label>
-                            <font-awesome-icon icon="venus-mars"/>
+                            <md-icon>wc</md-icon>
                             Gender:</label>
                         <span>{{agent.gender}}</span>
                     </div>
                     <div
                         class="md-layout-item md-large-size-25 md-medium-size-25 md-small-size-25 detail-card-second-row ">
                         <label>
-                            <font-awesome-icon icon="phone"/>
+                            <md-icon>phone</md-icon>
                             Phone:</label>
                         <span>{{agent.phone}}</span>
                     </div>
                     <div
                         class="md-layout-item md-large-size-25 md-medium-size-25 md-small-size-25 detail-card-second-row">
                         <label>
-                            <font-awesome-icon icon="birthday-cake"/>
+                            <md-icon>cake</md-icon>
                             Birthday:</label>
                         <span>{{agent.birthday}}</span>
 
@@ -67,7 +67,7 @@
                     <div
                         class="md-layout-item md-large-size-25 md-medium-size-25 md-small-size-25 detail-card-second-row">
                         <label>
-                            <font-awesome-icon icon="tag"/>
+                            <md-icon>tag</md-icon>
                             Type</label>
                         <span>{{agent.commissionType}} </span>
 

@@ -97,7 +97,7 @@
 
                     <md-card-actions>
                         <md-button class="md-raised md-primary" type="submit" :disabled="loading">
-                            <font-awesome-icon icon="save"></font-awesome-icon>
+                            <md-icon>save</md-icon>
                             Save
                         </md-button>
                     </md-card-actions>
