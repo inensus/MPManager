@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 
 class TariffCreateRequest extends FormRequest
@@ -27,7 +28,7 @@ class TariffCreateRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => 'required|unique:meter_tariffs',
+            'name' => ['required',Rule::unique('meter_tariffs')->ignore($this->id)],
             'price' => 'required|integer', // 100 times of original price to support 2 decimal numbers.
             'currency' => 'required|string|max:20',
             'factor' => 'sometimes|integer',
@@ -41,6 +42,10 @@ class TariffCreateRequest extends FormRequest
             'components' => 'sometimes|required|array',
             'components.*.name' => 'required_with:components',
             'components.*.price' => 'required_with:components',
+            'tous' => 'sometimes|required|array',
+            'tous.*.start' => 'required_with:tous',
+            'tous.*.end' => 'required_with:tous',
+            'tous.*.value' => 'required_with:tous',
         ];
     }
 
