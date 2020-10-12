@@ -122,6 +122,7 @@ export default {
             try {
                 this.meterTypesList = await this.meterTypeService.createMeterType(this.meterType)
                 this.showNewType()
+                EventBus.$emit('widgetContentLoaded',this.subscriber,this.meterTypesList.length)
                 this.meterType.max_current = null
                 this.meterType.phase = null
                 this.meterType.online = 0

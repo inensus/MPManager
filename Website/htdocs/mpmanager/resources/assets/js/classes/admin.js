@@ -1,13 +1,27 @@
 import { EventBus } from '../shared/eventbus'
+import { Paginator } from './paginator'
+import Repository from '../repositories/RepositoryFactory'
+import { resources } from '../resources'
 
 export class Admin {
 
     constructor () {
+        this.repository = new Repository.get('user')
+        this.list = []
         this.name = null
         this.id = null
         this.email = null
         this.token = null
         this.remaining_time = 0
+        this.paginator = new Paginator(resources.admin.list)
+    }
+
+    updateList(data){
+        this.list = []
+        for (let m in data){
+            this.list.push(data[m])
+        }
+        return this.list
     }
 
     _fetchData (response) {

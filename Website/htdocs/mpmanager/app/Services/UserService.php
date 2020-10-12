@@ -105,6 +105,9 @@ class UserService implements IUserService
             $user->with('address');
         }
 
+        if (array_key_exists('paginate', $relations) &&  $relations['paginate'] === 0) {
+            return $user->get();
+        }
         return $user->paginate();
     }
 }

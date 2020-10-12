@@ -6,6 +6,7 @@
             :button="true"
             @widgetAction="showNewUser = true"
             :subscriber="subscriber"
+            :paginator="adminService.paginator"
         >
             <form v-if="showNewUser" @submit.prevent="submitCreateForm" data-vv-scope="form-create">
                 <div class="edit-container">
@@ -212,24 +213,21 @@ export default {
             showNewUser: false
         }
     },
-
-    created () {
-        this.getUsers()
+    mounted() {
+        EventBus.$on('pageLoaded', this.reloadList)
     },
-    computed: {},
+    beforeDestroy () {
+        EventBus.$off('pageLoaded')
+    },
     methods: {
-        async getUsers () {
-            let users = await this.adminService.getUserList()
-            users.forEach(u => {
-                let usr = {
-                    id: u.id,
-                    name: u.name,
-                    email: u.email,
-                    phone: u.address ? u.address.phone : '-',
-                }
-                this.users.push(usr)
-            })
+        reloadList (subscriber, data) {
+            if(subscriber !== this.subscriber)
+            {
+                return
+            }
+            this.users = this.adminService.updateList(data)
             EventBus.$emit('widgetContentLoaded',this.subscriber,this.users.length)
+
         },
         userDetail (user) {
             this.user.name = ''

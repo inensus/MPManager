@@ -11,19 +11,19 @@
             :paginator="assetService.paginator"
             color="green"
             :reset-key="resetKey">
-                <md-table>
-                    <md-table-row>
-                        <md-table-head  v-for="(item, index) in headers" :key="index">{{item}}</md-table-head>
-                    </md-table-row>
+            <md-table>
+                <md-table-row>
+                    <md-table-head v-for="(item, index) in headers" :key="index">{{ item }}</md-table-head>
+                </md-table-row>
 
                 <md-table-row v-for="(asset_type,index) in assetService.list" style="cursor:pointer;" :key="index">
 
-                    <md-table-cell> {{ asset_type.id}}
+                    <md-table-cell> {{ asset_type.id }}
                     </md-table-cell>
 
                     <md-table-cell>
                         <div class="md-layout" v-if="!asset_type.edit">
-                            {{ asset_type.name}}&nbsp;&nbsp;
+                            {{ asset_type.name }}&nbsp;&nbsp;
                         </div>
                         <div class="md-layout-item" v-else>
                             <md-field>
@@ -33,10 +33,10 @@
                     </md-table-cell>
 
                     <md-table-cell>
-                        {{asset_type.price}} {{appConfig.currency}}
+                        {{ asset_type.price }} {{ appConfig.currency }}
                     </md-table-cell>
 
-                    <md-table-cell class="hidden-xs">{{asset_type.updated_at}}</md-table-cell>
+                    <md-table-cell class="hidden-xs">{{ asset_type.updated_at }}</md-table-cell>
                     <md-table-cell>
                         <div class="md-layout-item" style="display: inline-block; cursor: pointer; color: #2b542c"
                              v-if="asset_type.edit"
@@ -55,7 +55,7 @@
                 </md-table-row>
 
                 <md-progress-bar md-mode="indeterminate" v-if="loading"/>
-                </md-table>
+            </md-table>
         </widget>
     </div>
 
@@ -66,6 +66,7 @@ import Widget from '../../shared/widget'
 import AddAssetType from './AddAssetType'
 import { EventBus } from '../../shared/eventbus'
 import { AssetService } from '../../services/AssetService'
+
 export default {
     name: 'AssetTypeList',
     components: { Widget, AddAssetType },
@@ -96,7 +97,7 @@ export default {
 
     },
     methods: {
-        showAddAssetType(){
+        showAddAssetType () {
             this.addNewAssetType = true
         },
         reloadList (subscriber, data) {
@@ -104,7 +105,7 @@ export default {
                 return
             }
             this.assetService.updateList(data)
-            EventBus.$emit('widgetContentLoaded',this.subscriber, this.assetService.list.length)
+            EventBus.$emit('widgetContentLoaded', this.subscriber, this.assetService.list.length)
 
         },
         addToList (asset_type) {
@@ -130,20 +131,31 @@ export default {
         },
 
         async deleteAssetType (asset_type) {
-            try {
-                this.loading = true
-                await this.assetService.deleteAsset(asset_type)
-                this.loading = false
-                this.alertNotify('success', asset_type.name + ' has deleted.')
-                this.resetKey++
-            } catch (e) {
-                this.loading = false
-                this.alertNotify('error', e.message)
-            }
+            this.$swal({
+                type: 'question',
+                title: 'Delete Asset Type',
+                text: 'Are you sure to delete the asset type ' + asset_type + '?',
+                showCancelButton: true,
+                cancelButtonText: 'Cancel',
+                confirmButtonText: 'Delete'
+            }).then(async response => {
+                if(response){
+                    try {
+                        this.loading = true
+                        await this.assetService.deleteAsset(asset_type)
+                        this.loading = false
+                        this.alertNotify('success', asset_type.name + ' has deleted.')
+                        this.resetKey++
+                    } catch (e) {
+                        this.loading = false
+                        this.alertNotify('error', e.message)
+                    }
+                }
+
+            })
+
         },
-
         closeAddComponent (data) {
-
             this.addNewAssetType = data
         },
         alertNotify (type, message) {

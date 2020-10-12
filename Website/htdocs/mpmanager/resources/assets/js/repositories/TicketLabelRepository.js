@@ -3,7 +3,7 @@ import Client from './Client/AxiosClient'
 
 export default {
     list () {
-        return Client.get(`${resource}` + '/?outsource=1')
+        return Client.get(`${resource}`)
     },
 
     create (labelPM) {
