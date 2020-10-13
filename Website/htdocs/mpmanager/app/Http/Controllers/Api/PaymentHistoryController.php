@@ -19,6 +19,12 @@ use DatePeriod;
 use Illuminate\Http\Request;
 use function count;
 
+
+/**
+ * @group Payment-History
+ * Class PaymentHistoryController
+ * @package App\Http\Controllers
+ */
 class PaymentHistoryController
 {
     /**
@@ -34,7 +40,19 @@ class PaymentHistoryController
     {
         $this->history = $history;
     }
-
+    
+    /**
+     * Detail
+     * @urlParam payerId integer required
+     * @urlParam period string required
+     * @urlParam limit integer
+     * @urlParam order string
+     * @param int $payerId
+     * @param string $period
+     * @param null $limit
+     * @param string $order
+     * @return array
+     */
     public function show(int $payerId, string $period, $limit = null, $order = 'ASC')
     {
         $period = strtoupper($period);
@@ -56,6 +74,7 @@ class PaymentHistoryController
         return $this->preparePaymentFlow($payments);
     }
 
+    
     public function showForAgentCustomers(string $period, $limit = null, $order = 'ASC')
     {
         $agent = request()->attributes->get('user');
@@ -79,6 +98,13 @@ class PaymentHistoryController
     }
 
 
+    /**
+     * Payment Periods
+     * @urlParam personId integer required
+     * @param $personId
+     * @return ApiResource
+     * @throws \Exception
+     */
     public function getPaymentPeriod($personId)
     {
         $person = Person::find($personId);
@@ -95,6 +121,13 @@ class PaymentHistoryController
         return new ApiResource(['difference' => $difference, 'lastTransaction' => $lastTransactionDate]);
     }
 
+    /**
+     * Person payment flow per year
+     * @urlParam personId integer required
+     * @param int $personId
+     * @param int|null $year
+     * @return array
+     */
     public function byYear(int $personId, int $year = null)
     {
         $year = $year ?? (int)date('Y');
@@ -107,9 +140,12 @@ class PaymentHistoryController
     }
 
 
-    /***
-     * if the person has any debts to the system
+    /**
+     * Person Debts
+     * @urlParam personId integer required
+     * checks if the person has any debts to the system
      * @param int $personId
+     * @return ApiResource
      */
     public function debts($personId)
     {
@@ -125,7 +161,13 @@ class PaymentHistoryController
 
     }
 
-
+    /**
+     * Payments list with date range
+     * @bodyParam begin string
+     * @bodyParam end string
+     * @return ApiResource
+     * @throws \Exception
+     */
     public function getPaymentRange(): ApiResource
     {
         $begin = request('begin'); // Y-m-d
