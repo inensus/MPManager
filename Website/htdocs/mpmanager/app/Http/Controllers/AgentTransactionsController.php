@@ -65,13 +65,13 @@ class AgentTransactionsController extends Controller
         return new ApiResource($transactions);
     }
 
+
     /**
      * List for Web
      * @urlParam agentId int Required
      * @param Agent $agent
      * @return ApiResource
      */
-
     public function indexWeb(Agent $agent)
     {
         $transactions = $this->agentTransactionService->listForWeb($agent->id);
