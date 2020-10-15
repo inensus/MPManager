@@ -7,6 +7,11 @@ use App\Models\ConnectionType;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
+/**
+ * @group Connection Types
+ * Class ConnectionTypeController
+ * @package App\Http\Controllers
+ */
 class ConnectionTypeController extends Controller
 {
 
@@ -21,6 +26,13 @@ class ConnectionTypeController extends Controller
         $this->connectionType = $connectionType;
     }
 
+    /**
+     * List
+     * List of all Connection Types
+     * @param Request $request
+     * @return ApiResource
+     */
+
     public function index(Request $request): ApiResource
     {
         if ($request->get('paginate') === null) {
@@ -33,7 +45,13 @@ class ConnectionTypeController extends Controller
         return new ApiResource($connectionTypes);
     }
 
-
+    /**
+     * Create
+     * Create a new connection type
+     * @bodyParam name string required
+     * @param Request $request
+     * @return ApiResource
+     */
     public function store(Request $request)
     {
         $connectionName = $request->get('name');
@@ -45,6 +63,14 @@ class ConnectionTypeController extends Controller
         return new ApiResource($connectionType);
 
     }
+
+    /**
+     * Detail
+     * Detail of the specified Connection Type
+     * @urlParam connectionTypeId int required
+     * @param $connectionTypeId
+     * @return ApiResource
+     */
 
     public function show($connectionTypeId)
     {
@@ -60,6 +86,14 @@ class ConnectionTypeController extends Controller
 
 
     }
+
+    /**
+     * Update
+     * Update of the specified Connection Type
+     * @bodyParam name string required
+     * @param ConnectionType $connectionType
+     * @return ApiResource
+     */
     public function update(ConnectionType $connectionType): ApiResource
     {
         $connectionType->name = request('name');

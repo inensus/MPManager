@@ -10,6 +10,12 @@ use App\Models\SubTarget;
 use App\Models\Target;
 use Illuminate\Http\Request;
 
+/**
+ * @group Targets
+ * Class TargetController
+ * @package App\Http\Controllers
+ */
+
 class TargetController extends Controller
 {
     /**
@@ -39,6 +45,7 @@ class TargetController extends Controller
 
 
     /**
+     * List
      * List of targets
      */
     public function index(): ApiResource
@@ -49,8 +56,9 @@ class TargetController extends Controller
     }
 
     /**
-     * Detail of target
-     *
+     * Detail
+     * Detail of the specified target
+     * @urlParam id int required
      * @param $id
      *
      * @return ApiResource
@@ -61,7 +69,11 @@ class TargetController extends Controller
         return new ApiResource($target);
     }
 
-
+    /**
+     * Get Slots for Date
+     *
+     * @return ApiResource
+     */
     public function getSlotsForDate()
     {
         $date = request('date');
@@ -74,6 +86,15 @@ class TargetController extends Controller
         return new ApiResource($takenSlots);
     }
 
+    /**
+     * Create
+     * Create a new target
+     * @bodyParam data int required
+     * @bodyParam period date required
+     * @bodyParam targetId int required
+     * @bodyParam targetType string required
+     * @param Request $request
+     */
     public function store(Request $request)
     {
         $data = $request->get('data');

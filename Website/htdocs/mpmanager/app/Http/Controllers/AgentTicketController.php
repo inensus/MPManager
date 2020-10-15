@@ -11,7 +11,11 @@ use Illuminate\Http\Request;
 use Inensus\Ticket\Exceptions\TicketOwnerNotFoundException;
 use Inensus\Ticket\Http\Resources\TicketResource;
 
-
+/**
+ * @group Agent-Tickets
+ * Class AgentTicketController
+ * @package App\Http\Controllers
+ */
 class AgentTicketController extends Controller
 {
     private $agentTicketService;
@@ -24,8 +28,8 @@ class AgentTicketController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
-     *
+     * List
+     * List of all agent tickets
      * @param Request $request
      * @return ApiResource
      */
@@ -37,6 +41,14 @@ class AgentTicketController extends Controller
         return new ApiResource($tickets);
     }
 
+    /**
+     * List of Agent Customer Tickets
+     * @urlParam customerId int required
+     * @param $customerId
+     * @param Request $request
+     * @return ApiResource
+     */
+
     public function agentCustomerTickets($customerId, Request $request)
     {
         $agent = request()->attributes->get('user');
@@ -45,8 +57,13 @@ class AgentTicketController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
+     * Create
+     * Create a new ticket
+     * @bodyParam owner_id int required
+     * @bodyParam due_date date required
+     * @bodyParam label string required
+     * @bodyParam title string required
+     * @bodyParam  description string required
      * @param CreateAgentTicketRequest $request
      * @return JsonResponse|TicketResource
      */
@@ -66,6 +83,13 @@ class AgentTicketController extends Controller
         return new TicketResource($this->agentTicketService->getBatch([$ticket]));
     }
 
+    /**
+     * Detail
+     * Detail of the specified agent ticket
+     * @urlParam ticketId int required
+     * @param $ticketId
+     * @return ApiResource
+     */
     public function show($ticketId): ApiResource
     {
         $ticket = $this->agentTicketService->getTicket($ticketId);

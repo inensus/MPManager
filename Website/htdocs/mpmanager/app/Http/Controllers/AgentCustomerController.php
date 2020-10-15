@@ -8,6 +8,11 @@ use App\Services\AgentCustomerService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
+/**
+ * @group Agent-Customers
+ * Class AgentCustomerController
+ * @package App\Http\Controllers
+ */
 class AgentCustomerController extends Controller
 {
 
@@ -20,8 +25,8 @@ class AgentCustomerController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
-     *
+     * List
+     *List of all agents customers
      * @param Request $request
      * @return ApiResource
      */
@@ -30,9 +35,16 @@ class AgentCustomerController extends Controller
         $agent = Agent::find(auth('agent_api')->user()->id);
        return new ApiResource($this->agentCustomerService->list($agent));
     }
+
+    /**
+     * Search
+     * @urlParam term string required
+     * @urlParam paginate int required
+     * @urlParam agent_api required
+     * @return ApiResource
+     */
     public function search()
     {
-
         $term = request('term');
         $paginate = request('paginate') ?? 1;
         $agent = Agent::find(auth('agent_api')->user()->id);

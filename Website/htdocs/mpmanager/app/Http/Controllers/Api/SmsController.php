@@ -29,6 +29,11 @@ use Inensus\Ticket\Services\CommentService;
 use Inensus\Ticket\Trello\Api;
 use Inensus\Ticket\Trello\Comments;
 
+/**
+ * @group Sms
+ * Class SmsController
+ * @package App\Http\Controllers
+ */
 class SmsController extends Controller
 {
     /**
@@ -74,6 +79,11 @@ class SmsController extends Controller
         $this->meterParameter = $meterParameter;
     }
 
+    /**
+     * List
+     * @return ApiResource
+     */
+
     public function index()
     {
 
@@ -84,6 +94,12 @@ class SmsController extends Controller
             ->paginate(20);
         return new ApiResource($list);
     }
+
+    /**
+     * Create Bulk
+     *
+     * @param Request $request
+     */
 
     public function storeBulk(Request $request)
     {
@@ -192,6 +208,14 @@ class SmsController extends Controller
         }
     }
 
+    /**
+     * Create
+     * Create a new sms
+     * @bodyParam sender int required
+     * @bodyParam message string required
+     * @param StoreSmsRequest $request
+     * @return ApiResource
+     */
     public function store(StoreSmsRequest $request): ApiResource
     {
         $sender = $request->get('sender');
@@ -269,6 +293,13 @@ class SmsController extends Controller
 
     }
 
+    /**
+     * Create and Send
+     * @bodyParam message string required
+     * @bodyParam person_id int required
+     * @param SmsRequest $request
+     * @return ApiResource
+     */
     public function storeAndSend(SmsRequest $request): ApiResource
     {
         $personId = $request->get('person_id');
@@ -329,6 +360,13 @@ class SmsController extends Controller
         }
     }
 
+    /**
+     * Detail
+     * Sms Detail of the specified person
+     * @urlParam person_id int required
+     * @param $person_id
+     * @return ApiResource
+     */
     public function show($person_id)
     {
         $personAddresses = $this->person::with([
@@ -346,6 +384,12 @@ class SmsController extends Controller
         return new ApiResource($smses);
     }
 
+    /**
+     * List by Phone
+     * @urlParam phone int required
+     * @param $phone
+     * @return ApiResource
+     */
     public function byPhone($phone)
     {
         $smses = $this->sms->where('receiver', $phone)->get();
@@ -353,6 +397,12 @@ class SmsController extends Controller
     }
 
 
+    /**
+     * Search
+     *
+     * @param $search
+     * @return ApiResource
+     */
     public function search($search)
     {
         //search in people

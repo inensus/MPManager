@@ -11,10 +11,16 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
 
+/**
+ * @group Manufacturers
+ * Class ManufacturerController
+ * @package App\Http\Controllers
+ */
 class ManufacturerController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * List
+     * List of all manufacturers.
      *
      */
     public function index()
@@ -26,7 +32,17 @@ class ManufacturerController extends Controller
 
 
     /**
-     * Store a newly created resource in storage.
+     * Create
+     * Create a new manufacturer.
+     * @bodyParam name string required
+     * @bodyParam phone string
+     * @bodyParam email string
+     * @bodyParam contact_person string
+     * @bodyParam website string
+     * @bodyParam city_id int
+     * @bodyParam address string
+     * @bodyParam api_name string
+     * @bodyParam master_key int required
      * @param ManufacturerRequest $request
      *@return ApiResource
      */
@@ -54,7 +70,9 @@ class ManufacturerController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Detail
+     * Detail of the specified Manufacturer.
+     * @urlParam id int required
      * @param  Manufacturer $manufacturer
      * @return ApiResource
      */
@@ -64,26 +82,11 @@ class ManufacturerController extends Controller
             $manufacturer::with('address.city.country')->get()
         );
     }
-
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param Request $request
-     * @param  Manufacturer $manufacturer
-     * @return Response
-     */
     public function update(Request $request, Manufacturer $manufacturer)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  Manufacturer $manufacturer
-     * @return Response
-     */
     public function destroy(Manufacturer $manufacturer)
     {
         //

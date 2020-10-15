@@ -10,6 +10,11 @@ use App\Models\Energy;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
+/**
+ * @group Energies
+ * Class EnergyController
+ * @package App\Http\Controllers
+ */
 class EnergyController extends Controller
 {
     /**
@@ -22,6 +27,16 @@ class EnergyController extends Controller
         $this->energy = $energy;
     }
 
+    /**
+     * Create
+     * @bodyParam mini_grid_id int required
+     * @bodyParam node_id int required
+     * @bodyParam device_id int required
+     * @bodyParam meters int required
+     * @bodyParam read_out int required
+     * @param StoreEnergyRequest $request
+     * @return ApiResource
+     */
     public function store(StoreEnergyRequest $request): ApiResource
     {
         $meters = $request->get('meters');
@@ -73,7 +88,14 @@ class EnergyController extends Controller
         return new ApiResource(['result' => 'success']);
     }
 
-
+    /**
+     * Detail
+     * Detail Energy of the specified mini grid
+     * @urlParam miniGridId int
+     * @param Request $request
+     * @param $miniGridId
+     * @return ApiResource
+     */
     public function show(Request $request, $miniGridId): ApiResource
     {
         $energyReadings = $this->energy->newQuery()

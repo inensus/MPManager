@@ -14,6 +14,11 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * @group Restrictions
+ * Class RestrictionController
+ * @package App\Http\Controllers
+ */
 class RestrictionController extends Controller
 {
 

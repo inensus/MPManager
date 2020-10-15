@@ -8,6 +8,11 @@ use App\Models\Agent;
 use App\Services\AgentChargeService;
 use Illuminate\Http\Request;
 
+/**
+ * @group Agents
+ * Class AgentChargeController
+ * @package App\Http\Controllers
+ */
 class AgentChargeController extends Controller
 {
     private $agentChargeService;

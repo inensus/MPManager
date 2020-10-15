@@ -29,6 +29,11 @@ use Inensus\Ticket\Models\Ticket;
 use stdClass;
 use function count;
 
+/**
+ * @group Revenue
+ * Class RevenueController
+ * @package App\Http\Controllers
+ */
 class RevenueController extends Controller
 {
     /**

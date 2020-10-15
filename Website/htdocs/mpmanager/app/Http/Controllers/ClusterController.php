@@ -21,6 +21,12 @@ use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Support\Facades\Storage;
 use function json_decode;
 
+/**
+ * @group Clusters
+ * Class ClusterController
+ * @package App\Http\Controllers
+ */
+
 class ClusterController
 {
     /**
@@ -67,6 +73,12 @@ class ClusterController
         $this->cluster = $cluster;
     }
 
+    /**
+     * List
+     * List of all clusters
+     * @return ApiResource
+     */
+
     public function index()
     {
         $startDate = request('start_date');
@@ -85,6 +97,14 @@ class ClusterController
         return new ApiResource($this->fetchClusterData($clusters, $dateRange));
     }
 
+    /**
+     * Detail
+     * Detail of the specified cluster.
+     * @urlParam id int required
+     * @param $id
+     * @return ApiResource
+     */
+
     public function show($id)
     {
 
@@ -92,6 +112,14 @@ class ClusterController
             ->find($id);
         return new ApiResource($cluster);
     }
+
+    /**
+     * Geo Detail
+     * Detail geo information of the specified cluster.
+     * @urlParam id int required
+     * @param Cluster $cluster
+     * @return ApiResource
+     */
     public function showGeo(Cluster $cluster)
     {
         try {
@@ -104,7 +132,9 @@ class ClusterController
         return new ApiResource($cluster);
     }
     /**
+     * List with Geo
      * Gives the json files back which contains the polygon of the given cluster
+     *
      */
     public function geo()
     {
@@ -132,6 +162,16 @@ class ClusterController
     }
 
 
+    /**
+     * Create
+     * Create a new cluster
+     * @bodyParam name string required
+     * @bodyParam geo_type
+     * @bodyParam geo_data
+     * @bodyParam manager_id int required
+     * @param ClusterRequest $request
+     * @return ApiResource
+     */
     public function store(ClusterRequest $request)
     {
         //type of geo data its either remote or manual

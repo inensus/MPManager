@@ -7,6 +7,11 @@ use App\Models\AssetRate;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
+/**
+ * @group Appliance Rates
+ * Class AssetRateController
+ * @package App\Http\Controllers
+ */
 class AssetRateController extends Controller
 {
     /**
@@ -63,8 +68,12 @@ class AssetRateController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
-     *
+     * Update
+     * Update the specified rate.
+     * @bodyParam asset_person_id int required
+     * @bodyParam rate_cost int required
+     * @bodyParam remaining int required
+     * @bodyParam due_date date required
      * @param Request $request
      * @param AssetRate $assetRate
      * @return ApiResource

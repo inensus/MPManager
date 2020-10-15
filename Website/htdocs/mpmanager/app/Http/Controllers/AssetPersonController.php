@@ -9,6 +9,11 @@ use App\Models\Person\Person;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
+/**
+ * @group Appliance Person
+ * Class AssetPersonController
+ * @package App\Http\Controllers
+ */
 class AssetPersonController extends Controller
 {
 
@@ -22,11 +27,6 @@ class AssetPersonController extends Controller
         $this->assetPerson = $assetPerson;
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return Response
-     */
     public function index()
     {
         //
@@ -34,8 +34,12 @@ class AssetPersonController extends Controller
 
 
     /**
-     * Store a newly created resource in storage.
-     *
+     * Create
+     * Create a new Asset Person
+     * @bodyParam person_id int required
+     * @bodyParam asset_type_id int required
+     * @bodyParam total_cost int required
+     * @bodyParam rate_count int required
      * @param AssetType $assetType
      * @param Person $person
      * @param Request $request
@@ -54,8 +58,9 @@ class AssetPersonController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
+     * Detail
+     * Detail of the specified person asset
+     * @urlParam person_id int required
      * @param Person $person
      * @param Request $request
      * @return ApiResource
@@ -68,24 +73,12 @@ class AssetPersonController extends Controller
         return new ApiResource($assets);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param Request $request
-     * @param AssetPerson $assetPerson
-     * @return Response
-     */
+
     public function update(Request $request, AssetPerson $assetPerson)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param AssetPerson $assetPerson
-     * @return Response
-     */
     public function destroy(AssetPerson $assetPerson)
     {
         //

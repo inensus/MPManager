@@ -101,12 +101,30 @@ class TariffController extends Controller
         return new ApiResource($tariff);
     }
 
+    /**
+     * Update
+     * Update the specified tariff
+     * @bodyParam
+     * @bodyParam
+     * @bodyParam
+     * @bodyParam
+     * @param MeterTariff $tariff
+     * @param TariffCreateRequest $request
+     * @return ApiResource
+     */
     public function update(MeterTariff $tariff, TariffCreateRequest $request): ApiResource
     {
         $result = $this->meterTariffService->update($tariff, $request);
         return new ApiResource($result);
     }
 
+    /**
+     * Usages
+     * Meter Tariff usage count
+     * @urlParam tariff int required
+     * @param MeterTariff $tariff
+     * @return ApiResource
+     */
     public function usages(MeterTariff $tariff): ApiResource
     {
         $count = $this->meterTariffService->meterTariffUsageCount($tariff->id);
@@ -114,6 +132,9 @@ class TariffController extends Controller
     }
 
     /**
+     * Change Meter Tariff
+     * @bodyParam Param tariff int required
+     * @bodyParam Param changeId int required
      * @param MeterTariff $tariff
      * @param int $changeId
      * @return ApiResource
@@ -126,6 +147,14 @@ class TariffController extends Controller
         return new ApiResource($result);
     }
 
+    /**
+     * Remove
+     * Remove the specified tariff
+     * @bodyParam tariff_id int required
+     * @param MeterTariff $tariff
+     * @return bool|null
+     * @throws \Exception
+     */
     public function destroy(MeterTariff $tariff)
     {
         return $tariff->delete();

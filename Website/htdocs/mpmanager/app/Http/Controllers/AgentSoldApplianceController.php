@@ -9,6 +9,11 @@ use App\Models\AgentSoldAppliance;
 use App\Services\AgentSoldApplianceService;
 use Illuminate\Http\Request;
 
+/**
+ * @group Agent-Appliances
+ * Class AgentSoldApplianceController
+ * @package App\Http\Controllers
+ */
 class AgentSoldApplianceController extends Controller
 {
 
@@ -21,6 +26,7 @@ class AgentSoldApplianceController extends Controller
 
 
     /**
+     * List
      * Display a listing of the resource.
      *
      * @param Agent $agent
@@ -44,8 +50,13 @@ class AgentSoldApplianceController extends Controller
     }
 
     /**
+     * Create
      * Store a newly created resource in storage.
-     *
+     * @bodyParam person_id int required
+     * @bodyParam down_payment int required
+     * @bodyParam tenure int required
+     * @bodyParam first_payment_date date required
+     * @bodyParam agent_assigned_appliance_id int required
      * @param CreateAgentSoldApplianceRequest $request
      * @return ApiResource
      */
@@ -61,30 +72,23 @@ class AgentSoldApplianceController extends Controller
         return new ApiResource($appliance);
     }
 
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param agentSoldAppliance $agent_sold_appliance
-     * @return void
-     */
     public function update(Request $request, agentSoldAppliance $agent_sold_appliance)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param \App\agentSoldAppliance $agent_sold_appliance
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(agentSoldAppliance $agent_sold_appliance)
     {
         //
     }
 
+    /**
+     * List for Web
+     * @urlParam agent int required
+     * @param Agent $agent
+     * @param Request $request
+     * @return ApiResource
+     */
     public function indexWeb(Agent $agent, Request $request)
     {
 

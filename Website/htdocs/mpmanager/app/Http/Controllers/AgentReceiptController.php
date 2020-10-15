@@ -10,6 +10,11 @@ use App\Models\User;
 use App\Services\AgentReceiptService;
 use Illuminate\Http\Request;
 
+/**
+ * @group Agent-Receipts
+ * Class AgentReceiptController
+ * @package App\Http\Controllers
+ */
 class AgentReceiptController extends Controller
 {
 
@@ -21,8 +26,9 @@ class AgentReceiptController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
-     *
+     * List Agent Receipts
+     * List of the specified Agent Receipts.
+     * @urlParam agentId int required
      * @param Agent $agent
      * @param Request $request
      * @return ApiResource
@@ -35,8 +41,8 @@ class AgentReceiptController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
-     *
+     * Detail
+     * @urlParam userId int required
      * @param User $user
      * @param Request $request
      * @return ApiResource
@@ -49,7 +55,7 @@ class AgentReceiptController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * List All Receipts
      *
      * @param Request $request
      * @return ApiResource
@@ -62,8 +68,9 @@ class AgentReceiptController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
-     *
+     * Create
+     * Create a new Agent Receipt
+     * @bodyParam amount int required
      * @param Agent $agent
      * @param CreateAgentReceiptRequest $request
      * @return ApiResource
@@ -79,24 +86,11 @@ class AgentReceiptController extends Controller
         return new ApiResource($appliance);
     }
 
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return void
-     */
     public function update(Request $request)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param Request $request
-     * @return void
-     */
     public function destroy(Request $request)
     {
         //

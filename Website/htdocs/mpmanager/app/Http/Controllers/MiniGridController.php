@@ -8,6 +8,12 @@ use App\Http\Resources\ApiResource;
 use App\Models\MiniGrid;
 use Illuminate\Http\Request;
 
+/**
+ * @group Mini Grids
+ * Class MiniGridController
+ * @package App\Http\Controllers
+ */
+
 class MiniGridController extends Controller
 {
 
@@ -20,6 +26,14 @@ class MiniGridController extends Controller
     {
         $this->miniGrid = $miniGrid;
     }
+
+    /**Create
+     * Create a new Mini Grid
+     * @bodyParam cluster_id id required
+     * @bodyParam name int required
+     * @param StoreMiniGridRequest $request
+     * @return ApiResource
+     */
 
     public function store(StoreMiniGridRequest $request)
     {
@@ -68,8 +82,8 @@ class MiniGridController extends Controller
         return new ApiResource($miniGrid);
     }
 
-    /**
-     * Update
+    /**Update
+     * Update the specified mini grid
      * @bodyParam name string The name of the MiniGrid.
      * @bodyParam data_stream int If the data_stream is enabled or not.
      *

@@ -10,6 +10,11 @@ use App\Models\User;
 use App\Services\AgentBalanceHistoryService;
 use Illuminate\Http\Request;
 
+/**
+ * @group Agents
+ * Class AgentBalanceHistoryController
+ * @package App\Http\Controllers
+ */
 class AgentBalanceHistoryController extends Controller
 {
 

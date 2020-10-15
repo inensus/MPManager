@@ -9,6 +9,11 @@ use App\Models\AssetType;
 use Exception;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @group Appliance Types
+ * Class AssetTypeController
+ * @package App\Http\Controllers
+ */
 class AssetTypeController extends Controller
 {
 
@@ -25,7 +30,8 @@ class AssetTypeController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * List
+     * List of all Asset Types
      *
      * @return ApiResource
      */
@@ -38,8 +44,10 @@ class AssetTypeController extends Controller
 
 
     /**
-     * Store a newly created resource in storage.
-     *
+     * Create
+     * Create a new Asset Type
+     * @bodyParam name string required
+     * @bodyParam price int required
      * @param AssetTypeCreateRequest $request
      * @return ApiResource
      */
@@ -54,8 +62,11 @@ class AssetTypeController extends Controller
 
 
     /**
-     * Update the specified resource in storage.
-     *
+     * Update
+     * Update the specified Asset Type
+     * @bodyParam asset_type_id int required
+     * @bodyParam name string required
+     * @bodyParam price int required
      * @param AssetTypeUpdateRequest $request
      * @param AssetType $assetType
      * @return ApiResource
@@ -67,8 +78,9 @@ class AssetTypeController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
+     * Remove
+     * Remove the specified asset type.
+     * @bodyParam asset_type_id int required
      * @param AssetType $assetType
      * @return ApiResource
      * @throws Exception

@@ -13,6 +13,11 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
+/**
+ * @group Addresses
+ * Class AddressController
+ * @package App\Http\Controllers
+ */
 class AddressController extends Controller
 {
     /**
@@ -27,6 +32,7 @@ class AddressController extends Controller
     }
 
     /**
+     * List
      * A list of all registered addresses
      * @return ApiResource
      */
@@ -38,7 +44,9 @@ class AddressController extends Controller
     }
 
     /**
+     * Detail
      * The detail of a given address id
+     * @urlParam id int required
      * @param integer $id
      * @return ApiResource
      */

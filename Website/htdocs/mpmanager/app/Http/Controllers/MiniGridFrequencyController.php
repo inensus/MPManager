@@ -7,6 +7,11 @@ use App\Models\MiniGridFrequency;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
+/**
+ * @group Generation Asset
+ * Class MiniGridFrequencyController
+ * @package App\Http\Controllers
+ */
 
 class MiniGridFrequencyController extends Controller
 {

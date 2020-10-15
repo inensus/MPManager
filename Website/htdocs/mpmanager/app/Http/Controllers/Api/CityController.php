@@ -37,6 +37,7 @@ class CityController extends Controller
     }
 
     /**
+     * List
      * List of all cities
      *
      * @return ApiResource
@@ -49,8 +50,9 @@ class CityController extends Controller
     }
 
     /**
+     * Detail
      * Details of requested city
-     *
+     * @urlParam id int required
      * @param $id
      *
      * @return ApiResource
@@ -69,8 +71,10 @@ class CityController extends Controller
     }
 
     /**
+     * Update
      * Updates the given city
-     *
+     * @bodyParam name string required
+     * @bodyParam mini_grid_id int required
      * @param CityRequest $request
      * @param City $city
      *
@@ -86,8 +90,10 @@ class CityController extends Controller
 
     /**
      * Create
+     * Create a new City
+     * @bodyParam name string required
+     * @bodyParam mini_grid_id int required
      * @param Request $request
-     *
      * @return ApiResource
      * @throws ValidationException
      */
