@@ -27,7 +27,7 @@ class SubConnectionTypeController extends Controller
      *
      * @return ApiResource
      */
-    public function index($connectionTypeId)
+    public function index($connectionTypeId = null)
     {
         $connectionTypes = $this->subConnectionType::with('tariff')->newQuery();
         if($connectionTypeId !== null){
