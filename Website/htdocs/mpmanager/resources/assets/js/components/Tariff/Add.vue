@@ -175,7 +175,6 @@
                                         placeholder="% of normal tariff"
                                         id="value"
                                         name="value"
-                                        type="number"
                                         min="1"
                                         v-model="tou.value"
                                         v-validate="'required|decimal|min_value:1'"
