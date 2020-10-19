@@ -96,7 +96,7 @@
                                     {{label.label_color}}
                                 </md-table-cell>
                                 <md-table-cell>
-                                    <md-icon v-if="label.out_source===0">cancel</md-icon>
+                                    <md-icon v-if="label.out_source === 0">cancel</md-icon>
                                     <md-icon v-else>check</md-icon>
                                 </md-table-cell>
                             </md-table-row>
@@ -148,13 +148,14 @@ export default {
         },
         async saveLabel () {
 
-            let validator = await this.$validator.validateAll()
+            let validator = await this.$validator.validateAll('')
             if (validator) {
 
                 try {
                     this.loading = true
                     await this.ticketLabelService.createLabel(this.ticketLabelService.newLabelName, this.ticketLabelService.currentColor, this.ticketLabelService.outSourcing)
                     this.alertNotify('success', 'New category added successfully.')
+                    await this.getLabels()
                     this.loading = false
                 } catch (e) {
                     this.loading = false

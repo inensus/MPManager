@@ -180,13 +180,14 @@ export default {
         async saveTicket () {
             try {
                 this.loading = true
+                console.log(this.maintenanceData)
                 await this.ticketService.createMaintenanceTicket(this.maintenanceData)
                 await this.smsService.sendMaintenanceSms(this.maintenanceData)
                 this.alertNotify('success', 'The Task created successfully. The Person will also be notified by sms')
                 this.maintenanceService.resetMaintenance()
                 this.loading = false
             } catch (e) {
-                this.alertNotify('error', 'e.message')
+                this.alertNotify('error', e.message)
                 this.loading = false
             }
         },

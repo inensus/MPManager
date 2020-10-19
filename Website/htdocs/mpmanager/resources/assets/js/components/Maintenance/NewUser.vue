@@ -15,7 +15,7 @@
                                         <label for="name">Name</label>
 
                                         <md-input type="text" name="name" id="name"
-                                                  v-model="this.maintenanceService.personData.name"
+                                                  v-model="maintenanceService.personData.name"
                                                   placeholder="Name"
                                                   v-validate="'required|min:3'"/>
                                         <span class="md-error">{{ errors.first('form-user.name') }}</span>
@@ -26,7 +26,7 @@
                                         <label for="surname">Surname</label>
 
                                         <md-input type="text" v-validate="'required'"
-                                                  v-model="this.maintenanceService.personData.surname"
+                                                  v-model="maintenanceService.personData.surname"
                                                   id="surname"
                                                   name="surname"
                                                   placeholder="Surname"/>
@@ -40,7 +40,7 @@
                                             Grid)</label>
 
                                         <md-select v-validate="'required'" id="mini-grids" name="mini-grids"
-                                                   v-model="this.maintenanceService.personData.mini_grid_id">
+                                                   v-model="maintenanceService.personData.mini_grid_id">
                                             <md-option value selected disabled>&#45;&#45; Select &#45;&#45;</md-option>
                                             <md-option
                                                 v-for="(miniGrid,index) in miniGrids"
@@ -61,7 +61,7 @@
                                             id="phone"
                                             name="phone"
                                             v-validate="'required'"
-                                            v-model="this.maintenanceService.personData.phone"
+                                            v-model="maintenanceService.personData.phone"
                                             placeholder="Phone (+___ _+9___ ____)"
                                         />
                                         <span class="md-error">{{ errors.first('form-user.phone') }}</span>
@@ -72,7 +72,7 @@
                                         <label for="city">Living In</label>
 
                                         <md-select id="city" v-validate="'required'" name="city"
-                                                   v-model="this.maintenanceService.personData.city_id">
+                                                   v-model="maintenanceService.personData.city_id">
                                             <md-option value selected disabled>&#45;&#45; Select &#45;&#45;</md-option>
                                             <md-option
                                                 v-for="(city,index) in cities"
@@ -134,7 +134,6 @@ export default {
 
     data () {
         return {
-
             miniGrids: [],
             cities: [],
             miniGridService: new MiniGridService(),
@@ -187,7 +186,7 @@ export default {
             }
             try {
                 this.loading = true
-                await this.maintenanceService.createMaintenance(this.personData)
+                await this.maintenanceService.createMaintenance(this.maintenanceService.personData)
                 this.loading = false
                 this.alertNotify('success', 'Maintenance Person Created')
                 this.maintenanceService.resetPersonData()

@@ -163,9 +163,9 @@ export default {
     },
 
     created () {
-        this.user.name = this.$store.getters.admin.name
-        this.user.email = this.$store.getters.admin.email
-        this.user.id = this.$store.getters.admin.id
+        this.user.name = this.$store.getters['auth/authenticationService'].authenticateUser.name
+        this.user.email = this.$store.getters['auth/authenticationService'].authenticateUser.email
+        this.user.id = this.$store.getters['auth/authenticationService'].authenticateUser.id
     },
     mounted () {
         this.fillInformation()

@@ -9,9 +9,9 @@ export class UserService {
         this.selectedUser = null
     }
 
-    async getUsers() {
+    async getUsers(paginate = 1) {
         try {
-            let response = await this.repository.list()
+            let response = await this.repository.list(paginate)
 
             if (response.status === 200) {
                 this.users = response.data.data

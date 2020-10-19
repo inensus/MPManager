@@ -3,7 +3,7 @@
         <widget
             :id="'connection-type-detail'"
             :title="'Connection Type Details'"
-            :subscriber="subscriber"
+            :subscriber="subscriber.detail"
         >
             <md-card>
                 <md-card-content>
@@ -115,7 +115,7 @@
             :button-text="'New Sub Connection Type'"
             @widgetAction="addSubType"
             :color="'green'"
-            :subscriber="subscriber">
+            :subscriber="subscriber.subTypes">
             <md-card>
                 <md-card-content>
                         <md-table>
@@ -201,7 +201,10 @@ export default {
     components: {  Widget },
     data() {
         return{
-            subscriber:'sub-connection-type',
+            subscriber:{
+                detail:'connection-type-detail',
+                subTypes:'sub-connection-types'
+            },
             connectionTypeService: new ConnectionTypeService(),
             subConnectionTypeService: new SubConnectionTypeService(),
             tariffService: new TariffService(),
@@ -223,6 +226,7 @@ export default {
     },
     created () {
         this.subConnectionType.connection_type_id = this.$route.params.id
+        console.log(this.subConnectionType.connection_type_id)
         this.getSubConnectionTypes(this.subConnectionType.connection_type_id)
         this.getConnectionTypeDetail(this.subConnectionType.connection_type_id)
         this.getTariffs()
@@ -329,7 +333,7 @@ export default {
         async getConnectionTypeDetail(connectionTypeId){
             try {
                 this.connectionType = await this.connectionTypeService.getConnectionTypeDetail(connectionTypeId)
-                this.newConnectionTypeName = this.connectionType.name
+                EventBus.$emit('widgetContentLoaded',this.subscriber.detail,this.connectionType)
             }catch (e) {
                 this.alertNotify('error', e.message)
             }
@@ -337,7 +341,7 @@ export default {
         async getSubConnectionTypes(connectionTypeId){
             try {
                 await this.subConnectionTypeService.getSubConnectionTypes(connectionTypeId)
-                EventBus.$emit('widgetContentLoaded',this.subscriber,this.subConnectionTypeService.subConnectionTypes.length)
+                EventBus.$emit('widgetContentLoaded',this.subscriber.subTypes,this.subConnectionTypeService.subConnectionTypes.length)
             } catch (e) {
                 this.alertNotify('error', e.message)
             }

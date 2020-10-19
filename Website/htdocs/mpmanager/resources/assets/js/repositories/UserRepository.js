@@ -6,7 +6,7 @@ const resource ={
 
 export default {
 
-    list(){
-        return axios.get(`${resource.list}`)
+    list(paginate){
+        return axios.get(`${resource.list}?paginate=${paginate}`)
     }
 }
