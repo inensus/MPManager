@@ -72,12 +72,14 @@ class AddressController extends Controller
         $this->address->street = $request->get('street') ?? '';
         $this->address->city_id = $request->get('city_id');
         $this->address->is_primary = $request->get('primary') ?? 0;
-        if ($this->address->is_primary === 1) { // set old primary address to not primary
+        if ($this->address->is_primary ) { // set old primary address to not primary
             $person->addresses()->where('is_primary', 1)->update(['is_primary' => 0]);
         }
         $this->address->owner()->associate($person);
 
         $this->address->save();
+        $person->update([
+            'updated_at' => date('Y-m-d h:i:s')]);
         return new ApiResource($this->address->with('city')->where('id', $this->address->id)->first());
     }
 
@@ -181,6 +183,8 @@ class AddressController extends Controller
             $person->addresses()->where('is_primary', 1)->update(['is_primary' => 0]);
         }
         $address->save();
+        $person->update([
+            'updated_at' => date('Y-m-d h:i:s')]);
         return new ApiResource($address->with('city')->where('id', $address->id)->first());
     }
 }
