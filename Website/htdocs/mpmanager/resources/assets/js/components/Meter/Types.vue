@@ -162,7 +162,7 @@ export default {
     computed:{
         connectivity: function(){
             return this.meterTypesList.map(function (type){
-                return type.online === 0 ? 'Online' : 'Offline'
+                return type.online === 1 ? 'Online' : 'Offline'
             })
         }
     },
