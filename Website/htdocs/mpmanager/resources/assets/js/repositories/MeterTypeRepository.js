@@ -1,4 +1,4 @@
-const resource = '/api/meters/types'
+const resource = '/api/meter-types'
 import Client from './Client/AxiosClient'
 
 export default {
