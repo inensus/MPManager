@@ -14,7 +14,8 @@
                         <font-awesome-icon icon="user" class="fa-4x"/>
                     </div>
                     <div class="md-layout-item md-size-65">
-                        <h3>{{person.title }} {{ person.name}} {{person.surname}}</h3>
+                        <h3>{{this.personService.person.title }} {{ this.personService.person.name}}
+                            {{this.personService.person.surname}}</h3>
                     </div>
                     <div class="md-layout-item md-large-size-20 md-medium-size-15 md-small-size-10">
                         <md-button @click="editPerson=true" class="md-icon-button" style="float: right">
@@ -26,21 +27,21 @@
                         <font-awesome-icon icon="venus-mars"/>&nbsp;Gender:
                     </div>
                     <div class="md-layout-item md-size-15">
-                        {{person.gender}}
+                        {{this.personService.person.gender}}
                     </div>
 
                     <div class="md-layout-item md-size-20">
                         <font-awesome-icon icon="graduation-cap"/>&nbsp;Education:
                     </div>
                     <div class="md-layout-item md-size-15">
-                        {{person.education}}
+                        {{this.personService.person.education}}
                     </div>
 
                     <div class="md-layout-item md-size-15">
                         <font-awesome-icon icon="birthday-cake"/>&nbsp;Birth Date:
                     </div>
                     <div class="md-layout-item md-size-15">
-                        {{person.birthDate}}
+                        {{this.personService.person.birthDate}}
                     </div>
 
                 </div>
@@ -56,28 +57,31 @@
                                             type="text"
                                             name="person-title"
                                             id="person-title"
-                                            v-model="person.title"
+                                            v-model="personService.person.title"
                                         />
                                     </md-field>
 
                                     <md-field>
                                         <label for="name">Name</label>
-                                        <md-input type="text" name="name" id="name" v-model="person.name"/>
+                                        <md-input type="text" name="name" id="name"
+                                                  v-model="personService.person.name"/>
                                     </md-field>
 
                                     <md-field>
                                         <label for="surname">Surname</label>
-                                        <md-input type="text" name="surname" id="surname" v-model="person.surname"/>
+                                        <md-input type="text" name="surname" id="surname"
+                                                  v-model="personService.person.surname"/>
                                     </md-field>
 
-                                    <md-datepicker name="birthDate" v-model="person.birthDate">
+                                    <md-datepicker md-immediately  name="birthDate" v-model="personService.person.birthDate">
                                         <label for="birth-date">Birth Date :</label>
                                     </md-datepicker>
 
                                     <md-field>
                                         <label for="gender">Gender :</label>
-                                        <md-select name="gender" id="gender" v-model="person.gender">
-                                            <md-option disabled v-if="person.gender==null">-- Select --</md-option>
+                                        <md-select name="gender" id="gender" v-model="personService.person.gender">
+                                            <md-option disabled v-if="personService.person.gender==null">-- Select --
+                                            </md-option>
                                             <md-option value="male">Male</md-option>
                                             <md-option value=" female">Female</md-option>
                                         </md-select>
@@ -89,12 +93,13 @@
                                             type="text"
                                             name="education"
                                             id="education"
-                                            v-model="person.education"
+                                            v-model="personService.person.education"
                                         />
                                     </md-field>
                                 </md-card-content>
                                 <md-card-actions>
-                                    <md-button type="submit" @click="updatePerson" class="md-primary btn-save">Save</md-button>
+                                    <md-button type="submit" @click="updatePerson" class="md-primary btn-save">Save
+                                    </md-button>
                                     <md-button type="button" @click="editPerson = false" class="md-accent btn-save">
                                         Cancel
                                     </md-button>
@@ -132,10 +137,14 @@ export default {
             editPerson: false
         }
     },
+    mounted () {
+        this.personService.person = this.person
+    },
+
     methods: {
         updatePerson () {
             this.editPerson = false
-            this.personService.updatePerson(this.person)
+            this.personService.updatePerson()
 
         },
         confirmDelete () {
@@ -152,9 +161,9 @@ export default {
                         '  <label>' +
                         '    <input type="checkbox" name="confirmation" id="confirmation" >' +
                         '   I confirm that ' +
-                        this.person.name +
+                        this.personService.person.name +
                         ' ' +
-                        this.person.surname +
+                        this.personService.person.surname +
                         ' will be deleted' +
                         '  </label>' +
                         '</div>'
@@ -171,8 +180,8 @@ export default {
             })
         },
         deletePerson () {
-            axios.delete(resources.person.delete + this.person.id).then(response => {
-                if(response.status === 200){
+            axios.delete(resources.person.delete + this.personService.person.id).then(response => {
+                if (response.status === 200) {
                     this.showConfirmation()
                 }
 
