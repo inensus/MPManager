@@ -4,6 +4,7 @@ namespace App\Listeners;
 
 use App\Models\Meter\Meter;
 use Illuminate\Events\Dispatcher;
+use Illuminate\Support\Facades\Log;
 
 
 class MeterListener
@@ -14,9 +15,7 @@ class MeterListener
      */
     public function onParameterSaved(int $meter_id)
     {
-        $meter = Meter::find($meter_id);
-        $meter->in_use = 1;
-        $meter->save();
+        Log::debug('listener Core',[]);
     }
 
     public function subscribe(Dispatcher $events)
