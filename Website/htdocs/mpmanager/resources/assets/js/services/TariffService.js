@@ -40,7 +40,7 @@ export class TariffService {
             name: tariffData.name,
             price: tariffData.price,
             currency: tariffData.currency,
-            factor: tariffData.factor,
+            factor: tariffData.factor?tariffData.factor:1,
             accessRate: {
                 id: null,
                 amount: null,
@@ -85,8 +85,6 @@ export class TariffService {
                 tariff.components.push(component)
             }
         }
-        // eslint-disable-next-line no-debugger
-        debugger
         if (tariffData.tou.length > 0) {
             let price = tariffData.price / 100
             for (let i = 0; i < tariffData.tou.length; i++) {
