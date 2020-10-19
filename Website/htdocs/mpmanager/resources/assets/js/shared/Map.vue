@@ -149,8 +149,8 @@ export default {
                 if (type === 'Marker') {
 
                     let geoDataItem = {
-                        id: layer._tooltip._content.split('-')[1],
-                        meterSerial: layer._tooltip._content.split('-')[0],
+                        id: layer._tooltip._content.split('/')[1],
+                        meterSerial: layer._tooltip._content.split('/')[0],
                         lat: layer._latlng.lat,
                         lng: layer._latlng.lng
                     }
@@ -443,7 +443,7 @@ export default {
                         let markingInfo = this.markingInfos.filter(x => x.lat === e[0] && x.lon === e[1])[0]
                         if (markingInfo !== undefined) {
                             if (this.isMeter) {
-                                markerLayer.bindTooltip(markingInfo.serialNumber + '-' + markingInfo.id)
+                                markerLayer.bindTooltip(markingInfo.serialNumber + '/' + markingInfo.id)
                                 let parent = this
                                 markerLayer.on('click', function () {
                                     parent.routeToDetail(markingInfo.serialNumber, markingInfo.name)
