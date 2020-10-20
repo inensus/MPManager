@@ -98,7 +98,7 @@
 
                     <span class="md-title" v-if="miniGridData">
                     MiniGrid <strong>{{ miniGridData.name}}</strong>
-                <font-awesome-icon @click="editMiniGrid" icon="wrench"/>
+                        <md-icon @click="editMiniGrid">plumbing</md-icon>
 
                 </span>
                         <md-switch v-model="enableDataStream" @change="onDataStreamChange($event)" :disabled="switching"
@@ -112,7 +112,7 @@
                     Period : {{this.startDate}} - {{this.endDate}}
                 </span>
                             <md-button class="md-raised" @click="openDatePicker">
-                                <font-awesome-icon icon="calendar"/>
+                                <md-icon>calendar_today</md-icon>
                                 Select Period
                             </md-button>
 
@@ -127,7 +127,7 @@
                         :header-text-color="'#dddddd'"
                         :sub-text="soldEnergy.toString() +'kWh'"
                         :sub-text-color="'#e3e3e3'"
-                        box-icon="solar-panel"
+                        box-icon="wb_iridescent"
                         :box-icon-color="'#578839'"
                     />
                 </div>
@@ -140,7 +140,7 @@
                          :header-text-color="'#dddddd'"
                          :sub-text="readable(currentTransaction[0].amount).toString() "
                          :sub-text-color="'#e3e3e3'"
-                         box-icon="tasks"
+                         box-icon="list"
                          :box-icon-color="'#578839'"
                     />
                 </div>
@@ -153,7 +153,7 @@
                          :header-text-color="'#dddddd'"
                          :sub-text="readable(currentTransaction[0].revenue).toString() +this.appConfig.currency"
                          :sub-text-color="'#e3e3e3'"
-                         box-icon="money-bill"
+                         box-icon="attach_money"
                          :box-icon-color="'#578839'"
                     />
                 </div>
@@ -255,7 +255,8 @@
                     />
                 </div>
                 <div class="md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-100">
-                    <widget :id="'revenue-trends'" :title="'Revenue Trends'">
+                    <widget :id="'revenue-trends'" :title="'Revenue Trends'" :subscriber="subscriber.revenue_trends"
+                    >
                         <div class="md-layout md-gutter">
                             <div class="md-layout-item">
                                 <GChart
@@ -331,7 +332,7 @@
                                 </md-card-content>
                                 <md-card-actions>
                                     <md-button class="md-raised md-accent" @click="showModal = false">
-                                        <font-awesome-icon icon="times"/>
+                                        <md-icon>cancel</md-icon>
                                         Close
                                     </md-button>
 
@@ -490,6 +491,9 @@ export default {
     },
     data () {
         return {
+            subscriber:{
+                revenue_trends:'mini-grid-revenue-trends'
+            },
             miniGridService: new MiniGridService(),
             revenueService: new RevenueService(),
             revenueTrends: null,
@@ -505,7 +509,6 @@ export default {
             thirdStep: false,
             purchaseCode: '',
             showModal: false,
-
             currentSelectedTargetCircle: 0,
             displayedTargetPercetinles: [0, 5],
             miniGridData: {},
@@ -752,6 +755,7 @@ export default {
                     }
 
                 }
+                EventBus.$emit('widgetContentLoaded',this.subscriber.revenue_trends,this.trendChartData.base.length)
 
             } catch (e) {
                 this.redirectDialogActive = true

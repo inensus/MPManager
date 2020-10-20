@@ -9,7 +9,7 @@
                     :headerTextColor="'#dddddd'"
                     :headerText="'Registered Clusters'"
                     :subTextColor="'#e3e3e3'"
-                    :boxIcon="'sitemap'"
+                    :boxIcon="'map'"
                     :boxIconColor="'#578839'"
 
                 />
@@ -23,7 +23,7 @@
                     :headerTextColor="'#dddddd'"
                     headerText="Registered Customers"
                     :subTextColor="'#e3e3e3'"
-                    :boxIcon="'user'"
+                    :boxIcon="'supervisor_account'"
                     :boxIconColor="'#385a76'"
 
                 />
@@ -36,7 +36,7 @@
                     :headerTextColor="'#dddddd'"
                     header-text="Connected Meters"
                     :subTextColor="'#e3e3e3'"
-                    boxIcon="plug"
+                    boxIcon="settings_input_hdmi"
                     :boxIconColor="'#604058'"
                 />
             </div>
@@ -48,7 +48,7 @@
                     :headerTextColor="'#dddddd'"
                     header-text="Revenue (last 30 days)"
                     :subTextColor="'#e3e3e3'"
-                    :boxIcon="'money-bill'"
+                    :boxIcon="'attach_money'"
                     :boxIconColor="'#5c5837'"
                 />
             </div>

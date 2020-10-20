@@ -4,7 +4,9 @@
             title="User Management"
             :button-text="'NEW USER'"
             :button="true"
-            :callback="()=>{showNewUser = true}"
+            @widgetAction="showNewUser = true"
+            :subscriber="subscriber"
+            :paginator="adminService.paginator"
         >
             <form v-if="showNewUser" @submit.prevent="submitCreateForm" data-vv-scope="form-create">
                 <div class="edit-container">
@@ -24,7 +26,7 @@
                                         name="name"
                                         id="name"
                                     />
-                                    <font-awesome-icon icon="pen"/>
+                                    <md-icon>create</md-icon>
                                     <span class="md-error">{{ errors.first('form-create.name') }}</span>
                                 </md-field>
                             </div>
@@ -39,7 +41,7 @@
                                         v-model="user.email"
                                         v-validate="'required|email'"
                                     />
-                                    <font-awesome-icon icon="envelope"/>
+                                    <md-icon>email</md-icon>
                                     <span class="md-error">{{ errors.first('form-create.email') }}</span>
                                 </md-field>
                             </div>
@@ -130,7 +132,7 @@
                                 name="name"
                                 id="name"
                             />
-                            <font-awesome-icon icon="pen"/>
+                            <md-icon>create</md-icon>
                             <span class="md-error">{{ errors.first('form-edit.name') }}</span>
                         </md-field>
                     </div>
@@ -139,14 +141,14 @@
                         <md-field>
                             <label>Phone</label>
                             <md-input type="text" name="phone" id="phone" v-model="user.phone"/>
-                            <font-awesome-icon icon="phone"/>
+                            <md-icon>phone</md-icon>
                         </md-field>
                     </div>
                     <div class="md-layout-item md-size-50 md-small-size-100">
                         <md-field>
                             <label>street</label>
                             <md-input v-model="user.street" name="street" id="street"/>
-                            <font-awesome-icon icon="address-card"/>
+                            <md-icon>contacts</md-icon>
                         </md-field>
                     </div>
                     <div class="md-layout-item md-size-50 md-small-size-100">
@@ -182,6 +184,7 @@
 import Widget from '../../shared/widget'
 import { Admin } from '../../classes/admin'
 import { City } from '../../classes/Cities/city'
+import { EventBus } from '../../shared/eventbus'
 
 export default {
     name: 'ProfileManagement',
@@ -189,6 +192,7 @@ export default {
 
     data () {
         return {
+            subscriber:'user-management',
             sending: false,
             modalVisibility: false,
             cities: [],
@@ -209,23 +213,21 @@ export default {
             showNewUser: false
         }
     },
-
-    created () {
-        this.getUsers()
+    mounted() {
+        EventBus.$on('pageLoaded', this.reloadList)
     },
-    computed: {},
+    beforeDestroy () {
+        EventBus.$off('pageLoaded')
+    },
     methods: {
-        async getUsers () {
-            let users = await this.adminService.getUserList()
-            users.forEach(u => {
-                let usr = {
-                    id: u.id,
-                    name: u.name,
-                    email: u.email,
-                    phone: u.address ? u.address.phone : '-',
-                }
-                this.users.push(usr)
-            })
+        reloadList (subscriber, data) {
+            if(subscriber !== this.subscriber)
+            {
+                return
+            }
+            this.users = this.adminService.updateList(data)
+            EventBus.$emit('widgetContentLoaded',this.subscriber,this.users.length)
+
         },
         userDetail (user) {
             this.user.name = ''

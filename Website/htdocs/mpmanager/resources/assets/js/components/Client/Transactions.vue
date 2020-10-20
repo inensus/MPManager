@@ -3,45 +3,42 @@
 
         :title="'Last Transactions'"
         :paginator="transactions.paginator"
-
+        color="green"
+        :subscriber="subscriber"
     >
 
         <md-card>
             <md-card-content>
-                <div v-if="transactions.length>0">
-                    <md-table style="width:100%" v-model="transactions" md-card md-fixed-header>
-                        <md-table-row
-                            @click="loadTransaction(item.transaction_id)"
-                            slot="md-table-row"
-                            slot-scope="{ item }"
-                        >
-                            <md-table-cell
-                                md-label="Payment Type"
-                                md-sort-by="payment_type"
-                                md-numeric
-                            >{{ item.payment_type }}
-                            </md-table-cell>
-                            <md-table-cell md-label="Sender" md-sort-by="sender">{{ item.sender }}</md-table-cell>
-                            <md-table-cell md-label="Amount" md-sort-by="amount">{{ item.amount + ' ' + appConfig.currency}}
-                            </md-table-cell>
-                            <md-table-cell md-label="Paid For" md-sort-by="paid_for_type">{{ item.paid_for_type }}
-                            </md-table-cell>
-                            <md-table-cell
-                                md-label="Payment Service"
-                                md-sort-by="payment_service"
-                            >{{ item.payment_service }}
-                            </md-table-cell>
-                            <md-table-cell
-                                md-label="Created At"
-                                md-sort-by="paid_for_type"
-                            >{{timeForHuman(item.created_at)}}
-                            </md-table-cell>
-                        </md-table-row>
-                    </md-table>
-                </div>
-                <div v-else>
-                    <no-table-data :headers="headers" :tableName="tableName"/>
-                </div>
+
+                        <md-table style="width:100%" v-model="transactions" md-card md-fixed-header>
+                            <md-table-row
+                                @click="loadTransaction(item.transaction_id)"
+                                slot="md-table-row"
+                                slot-scope="{ item }"
+                            >
+                                <md-table-cell
+                                    md-label="Payment Type"
+                                    md-sort-by="payment_type"
+                                    md-numeric
+                                >{{ item.payment_type }}
+                                </md-table-cell>
+                                <md-table-cell md-label="Sender" md-sort-by="sender">{{ item.sender }}</md-table-cell>
+                                <md-table-cell md-label="Amount" md-sort-by="amount">{{ item.amount + ' ' + appConfig.currency}}
+                                </md-table-cell>
+                                <md-table-cell md-label="Paid For" md-sort-by="paid_for_type">{{ item.paid_for_type }}
+                                </md-table-cell>
+                                <md-table-cell
+                                    md-label="Payment Service"
+                                    md-sort-by="payment_service"
+                                >{{ item.payment_service }}
+                                </md-table-cell>
+                                <md-table-cell
+                                    md-label="Created At"
+                                    md-sort-by="paid_for_type"
+                                >{{timeForHuman(item.created_at)}}
+                                </md-table-cell>
+                            </md-table-row>
+                        </md-table>
 
             </md-card-content>
             <md-card-actions>
@@ -87,13 +84,15 @@
 import { currency } from '../../mixins/currency'
 import { timing } from '../../mixins/timing'
 import Widget from '../../shared/widget'
-import NoTableData from '../../shared/NoTableData'
+import { EventBus } from '../../shared/eventbus'
+
 export default {
     name: 'Transactions',
-    components: { Widget,NoTableData },
+    components: { Widget },
     mixins: [currency, timing],
     data () {
         return {
+            subscriber:'client-transactions',
             articleClass: 'col-sm-12',
             personId: null,
             transactions: [],
@@ -103,7 +102,7 @@ export default {
             total: 0,
             totalPages: 0,
             headers: ['Payment Type', 'Sender', 'Amount','Paid For','Payment Service','Created At'],
-            tableName: 'Transactions'
+            tableName: 'Transactions',
         }
     },
     mounted () {
@@ -135,6 +134,7 @@ export default {
                     this.to = responseData.to
                     this.total = responseData.total
                     this.totalPages = responseData.last_page
+                    EventBus.$emit('widgetContentLoaded',this.subscriber,this.transactions.length)
                 })
         },
         loadTransaction (transactionId) {

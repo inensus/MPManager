@@ -1,10 +1,5 @@
 <template>
     <div class="page-container">
-        <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-        />
-
         <widget
             :id="'meter-list'"
             :title="'Meters'"
@@ -12,53 +7,49 @@
             :search="true"
             :subscriber="subscriber"
             :route_name="'/meters'"
+            color="green"
         >
 
-            <div v-if="meters.list.length>0">
-                <md-table md-card style="margin-left: 0">
-                    <md-table-row>
-                        <md-table-head>ID</md-table-head>
-                        <md-table-head>
-                            <font-awesome-icon icon="plus"/>
-                            Serial Number
-                        </md-table-head>
-                        <md-table-head>
-                            <font-awesome-icon icon="plus"/>
-                            Tariff
-                        </md-table-head>
-                        <md-table-head>Manufacturer</md-table-head>
-                        <md-table-head>Type</md-table-head>
-                        <md-table-head>Last update</md-table-head>
-                    </md-table-row>
+                    <md-table md-card style="margin-left: 0">
+                        <md-table-row>
+                            <md-table-head>ID</md-table-head>
+                            <md-table-head>
+                                <md-icon>add</md-icon>
+                                Serial Number
+                            </md-table-head>
+                            <md-table-head>
+                                <md-icon>add</md-icon>
+                                Tariff
+                            </md-table-head>
+                            <md-table-head>Manufacturer</md-table-head>
+                            <md-table-head>Type</md-table-head>
+                            <md-table-head>Last update</md-table-head>
+                        </md-table-row>
 
-                    <md-table-row
-                        v-for="meter in meters.list"
-                        :key="meter.id"
-                        :class="meter.inUse===1 ? 'active': 'warning'"
-                        style="cursor:pointer;"
-                        @click="meterDetail( meter.serialNumber)"
-                    >
-                        <md-table-cell>{{ meter.id}}</md-table-cell>
-                        <md-table-cell>{{ meter.serialNumber}}</md-table-cell>
-                        <md-table-cell>{{meter.tariff}}</md-table-cell>
-                        <md-table-cell>{{ meter.manufacturer.manufacturerName}}</md-table-cell>
-                        <md-table-cell>
-                            {{meter.type}}
-                            <span
-                                v-if="meter.online"
-                                class="label label-success"
-                                style="padding: 5px; font-size: 1.2rem"
-                            >
+                        <md-table-row
+                            v-for="meter in meters.list"
+                            :key="meter.id"
+                            :class="meter.inUse===1 ? 'active': 'warning'"
+                            style="cursor:pointer;"
+                            @click="meterDetail( meter.serialNumber)"
+                        >
+                            <md-table-cell>{{ meter.id}}</md-table-cell>
+                            <md-table-cell>{{ meter.serialNumber}}</md-table-cell>
+                            <md-table-cell>{{meter.tariff}}</md-table-cell>
+                            <md-table-cell>{{ meter.manufacturer.manufacturerName}}</md-table-cell>
+                            <md-table-cell>
+                                {{meter.type}}
+                                <span
+                                    v-if="meter.online"
+                                    class="label label-success"
+                                    style="padding: 5px; font-size: 1.2rem"
+                                >
               <i class="fa fa-globe"></i>
             </span>
-                        </md-table-cell>
-                        <md-table-cell>{{meter.lastUpdate}}</md-table-cell>
-                    </md-table-row>
-                </md-table>
-            </div>
-            <div v-else>
-                <no-table-data :headers="headers" :tableName="tableName"/>
-            </div>
+                            </md-table-cell>
+                            <md-table-cell>{{meter.lastUpdate}}</md-table-cell>
+                        </md-table-row>
+                    </md-table>
 
         </widget>
     </div>
@@ -69,18 +60,17 @@ import Widget from '../../shared/widget'
 import { Meters } from '../../classes/Meters'
 import { Manufacturers } from '../../classes/Manufacturer'
 import { EventBus } from '../../shared/eventbus'
-import NoTableData from '../../shared/NoTableData'
 
 export default {
     name: 'MeterList',
-    components: { Widget, NoTableData },
+    components: { Widget },
     data () {
         return {
             meters: new Meters(),
             manufacturers: new Manufacturers(),
             subscriber: 'meterList',
             headers: ['ID', 'Serial Number', 'Tariff', 'Manufacturer', 'Type', 'Last update'],
-            tableName: 'Meter'
+            tableName: 'Meter',
         }
     },
 
@@ -96,9 +86,12 @@ export default {
         EventBus.$off('end_searching', this.endSearching)
     },
     methods: {
-        reloadList (subscriber, data) {
-            if (subscriber !== this.subscriber) return
-            this.meters.updateList(data)
+        async reloadList (subscriber, data) {
+            if (subscriber !== this.subscriber){
+                return
+            }
+            await this.meters.updateList(data)
+            EventBus.$emit('widgetContentLoaded',this.subscriber,this.meters.list.length)
         },
         confirmDelete (meter) {
             this.$swal({
@@ -164,7 +157,6 @@ export default {
             })
         },
         searching (searchTerm) {
-
             this.meters.search(searchTerm)
         },
         endSearching () {

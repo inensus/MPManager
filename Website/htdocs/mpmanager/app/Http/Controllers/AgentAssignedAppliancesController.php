@@ -7,6 +7,11 @@ use App\Models\Agent;
 use App\Services\AgentAssignedApplianceService;
 use Illuminate\Http\Request;
 
+/**
+ * @group Agent-Appliances
+ * Class AgentAssignedApplianceController
+ * @package App\Http\Controllers
+ */
 class AgentAssignedAppliancesController extends Controller
 {
 
@@ -18,7 +23,7 @@ class AgentAssignedAppliancesController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * List for Android-APP.
      *
      * @param Request $request
      * @return ApiResource
@@ -32,7 +37,10 @@ class AgentAssignedAppliancesController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
+     * @bodyParam agent_id integer required
+     * @bodyParam user_id integer required
+     * @bodyParam appliance_type_id integer required
+     * @bodyParam cost integer required
      * @param CreateAgentAssignedApplianceRequest $request
      * @return ApiResource
      */
@@ -50,30 +58,10 @@ class AgentAssignedAppliancesController extends Controller
     }
 
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return void
-     */
-    public function update(Request $request)
-    {
-        //
-    }
+   
 
     /**
-     * Remove the specified resource from storage.
-     *
-     * @param Request $request
-     * @return void
-     */
-    public function destroy(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display a listing of the resource.
+     * List for Web interface.
      *
      * @param Agent $agent
      * @param Request $request

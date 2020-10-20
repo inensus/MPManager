@@ -8,7 +8,6 @@
             :subscriber="subscriber"
             :color="'red'"
         >
-            <div v-if="list.length>0">
                 <md-table v-model="list" md-sort="id" md-sort-order="desc">
                     <md-table-row>
                         <md-table-head v-for="(item, index) in headers" :key="index">{{item}}</md-table-head>
@@ -19,20 +18,14 @@
                         <md-table-cell md-label="Date">{{item.date}}</md-table-cell>
                         <md-table-cell md-label="Name">{{item.name}}</md-table-cell>
                         <md-table-cell md-label="File">
-                            <div @click="download(item.id, '/download')">
-                                <font-awesome-icon icon="save" style="cursor: pointer"/>
+                            <div  style="cursor: pointer;" @click="download(item.id, '/download')">
+                                <md-icon>save</md-icon>
                                 <span> Download</span>
-
                             </div>
-
                         </md-table-cell>
                     </md-table-row>
 
                 </md-table>
-            </div>
-            <div v-else>
-                <no-table-data :headers="headers" :tableName="tableName"/>
-            </div>
         </widget>
     </div>
 
@@ -42,12 +35,11 @@
 import Widget from '../../shared/widget'
 import { EventBus } from '../../shared/eventbus'
 import { ReportsService } from '../../services/ReportsService'
-import NoTableData from '../../shared/NoTableData'
 
 export default {
     name: 'Reports',
     components: {
-        Widget, NoTableData
+        Widget
     },
     props: {
         id: null,
@@ -74,9 +66,11 @@ export default {
 
     methods: {
         reloadList (subscriber, data) {
-            if (subscriber === this.subscriber) {
-                this.list = this.reportService.updateList(data)
+            if (subscriber !== this.subscriber) {
+                return
             }
+            this.list = this.reportService.updateList(data)
+            EventBus.$emit('widgetContentLoaded',this.subscriber,this.reportService.list.length)
         },
 
         download (id, reference) {

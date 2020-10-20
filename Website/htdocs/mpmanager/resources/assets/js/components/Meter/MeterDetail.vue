@@ -1,9 +1,5 @@
 <template>
     <div class="page-container" id="widget-grid">
-        <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
-        />
         <div class="md-layout md-gutter">
             <div class="md-layout-item md-size-35 md-small-size-100">
                 <widget :title="'Overview'" class="col-sm-5" :id="'meter-overview'">
@@ -154,39 +150,36 @@
                     :id="'meter-transactions'"
                     :paginator="transactions.paginator"
                     :subscriber="subscriber"
+                    color="green"
                 >
                     <md-card>
                         <md-card-content>
-                            <div v-if="transactions.tokens.length>0">
-                                <md-table>
-                                    <md-table-row>
-                                        <md-table-head v-for="(item, index) in headers" :key="index">{{item}}
-                                        </md-table-head>
-                                    </md-table-row>
-                                    <md-table-row v-for="token in transactions.tokens" :key="token.id">
-                                        <md-table-cell v-text="token.transaction.id"></md-table-cell>
-                                        <md-table-cell
-                                            v-text="token.transaction.original_transaction_type == 'vodacom_transaction' ? 'Vodacom' :'Airtel'"
-                                        ></md-table-cell>
-                                        <md-table-cell v-text="token.transaction.amount"></md-table-cell>
-                                        <md-table-cell
-                                            v-if="token.paid_for_type === 'token'"
-                                        >Token {{token.paid_for.token}}
-                                        </md-table-cell>
-                                        <md-table-cell v-else>Access Rate</md-table-cell>
-                                        <md-table-cell
-                                            v-if="token.paid_for_type === 'token'"
-                                            v-text="token.paid_for.energy + 'kWh'"
-                                        ></md-table-cell>
-                                        <md-table-cell v-else>-</md-table-cell>
-                                        <md-table-cell v-text="token.created_at"></md-table-cell>
-                                    </md-table-row>
-                                </md-table>
-                            </div>
 
-                            <div v-else>
-                                <no-table-data :headers="headers" :tableName="tableName"/>
-                            </div>
+                                    <md-table>
+                                        <md-table-row>
+                                            <md-table-head v-for="(item, index) in headers" :key="index">{{item}}
+                                            </md-table-head>
+                                        </md-table-row>
+                                        <md-table-row v-for="token in transactions.tokens" :key="token.id">
+                                            <md-table-cell v-text="token.transaction.id"></md-table-cell>
+                                            <md-table-cell
+                                                v-text="token.transaction.original_transaction_type == 'vodacom_transaction' ? 'Vodacom' :'Airtel'"
+                                            ></md-table-cell>
+                                            <md-table-cell v-text="token.transaction.amount"></md-table-cell>
+                                            <md-table-cell
+                                                v-if="token.paid_for_type === 'token'"
+                                            >Token {{token.paid_for.token}}
+                                            </md-table-cell>
+                                            <md-table-cell v-else>Access Rate</md-table-cell>
+                                            <md-table-cell
+                                                v-if="token.paid_for_type === 'token'"
+                                                v-text="token.paid_for.energy + 'kWh'"
+                                            ></md-table-cell>
+                                            <md-table-cell v-else>-</md-table-cell>
+                                            <md-table-cell v-text="token.created_at"></md-table-cell>
+                                        </md-table-row>
+                                    </md-table>
+
                         </md-card-content>
                     </md-card>
                 </widget>
@@ -195,7 +188,7 @@
 
         <div style="margin-top: 1rem;"></div>
 
-        <widget :title="'Meter Readings'" class="col-sm-12" :id="'meter-readings'">
+        <widget v-if="meter.meterType.online !== 0" :title="'Meter Readings'" class="col-sm-12" :id="'meter-readings'">
             <div role="menu" slot="tabbar">
                 <button
                     class="md-button dropdown-toggle btn-xs"
@@ -204,7 +197,7 @@
                     style="color:white"
                 >
                     Period
-                    <font-awesome-icon icon="caret-down"/>
+                    <md-icon>calendar_today</md-icon>
                 </button>
             </div>
 
@@ -250,13 +243,12 @@ import { Meter } from '../../classes/meter/meter'
 import { resources } from '../../resources'
 import { ConnectionTypes } from '../../classes/connection/ConnectionTypes'
 import { currency } from '../../mixins/currency'
-import NoTableData from '../../shared/NoTableData'
 import moment from 'moment'
 
 
 export default {
     name: 'MeterDetail',
-    components: { Widget, NoTableData },
+    components: { Widget },
     mixins: [currency],
     created () {
         EventBus.$on('pageLoaded', this.reloadList)
@@ -353,8 +345,11 @@ export default {
             })
         },
         reloadList (subscriber, data) {
-            if (subscriber !== this.subscriber) return
+            if (subscriber !== this.subscriber){
+                return
+            }
             this.transactions.updateList(data)
+            EventBus.$emit('widgetContentLoaded',this.subscriber,this.transactions.tokens.length)
         },
         getConsumptions () {
             this.loading = true

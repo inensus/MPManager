@@ -73,8 +73,9 @@
                 <div>
                     <div class="md-layout-item md-size-100" id="logger-done-success"
                          v-if="PaymentProcess===true">
-                        <span class="success-span">Successful <font-awesome-icon class="success-icon"
-                                                                                 icon="check"/></span>
+                        <span class="success-span">Successful
+                            <md-icon style="color: green">check</md-icon>
+                        </span>
 
                         <div class="md-layout-item md-size-100 exclamation-div">
                             <span v-if="purchasingType==='logger' ">You have purchased one more slot to logging mini-grid data</span>
@@ -83,8 +84,9 @@
                     </div>
                     <div class="md-layout-item md-size-100" id="logger-done-fail"
                          v-if="PaymentProcess===false">
-                        <span class="failure-span">Something went wrong <font-awesome-icon class="fail-icon"
-                                                                                           icon="exclamation"/></span>
+                        <span class="failure-span">Something went wrong
+                            <md-icon style="color: red">priority_high</md-icon>
+                        </span>
 
                         <div class="md-layout-item md-size-100 exclamation-div">
                             <span>We were not able to process your Payment. Please contact the administrator.</span>

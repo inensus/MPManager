@@ -7,10 +7,11 @@
         <widget id="tariff-list"
                 title="Tariffs"
                 :button="true"
+                :subscriber="subscriber"
                 buttonText="New Tariff"
-                :callback="showNewTariff"
-                color="red">
-            <div v-if="tariffService.list.length>0">
+                @widgetAction="showNewTariff"
+                color="green">
+
                 <md-table
                     v-model="tariffService.list"
                     md-sort="id"
@@ -52,14 +53,8 @@
                     </md-table-row>
                 </md-table>
                 <md-progress-bar md-mode="indeterminate" v-if="loading"/>
-            </div>
 
-            <div v-else>
-                <no-table-data :headers="headers" :tableName="tableName"/>
-            </div>
         </widget>
-
-
     </div>
 </template>
 
@@ -69,14 +64,14 @@ import { currency } from '../../mixins/currency'
 import Add from './Add'
 import { EventBus } from '../../shared/eventbus'
 import { TariffService } from '../../services/TariffService'
-import NoTableData from '../../shared/NoTableData'
 
 export default {
     name: 'TariffList',
-    components: { Widget, Add, NoTableData },
+    components: { Widget, Add },
     mixins: [currency],
     data () {
         return {
+            subscriber:'tariff-list',
             tariffService: new TariffService(),
             tariffList: [],
             headers: ['ID', 'Name', 'kWh Price', 'Access Rate', 'Access Rate Period in Days','#'],

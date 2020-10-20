@@ -4,51 +4,48 @@
         <widget
             title="Sms List"
             :subscriber="subscriber"
-
-            :callback="() => {this.showModal = true}"
-            color="red"
+            @widgetAction="() => {this.showModal = true}"
+            color="green"
             :paginator="smsService.paginator"
             :route_name="'/sms/list'"
+            :button="false"
         >
 
             <div class="md-layout md-gutter" v-if="!showModal">
                 <div class="md-layout-item md-size-35 " style="min-height: 95vh!important;
     border-right: 1px solid #d6d6d6;">
                     <div class="scrollable">
-                        <div v-if="numberList.length>0">
-                            <md-table>
-                                <md-table-toolbar>
-                                    <md-field>
-                                        <md-input v-model="filterNumber" type="text" class="form-control"
-                                                  placeholder="Search"
-                                        ></md-input>
-                                    </md-field>
-                                </md-table-toolbar>
-                                <md-table-row v-for="sms in numberList" :key="sms.number"
-                                              style="cursor:pointer;"
-                                              @click="smsDetail( sms.number)">
-                                    <md-table-cell v-if="sms.owner"
-                                                   :class="sms.number === selectedNumber?  'active':''">
-                                        <img :data-letters="sms.owner.name[0] +sms.owner.surname[0]" src="" alt="">
-                                        {{sms.owner.name}}
-                                        {{sms.owner.surname}}
-                                        <small>({{sms.number}})</small>
 
-                                    </md-table-cell>
-                                    <md-table-cell v-else>
-                                        <span data-letters="??" src="" alt=""></span>
-                                        {{ sms.number}}
-                                        <small style="position: absolute; right: 1vw;" class="badge badge-info"> {{
-                                            sms.total}}
-                                        </small>
-                                    </md-table-cell>
-                                </md-table-row>
-                            </md-table>
-                        </div>
+                                <md-table>
+                                    <md-table-toolbar>
+                                        <md-field>
+                                            <md-input v-model="filterNumber" type="text" class="form-control"
+                                                      placeholder="Search"
+                                            ></md-input>
+                                        </md-field>
+                                    </md-table-toolbar>
+                                    <md-table-row v-for="sms in numberList" :key="sms.number"
+                                                  style="cursor:pointer;"
+                                                  @click="smsDetail( sms.number)">
+                                        <md-table-cell v-if="sms.owner"
+                                                       :class="sms.number === selectedNumber?  'active':''">
+                                            <img :data-letters="sms.owner.name[0] +sms.owner.surname[0]" src="" alt="">
+                                            {{sms.owner.name}}
+                                            {{sms.owner.surname}}
+                                            <small>({{sms.number}})</small>
 
-                        <div v-else>
-                            <no-table-data :headers="headers" :tableName="tableName"/>
-                        </div>
+                                        </md-table-cell>
+                                        <md-table-cell v-else>
+                                            <span data-letters="??" src="" alt=""></span>
+                                            {{ sms.number}}
+                                            <small style="position: absolute; right: 1vw;" class="badge badge-info"> {{
+                                                    sms.total}}
+                                            </small>
+                                        </md-table-cell>
+                                    </md-table-row>
+                                </md-table>
+
+
                     </div>
                 </div>
                 <div class="md-layout-item md-size-65">
@@ -85,14 +82,12 @@
                     </div>
                 </div>
             </div>
-
         </widget>
     </div>
 </template>
 
 <script>
 import Widget from '../../shared/widget'
-import NoTableData from '../../shared/NoTableData'
 import { EventBus } from '../../shared/eventbus'
 import { SmsService } from '../../services/SmsService'
 
@@ -100,7 +95,7 @@ const debounce = require('debounce')
 
 export default {
     name: 'List',
-    components: {Widget, NoTableData },
+    components: {  Widget },
     watch: {
         filterNumber: debounce(function () {
             this.searchSms(this.filterNumber)
@@ -136,6 +131,7 @@ export default {
 
             if (subscriber !== this.subscriber) return
             this.numberList = this.smsService.updateList(data)
+            EventBus.$emit('widgetContentLoaded',this.subscriber,this.numberList.length)
             if (this.numberList.length > 0)
                 this.list = this.smsDetail(this.numberList[0].number)
         },

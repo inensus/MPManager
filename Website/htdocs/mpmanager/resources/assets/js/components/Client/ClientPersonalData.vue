@@ -4,14 +4,15 @@
         title="Details"
         :button="true"
         button-text="Delete Person"
-        color="red"
-        :callback="confirmDelete">
+        :callback="confirmDelete"
+        button-icon="delete"
+        :show-spinner="false">
 
         <md-card>
             <md-card-content>
                 <div class="md-layout md-gutter" v-if="!editPerson">
                     <div class="md-layout-item md-large-size-15 md-medium-size-20 md-small-size-25">
-                        <font-awesome-icon icon="user" class="fa-4x"/>
+                        <md-icon class="md-size-3x">account_circle</md-icon>
                     </div>
                     <div class="md-layout-item md-size-65">
                         <h3>{{this.personService.person.title }} {{ this.personService.person.name}}
@@ -19,26 +20,26 @@
                     </div>
                     <div class="md-layout-item md-large-size-20 md-medium-size-15 md-small-size-10">
                         <md-button @click="editPerson=true" class="md-icon-button" style="float: right">
-                            <font-awesome-icon icon="pen"/>
+                            <md-icon>create</md-icon>
                         </md-button>
                     </div>
                     <div class="md-layout-item md-size-100">&nbsp;</div>
                     <div class="md-layout-item md-size-15">
-                        <font-awesome-icon icon="venus-mars"/>&nbsp;Gender:
+                        <md-icon>wc</md-icon> Gender:
                     </div>
                     <div class="md-layout-item md-size-15">
                         {{this.personService.person.gender}}
                     </div>
 
                     <div class="md-layout-item md-size-20">
-                        <font-awesome-icon icon="graduation-cap"/>&nbsp;Education:
+                        <md-icon>school</md-icon>&nbsp;Education:
                     </div>
                     <div class="md-layout-item md-size-15">
                         {{this.personService.person.education}}
                     </div>
 
                     <div class="md-layout-item md-size-15">
-                        <font-awesome-icon icon="birthday-cake"/>&nbsp;Birth Date:
+                        <md-icon>cake</md-icon>&nbsp;Birth Date:
                     </div>
                     <div class="md-layout-item md-size-15">
                         {{this.personService.person.birthDate}}

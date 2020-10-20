@@ -1,7 +1,5 @@
 <template>
     <div>
-
-
         <new-user :newUser="newUser"
                   @stored="getEmployees"
                   @closed=" () => {this.newUser = false}"></new-user>
@@ -9,7 +7,7 @@
             title="New Maintenance Request"
             button-text="New Maintenance Service Provider"
             :button="true"
-            :callback="openNewUser"
+            @widgetAction="openNewUser"
             color="green"
         >
 
@@ -99,7 +97,7 @@
 
                     <md-card-actions>
                         <md-button class="md-raised md-primary" type="submit" :disabled="loading">
-                            <font-awesome-icon icon="save"></font-awesome-icon>
+                            <md-icon>save</md-icon>
                             Save
                         </md-button>
                     </md-card-actions>
@@ -182,13 +180,14 @@ export default {
         async saveTicket () {
             try {
                 this.loading = true
+                console.log(this.maintenanceData)
                 await this.ticketService.createMaintenanceTicket(this.maintenanceData)
                 await this.smsService.sendMaintenanceSms(this.maintenanceData)
                 this.alertNotify('success', 'The Task created successfully. The Person will also be notified by sms')
                 this.maintenanceService.resetMaintenance()
                 this.loading = false
             } catch (e) {
-                this.alertNotify('error', 'e.message')
+                this.alertNotify('error', e.message)
                 this.loading = false
             }
         },

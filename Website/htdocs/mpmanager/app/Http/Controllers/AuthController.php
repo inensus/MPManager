@@ -3,6 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
+/**
+ * @group Authenticator
+ * Class AuthController
+ * Responsible for API-Call authentications.
+ * @package App\Http\Controllers
+ */
 
 class AuthController extends Controller
 {
@@ -16,7 +22,12 @@ class AuthController extends Controller
         $this->middleware('auth:api', ['except' => ['login']]);
     }
 
-
+    /**
+     * JWT authentication
+     *
+     * @bodyParam email string required
+     * @bodyParam password string required
+     */
     public function login()
     {
         $credentials = request(['email', 'password']);
@@ -51,8 +62,9 @@ class AuthController extends Controller
     }
 
     /**
-     * Refresh a token.
-     *
+     * Refresh token
+     * Generates a new valid token for the next 3600 seconds
+     * Inorder to generate the new token, a working (Bearer)token has to be provided in the header
      * @return JsonResponse
      */
     public function refresh()

@@ -3,6 +3,7 @@
     <widget
         v-if="showAdd"
         title="Add New Tariff"
+        color="red"
     >
         <md-card>
 
@@ -79,12 +80,13 @@
                     <div class="md-layout-item md-xlarge-size-100 md-large-size-100 md-medium-size-100 md-small-size-100">
                         <md-checkbox v-model="hasAccessRate" @change="accessRateChange($event)">Enable access rate?</md-checkbox>
                     </div>
+                    <div class="md-layout-item md-large-size-100 md-medium-size-100 md-small-size-100">
 
                    <!--Additional-Components-->
                     <div class="md-layout-item  md-xlarge-size-100 md-large-size-100 md-medium-size-100 md-small-size-100">
 
                         <md-button role="button" class="md-raised md-secondary" @click="addComponent('component')">
-                            <font-awesome-icon icon="plus"/>
+                            <md-icon>add</md-icon>
                             Add Additional Cost Component
                         </md-button>
                     </div>
@@ -130,7 +132,7 @@
                     <!--TOUS-->
                     <div class="md-layout-item  md-xlarge-size-100 md-large-size-100 md-medium-size-100 md-small-size-100">
                         <md-button role="button" :disabled="tariffService.conflicts.length>0" class="md-raised md-secondary" @click="addComponent('usage')">
-                            <font-awesome-icon icon="plus"/>
+                            <md-icon>add</md-icon>
                             Add TOU
                         </md-button>
                         <div v-if="tariffService.tariff.tous.length>0" role="alert" class="alert alert-info">

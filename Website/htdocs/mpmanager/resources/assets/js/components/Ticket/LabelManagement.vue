@@ -1,14 +1,9 @@
 <template>
     <div class="row">
-        <widget
-            :title="'Ticket Categories'"
-            :button="true"
-            :button-text="'New Categorie'"
-            :callback="() => {newLabel = true}"
-            color="green">
-
-
-            <md-card v-if="newLabel">
+        <widget v-if="newLabel"
+            title="New Category Label"
+            color="red">
+            <md-card >
                 <md-card-header>
                     <div class="md-title">Categories for Tickets</div>
                 </md-card-header>
@@ -62,7 +57,7 @@
                     </div>
                     <div class="md-layout">
                         <span class="md-subheader">
-                            By any question please get in touch with &nbsp; <font-awesome-icon icon="envelope"/>  ako@inensus.com
+                            By any question please get in touch with &nbsp; <md-icon>email</md-icon> ako@inensus.com
                     </span>
 
                     </div>
@@ -76,10 +71,18 @@
                     <md-button class="md-raised md-accent" @click="() => {newLabel = false}">Cancel</md-button>
                 </md-card-actions>
             </md-card>
+        </widget>
 
+        <widget
+            :title="'Ticket Categories'"
+            :button="true"
+            :button-text="'New Categorie'"
+            @widgetAction="() => {newLabel = true}"
+            color="green"
+            :subscriber="subscriber">
             <md-card>
                 <md-card-content>
-                    <div v-if="ticketLabelService.list.length>0">
+
                         <md-table>
                             <md-table-row>
                                 <md-table-head v-for="(item, index) in headers" :key="index">{{item}}</md-table-head>
@@ -93,16 +96,12 @@
                                     {{label.label_color}}
                                 </md-table-cell>
                                 <md-table-cell>
-                                    <font-awesome-icon v-if="label.out_source===0" icon="times"/>
-                                    <font-awesome-icon v-else icon="check"/>
+                                    <md-icon v-if="label.out_source === 0">cancel</md-icon>
+                                    <md-icon v-else>check</md-icon>
                                 </md-table-cell>
                             </md-table-row>
 
                         </md-table>
-                    </div>
-                    <div v-else>
-                        <no-table-data :headers="headers" :tableName="tableName"/>
-                    </div>
 
                 </md-card-content>
 
@@ -117,47 +116,46 @@
 <script>
 import Widget from '../../shared/widget'
 import { TicketLabelService } from '../../services/TicketLabelService'
-import NoTableData from '../../shared/NoTableData'
+import { EventBus } from '../../shared/eventbus'
 
 export default {
     name: 'LabelManagement',
-    components: { Widget, NoTableData },
+    components: { Widget },
     data () {
         return {
             ticketLabelService: new TicketLabelService(),
             newLabel: false,
             headers: ['ID', 'Name', 'Color', 'Outsourcing'],
             tableName: 'Category',
-            loading: false
+            loading: false,
+            subscriber:'ticket-labels'
         }
 
     },
 
     created () {
         this.getLabels()
-
     },
 
-    mounted () {
-
-    },
     methods: {
         async getLabels () {
             try {
                 await this.ticketLabelService.getLabels()
+                EventBus.$emit('widgetContentLoaded',this.subscriber,this.ticketLabelService.list.length)
             } catch (e) {
                 this.alertNotify('error', e.message)
             }
         },
         async saveLabel () {
 
-            let validator = await this.$validator.validateAll()
+            let validator = await this.$validator.validateAll('')
             if (validator) {
 
                 try {
                     this.loading = true
                     await this.ticketLabelService.createLabel(this.ticketLabelService.newLabelName, this.ticketLabelService.currentColor, this.ticketLabelService.outSourcing)
                     this.alertNotify('success', 'New category added successfully.')
+                    await this.getLabels()
                     this.loading = false
                 } catch (e) {
                     this.loading = false

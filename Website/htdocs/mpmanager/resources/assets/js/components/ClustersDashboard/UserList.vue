@@ -41,7 +41,7 @@ export default {
 
         async getUserList () {
             try {
-                this.users = await this.userService.getUsers()
+                this.users = await this.userService.getUsers(0)
             } catch (e) {
                 this.alertNotify('error', e.message)
             }
