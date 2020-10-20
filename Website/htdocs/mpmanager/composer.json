@@ -11,7 +11,7 @@
         "php": "^7.3",
         "doctrine/dbal": "2.10.1",
         "fideloper/proxy": "^4.0",
-        "guzzlehttp/guzzle": "7.0.0-beta.1",
+        "guzzlehttp/guzzle": "7.2.0",
         "kemal/ticket": "dev-master",
         "laravel/framework": "^7.0",
         "laravel/helpers": "^1.2",
