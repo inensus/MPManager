@@ -25,7 +25,8 @@
                             {{ readable(item.price/100)}} {{item.currency}}
                         </md-table-cell>
                         <md-table-cell md-label="Access Rate" md-numeric md-sort-by="accessRate.amount">
-                            <div v-if="item.accessRate">
+
+                            <div v-if="item.accessRate.amount|| item.accessRate.amount===0">
                                 {{ readable(item.accessRate.amount) }} {{item.currency}}
                             </div>
                             <div v-else>-</div>
@@ -90,7 +91,6 @@ export default {
         async getTariffs () {
             try {
                 await this.tariffService.getTariffs()
-                EventBus.$emit('widgetContentLoaded',this.subscriber,this.tariffService.list.length)
             } catch (e) {
                 this.alertNotify('error', e.message)
             }

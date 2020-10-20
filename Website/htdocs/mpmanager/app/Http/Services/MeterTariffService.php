@@ -21,13 +21,6 @@ class MeterTariffService
 
     public function update(MeterTariff $tariff, TariffCreateRequest $request): Model
     {
-        $tariff->name = $request->input('name');
-        $tariff->factor = $request->input('factor');
-        $tariff->currency = $request->input('currency');
-        $tariff->price = $request->input('price');
-        $tariff->total_price = $request->input('price');
-        $tariff->update();
-
         if ($accessRate = request()->input('access_rate')) {
             if ($accessRate['id']) {
                 $updatedAccessRate = AccessRate::find($accessRate['id']);
@@ -97,6 +90,15 @@ class MeterTariffService
                 }
             }
         }
+        $tariff->update([
+            'name'=>$request->input('name'),
+            'factor'=>$request->input('factor'),
+            'currency'=>$request->input('currency'),
+            'price'=>$request->input('price'),
+            'total_price'=>$request->input('price'),
+             'updated_at' => date('Y-m-d h:i:s')
+        ]);
+
         return $meterTariff = MeterTariff::with([
             'accessRate',
             'pricingComponent',

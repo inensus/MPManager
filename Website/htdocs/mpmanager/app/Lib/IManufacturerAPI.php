@@ -8,17 +8,17 @@
 
 namespace App\Lib;
 
+use App\Misc\TransactionDataContainer;
 use App\Models\Meter\Meter;
 use App\Models\Meter\MeterToken;
 
 interface IManufacturerAPI
 {
     /**
-     * @param Meter $meter
-     * @param $energy
+     * @param TransactionDataContainer $transactionContainer
      * @return array
      */
-    public function  chargeMeter(Meter $meter, $energy): array;
+    public function  chargeMeter(TransactionDataContainer $transactionContainer): array;
 
     public function clearMeter(Meter $meter);
 }

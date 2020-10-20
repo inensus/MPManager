@@ -112,27 +112,32 @@ class MeterParameterController extends Controller
      */
     public function update(string $meterId)
     {
+
         $personId = \request('personId') ?? -1;
         $tariffId = \request('tariffId') ?? -1;
         $connectionId = \request('connectionId') ?? -1;
         $parameter = $this->meterParameter->where('meter_id', $meterId)->first();
+
         if ($personId !== -1) {
             $parameter->owner()->associate(Person::findOrFail($personId));
         } elseif ($connectionId !== -1) {
             $parameter->connectionType()->associate(SubConnectionType::findOrFail($connectionId));
         } elseif ($tariffId !== -1) {
-            $parameter->tariff()->associate(MeterTariff::findOrFail($tariffId));
-
-            $tariff = MeterTariff::find($tariffId);
+            $tariff = MeterTariff::findOrFail($tariffId);
+            $parameter->tariff()->associate($tariff);
             $accessRate = $tariff->accessRate()->first();
-
             $acP = $parameter->meter()->first()->accessRatePayment()->first();
-
-            $acP->access_rate_id = $accessRate->id;
-            $acP->update();
-
+            if ($acP){
+                $acP->access_rate_id = $accessRate->id;
+                $acP->update();
+            }
         } else {
             return;
+        }
+        $person=Person::find($parameter->owner_id);
+        if ($person) {
+            $person->update([
+                'updated_at' => date('Y-m-d h:i:s')]);
         }
         $parameter->save();
         return new ApiResource($parameter);

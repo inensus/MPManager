@@ -52,8 +52,11 @@ class CalinApi implements IManufacturerAPI
         return [$httpCode, $response];
     }
 
-    public function chargeMeter(Meter $meter, $energy): array
+    public function chargeMeter($transactionContainer): array
     {
+
+        $meter = $transactionContainer->meter;
+        $energy = (float)$transactionContainer->chargedEnergy;
         $timestamp = time();
         $cipherText = $this->generateCipherText(
             $meter->id,

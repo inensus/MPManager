@@ -206,7 +206,8 @@ export default {
             }
         },
         validateNewAddress () {
-            if ('city_id' in this.newAddress === false) {
+
+            if (!('city_id' in this.newAddress) || !this.newAddress.city_id) {
                 this.$swal({
                     type: 'error',
                     title: 'Missing Field',

@@ -7,22 +7,15 @@
  */
 
 /* Meter */
-Route::group(['prefix' => 'meters', 'middleware' => 'jwt.verify'], function () {
+Route::group(['prefix' => 'meters', ], function () {
     Route::get('/', 'MeterController@index');
-    Route::get('/{id}', 'MeterController@show')->where('id', '[0-9]+');
+    Route::get('/{id}', 'MeterController@show');
     Route::post('/', 'MeterController@store');
     Route::put('/{id}', 'MeterController@update')->where('id', '[0-9]+');
     Route::get('/search', 'MeterController@Search');
     Route::delete('/{ownerId}', 'MeterController@destroy');
     Route::get('{serialNumber}/revenue', 'RevenueController@meterRevenue');
-    /* Meter types */
-    Route::group(['prefix' => 'types'], function () {
-        Route::get('/', 'MeterTypeController@index');
-        Route::get('/{id}', 'MeterTypeController@show');
-        Route::post('/', 'MeterTypeController@store');
-        Route::put('/{meterType}', 'MeterTypeController@update');
-        Route::get('/{id}/list', 'MeterTypeController@meterList');
-    });
+
 
     Route::get('/{id}/all', 'MeterController@allRelations');
 
@@ -43,4 +36,12 @@ Route::group(['prefix' => 'meters', 'middleware' => 'jwt.verify'], function () {
     Route::get('{serialNumber}/consumptions/{start}/{end}', 'MeterController@consumptionList');
 
     Route::get('/geoList', 'MeterController@meterGeoList');
+});
+/* Meter types */
+Route::group(['prefix' => 'meter-types'], function () {
+    Route::get('/', 'MeterTypeController@index');
+    Route::get('/{id}', 'MeterTypeController@show');
+    Route::post('/', 'MeterTypeController@store');
+    Route::put('/{meterType}', 'MeterTypeController@update');
+    Route::get('/{id}/list', 'MeterTypeController@meterList');
 });

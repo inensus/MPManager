@@ -18,7 +18,7 @@ class CreateTimeOfUsagesTable extends Migration
             $table->unsignedInteger('tariff_id');
             $table->string('start');
             $table->string('end');
-            $table->integer('value');
+            $table->double('value');
             $table->timestamps();
         });
     }

@@ -10,6 +10,7 @@ namespace App\Observers;
 
 use App\Jobs\CreatePiggyBankEntry;
 use App\Jobs\UpdatePiggyBankEntry;
+use App\Models\Meter\Meter;
 use App\Models\Meter\MeterParameter;
 
 class MeterParameterObserver
@@ -31,6 +32,9 @@ class MeterParameterObserver
     public function created(MeterParameter $meterParameter)
     {
         CreatePiggyBankEntry::dispatch($meterParameter)->allOnConnection('redis')->onQueue(config('services.queues.misc'));
+        $meter = Meter::find($meterParameter->meter_id);
+        $meter->in_use = 1;
+        $meter->save();
     }
 
 

@@ -14,8 +14,9 @@ export class MeterTypeService {
             if( response.status === 200 ){
                 let data = response.data.data
                 for(let i in data){
+
                     let meterTypeData = data[i]
-                    let meterTypeOnline = meterTypeData.online === 0 ? 'Online' : 'Offline'
+                    let meterTypeOnline = meterTypeData.online === 1 ? 'Online' : 'Offline'
                     let meterTypes = {
                         id: meterTypeData.id,
                         name: meterTypeData.max_current + 'A ' + meterTypeData.phase + 'P ' + meterTypeOnline,

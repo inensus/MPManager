@@ -40,7 +40,7 @@ export class TariffService {
             name: tariffData.name,
             price: tariffData.price,
             currency: tariffData.currency,
-            factor: tariffData.factor,
+            factor: tariffData.factor?tariffData.factor:1,
             accessRate: {
                 id: null,
                 amount: null,
