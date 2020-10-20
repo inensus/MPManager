@@ -17,8 +17,8 @@
 
         <div class="ramaining-content" style="display: inline-flex">
             <div class="md-layout md-gutter md-alignment-center-left p-15">
-                <div class="md-layout-item md-size-40" style="margin-right: 1vh">
-                    <font-awesome-icon icon="user-circle" class="fa-4x c-white"/>
+                <div class="md-layout-item md-size-40" >
+                    <md-icon class="md-size-2x c-white">account_box</md-icon>
                 </div>
 
                 <div class="md-layout">
@@ -27,7 +27,7 @@
                     </div>
 
                     <div class="md-layout-item md-size-100 c-gray">
-                        <font-awesome-icon icon="clock" swap-opacity/>
+                        <small><md-icon>access_alarm</md-icon></small>
                         <small>{{remaining}}</small>
                     </div>
                 </div>
@@ -44,9 +44,7 @@
                            :to="menu.route">
                     <md-list-item :md-expand="'children' in menu">
                         <!-- add icon if icon is defined -->
-                        <font-awesome-icon :icon="menu.icon" v-if="'icon' in menu" class="c-white icon-box"
-                        />
-
+                        <md-icon v-if="'icon' in menu" class="c-white icon-box">{{menu.icon}}</md-icon>
                         <span class="md-list-item-text c-white">{{menu.name}}</span>
                         <md-list slot="md-expand" v-if="'children' in menu" class="no-bg">
                             <md-list-item v-for="(sub,index) in menu.children"
@@ -91,12 +89,12 @@ export default {
                 {
                     name: 'Customers',
                     route: '/people/page/1',
-                    icon: 'user-friends',
+                    icon: 'supervisor_account',
                 },
                 {
                     name: 'Agents',
 
-                    icon: 'user',
+                    icon: 'support_agent',
                     children: [
                         {
                             name: 'List',
@@ -126,12 +124,12 @@ export default {
                 {
                     name: 'Transactions',
                     route: '/transactions/page/1',
-                    icon: 'university',
+                    icon: 'account_balance',
 
                 },
                 {
                     name: 'Tickets',
-                    icon: 'ticket-alt',
+                    icon: 'confirmation_number',
                     children: [
                         {
                             name: 'List',
@@ -150,21 +148,21 @@ export default {
                 {
                     name: 'Tariffs',
                     route: '/tariffs',
-                    icon: 'charging-station',
+                    icon: 'widgets',
                 },
                 {
                     name: 'Targets',
                     route: '/targets',
-                    icon: 'bullseye',
+                    icon: 'gps_fixed',
                 },
                 {
                     name: 'Reports',
                     route: '/reports',
-                    icon: 'file-excel',
+                    icon: 'text_snippet',
                 },
                 {
                     name: 'Connection',
-                    icon: 'network-wired',
+                    icon: 'cast',
                     children: [
                         {
                             name: 'Groups',
@@ -194,16 +192,16 @@ export default {
                 {
                     name: 'Asset Types',
                     route: '/assets/types/page/1',
-                    icon: 'toolbox',
+                    icon: 'devices_other',
                 },
                 {
                     name: 'Maintenance',
                     route: '/maintenance',
-                    icon: 'wrench',
+                    icon: 'home_repair_service',
                 },
                 {
                     name: 'Locations',
-                    icon: 'map-marker',
+                    icon: 'add_location_alt',
                     children: [
                         {
                             name: 'Add Cluster',

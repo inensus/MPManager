@@ -23,9 +23,6 @@ import {config} from './config'
 
 Vue.prototype.appConfig = config
 
-import Raphael from 'raphael/raphael'
-
-global.Raphael = Raphael
 
 import Vue from 'vue'
 import VueRouter from 'vue-router'
@@ -100,11 +97,6 @@ Vue.use(VueGoogleMaps, {
         key: 'AIzaSyCiSUjcyWMpV8dAMjIQ-VUaLZZ9NEFIELo',
     },
 })
-
-import VTooltip from 'v-tooltip'
-
-Vue.use(VTooltip)
-
 import VueHtml2Canvas from 'vue-html2canvas'
 
 Vue.use(VueHtml2Canvas)
@@ -119,18 +111,11 @@ import SidebarComponent from './components/Sidebar'
 Vue.use(SidebarComponent)
 import '../sass/mpm.scss'
 
+
 import VeeValidate from 'vee-validate'
 
 Vue.use(VeeValidate)
 
-import {library} from '@fortawesome/fontawesome-svg-core'
-import {fas} from '@fortawesome/free-solid-svg-icons'
-import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome'
-import {faJs, faFacebookF, faSkype} from '@fortawesome/free-brands-svg-icons'
-
-library.add(fas)
-library.add(faJs, faFacebookF, faSkype)
-Vue.component('font-awesome-icon', FontAwesomeIcon)
 
 import Default from './layouts/Default.vue'
 

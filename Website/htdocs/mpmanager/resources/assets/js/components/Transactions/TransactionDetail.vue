@@ -5,7 +5,7 @@
                 <div
                     class="md-layout-item  md-xlarge-size-50  md-large-size-50 md-medium-size-50  md-small-size-100 md-xsmall-size-100">
                     <div class="transaction-detail-card">
-                        <widget title="Provider Specific Information">
+                        <widget title="Provider Specific Information" :show-spinner="false">
                             <md-card>
                                 <md-card-content>
 
@@ -31,7 +31,10 @@
                 <div
                     class="md-layout-item  md-xlarge-size-50  md-large-size-50 md-medium-size-50  md-small-size-100 md-xsmall-size-100">
                     <div class="transaction-detail-card">
-                        <widget color="red" title="Details">
+                        <widget
+                            color="red"
+                            title="Details"
+                            :show-spinner="false">
                             <md-card>
                                 <md-card-content>
                                     <div class="md-layout">
@@ -90,7 +93,10 @@
             <div class="md-layout md-gutter">
                 <div class="md-layout-item md-size-50">
                     <div class="transaction-detail-card">
-                        <widget color="green" title="Transaction Processing">
+                        <widget
+                            color="green"
+                            title="Transaction Processing"
+                            :show-spinner="false">
                             <md-card>
                                 <md-card-content v-if="ot.status===1">
                                     <div class="md-layout md-gutter md-size-100" justify="around">
@@ -135,7 +141,10 @@
                 </div>
                 <div class="md-layout-item md-size-50">
                     <div class="transaction-detail-card">
-                        <widget color="red" title="Outgoing sms">
+                        <widget
+                            color="red"
+                            title="Outgoing sms"
+                            :show-spinner="false">
                             <md-card>
                                 <md-card-content v-if="transaction.sms">
 

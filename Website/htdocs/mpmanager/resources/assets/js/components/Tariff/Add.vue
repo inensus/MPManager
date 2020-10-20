@@ -3,6 +3,7 @@
     <widget
         v-if="showAdd"
         title="Add New Tariff"
+        color="red"
     >
         <md-card>
 
@@ -84,7 +85,7 @@
                     <div class="md-layout-item  md-xlarge-size-100 md-large-size-100 md-medium-size-100 md-small-size-100">
 
                         <md-button role="button" class="md-raised md-secondary" @click="addComponent('component')">
-                            <font-awesome-icon icon="plus"/>
+                            <md-icon>add</md-icon>
                             Add Additional Cost Component
                         </md-button>
                     </div>
@@ -130,7 +131,7 @@
                     <!--TOUS-->
                     <div class="md-layout-item  md-xlarge-size-100 md-large-size-100 md-medium-size-100 md-small-size-100">
                         <md-button role="button" :disabled="tariffService.conflicts.length>0" class="md-raised md-secondary" @click="addComponent('usage')">
-                            <font-awesome-icon icon="plus"/>
+                            <md-icon>add</md-icon>
                             Add TOU
                         </md-button>
                         <div v-if="tariffService.tariff.tous.length>0" role="alert" class="alert alert-info">
@@ -194,12 +195,11 @@
 
                                 </md-field>
                             </div>
-                            <div class="md-layout-item md-xlarge-size-5 md-large-size-5 md-medium-size-5 md-small-size-5"
-                                 @click="removeComponent('usage',tou.id)">
 
-                                <md-icon style="margin-top: 1.5rem;color: red;">cancel
+                            <div class="md-layout-item md-xlarge-size-10 md-large-size-10 md-medium-size-10 md-small-size-10"
+                                 @click="removeComponent('component',component.id)">
+                                <md-icon style="margin-top: 1.5rem;color: #ff0000;">cancel
                                 </md-icon>
-
                             </div>
                         </form>
                     </div>

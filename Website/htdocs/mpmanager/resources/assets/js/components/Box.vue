@@ -6,7 +6,7 @@
                 class="box"
                 style="font-size: 1.5rem"
                 :style="backgroundColor">
-                <font-awesome-icon :icon="boxIcon" style="color:white;" v-if="!customIcon"/>
+                <md-icon style="color:white;" v-if="!customIcon">{{ boxIcon }}</md-icon>
                 <img :src="boxIcon" alt="" v-else>
                 <slot></slot>
             </div>

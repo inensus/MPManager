@@ -8,6 +8,11 @@ use App\Models\Transaction\AgentTransaction;
 use App\Services\AgentTransactionService;
 use Illuminate\Http\Request;
 
+/**
+ * @group AgentTransactions
+ * Class AgentTransactionController
+ * @package App\Http\Controllers
+ */
 class AgentTransactionsController extends Controller
 {
     private $agentTransactionService;
@@ -40,41 +45,6 @@ class AgentTransactionsController extends Controller
         $agent = request()->attributes->get('user');
         $transactions = $this->agentTransactionService->listByCustomer($agent->id, $customerId);
         return new ApiResource($transactions);
-    }
-
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return void
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param AgentTransaction $agent_Transactions
-     * @return void
-     */
-    public function update(Request $request, AgentTransaction $agent_Transactions)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param AgentTransaction $agent_Transactions
-     * @return void
-     */
-    public function destroy(AgentTransaction $agent_Transactions)
-    {
-        //
     }
 
     public function indexWeb(Agent $agent)

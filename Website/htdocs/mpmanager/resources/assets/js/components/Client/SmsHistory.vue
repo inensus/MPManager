@@ -1,31 +1,35 @@
 <template>
-  <widget :title="'Sms History ('+smses.length+')' ">
-    <div id="chat-body" class="chat-body chat-body-scroll" ref="chat">
-      <ul>
-        <li
-          class="message"
-          v-for="sms in smses"
-          :key="sms.id"
-          :class="sms.direction === 0 ? 'incomming' : ''"
-        >
-          <img v-if="sms.direction===0" :data-letters="personName" src alt />
-          <img
-            v-else
-            width="48px"
-            src="https://cdn3.iconfinder.com/data/icons/49handdrawing/256x256/user-admin.png"
-            class="online"
-            alt
-          />
-          <div class="message-text">
-            <time>{{sms.created_at}}</time>
-            <a v-if="sms.direction===0" href="javascript:void(0);" class="username">{{personName}}</a>
-            <a v-else href="javascript:void(0);" class="username">System</a>
-            {{ sms.body}}
+  <widget :title="'Sms History ('+smses.length+')' "
+  color="green"
+  :subscriber="subscriber">
+
+          <div id="chat-body" class="chat-body chat-body-scroll" ref="chat">
+              <ul>
+                  <li
+                      class="message"
+                      v-for="sms in smses"
+                      :key="sms.id"
+                      :class="sms.direction === 0 ? 'incomming' : ''"
+                  >
+                      <img v-if="sms.direction===0" :data-letters="personName" src alt />
+                      <img
+                          v-else
+                          width="48px"
+                          src="https://cdn3.iconfinder.com/data/icons/49handdrawing/256x256/user-admin.png"
+                          class="online"
+                          alt
+                      />
+                      <div class="message-text">
+                          <time>{{sms.created_at}}</time>
+                          <a v-if="sms.direction===0" href="javascript:void(0);" class="username">{{personName}}</a>
+                          <a v-else href="javascript:void(0);" class="username">System</a>
+                          {{ sms.body}}
+                      </div>
+                  </li>
+                  <li v-if="smses.length === 0">There is no sms</li>
+              </ul>
           </div>
-        </li>
-        <li v-if="smses.length === 0">There is no sms</li>
-      </ul>
-    </div>
+
 
     <div class="chat-footer">
       <md-field>
@@ -33,16 +37,17 @@
         <md-button type="submit" class="md-primary btn-save" @click="sendSms">Send it</md-button>
       </md-field>
 
-      
+
     </div>
 
-    
+
   </widget>
 </template>
 
 <script>
 import Widget from '../../shared/widget'
 import { resources } from '../../resources'
+import { EventBus } from '../../shared/eventbus'
 
 export default {
     name: 'SmsHistory',
@@ -64,13 +69,15 @@ export default {
     data() {
         return {
             smses: [],
-            message: ''
+            message: '',
+            subscriber:'customer-sms-history'
         }
     },
     methods: {
         getSmsList() {
             axios.get(resources.sms.list + this.personId).then(response => {
                 this.smses = response.data.data
+                EventBus.$emit('widgetContentLoaded',this.subscriber,this.smses.length)
 
                 this.scrollDown()
             })

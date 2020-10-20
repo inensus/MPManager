@@ -1,5 +1,7 @@
 <template>
-    <div v-if="addNewCommission">
+    <widget v-if="addNewCommission"
+            title="New Commission"
+    >
 
         <form novalidate class="md-layout" @submit.prevent="saveCommission"
               data-vv-scope="Commission-Form">
@@ -59,13 +61,14 @@
         </form>
 
 
-    </div>
+    </widget>
 
 </template>
 <script>
 
 import { EventBus } from '../../../shared/eventbus'
 import { AgentCommissionService } from '../../../services/AgentCommissionService'
+import widget from '../../../shared/widget'
 
 export default {
     name: 'NewCommission',
@@ -76,7 +79,7 @@ export default {
 
         }
     },
-    components: {},
+    components: {widget},
     props: {
 
         addNewCommission: {

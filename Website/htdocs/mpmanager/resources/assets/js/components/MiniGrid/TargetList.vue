@@ -1,6 +1,8 @@
 <template>
 
-    <widget :id="'revenue-types'" :title="'Revenue Analysis'" v-if="batchRevenues.revenueList">
+    <widget :id="'revenue-types'"
+            :title="'Revenue Analysis'"
+            :subscriber="subscriber">
 
         <md-table>
             <md-table-row>
@@ -52,10 +54,6 @@
             </template>
 
 
-            <md-table-row v-else>
-                <md-table-cell colspan="4">No Data available</md-table-cell>
-            </md-table-row>
-
             <md-table-row style="margin-top: 2rem;">
                 <md-table-cell>Total</md-table-cell>
                 <md-table-cell>{{totalRevenues.totalConnections}}</md-table-cell>
@@ -80,6 +78,7 @@ import Widget from '../../shared/widget'
 import { BatchRevenue } from '../../classes/revenue/batch'
 import moment from 'moment'
 import { currency } from '../../mixins/currency'
+import { EventBus } from '../../shared/eventbus'
 
 export default {
     name: 'TargetList',
@@ -109,10 +108,10 @@ export default {
             batchRevenues: new BatchRevenue(),
             comparedRevenues: new BatchRevenue(),
             datesSet: 0, //when 2 fire batchData
+            subscriber:'mini-grid-revenues',
             totalRevenues: {
                 comparedRevenue: 0,
                 totalAverage: 0,
-
                 revenue: 0,
                 compareRevenue: 0,
                 connections: 0,
@@ -123,7 +122,8 @@ export default {
                 revenuePerConnection: 0,
                 compareRevenuePerConnection: 0,
                 totalTargetRevenue: 0,
-            }
+            },
+
         }
     },
     computed: {
@@ -131,7 +131,11 @@ export default {
             return this.batchRevenues.filter(function (revenue){
                 return revenue.revenueList !== null
             })
-        }
+        },
+        compareAnalysisAvailable () {
+            return this.comparedRevenues.revenueList !== null
+        },
+
     },
     watch: {
         base: function () {
@@ -179,10 +183,13 @@ export default {
                                     this.comparedRevenues.revenueList = response
                                     this.comparedRevenues.revenueList.averages = this.calculateAverages(this.comparedRevenues.revenueList)
                                     this.totals()
+                                    EventBus.$emit('widgetContentLoaded',this.subscriber,this.batchRevenues.revenueList)
+
                                 })
                         }
                     })
             }
+
         },
         calculateAverages (list) {
             let data = {}
@@ -261,6 +268,7 @@ export default {
             this.totalRevenues.comparedTotalAverage = comparedTotalAverage / (comparedAffectedAverageConnections > 0 ? comparedAffectedAverageConnections : 1)
 
             this.$emit('complete', totalConnections)
+
         }
     }
 }

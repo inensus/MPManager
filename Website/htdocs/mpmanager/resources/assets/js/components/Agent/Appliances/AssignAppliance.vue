@@ -1,6 +1,6 @@
 <template>
 
-    <div v-if="assignNewAppliance">
+    <md-dialog :md-active.sync="assignNewAppliance">
         <!-- assing new appliance -->
         <form novalidate class="md-layout" @submit.prevent="saveAppliance"
               data-vv-scope="Appliance-Form">
@@ -41,7 +41,7 @@
                 </md-card-actions>
             </md-card>
         </form>
-    </div>
+    </md-dialog>
 
 </template>
 <script>

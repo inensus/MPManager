@@ -26,7 +26,7 @@
 
                     <div class="md-layout-item md-size-25">
                         <div style="text-align: center; margin-bottom: 1px">
-                            <font-awesome-icon icon="sun"/>
+                            <md-icon>wb_sunny</md-icon>
                         </div>
                         <div style="text-align: center">
                             {{weather.sys.sunrise | momento}}
@@ -34,7 +34,7 @@
                     </div>
                     <div class="md-layout-item md-size-25">
                         <div style="text-align: center">
-                            <font-awesome-icon icon="sun"/>
+                            <md-icon>wb_sunny</md-icon>
                         </div>
                         <div style="text-align: center">
                             {{weather.sys.sunset | momento}}
@@ -42,7 +42,7 @@
                     </div>
                     <div class="md-layout-item md-size-25">
                         <div style="text-align: center">
-                            <font-awesome-icon icon="wind"/>
+                            <md-icon>wb_sunny</md-icon>
                         </div>
                         <div style="text-align: center">
                             {{weather.wind.speed}} M/S
@@ -50,7 +50,7 @@
                     </div>
                     <div class="md-layout-item md-size-25"
                          style="position:absolute; bottom:10px; right: 0; color: #818087;font-size: 11px">
-                        <font-awesome-icon icon="marker"/>
+                        <md-icon>place</md-icon>
                         {{weather.name}}
                     </div>
                 </div>

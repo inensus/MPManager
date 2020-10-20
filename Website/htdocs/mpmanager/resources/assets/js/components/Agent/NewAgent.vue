@@ -3,6 +3,7 @@
         <widget
             v-if="addAgent"
             title="Add New Agent"
+            color="red"
         >
             <md-card>
                 <md-card-content>
@@ -164,7 +165,7 @@
                                             id="confirmPassword"
                                             name="confirmPassword"
                                             v-model="confirmPassword"
-                                            v-validate="'required|confirmed:$passwordRef|min:3|max:15'"
+                                            v-validate="'required|confirmed:passwordRef|max:15'"
                                             type="password"
                                         />
                                         <span class="md-error">{{ errors.first('Agent-Form.confirmPassword') }}</span>

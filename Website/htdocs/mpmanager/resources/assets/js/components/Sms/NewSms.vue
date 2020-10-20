@@ -1,7 +1,7 @@
 <template>
     <!-- modal-->
     <div>
-        <widget title="New Sms" color="green">
+        <widget title="New Sms" color="red">
             <md-card class="md-size-80">
                 <md-card-header>
 

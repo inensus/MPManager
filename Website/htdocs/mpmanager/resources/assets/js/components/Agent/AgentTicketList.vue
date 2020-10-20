@@ -115,23 +115,23 @@ export default {
         }
     },
     mounted () {
-
         EventBus.$on('pageLoaded', this.reloadList)
-
     },
     beforeDestroy () {
-
         EventBus.$off('pageLoaded', this.reloadList)
     },
     methods: {
         reloadList (subscriber, data) {
-            if (subscriber !== this.subscriber) return
+            if (subscriber !== this.subscriber){
+                return
+            }
             this.agentTicketService.updateList(data)
             this.loaded = true
+            EventBus.$emit('widgetContentLoaded',this.subscriber,this.agentTicketService.list.length)
+
         },
         showComment (ticket) {
             Vue.set(ticket, 'newComment', !ticket.newComment)
-
         },
     }
 }

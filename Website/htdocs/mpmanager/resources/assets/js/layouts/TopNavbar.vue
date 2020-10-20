@@ -39,7 +39,7 @@
                         @click="toggleSidebar"
                         style="vertical-align: bottom !important;"
                     >
-                        <font-awesome-icon icon="bars"/>
+                        <md-icon>format_align_justify</md-icon>
                     </md-button>
                 </div>
 
