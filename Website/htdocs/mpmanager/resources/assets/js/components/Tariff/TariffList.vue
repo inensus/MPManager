@@ -12,59 +12,56 @@
                 @widgetAction="showNewTariff"
                 color="green">
 
-                <md-table
-                    v-model="tariffService.list"
-                    md-sort="id"
-                    md-sort-order="asc"
-                    md-card>
+            <md-table
+                v-model="tariffService.list"
+                md-sort="id"
+                md-sort-order="asc"
+                md-card>
 
-                    <md-table-row slot="md-table-row" slot-scope="{ item }">
-                        <md-table-cell md-label="ID" md-sort-by="id" md-numeric>{{ item.id }}</md-table-cell>
-                        <md-table-cell md-label="Name" md-sort-by="name">{{ item.name }}</md-table-cell>
-                        <md-table-cell md-label="kWh Price" md-numeric>
-                            {{ readable(item.price/100)}} {{item.currency}}
-                        </md-table-cell>
-                        <md-table-cell md-label="Access Rate" md-numeric md-sort-by="accessRate.amount">
+                <md-table-row slot="md-table-row" slot-scope="{ item }">
+                    <md-table-cell md-label="ID" md-sort-by="id" md-numeric>{{ item.id }}</md-table-cell>
+                    <md-table-cell md-label="Name" md-sort-by="name">{{ item.name }}</md-table-cell>
+                    <md-table-cell md-label="kWh Price" md-numeric>
+                        {{ readable(item.price/100)}} {{item.currency}}
+                    </md-table-cell>
+                    <md-table-cell md-label="Access Rate" md-numeric md-sort-by="accessRate.amount">
+                        <div v-if="item.accessRate">
+                            {{ readable(item.accessRate.amount) }} {{item.currency}}
+                        </div>
+                        <div v-else>-</div>
+                    </md-table-cell>
+                    <md-table-cell md-label="Access Rate Period in Days"
+                                   md-numeric
+                    >
+                        <div v-if="item.accessRate.period">
+                            {{ item.accessRate.period }} Days
+                        </div>
+                        <div v-else>-</div>
 
-                            <div v-if="item.accessRate.amount|| item.accessRate.amount===0">
-                                {{ readable(item.accessRate.amount) }} {{item.currency}}
-                            </div>
-                            <div v-else>-</div>
-                        </md-table-cell>
-                        <md-table-cell md-label="Access Rate Period in Days"
-                                       md-numeric
-                        >
-                            <div v-if="item.accessRate.period">
-                                {{ item.accessRate.period }} Days
-                            </div>
-                            <div v-else>-</div>
-
-                        </md-table-cell>
-                        <md-table-cell md-label="#">
-                            <md-button class="md-icon-button" @click="editTariff(item.id)">
-                                <md-tooltip md-direction="top">Edit</md-tooltip>
-                                <md-icon>edit</md-icon>
-                            </md-button>
-                            <md-button class="md-icon-button" @click="showConfirmation(item.id)">
-                                <md-tooltip md-direction="top">Delete</md-tooltip>
-                                <md-icon>delete</md-icon>
-                            </md-button>
-                        </md-table-cell>
-                    </md-table-row>
-                </md-table>
-                <md-progress-bar md-mode="indeterminate" v-if="loading"/>
+                    </md-table-cell>
+                    <md-table-cell md-label="#">
+                        <md-button class="md-icon-button" @click="editTariff(item.id)">
+                            <md-tooltip md-direction="top">Edit</md-tooltip>
+                            <md-icon>edit</md-icon>
+                        </md-button>
+                        <md-button class="md-icon-button" @click="showConfirmation(item.id)">
+                            <md-tooltip md-direction="top">Delete</md-tooltip>
+                            <md-icon>delete</md-icon>
+                        </md-button>
+                    </md-table-cell>
+                </md-table-row>
+            </md-table>
+            <md-progress-bar md-mode="indeterminate" v-if="loading"/>
 
         </widget>
     </div>
 </template>
-
 <script>
 import Widget from '../../shared/widget'
 import { currency } from '../../mixins/currency'
 import Add from './Add'
 import { EventBus } from '../../shared/eventbus'
 import { TariffService } from '../../services/TariffService'
-
 export default {
     name: 'TariffList',
     components: { Widget, Add },
@@ -80,17 +77,16 @@ export default {
         }
     },
     mounted () {
-
         this.getTariffs()
         EventBus.$on('tariffAdded', ()=>{
             this.getTariffs()
         })
     },
     methods: {
-
         async getTariffs () {
             try {
                 await this.tariffService.getTariffs()
+                EventBus.$emit('widgetContentLoaded',this.subscriber,this.tariffService.list.length)
             } catch (e) {
                 this.alertNotify('error', e.message)
             }
@@ -123,7 +119,6 @@ export default {
                 this.loading = false
                 this.alertNotify('success', 'Tariff changed on using meters successfully.')
             } catch (e) {
-
                 this.loading = false
                 this.alertNotify('error', e.message)
             }
