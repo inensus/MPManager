@@ -1,5 +1,5 @@
 <template>
-
+<div>
     <widget
         v-if="showAdd"
         title="Add New Tariff"
@@ -80,7 +80,7 @@
                     <div class="md-layout-item md-xlarge-size-100 md-large-size-100 md-medium-size-100 md-small-size-100">
                         <md-checkbox v-model="hasAccessRate" @change="accessRateChange($event)">Enable access rate?</md-checkbox>
                     </div>
-                    <div class="md-layout-item md-large-size-100 md-medium-size-100 md-small-size-100">
+
 
                    <!--Additional-Components-->
                     <div class="md-layout-item  md-xlarge-size-100 md-large-size-100 md-medium-size-100 md-small-size-100">
@@ -330,7 +330,7 @@
         </md-card>
 
     </widget>
-
+   </div>
 </template>
 
 <script>
