@@ -130,7 +130,11 @@ export default {
             return this.batchRevenues.filter(function (revenue){
                 return revenue.revenueList !== null
             })
-        }
+        },
+        compareAnalysisAvailable () {
+            return this.comparedRevenues.revenueList !== null
+        },
+
     },
     watch: {
         base: function () {
