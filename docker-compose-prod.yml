@@ -7,8 +7,11 @@ services:
       dockerfile: DockerfileLaravelProd
     image: laravel/php:73
     user: "www-data:www-data"
+    restart: unless-stopped
     depends_on:
       - maria
+      - composer
+      - node
     links:
       - maria:db
       - redis:redis
@@ -52,24 +55,14 @@ services:
 
   'redis':
     image: redis:5
+    restart: unless-stopped
     volumes:
       - ./redis/:/data
-
-
-  'phpmyadmin':
-    container_name: phpma
-    image: phpmyadmin/phpmyadmin:latest
-    depends_on:
-      - maria
-    links:
-      - maria:db
-    environment:
-      - "PMA_ABSOLUTE_URI=https://db.mpmanager.tk" # Your subdomain address
-
 
   'maria':
     container_name: maria
     image: mariadb:10.3
+    restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: laravel
       MYSQL_DATABASE: laravel
@@ -77,7 +70,6 @@ services:
       MYSQL_PASSWORD: laravel
     volumes:
       - ./DB/mysql:/var/lib/mysql
-
 
   nginx:
     container_name: nginx
