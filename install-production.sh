@@ -22,10 +22,10 @@ function setup_tls_parameters() {
 
 function should_renew_certificate() {
   local data_path=$1
-  local domains=$2 
+  local domains=$2
 
   # Check if certificates already exists
-  if [ -d "$data_path/conf/live/${domains}" ]; then    
+  if [ -d "$data_path/conf/live/${domains}" ]; then
     read -p "Existing data found for ${domains}. Continue and replace existing certificate? (y/N) " decision
       if [ "$decision" != "Y" ] && [ "$decision" != "y" ]; then
       echo 0
@@ -56,7 +56,7 @@ function make_dummy_certificate() {
 
 function start_nginx() {
   echo "### Starting nginx ..."
-  docker-compose -f docker-compose-prod.yml up --build --force-recreate -d 
+  docker-compose -f docker-compose-prod.yml up --build --force-recreate -d
   echo
 }
 
@@ -174,16 +174,26 @@ check_if_docker_compose_installed
 echo "###################################################################################"
 echo "#                               IMPORTANT !!                                      #"
 echo "###################################################################################"
+echo "#  MicroPowerManager has got two types of installations for the Prod. mode, those are non-domain & domain with SSL certificate. #"
+echo "###################################################################################"
+echo ""
+read -p "If you already have a domain name and would you like to set up MicroPowerManager within domain with SSL certificate installation? (n/Y) " ipDecision
+
+    if [ "$ipDecision" != "N" ] && [ "$ipDecision" != "n" ]; then
+
+echo "###################################################################################"
 echo "# This script will setup SSL Certificates that are required for the Prod. mode    #"
 echo "# If you already configured your Certificates, you can skip the first part and   #"
 echo "# start the web services.                                                         #"
 echo "###################################################################################"
 echo ""
 
-read -p "MicroPowerManager starting with production mode. Continue set up certification? (n/Y) " decision
+    read -p "MicroPowerManager starting with domain with SSL certificate mode. Continue set up certification? (n/Y) " decision
+
 if [ "$decision" != "Y" ] && [ "$decision" != "y" ] && [ "$decision" != "" ]; then
   echo "Do you want to start only the web services? "
-  read -p "(N/y)" webservice
+
+   read -p "(N/y)" webservice
 
   if [ "$webservice" == "Y" ] || [ "$webservice" == "y" ]; then
     echo " Starting web services please wait."
@@ -208,11 +218,11 @@ else
     done
     read -p "Are the inputs correct? (y/n) " newDomain
     if [ "$newDomain" != "N" ] && [ "$newDomain" != "n" ]; then
-    
+
       domainsDone=1
       make_config_file "$domain"
       break
-    else 
+    else
         domains_list=()
     fi
   done
@@ -224,7 +234,7 @@ else
     echo "Email address :" $email
     emailIsValid=$(email_validation "$email")
   done
- 
+
   setup_tls_parameters $data_path
 
   # Create dummy certificates if needed.
@@ -269,3 +279,22 @@ else
   reload_nginx
 
 fi
+else
+
+echo "###################################################################################"
+echo "# This script will start MicroPowerManager with a non-domain set up in the Prod. mode.    #"
+echo "###################################################################################"
+echo ""
+
+echo " MicroPowerManager is starting please wait."
+
+ echo $( docker-compose -f docker-compose-prod-non-domain.yml up --build --force-recreate -d)
+
+  echo "MicroPowerManager started. "
+
+
+exit
+fi
+
+
+
