@@ -36,5 +36,4 @@ RUN touch /usr/local/etc/php/conf.d/xdebug.ini; \
 EXPOSE 9000
 COPY ./owner-changer.sh /owner-changer.sh
 RUN chmod +x /owner-changer.sh
-
-CMD ["bash","-c","php-fpm","/owner-changer.sh"]
+CMD ["bash","-c","/owner-changer.sh"]
