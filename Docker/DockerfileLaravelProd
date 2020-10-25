@@ -35,7 +35,9 @@ RUN touch /usr/local/etc/php/conf.d/xdebug.ini; \
     echo xdebug.remote_port=9000 >> /usr/local/etc/php/conf.d/xdebug.ini; \
     echo xdebug.remote_log=/tmp/php5-xdebug.log >> /usr/local/etc/php/conf.d/xdebug.ini;
 
-# Change current user to www
-USER www-data
+# change volume user
+RUN mkdir -p /var/www/html/mpmanager && mkdir -p /var/www/html/composer.phar && chown -R www-data: /var/www/html
+VOLUME /var/www/html
+
 EXPOSE 9000
 CMD ["php-fpm"]
