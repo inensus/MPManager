@@ -294,7 +294,7 @@ echo " MicroPowerManager is starting please wait."
 
 
 exit
-
+fi
 
 
 
