@@ -33,9 +33,8 @@ RUN touch /usr/local/etc/php/conf.d/xdebug.ini; \
     echo xdebug.remote_port=9000 >> /usr/local/etc/php/conf.d/xdebug.ini; \
     echo xdebug.remote_log=/tmp/php5-xdebug.log >> /usr/local/etc/php/conf.d/xdebug.ini;
 
-# change volume user
-RUN mkdir -p /var/www/html/mpmanager && mkdir -p /var/www/html/composer.phar && chown -R www-data: /var/www/html
-VOLUME /var/www/html
-
 EXPOSE 9000
-CMD ["php-fpm"]
+COPY ./owner-changer.sh /owner-changer.sh
+RUN chmod +x /owner-changer.sh
+
+CMD ["bash","-c","php-fpm","/owner-changer.sh"]
