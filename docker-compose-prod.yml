@@ -6,8 +6,8 @@ services:
       context: Docker/
       dockerfile: DockerfileLaravelProd
     image: laravel/php:73
-    user: "www-data:www-data"
     restart: unless-stopped
+    container_name: laravel
     depends_on:
       - maria
       - composer
