@@ -22,10 +22,10 @@ function setup_tls_parameters() {
 
 function should_renew_certificate() {
   local data_path=$1
-  local domains=$2 
+  local domains=$2
 
   # Check if certificates already exists
-  if [ -d "$data_path/conf/live/${domains}" ]; then    
+  if [ -d "$data_path/conf/live/${domains}" ]; then
     read -p "Existing data found for ${domains}. Continue and replace existing certificate? (y/N) " decision
       if [ "$decision" != "Y" ] && [ "$decision" != "y" ]; then
       echo 0
@@ -56,7 +56,7 @@ function make_dummy_certificate() {
 
 function start_nginx() {
   echo "### Starting nginx ..."
-  docker-compose -f docker-compose-prod.yml up --build --force-recreate -d 
+  docker-compose -f docker-compose-prod.yml up --build --force-recreate -d
   echo
 }
 
@@ -108,7 +108,60 @@ function reload_nginx() {
   echo "### Reloading nginx ..."
   docker-compose -f docker-compose-prod.yml exec nginx nginx -s reload
 }
+function make_config_file() {
+   touch ./NginxProxy/conf.p/app.conf
+   local domain_name=$1
 
+echo 'server {
+     listen 80;
+     server_tokens off;
+
+    location /.well-known/acme-challenge/ {
+        root /var/www/certbot;
+    }
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+server {
+    listen 443 ssl;
+    server_tokens off;
+
+    ssl_certificate /etc/letsencrypt/live/'$domain_name'/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/'$domain_name'/privkey.pem;
+    include /etc/letsencrypt/options-ssl-nginx.conf;
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    index index.php index.html;
+    error_log  /var/log/nginx/error.log;
+    access_log /var/log/nginx/access.log;
+    root /var/www/html/mpmanager/public;
+    location ~ \.php$ {
+        try_files $uri =404;
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        fastcgi_pass laravel:9000;
+        fastcgi_index index.php;
+        include fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_param PATH_INFO $fastcgi_path_info;
+    }
+
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+        gzip_static on;
+    }
+}' > ./NginxProxy/conf.p/app.conf
+}
+function email_validation(){
+  regex="^[a-z0-9!#\$%&'*+/=?^_\`{|}~-]+(\.[a-z0-9!#$%&'*+/=?^_\`{|}~-]+)*@([a-z0-9]([a-z0-9-]*[a-z0-9])?\.)+[a-z0-9]([a-z0-9-]*[a-z0-9])?\$"
+  local email=$1
+  if [[ $email =~ $regex ]] ; then
+    echo 1
+else
+    echo 0
+fi
+}
 ###################################################################
 ##################### Script start ################################
 ###################################################################
@@ -117,20 +170,35 @@ rsa_key_size=4096
 data_path="./certbot"
 email=""  # Adding a valid address is strongly recommended
 staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
+ipDecision=""
 check_if_docker_compose_installed
 echo "###################################################################################"
 echo "#                               IMPORTANT !!                                      #"
 echo "###################################################################################"
+echo "#  MicroPowerManager has got two types of installations for the Prod. mode,       #"
+echo "#  those are IP based & domain based with SSL certificate.                        #"
+echo "###################################################################################"
+echo ""
+
+   read -p "Which installation type do you prefer IP based or domain based? (i/d)" ipDecision
+   while [ "$ipDecision" != "d" -a  "$ipDecision" != "D" -a "$ipDecision" != "i" -a "$ipDecision" != "I" ]; do
+   read -p "Which installation type do you prefer IP based or domain based ? (i/d)" ipDecision
+  done
+    if [ "$ipDecision" == "D" ] || [ "$ipDecision" == "d" ]; then
+
+echo "###################################################################################"
 echo "# This script will setup SSL Certificates that are required for the Prod. mode    #"
-echo "# If you already confirgured your Certificates, you can skip the first part and   #"
+echo "# If you already configured your Certificates, you can skip the first part and    #"
 echo "# start the web services.                                                         #"
 echo "###################################################################################"
 echo ""
 
-read -p "MicroPowerManager starting with production mode. Continue set up certification? (n/Y) " decision
+    read -p "MicroPowerManager starting with domain with SSL certificate mode. Continue set up certification? (n/Y) " decision
+
 if [ "$decision" != "Y" ] && [ "$decision" != "y" ] && [ "$decision" != "" ]; then
   echo "Do you want to start only the web services? "
-  read -p "(N/y)" webservice
+
+   read -p "(N/y)" webservice
 
   if [ "$webservice" == "Y" ] || [ "$webservice" == "y" ]; then
     echo " Starting web services please wait."
@@ -150,22 +218,28 @@ else
     fi
     domains_list+=($domain)
     domains_list+=("www.$domain")
-    domains_list+=("db.$domain")
     for key in ${!domains_list[*]}; do
       printf "%4d: %s\n" $key ${domains_list[$key]}
     done
     read -p "Are the inputs correct? (y/n) " newDomain
     if [ "$newDomain" != "N" ] && [ "$newDomain" != "n" ]; then
-    
+
       domainsDone=1
+      make_config_file "$domain"
       break
-    else 
+    else
         domains_list=()
     fi
   done
-  read -p "Enter a valid email address and press [ENTER]:" email
-  echo "Email address :" $email
- 
+
+   read -p "Enter a valid email address and press [ENTER]:" email
+    echo "Email address :" $email
+   while [ $(email_validation "$email") == 0 ]; do
+    read -p "Enter a valid email address and press [ENTER]:" email
+    echo "Email address :" $email
+    emailIsValid=$(email_validation "$email")
+  done
+
   setup_tls_parameters $data_path
 
   # Create dummy certificates if needed.
@@ -210,3 +284,23 @@ else
   reload_nginx
 
 fi
+elif [ "$ipDecision" == "I" ] || [ "$ipDecision" == "i" ]; then
+
+echo "###################################################################################"
+echo "# This script will start MicroPowerManager with a IP-base set up                  #"
+echo "# in the Prod. mode.                                                              #"
+echo "###################################################################################"
+echo ""
+
+echo " MicroPowerManager is starting please wait."
+
+ echo $( docker-compose -f docker-compose-prod-non-domain.yml up --build --force-recreate -d)
+  echo "MicroPowerManager started. "
+
+exit
+else
+   ipDecision=""
+fi
+
+
+
