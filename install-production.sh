@@ -170,20 +170,25 @@ rsa_key_size=4096
 data_path="./certbot"
 email=""  # Adding a valid address is strongly recommended
 staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
+ipDecision=""
 check_if_docker_compose_installed
 echo "###################################################################################"
 echo "#                               IMPORTANT !!                                      #"
 echo "###################################################################################"
-echo "#  MicroPowerManager has got two types of installations for the Prod. mode, those are non-domain & domain with SSL certificate. #"
+echo "#  MicroPowerManager has got two types of installations for the Prod. mode,       #"
+echo "#  those are IP based & domain based with SSL certificate.                        #"
 echo "###################################################################################"
 echo ""
-read -p "If you already have a domain name and would you like to set up MicroPowerManager within domain with SSL certificate installation? (n/Y) " ipDecision
 
-    if [ "$ipDecision" != "N" ] && [ "$ipDecision" != "n" ]; then
+   read -p "Which installation type do you prefer IP based or domain based? (i/d)" ipDecision
+   while [ "$ipDecision" != "d" -a  "$ipDecision" != "D" -a "$ipDecision" != "i" -a "$ipDecision" != "I" ]; do
+   read -p "Which installation type do you prefer IP based or domain based ? (i/d)" ipDecision
+  done
+    if [ "$ipDecision" == "D" ] || [ "$ipDecision" == "d" ]; then
 
 echo "###################################################################################"
 echo "# This script will setup SSL Certificates that are required for the Prod. mode    #"
-echo "# If you already configured your Certificates, you can skip the first part and   #"
+echo "# If you already configured your Certificates, you can skip the first part and    #"
 echo "# start the web services.                                                         #"
 echo "###################################################################################"
 echo ""
@@ -279,21 +284,22 @@ else
   reload_nginx
 
 fi
-else
+elif [ "$ipDecision" == "I" ] || [ "$ipDecision" == "i" ]; then
 
 echo "###################################################################################"
-echo "# This script will start MicroPowerManager with a non-domain set up in the Prod. mode.    #"
+echo "# This script will start MicroPowerManager with a IP-base set up                  #"
+echo "# in the Prod. mode.                                                              #"
 echo "###################################################################################"
 echo ""
 
 echo " MicroPowerManager is starting please wait."
 
  echo $( docker-compose -f docker-compose-prod-non-domain.yml up --build --force-recreate -d)
-
   echo "MicroPowerManager started. "
 
-
 exit
+else
+   ipDecision=""
 fi
 
 
