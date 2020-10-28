@@ -1,0 +1,77 @@
+<?php
+namespace App\Console\Commands;
+use Illuminate\Console\Command;
+
+class RoutesGenerator  extends Command
+{
+    /**
+     * The name and signature of the console command.
+     *
+     * @var string
+     */
+    protected $signature = 'routes:generate';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'Generates new routes from packages';
+
+    /**
+     * Execute the console command.
+     */
+    public function handle(): void
+    {
+        $routeTmp = 'storage/skeletons/routes.tmp';
+        fopen($routeTmp, 'w');
+
+        $exportedRoutes = 'resources/assets/js/ExportedRoutes.js';
+        file_put_contents($routeTmp, file($exportedRoutes));
+        $this->removeLine($routeTmp,'last');
+
+        $directories = glob('resources/assets/js/plugins' . '/*', GLOB_ONLYDIR);
+        if (count($directories) > 0) {
+            foreach ($directories as $key => $value) {
+                $this->createPluginRoutesTmp($value, $routeTmp);
+            }
+            $tmpFile = fopen($routeTmp, 'a+');
+            fwrite($tmpFile, ']');
+            fclose($tmpFile);
+            file_put_contents($exportedRoutes, file($routeTmp));
+        }
+    }
+
+    private function createPluginRoutesTmp($src, $coreRoutesTmp)
+    {
+        $packageRoutes =  $src . "/js/routes.js";
+        $packageRoutesTmp =  $src . "/js/routes.tmp";
+        fopen($packageRoutesTmp, 'w');
+        file_put_contents($packageRoutesTmp, file($packageRoutes));
+        $this->removeLine($packageRoutesTmp, 'first');
+        $this->removeLine($packageRoutesTmp, 'last');
+        $this->appendLines($packageRoutesTmp, $coreRoutesTmp);
+    }
+    private function removeLine($packageRoutesTmp, $type)
+    {
+        $lines = file($packageRoutesTmp);
+        if ($type === 'first') {
+            array_shift($lines);
+        } elseif ($type === 'last') {
+            array_pop($lines);
+        } else {
+            return;
+        }
+        $file = join('', $lines);
+        file_put_contents($packageRoutesTmp, $file);
+    }
+    private function appendLines($packageRoutesTmp, $coreRoutesTmp)
+    {
+        $lines = file($packageRoutesTmp);
+        $tmp = fopen($coreRoutesTmp, 'a+');
+        foreach ($lines as $key => $value) {
+            fwrite($tmp, $value);
+        }
+        fclose($tmp);
+    }
+}
