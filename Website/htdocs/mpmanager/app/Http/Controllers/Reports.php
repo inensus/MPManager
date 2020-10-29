@@ -1,11 +1,11 @@
 <?php
 
 
-namespace App\Http\Controllers\Export;
+namespace App\Http\Controllers;
 
 
 use App\Http\Resources\ApiResource;
-use App\Jobs\ReportGenerator;
+
 use App\Models\City;
 use App\Models\ConnectionGroup;
 use App\Exceptions\CustomerGroup\CustomerGroupNotFound;

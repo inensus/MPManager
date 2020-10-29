@@ -3,7 +3,6 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Http\Requests\StoreEnergyRequest;
 use App\Http\Resources\ApiResource;
 use App\Models\Energy;

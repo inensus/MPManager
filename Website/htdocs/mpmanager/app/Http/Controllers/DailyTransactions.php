@@ -6,10 +6,9 @@
  * Time: 10:44
  */
 
-namespace App\Http\Controllers\Export;
+namespace App\Http\Controllers;
 
 
-use App\Http\Controllers\Controller;
 use App\Models\Transaction\Transaction;
 use Illuminate\Http\Request;
 

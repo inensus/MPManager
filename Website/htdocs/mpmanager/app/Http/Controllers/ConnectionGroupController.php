@@ -3,7 +3,6 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Http\Requests\CreateConnectionGroupRequest;
 use App\Http\Resources\ApiResource;
 use App\Models\ConnectionGroup;
@@ -38,6 +37,7 @@ class ConnectionGroupController
         return new ApiResource($this->connectionGroup);
 
     }
+
     public function update(ConnectionGroup $connectionGroup): ApiResource
     {
         $connectionGroup->update(request()->only(['name']));

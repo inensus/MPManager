@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Resources\ApiResource;
 use App\Models\ConnectionType;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
 class ConnectionTypeController extends Controller
 {
@@ -49,25 +48,24 @@ class ConnectionTypeController extends Controller
     public function show($connectionTypeId)
     {
         $meter_count_relation = request()->input('meter_count');
-        if($connectionTypeId !== null){
+        if ($connectionTypeId !== null) {
             $connectionTypeDetail = $this->connectionType->newQuery();
-            if($meter_count_relation){
+            if ($meter_count_relation) {
                 $connectionTypeDetail = $connectionTypeDetail->withCount('meterParameters');
             }
             $connectionTypeDetail = $connectionTypeDetail->where('id', $connectionTypeId)->get();
             return new ApiResource($connectionTypeDetail);
         }
-
+        return new ApiResource(null);
 
     }
+
     public function update(ConnectionType $connectionType): ApiResource
     {
         $connectionType->name = request('name');
         $connectionType->save();
         return new ApiResource($connectionType);
     }
-
-
 
 
 }

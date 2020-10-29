@@ -6,7 +6,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\PersonRequest;
 use App\Http\Resources\ApiResource;
 use App\Http\Services\PersonService;
-use App\Models\Address\Address;
 use App\Models\Person\Person;
 use Exception;
 

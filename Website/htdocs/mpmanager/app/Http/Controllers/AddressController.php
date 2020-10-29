@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Admin;
 use App\Http\Requests\CreateAddressRequest;
 use App\Models\Address\Address;
 use App\Exceptions\ValidationException;

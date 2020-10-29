@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Http\Controllers\Export\Reports;
+use App\Http\Controllers\Reports;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 

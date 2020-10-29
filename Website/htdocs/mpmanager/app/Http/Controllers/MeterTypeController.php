@@ -5,17 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\MeterTypeCreateRequest;
 use App\Http\Requests\MeterTypeUpdateRequest;
 use App\Http\Resources\ApiResource;
-
-use App\Http\Resources\MeterTypeResource;
 use App\Models\Meter\MeterType;
-
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\ValidationException;
-
 /**
  * @group MeterTypes
  * Class MeterTypeController

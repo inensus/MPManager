@@ -29,6 +29,7 @@ class LabelController extends Controller
      */
     public function index(Request $request)
     {
+
         $outsource = $request->get('outsource');
 
         if ($outsource) {

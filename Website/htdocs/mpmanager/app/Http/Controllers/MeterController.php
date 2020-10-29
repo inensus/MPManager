@@ -10,7 +10,6 @@ use App\Models\Meter\MeterToken;
 use App\Models\PaymentHistory;
 use App\Models\Person\Person;
 use App\Models\Transaction\Transaction;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -169,8 +168,8 @@ class MeterController extends Controller
     {
 
         $points =  $request->only([
-        'lat','lng'
-    ]);
+            'lat','lng'
+        ]);
 
         if ($points) {
             $meter = $this->meter->find($meter);
@@ -336,5 +335,3 @@ class MeterController extends Controller
     }
 
 }
-
-
