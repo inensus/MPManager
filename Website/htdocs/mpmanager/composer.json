@@ -12,7 +12,6 @@
         "doctrine/dbal": "2.10.1",
         "fideloper/proxy": "^4.0",
         "guzzlehttp/guzzle": "7.2.0",
-        "kemal/ticket": "dev-master",
         "laravel/framework": "^7.0",
         "laravel/helpers": "^1.2",
         "laravel/horizon": "^4.0",
@@ -56,7 +55,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Tests\\": "tests/"
+            "Tests\\": "tests/",
+            "Inensus\\Ticket\\": "packages/inensus/ticket/src"
         }
     },
     "minimum-stability": "dev",
@@ -73,11 +73,6 @@
             "@php artisan key:generate --ansi"
         ],
         "lint": "find . -name \\*.php -not -path './lib/composer/*' -not -path './build/.phan/*' -exec php -l \"{}\" \\;"
-    },
-    "repositories": {
-        "ticketing": {
-            "type": "path",
-            "url": "packages/inensus/ticket"
-        }
     }
+
 }
