@@ -39,19 +39,19 @@
         <div class="sidebar-wrapper">
             <slot name="content"></slot>
             <md-list class="no-bg p-15" md-expand-single>
-                <component :is="'route' in menu ? 'router-link' : 'div'" v-for="(menu,index) in menus" :key="index"
-                           :md-expand="'children' in menu"
-                           :to="menu.route">
-                    <md-list-item :md-expand="'children' in menu">
+                <component :is="menu.url_slug !== '' ? 'router-link' : 'div'" v-for="(menu,index) in menus" :key="index"
+                           :md-expand="menu.sub_menu_items.length !== 0"
+                           :to="menu.url_slug">
+                    <md-list-item :md-expand="menu.sub_menu_items.length !== 0">
                         <!-- add icon if icon is defined -->
-                        <md-icon v-if="'icon' in menu" class="c-white icon-box">{{menu.icon}}</md-icon>
+                        <md-icon v-if="menu.md_icon !== ''" class="c-white icon-box">{{menu.md_icon}}</md-icon>
                         <span class="md-list-item-text c-white">{{menu.name}}</span>
-                        <md-list slot="md-expand" v-if="'children' in menu" class="no-bg">
-                            <md-list-item v-for="(sub,index) in menu.children"
+                        <md-list slot="md-expand" v-if="menu.sub_menu_items.length !== 0" class="no-bg">
+                            <md-list-item v-for="(sub,index) in menu.sub_menu_items"
                                           :key="index"
 
                             >
-                                <router-link :to="sub.route" class="sub-menu">
+                                <router-link :to="sub.url_slug" class="sub-menu">
                                     <md-list-item class="md-inset c-white">
                                         <span class="md-list-item-text c-white"> {{sub.name}}</span>
                                     </md-list-item>
@@ -61,165 +61,23 @@
                     </md-list-item>
                 </component>
             </md-list>
+
         </div>
     </div>
 </template>
 <script>
-export default {
+import menu from './menu.json'
 
-    data: () => (
-        {
+export default {
+    name:'SideBar',
+    data() {
+        return{
             show_extender: false,
             admin: null,
-            menus: [
-                {
-                    name: 'Dashboard',
-                    icon: 'home',
-                    children: [
-                        {
-                            name: 'Clusters',
-                            route: '/'
-                        },
-                        {
-                            name: 'Mini-Grid',
-                            route: '/dashboards/mini-grid'
-                        },
-                    ]
-                },
-                {
-                    name: 'Customers',
-                    route: '/people/page/1',
-                    icon: 'supervisor_account',
-                },
-                {
-                    name: 'Agents',
-
-                    icon: 'support_agent',
-                    children: [
-                        {
-                            name: 'List',
-                            route: '/agents/page/1',
-                        },
-                        {
-                            name: 'Commission Types',
-                            route: '/commissions'
-                        },
-                    ]
-                },
-                {
-                    name: 'Meters',
-                    icon: 'bolt',
-                    children: [
-                        {
-                            name: 'List',
-                            route: '/meters/page/1',
-                        },
-                        {
-                            name: 'Types',
-                            route: '/meters/types'
-                        },
-                    ]
-
-                },
-                {
-                    name: 'Transactions',
-                    route: '/transactions/page/1',
-                    icon: 'account_balance',
-
-                },
-                {
-                    name: 'Tickets',
-                    icon: 'confirmation_number',
-                    children: [
-                        {
-                            name: 'List',
-                            route: '/tickets'
-                        },
-                        {
-                            name: 'Users',
-                            route: '/tickets/settings/users'
-                        },
-                        {
-                            name: 'Categories',
-                            route: '/tickets/settings/categories'
-                        },
-                    ]
-                },
-                {
-                    name: 'Tariffs',
-                    route: '/tariffs',
-                    icon: 'widgets',
-                },
-                {
-                    name: 'Targets',
-                    route: '/targets',
-                    icon: 'gps_fixed',
-                },
-                {
-                    name: 'Reports',
-                    route: '/reports',
-                    icon: 'text_snippet',
-                },
-                {
-                    name: 'Connection',
-                    icon: 'cast',
-                    children: [
-                        {
-                            name: 'Groups',
-                            route: '/connection-groups',
-                        },
-                        {
-                            name: 'Types',
-                            route: '/connection-types'
-                        }
-                    ]
-                },
-                {
-                    name: 'Sms',
-                    icon: 'sms',
-                    children: [
-                        {
-                            name: 'Sms List',
-                            route: '/sms/list'
-                        },
-                        {
-                            name: 'New Sms',
-                            route: '/sms/newsms'
-                        },
-
-                    ]
-                },
-                {
-                    name: 'Asset Types',
-                    route: '/assets/types/page/1',
-                    icon: 'devices_other',
-                },
-                {
-                    name: 'Maintenance',
-                    route: '/maintenance',
-                    icon: 'home_repair_service',
-                },
-                {
-                    name: 'Locations',
-                    icon: 'add_location_alt',
-                    children: [
-                        {
-                            name: 'Add Cluster',
-                            route: '/locations/add-cluster',
-                        },
-                        {
-                            name: 'Add MiniGrid',
-                            route: '/locations/add-mini-grid',
-                        },
-                        {
-                            name: 'Add Village',
-                            route: '/locations/add-village',
-                        }
-                    ]
-                }
-            ]
+            menus: menu
         }
-    ),
+    },
+
     props: {
         title: {
             type: String,
