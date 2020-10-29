@@ -10,13 +10,11 @@ namespace App\Http\Controllers;
 
 
 use App\Http\Resources\ApiResource;
-use App\Models\AccessRate\AccessRatePayment;
 use App\Models\PaymentHistory;
 use App\Models\Person\Person;
 use Carbon\Carbon;
 use Carbon\CarbonInterval;
 use DatePeriod;
-use Illuminate\Http\Request;
 use function count;
 
 
@@ -40,7 +38,7 @@ class PaymentHistoryController
     {
         $this->history = $history;
     }
-    
+
     /**
      * Detail
      * @urlParam payerId integer required
@@ -74,7 +72,7 @@ class PaymentHistoryController
         return $this->preparePaymentFlow($payments);
     }
 
-    
+
     public function showForAgentCustomers(string $period, $limit = null, $order = 'ASC')
     {
         $agent = request()->attributes->get('user');

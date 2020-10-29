@@ -24,6 +24,7 @@ use DateInterval;
 use DatePeriod;
 use DateTime;
 use Illuminate\Http\Request;
+
 use Inensus\Ticket\Models\Label;
 use Inensus\Ticket\Models\Ticket;
 use stdClass;

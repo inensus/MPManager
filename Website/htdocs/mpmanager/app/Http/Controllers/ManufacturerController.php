@@ -3,13 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Address\Address;
-use App\Exceptions\ValidationException;
 use App\Http\Requests\ManufacturerRequest;
 use App\Http\Resources\ApiResource;
 use App\Models\Manufacturer;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Validator;
 
 class ManufacturerController extends Controller
 {

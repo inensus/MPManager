@@ -6,12 +6,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\TariffCreateRequest;
 use App\Http\Resources\ApiResource;
 use App\Http\Services\MeterTariffService;
-use App\Jobs\TariffPricingComponentsCalculator;
-use App\Models\AccessRate\AccessRate;
-use App\Models\Meter\Meter;
 use App\Models\Meter\MeterTariff;
-use App\Models\SocialTariff;
-use App\Models\TariffPricingComponent;
 
 /**
  * @group Tariffs
@@ -122,7 +117,7 @@ class TariffController extends Controller
     {
         $currentId = $tariff->id;
 
-        $result =   $this->meterTariffService->changeMetersTariff($currentId, $changeId);
+        $result = $this->meterTariffService->changeMetersTariff($currentId, $changeId);
         return new ApiResource($result);
     }
 

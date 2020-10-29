@@ -12,11 +12,9 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SmsRequest;
 use App\Http\Requests\StoreSmsRequest;
 use App\Http\Resources\ApiResource;
-
 use App\Models\ConnectionGroup;
 use App\Models\ConnectionType;
 use App\Models\Meter\MeterParameter;
-
 use App\Models\Person\Person;
 use App\Models\Sms;
 use App\Models\Transaction\Transaction;
