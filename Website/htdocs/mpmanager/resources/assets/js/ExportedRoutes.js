@@ -282,5 +282,5 @@ export const exportedRoutes = [
         path: '/commissions',
         component: require('./components/Agent/Commission/AgentCommissionList').default,
         meta: { layout: 'default' },
-    }
+    },
 ]

@@ -2,10 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\MenuItems;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class SubMenuItems extends Model
+class SubMenuItems extends BaseModel
 {
     public function menuItems(): BelongsTo
     {

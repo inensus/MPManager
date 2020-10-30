@@ -19,7 +19,7 @@ class CreateMenuItemsTable extends Migration
             $table->char('url_slug',50);
             $table->char('md_icon',50);
             $table->unsignedInteger('menu_order')->default(999);
-
+            $table->timestamps();
         });
 
     }

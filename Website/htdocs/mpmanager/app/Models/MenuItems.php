@@ -1,12 +1,9 @@
 <?php
 
-namespace App;
-
-use App\Models\SubMenuItems;
-use Illuminate\Database\Eloquent\Model;
+namespace App\Models;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class MenuItems extends Model
+class MenuItems extends BaseModel
 {
     public function subMenuItems(): HasMany
     {
