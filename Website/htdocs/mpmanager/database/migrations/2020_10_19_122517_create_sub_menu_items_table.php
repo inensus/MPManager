@@ -18,6 +18,7 @@ class CreateSubMenuItemsTable extends Migration
             $table->char('name',50);
             $table->char('url_slug',50);
             $table->integer('parent_id');
+            $table->timestamps();
         });
     }
 
