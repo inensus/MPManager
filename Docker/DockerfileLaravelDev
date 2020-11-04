@@ -14,7 +14,8 @@ RUN apt-get update && \
     bzip2 \
     supervisor \
     libzip-dev \
-    vim
+    vim \
+    git
 
 
 
