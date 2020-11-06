@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,500,700,400italic|Material+Icons">
     <title>{{ config('app.name', 'MicroPowerManager') }} @yield('page-title')</title>
     <link rel="stylesheet" href="//cdn.jsdelivr.net/chartist.js/latest/chartist.min.css">
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
 
     <style>
