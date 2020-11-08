@@ -1,35 +1,50 @@
 <template>
-    <donut-chart id="donut" :data="prepareChartData()" colors='[ "#FF6384", "#36A2EB", "#FFCE56" ]'
-                 resize="true"></donut-chart>
+    <div>
+
+        <GChart
+            v-if="donutData.length>0"
+            type="PieChart"
+            :data="donutData"
+            :options="donutChartOptions"
+        />
+    </div>
 
 
 </template>
 
 <script>
-import { DonutChart } from 'vue-morris'
 
 export default {
     name: 'PaymentHistoryChart',
-    components: {DonutChart},
     props: ['paymentdata'],
     data () {
         return {
-            hebele: this.paymentdata,
-
-            donutData: []
+            donutData: [
+                ['Paid For', 'Amount']
+            ],
+            donutChartOptions: {
+                title: 'Payment Distribution',
+                pieHole: 0.4,
+                legend: 'left',
+                height: 300,
+                pieSliceTextStyle: {
+                    color: 'white',
+                },
+            },
         }
     },
-    methods:{
-        prepareChartData(){
+    methods: {
+        prepareChartData () {
             for (let i in this.paymentdata) {
-                this.donutData.push({
-                    label: this.paymentdata[i].payment_type,
-                    value: this.paymentdata[i].amount
-
-                })
+                this.donutData.push([
+                    this.paymentdata[i].payment_type, this.paymentdata[i].amount
+                ])
             }
             return this.donutData
         }
+    },
+    mounted () {
+        this.prepareChartData()
     }
 }
 </script>
