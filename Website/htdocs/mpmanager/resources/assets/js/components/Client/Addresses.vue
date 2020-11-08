@@ -26,8 +26,8 @@
         <md-dialog class="adress-edit-container" :md-active.sync="modalVisibility">
             <md-dialog-title v-if="editFlag">Update Address</md-dialog-title>
             <md-dialog-title v-if="!editFlag">Register New Address</md-dialog-title>
-
-                            <div class="md-layout md-gutter md-size-100">
+             <md-dialog-content class="md-scrollbar">
+                            <div class="md-layout md-gutter">
                                 <div class="md-layout-item md-size-50 md-small-size-100">
                                     <md-field name="city">
                                         <label for="city">City</label>
@@ -87,7 +87,7 @@
                                 </div>
                             </div>
 
-
+             </md-dialog-content>
             <md-dialog-actions>
                 <md-button class="md-accent" @click="closeModal()">Close</md-button>
 

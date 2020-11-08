@@ -4,7 +4,7 @@
         title="Details"
         :button="true"
         button-text="Delete Person"
-        :callback="confirmDelete"
+        @widgetAction="confirmDelete"
         button-icon="delete"
         :show-spinner="false">
 
