@@ -1,6 +1,6 @@
 <template>
     <div>
-        <md-dialog :md-active.sync="modalVisibility"
+        <md-dialog :md-active.sync="modalVisibility" :md-click-outside-to-close="false"
         >
             <md-dialog-title>
                 Select Mini-Grid
