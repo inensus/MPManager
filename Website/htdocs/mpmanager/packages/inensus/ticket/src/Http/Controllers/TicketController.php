@@ -193,7 +193,8 @@ class TicketController extends Controller
 
     public function destroy(Request $request)
     {
-        $ticketId = $request->get('ticketId');
+        $ticket = $request->get('ticketId');
+        $ticketId=$ticket['id'];
         if ($ticketId === null) {
             return (new TicketResource([]))->response()->setStatusCode(404);
         }
