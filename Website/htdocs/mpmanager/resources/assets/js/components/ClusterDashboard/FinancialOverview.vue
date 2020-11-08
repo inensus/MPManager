@@ -5,7 +5,7 @@
         button
         button-text="Set Period"
         button-color="red"
-        :callback="showPeriod"
+        @widgetAction="showPeriod"
 
     >
         <div v-if="setPeriod" class="period-selector">
