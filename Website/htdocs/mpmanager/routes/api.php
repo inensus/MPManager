@@ -109,6 +109,7 @@ Route::group(['prefix' => 'energies', 'middleware' => 'jwt.verify'], static func
 // Generation-Assets
 Route::group(['prefix' => 'generation-assets', 'middleware' => 'jwt.verify'], static function () {
     Route::post('/grid', 'MiniGridFrequencyController@store');
+    Route::get('/{miniGridId}/readings', 'GenerationAssetsController@show');
 });
 // Maintenance
 Route::group(['prefix' => '/maintenance', 'middleware' => 'jwt.verify'], static function () {

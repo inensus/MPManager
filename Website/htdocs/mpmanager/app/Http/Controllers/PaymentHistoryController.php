@@ -129,10 +129,10 @@ class PaymentHistoryController
     public function byYear(int $personId, int $year = null)
     {
         $year = $year ?? (int)date('Y');
-        $payments = (new PaymentHistory)->getPaymentFlow('person', $personId, $year);
+        $payments = $this->history->getPaymentFlow('person', $personId, $year);
         $paymentFlow = array_fill(0, 11, 0);
         foreach ($payments as $payment) {
-            $paymentFlow[$payment['month'] - 1] = $payment['amount'];
+            $paymentFlow[$payment['month'] - 1] = (double)$payment['amount'];
         }
         return $paymentFlow;
     }

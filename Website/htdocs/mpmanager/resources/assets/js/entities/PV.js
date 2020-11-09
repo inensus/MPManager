@@ -13,6 +13,7 @@ export class PV {
         this.new_generated_energy_unit = null
         this.created_at = null
         this.updated_at = null
+        this.reading_date = null
 
     }
 
@@ -30,6 +31,7 @@ export class PV {
         this.new_generated_energy_unit = data['new_generated_energy_unit']
         this.created_at = data['created_at']
         this.updated_at = data['updated_at']
+        this.reading_date = data['reading_date']
 
         return this
     }

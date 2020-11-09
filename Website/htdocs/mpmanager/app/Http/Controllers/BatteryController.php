@@ -44,6 +44,7 @@ class BatteryController extends Controller
         return new ApiResource($batteryReadings->get());
     }
 
+
     /**
      * Battery details for Mini-Grid
      * @urlParam miniGridId int required
@@ -53,16 +54,29 @@ class BatteryController extends Controller
      * @param $id
      * @return ApiResource
      */
-    public function showByMiniGrid(Request $request, $id): ApiResource
+    public function showByMiniGrid(Request $request, $miniGridId): ApiResource
     {
-        $limit = $request->input('limit') ?? 96;
-        $batteries = $this->battery
-            ->newQuery()
-            ->where('mini_grid_id', $id)
-            ->latest()
-            ->take($limit)
-            ->get();
-        return new ApiResource($batteries->reverse()->values());
+        $limit = $request->input('limit');
+
+        $batteryReadings = $this->battery->newQuery()
+            ->where('mini_grid_id', $miniGridId);
+
+        if ($startDate = $request->input('start_date')) {
+            $batteryReadings->where('read_out', '>=',
+                Carbon::createFromTimestamp($startDate)->format('Y-m-d H:i:s'));
+        }
+        if ($endDate = $request->input('end_date')) {
+
+            $batteryReadings->where('read_out', '<=',
+                Carbon::createFromTimestamp($endDate)->format('Y-m-d H:i:s')
+            );
+        }
+        if($limit){
+            $batteryReadings->take($limit);
+        }
+        $batteryReadings->orderBy('read_out');
+        $batteryReadings->latest();
+        return new ApiResource($batteryReadings->get()->reverse()->values());
     }
 
     /**
