@@ -3,6 +3,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\PowerConverter;
 use App\Http\Requests\StoreEnergyRequest;
 use App\Http\Resources\ApiResource;
 use App\Models\Energy;
@@ -33,28 +34,37 @@ class EnergyController extends Controller
 
             $totalEnergy = 0;
             $totalAbsorbedEnergy = 0;
+            $totalAbsorbedEnergyUnit = '';
             foreach ($meter['values'] as $value) {
                 if ($value['name'] === 'Total yield') {
-                    $totalEnergy = str_replace(array('.', ','), '', $value['value']);
+                    //get rid of thousand separator
+                    $totalEnergy = str_replace(array('.', ','), array('', '.'), $value['value']);
                     break;
                 }
                 if ($value['name'] === 'Absorbed energy') {
-                    $totalAbsorbedEnergy = str_replace(array('.', ','), '', $value['value']);
+                    $totalAbsorbedEnergy = str_replace(array('.', ','), array('', '.'), $value['value']);
+                    $totalAbsorbedEnergyUnit = $value['unit'];
                 }
+
             }
 
             if ($lastEnergyInput !== null) {
                 $lastTotalEnergy = $lastEnergyInput->total_energy;
                 $lastTotalAbsorbed = $lastEnergyInput->total_absorbed;
-                $lastEnergyInput->active = 0;
-                $lastEnergyInput->save();
+                $lastTotalAbsorbedUnit = $lastEnergyInput->total_absorbed_unit;
+                $lastEnergyInput->update(['active' => 0]);
             } else {
                 $lastTotalEnergy = $totalEnergy;
                 $lastTotalAbsorbed = $totalAbsorbedEnergy;
+                $lastTotalAbsorbedUnit = $totalAbsorbedEnergyUnit;
             }
 
             $usedEnergySinceLastInput = $totalEnergy - $lastTotalEnergy;
-            $absorbedEnergySinceLastInput = $totalAbsorbedEnergy - $lastTotalAbsorbed;
+            $absorbedEnergySinceLastInput =
+                PowerConverter::convert($totalAbsorbedEnergy, $totalAbsorbedEnergyUnit, 'kW') -
+                PowerConverter::convert($lastTotalAbsorbed, $lastTotalAbsorbedUnit, 'kW');
+
+
             $this->energy->newQuery()->create([
                 'meter_id' => $meter["id"],
                 'active' => 1,
@@ -65,7 +75,10 @@ class EnergyController extends Controller
                 'read_out' => $request->input('read_out'),
                 'used_energy_since_last' => $usedEnergySinceLastInput,
                 'total_absorbed' => $totalAbsorbedEnergy,
+                'total_absorbed_unit' => $totalAbsorbedEnergyUnit,
                 'absorbed_energy_since_last' => $absorbedEnergySinceLastInput,
+                'absorbed_energy_since_last_unit' => 'kWh',
+
             ]);
 
         }
