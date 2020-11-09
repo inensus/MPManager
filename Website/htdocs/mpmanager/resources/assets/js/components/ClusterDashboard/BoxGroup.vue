@@ -39,7 +39,7 @@
                 :header-text-color="'#dddddd'"
                 header-text="Connected Meters"
                 :sub-text-color="'#e3e3e3'"
-                box-icon="plug"
+                :box-icon="'settings_input_hdmi'"
                 :box-icon-color="'#604058'"
             />
         </div>
@@ -52,7 +52,7 @@
                 :header-text-color="'#dddddd'"
                 :header-text="'Revenue last 30 days' "
                 :sub-text-color="'#e3e3e3'"
-                :box-icon="'money-bill'"
+                :box-icon="'attach_money'"
                 :box-icon-color="'#5c5837'"
             />
         </div>

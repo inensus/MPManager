@@ -165,7 +165,7 @@
                                             id="confirmPassword"
                                             name="confirmPassword"
                                             v-model="confirmPassword"
-                                            v-validate="'required|confirmed:passwordRef|max:15'"
+                                            v-validate="'required|confirmed:$passwordRef'"
                                             type="password"
                                         />
                                         <span class="md-error">{{ errors.first('Agent-Form.confirmPassword') }}</span>

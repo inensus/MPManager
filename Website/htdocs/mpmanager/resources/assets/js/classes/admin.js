@@ -16,9 +16,9 @@ export class Admin {
         this.paginator = new Paginator(resources.admin.list)
     }
 
-    updateList(data){
+    updateList (data) {
         this.list = []
-        for (let m in data){
+        for (let m in data) {
             this.list.push(data[m])
         }
         return this.list
@@ -66,14 +66,14 @@ export class Admin {
     getDetails () {
         if (this.id !== null)
             return
-        axios.get(resources.user.authData)
-            .then(response => {
-                this.id = response.data.id
-                this.name = response.data.name
-                this.email = response.data.email
-                EventBus.$emit('adminGot')
-            }
-            )
+        /*        axios.get(resources.user.authData)
+                    .then(response => {
+                        this.id = response.data.id
+                        this.name = response.data.name
+                        this.email = response.data.email
+                        EventBus.$emit('adminGot')
+                    }
+                    )*/
     }
 
     getName () {

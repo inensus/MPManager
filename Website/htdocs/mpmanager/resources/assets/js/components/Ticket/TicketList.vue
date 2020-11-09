@@ -5,9 +5,9 @@
                 @widgetAction="() => {filterTicket=true}"
                 title="List of Tickets"
                 button-icon="filter_list"
-                >
+        >
 
-            <div class="md-layout-item" v-if="filterTicket" >
+            <div class="md-layout-item" v-if="filterTicket">
                 <filtering @filtering="filtered"></filtering>
 
             </div>
@@ -16,6 +16,7 @@
                     <widget title="Opened Ticket"
                             :subscriber="subscriber.opened"
                             :paginator="ticketService.openedPaginator"
+                            :resetKey="resetKey"
                             color="green">
                         <ticket-item
                             :allow-comment="true"
@@ -28,6 +29,7 @@
                     <widget title="Closed Ticket"
                             :subscriber="subscriber.closed"
                             :paginator="ticketService.closedPaginator"
+                            :resetKey="resetKey"
                             color="red">
                         <ticket-item
                             :allow-comment="true"
@@ -51,7 +53,6 @@ import { EventBus } from '../../shared/eventbus'
 import Filtering from './Filtering'
 import { resources } from '../../resources'
 import { TicketService } from '../../services/TicketService'
-import { Paginator } from '../../classes/paginator'
 import { Ticket } from '../../classes/Ticket'
 
 export default {
@@ -74,11 +75,14 @@ export default {
     mounted () {
 
         EventBus.$on('pageLoaded', this.reloadList)
+        EventBus.$on('filterClosed', () => {
+            this.filterTicket = false
+        })
         EventBus.$on('listChanged', () => {
 
             this.resetKey += 1
-            this.ticketService.openedPaginator = new Paginator(resources.ticket.list + '?status=0')
-            this.ticketService.closedPaginator = new Paginator(resources.ticket.list + '?status=1')
+            EventBus.$emit('widgetContentLoaded', this.subscriber.opened, this.ticketService.openedList.length)
+            EventBus.$emit('widgetContentLoaded', this.subscriber.closed, this.ticketService.closedList.length)
 
         })
         window.Echo.private('histories').listen('HistoryEvent', event => {
@@ -147,12 +151,12 @@ export default {
     },
     methods: {
         async reloadList (subscriber, data) {
-            if (subscriber !== 'ticketListOpened' && subscriber !== 'ticketListClosed'){
+            if (subscriber !== 'ticketListOpened' && subscriber !== 'ticketListClosed') {
                 return
             }
             await this.ticketService.updateList(data, subscriber)
-            EventBus.$emit('widgetContentLoaded',this.subscriber.opened,this.ticketService.openedList.length)
-            EventBus.$emit('widgetContentLoaded',this.subscriber.closed,this.ticketService.closedList.length)
+            EventBus.$emit('widgetContentLoaded', this.subscriber.opened, this.ticketService.openedList.length)
+            EventBus.$emit('widgetContentLoaded', this.subscriber.closed, this.ticketService.closedList.length)
         },
         filtered (data) {
             this.ticketService.openedPaginator.setPaginationBaseUrl(

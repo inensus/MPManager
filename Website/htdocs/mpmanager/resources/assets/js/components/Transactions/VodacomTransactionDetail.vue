@@ -7,8 +7,7 @@
                 Mobile Provider
             </div>
             <div class="md-layout-item md-subheader n-font">
-                <img src="https://vodacom.co.tz/media/logo/stores/1/logo.png"
-                     style="max-height: 35px;">
+                <img class="logo" alt="logo" :src="imgLogo" style="max-height: 35px;"/>
             </div>
         </div>
         <hr class="hr-d">
@@ -53,12 +52,18 @@
 
 <script>
 
+import vodacomLogo from '../../../../../storage/app/public/icons/vodacom.png'
 
 export default {
 
     name: 'VodacomTransactionDetail',
+    props: ['ot'],
+    data () {
+        return {
+            imgLogo: vodacomLogo
 
-    props: ['ot']
+        }
+    }
 }
 </script>
 

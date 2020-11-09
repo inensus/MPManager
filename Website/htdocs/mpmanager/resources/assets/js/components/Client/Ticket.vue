@@ -8,6 +8,7 @@
             :button="true"
             :button-text="'New Ticket'"
             @widgetAction="openModal"
+            :resetKey="resetKey"
         >
 
                 <md-table>
@@ -22,7 +23,7 @@
                             <md-table-cell><md-icon>{{showTicket === index ? 'keyboard_arrow_down' : 'keyboard_arrow_right'}}</md-icon>{{ticket.name}}</md-table-cell>
                             <md-table-cell v-if="ticket.category">{{ticket.category.label_name}}</md-table-cell>
                             <md-table-cell v-else>-</md-table-cell>
-                            <md-table-cell><span  :class="[ticket.closed ? 'open-ticket': 'closed-ticket']">{{ticket.closed ? "Open" : "Closed"}}</span></md-table-cell>
+                            <md-table-cell><span  :class="[ticket.status === 0 ? 'open-ticket': 'closed-ticket']">{{ticket.status === 0 ? "Open" : "Closed"}}</span></md-table-cell>
                             <md-table-cell>{{formatDate(ticket.created_at)}}</md-table-cell>
                         </md-table-row>
                         <md-table-row v-if="showTicket === index" :key="index">
@@ -91,10 +92,8 @@
 
         <md-dialog :md-active.sync="showModal">
             <md-dialog-title>New Ticket</md-dialog-title>
-            <div class="new-ticket-modal-container">
-                <form novalidate class="md-layout">
-                    <div  class="md-layout md-gutter" >
-
+            <md-dialog-content class="md-scrollbar">
+                <form novalidate class="md-layout md-gutter" >
 
                         <div class="md-layout-item md-size-100 ">
                             <md-field name="title">
@@ -107,6 +106,7 @@
 
                             <md-datepicker
                                 name="ticketDueDate"
+                                md-immediately
                                 id="ticketDueDate"
                                 v-model="newTicket.dueDate"> <label for="ticketDueDate">Due Date</label></md-datepicker>
 
@@ -118,7 +118,7 @@
 
                             <md-field name="ticketPriority">
                                 <label for="ticketPriority">Category</label>
-                                <md-select name="ticketPriority" id="ticketPriority">
+                                <md-select v-model="newTicket.label" name="ticketPriority" id="ticketPriority">
                                     <md-option value="0" disabled>-- Select Category --</md-option>
                                     <md-option
                                         v-for="(label,index) in labels"
@@ -142,23 +142,23 @@
                         </div>
 
 
-                        <div class="md-layout-item md-size-100 ">
+                        <div class="md-layout-item md-size-100">
 
                             <md-field>
                                 <label for="description">Description</label>
                                 <md-textarea type="text" id="description" name="description" />
                             </md-field>
                         </div>
-                    </div>
+                        <md-dialog-actions class="md-layout-item md-size-100" >
+                        <md-button class="md-accent" @click="closeModal()">Close</md-button>
+
+                        <md-button class="md-primary btn-lg" @click="saveTicket()">Save</md-button>
+
+                    </md-dialog-actions>
                 </form>
-            </div>
+            </md-dialog-content>
 
-            <md-dialog-actions>
-                <md-button class="md-accent" @click="closeModal()">Close</md-button>
 
-                <md-button class="md-primary btn-lg" @click="saveTicket()">Save</md-button>
-
-            </md-dialog-actions>
         </md-dialog>
     </div>
 </template>
@@ -194,14 +194,16 @@ export default {
             newTicket: {
                 title: '',
                 description: '',
-                dueDate: '',
-                label: 1,
-                assignedPerson: '',
+                dueDate: null,
+                label: null,
+                assignedPerson: null,
                 owner_id: this.$store.getters.person.id, //current person id
                 owner_type: 'person',
                 creator: '',
-                outsourcing: 0
-            }
+                outsourcing: 0,
+
+            },
+            resetKey: 0,
         }
     },
     beforeDestroy() {
@@ -351,11 +353,9 @@ export default {
                 return
             }
 
-            axios.post(resources.ticket.create, this.newTicket).then(response => {
-                let data = response.data.data[0]
-                let t = new Ticket()
-
-                this.tickets.list.unshift(t.fromJson(data))
+            axios.post(resources.ticket.create, this.newTicket).then(() => {
+                EventBus.$emit('widgetContentLoaded', this.subscriber, this.tickets.list.length)
+                this.resetKey++
             })
 
             this.$emit('close')

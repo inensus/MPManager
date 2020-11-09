@@ -1,63 +1,64 @@
 <template>
 
-            <div class="md-layout md-gutter md-size-100" style="padding: 0.4rem; margin: auto;" >
-                <div class="md-layout-item md-size-42">
-                    <md-field>
-                        <md-select
+    <div class="md-layout md-gutter md-size-100" style="padding: 0.4rem; margin: auto;">
+        <div class="md-layout-item md-size-42">
+            <md-field>
+                <md-select
 
-                            @md-selected="setCategory"
-                            id="ticket_categories"
-                            name="ticket_categories"
-                            placeholder="Category"
-                        >
-                            <md-option value>-- Any Category --</md-option>
-                            <md-option
-                                :key="index"
-                                :value="category.id"
-                                v-for="(category,index) in categories"
-                            >{{category.label_name}}
-                            </md-option>
-                        </md-select>
-                    </md-field>
-                </div>
+                    @md-selected="setCategory"
+                    id="ticket_categories"
+                    name="ticket_categories"
+                    placeholder="Category"
+                >
+                    <md-option value>-- Any Category --</md-option>
+                    <md-option
+                        :key="index"
+                        :value="category.id"
+                        v-for="(category,index) in categories"
+                    >{{category.label_name}}
+                    </md-option>
+                </md-select>
+            </md-field>
+        </div>
 
-                <div class="md-layout-item md-size-42">
-                    <md-field class="md-layout-item">
-                        <md-select @md-selected="setPerson" id="assigned_to" name="assigned_to"
-                                   placeholder="Assigned To">
-                            <md-option value>-- Any User --</md-option>
-                            <md-option
-                                :key="person.id"
-                                :value="person.id"
-                                v-for="person in people"
-                            >{{person.user_name}}
-                            </md-option>
-                        </md-select>
-                    </md-field>
-                </div>
+        <div class="md-layout-item md-size-42">
+            <md-field class="md-layout-item">
+                <md-select @md-selected="setPerson" id="assigned_to" name="assigned_to"
+                           placeholder="Assigned To">
+                    <md-option value>-- Any User --</md-option>
+                    <md-option
+                        :key="person.id"
+                        :value="person.id"
+                        v-for="person in people"
+                    >{{person.user_name}}
+                    </md-option>
+                </md-select>
+            </md-field>
+        </div>
 
 
-                <div class="md-layout-item md-size-16">
-                    <md-button @click="filterTickets" class="md-raised md-primary">Filter</md-button>
-                    <md-button class="md-raised md-accent" @click="filterTicket = false">Close</md-button>
-                </div>
+        <div class="md-layout-item md-size-16">
+            <md-button @click="filterTickets" class="md-raised md-primary">Filter</md-button>
+            <md-button class="md-raised md-accent" @click=closeFilter()>Close</md-button>
+        </div>
 
-            </div>
+    </div>
 
 </template>
 
 <script>
-import {resources} from '../../resources'
+import { resources } from '../../resources'
+import { EventBus } from '../../shared/eventbus'
 
 export default {
     name: 'Filtering',
-    created() {
+    created () {
     },
-    mounted() {
+    mounted () {
         this.getCategories()
         this.getPeople()
     },
-    data() {
+    data () {
         return {
             categories: [],
             people: [],
@@ -66,23 +67,23 @@ export default {
         }
     },
     methods: {
-        setCategory(category) {
+        setCategory (category) {
             this.selectedCategory = category
         },
-        setPerson(person) {
+        setPerson (person) {
             this.selectedPerson = person
         },
-        getCategories() {
+        getCategories () {
             axios.get(resources.ticket.labels).then(response => {
                 this.categories = response.data.data
             })
         },
-        getPeople() {
+        getPeople () {
             axios.get(resources.ticket.users).then(response => {
                 this.people = response.data.data
             })
         },
-        filterTickets() {
+        filterTickets () {
             let query = ''
             if (this.selectedCategory !== '') {
                 query += '&category=' + this.selectedCategory
@@ -94,7 +95,11 @@ export default {
             if (query !== '') {
                 this.$emit('filtering', query)
             }
+        },
+        closeFilter () {
+            EventBus.$emit('filterClosed')
         }
+
     }
 }
 </script>

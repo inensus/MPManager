@@ -491,8 +491,8 @@ export default {
     },
     data () {
         return {
-            subscriber:{
-                revenue_trends:'mini-grid-revenue-trends'
+            subscriber: {
+                revenue_trends: 'mini-grid-revenue-trends'
             },
             miniGridService: new MiniGridService(),
             revenueService: new RevenueService(),
@@ -559,7 +559,7 @@ export default {
                 colors: ['#739e73', '#448aff', '#78002e', '#dce775',],
                 height: 220,
             },
-            donutChartOptions: { // options for donut chart
+            donutChartOptions: {
                 pieHole: 1,
                 legend: 'bottom',
                 height: 300,
@@ -625,7 +625,7 @@ export default {
         }
     },
     methods: {
-        closeModal(){
+        closeModal () {
             this.ModalVisibility = false
         },
         closeDatePicker () {
@@ -755,7 +755,7 @@ export default {
                     }
 
                 }
-                EventBus.$emit('widgetContentLoaded',this.subscriber.revenue_trends,this.trendChartData.base.length)
+                EventBus.$emit('widgetContentLoaded', this.subscriber.revenue_trends, this.trendChartData.base.length)
 
             } catch (e) {
                 this.redirectDialogActive = true
@@ -1008,6 +1008,37 @@ export default {
                     con, parseInt(connectionRev)
                 ])
             }
+            let value = donutData.reduce((acc, curr) => {
+                if (curr[1] > 0) {
+                    acc = true
+                }
+                return acc
+            }, false)
+            if (value) {
+                this.donutChartOptions = {
+                    pieHole: 1,
+                    legend: 'bottom',
+                    height: 300,
+                }
+            } else {
+                donutData = []
+                donutData.push(['Connection Name', 'Revenue'])
+                donutData.push(['', { v: 1, f: 'No Data' }])
+                this.donutChartOptions.chartArea = {
+                    left: '15%'
+                }
+                this.donutChartOptions.colors = ['transparent']
+                this.donutChartOptions.pieSliceBorderColor = '#9e9e9e'
+                this.donutChartOptions.pieSliceText = 'value'
+                this.donutChartOptions.pieSliceTextStyle = {
+                    color: '#9e9e9e'
+                }
+                this.donutChartOptions.tooltip = {
+                    trigger: 'none'
+                }
+
+            }
+
             return donutData
 
         },
@@ -1464,5 +1495,3 @@ export default {
         background: #90CAF9 !important;
     }
 </style>
-
-

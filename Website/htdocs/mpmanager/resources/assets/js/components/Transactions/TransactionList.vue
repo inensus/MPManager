@@ -146,15 +146,8 @@
 
                                 <md-table-cell style="text-align: center !important;">
 
-
-                                    <img v-if="transaction.service==='vodacom_transaction'"
-                                         src="https://vodacom.co.tz/media/logo/stores/1/logo.png"
-                                         style="max-height:18px;"
-                                    />
-                                    <img v-if="transaction.service==='airtel_transaction'"
-                                         src="https://upload.wikimedia.org/wikipedia/en/thumb/8/8d/Bharti_Airtel_Limited_logo.svg/361px-Bharti_Airtel_Limited_logo.svg.png"
-                                         style="max-height:18px; text-align: center"
-                                    />
+                                    <img v-if="transaction.service==='vodacom_transaction'" class="logo" alt="logo" :src="vodacomLogo" style="max-height: 18px;"/>
+                                    <img v-if="transaction.service==='airtel_transaction'" class="logo" alt="logo" :src="airtelLogo" style="max-height: 18px;"/>
                                     <img v-if="transaction.service==='agent_transaction'"
                                          src="https://image.flaticon.com/icons/svg/99/99395.svg"
                                          style="max-height:18px;"
@@ -200,6 +193,8 @@ import Widget from '../../shared/widget'
 import FilterTransaction from './FilterTransaction'
 import Box from '../Box'
 import { TransactionService } from '../../services/TransactionService'
+import airtelLogo from '../../../../../storage/app/public/icons/airtel.png'
+import vodacomLogo from '../../../../../storage/app/public/icons/vodacom.png'
 export default {
     name: 'transactionList',
     mixins: [timing, currency],
@@ -222,7 +217,9 @@ export default {
                 'Past 30 days'
             ],
             headers: ['ID', 'Service', 'Sender', 'Amount', 'Type', 'Message', 'Sent Date', 'Process Time'],
-            tableName: 'Transaction'
+            tableName: 'Transaction',
+            airtelLogo: airtelLogo,
+            vodacomLogo: vodacomLogo
         }
     },
 

@@ -25,7 +25,7 @@ export class Ticket {
         this.lastActivity = ticket.dateLastActivity
         this.category = ticketData.category
         this.closed = ticket.closed
-
+        this.status =ticketData.status
         for (let i = 0; i < actions.length; i++) {
             let action = actions[i]
             if (action.type !== 'commentCard') {
