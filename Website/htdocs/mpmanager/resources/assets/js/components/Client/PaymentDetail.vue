@@ -2,7 +2,7 @@
     <div>
         <widget :title="' Payment Overview '+ periodName"
                 :subscriber="subscriber"
-                >
+        >
             <div slot="tabbar">
                 <md-field>
                     <label class="period-style">Period</label>
@@ -17,14 +17,14 @@
                 </md-field>
             </div>
             <div class="md-layout md-gutter">
-                <div class="md-layout-item md-size-95">
+                <div class="md-layout-item md-size-90">
 
-                        <GChart
-                            type="ColumnChart"
-                            :data="chartData"
-                            :options="chartOptions"
-                            :resizeDebounce="500"
-                        />
+                    <GChart
+                        type="ColumnChart"
+                        :data="chartData"
+                        :options="chartOptions"
+                        :resizeDebounce="500"
+                    />
 
 
                 </div>
@@ -38,11 +38,12 @@
 <script>
 import Widget from '../../shared/widget'
 import { EventBus } from '../../shared/eventbus'
+
 export default {
     name: 'PaymentDetail',
     data () {
         return {
-            subscriber:'payment-overview',
+            subscriber: 'payment-overview',
             contentWidth: 0,
             personId: null,
             period: 'M',
@@ -51,9 +52,8 @@ export default {
             chartOptions: {
                 chart: {
                     title: 'Customer Payment Flow',
-                    subtitle: 'Sales, Expenses, and Profit: 2014-2017',
                 },
-                colors: ['#FF6384', '#CC6384', '#36A2EB']
+                colors: ['#0b920b', '#8b2621', '#0c7cd5']
             },
 
             barData: [],
@@ -89,7 +89,7 @@ export default {
             }
             axios.get(resources.paymenthistories + this.personId + '/payments/' + period)
                 .then(response => {
-                    this.chartData = [['Period', 'Energy', 'AccessRate', 'Deferred Payments']]
+                    this.chartData = [['Period', 'Energy', 'Access Rate', 'Loan Rate']]
 
                     let data = response.data
                     for (let x in data) {
@@ -98,10 +98,10 @@ export default {
                             x,
                             'energy' in data[x] ? parseInt(data[x]['energy']) : 0,
                             'access rate' in data[x] ? parseInt(data[x]['access rate']) : 0,
-                            'deferred payment' in data[x] ? parseInt(data[x]['energy']) : 0,
+                            'loan rate' in data[x] ? parseInt(data[x]['loan rate']) : 0,
                         ]
                         this.chartData.push(items)
-                        EventBus.$emit('widgetContentLoaded',this.subscriber,this.chartData.length)
+                        EventBus.$emit('widgetContentLoaded', this.subscriber, this.chartData.length)
                     }
                 })
 
@@ -110,19 +110,20 @@ export default {
 }
 </script>
 <style scoped>
-    .payment-period-select {
-        float: right;
-        padding-right: 2.5rem !important;
-        padding-left: 2.5rem !important;
-    }
+.payment-period-select {
+    float: right;
+    padding-right: 2.5rem !important;
+    padding-left: 2.5rem !important;
+}
 
-    .period-style {
-        color: white !important;
-        -webkit-text-fill-color: white !important;
-    }
+.period-style {
+    color: white !important;
+    -webkit-text-fill-color: white !important;
 
-    #period input[type="text"] {
-        color: white !important;
-        -webkit-text-fill-color: white !important;
-    }
+}
+
+#period input[type="text"] {
+    color: white !important;
+    -webkit-text-fill-color: white !important;
+}
 </style>
