@@ -6,6 +6,7 @@
 
                 <client-personal-data :person="person"/>
                 <addresses :person-id="person.id" v-if="person!==null"/>
+                <sms-history :person-id="personId" person-name="System"/>
             </div>
             <div class="md-layout-item md-size-45">
                 <payment-flow/>
@@ -16,9 +17,6 @@
                 <transactions/>
             </div>
 
-            <div class="md-layout-item md-size-100">
-                <sms-history :person-id="personId" person-name="System"/>
-            </div>
 
             <div class="md-layout-item md-size-50">
                 <div class="client-detail-card">
