@@ -80,7 +80,6 @@ export default {
             chartOptions: {
                 chart: {
                     title: 'Customer Payment Flow',
-                    subtitle: 'Sales, Expenses, and Profit: 2014-2017'
                 },
                 colors: ['#1b9e77', '#d95f02', '#7570b3']
             },
@@ -118,6 +117,7 @@ export default {
             return (
                 this.readable(result) +
                     cur + ' ' +
+                    'Over ' +
                     paidMonths.toString() +
                     'Months'
             )

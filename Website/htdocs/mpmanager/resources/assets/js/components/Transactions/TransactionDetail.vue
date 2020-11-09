@@ -8,14 +8,19 @@
                         <widget title="Provider Specific Information" :show-spinner="false">
                             <md-card>
                                 <md-card-content>
+
+
                                     <vodacom-transaction-detail
                                         :ot="ot"
                                         v-if="transaction.original_transaction_type === 'vodacom_transaction'"
                                     />
+
                                     <airtel-transaction-detail
                                         :ot="ot"
                                         v-if="transaction.original_transaction_type === 'airtel_transaction'"
                                     />
+
+
                                 </md-card-content>
                             </md-card>
                         </widget>
@@ -94,26 +99,23 @@
                             :show-spinner="false">
                             <md-card>
                                 <md-card-content v-if="ot.status===1">
-                                    <div class="md-layout md-gutter md-size-100" justify="around">
-                                        <div class="md-layout-item md-size-40">
-                                            <div>
-                                                <div class="md-layout">
-                                                    <div class="md-layout-item md-subheader">Payment For</div>
-                                                    <div class="md-layout-item md-subheader">Amount</div>
-                                                </div>
-                                                <hr class="hr-d">
-
-                                                <div :key="i" class="md-layout"
-                                                     v-for="(p,i) in transaction.payment_histories">
-                                                    <div class="md-layout-item md-subheader n-font">{{p.payment_type}}
-                                                    </div>
-                                                    <div class="md-layout-item md-subheader n-font">
-                                                        {{readable(p.amount)}}
-                                                    </div>
-                                                </div>
-
-
-                                            </div>
+                                    <div class="md-layout md-gutter md-size-100" >
+                                        <div class="md-layout-item md-size-55" style="margin: auto;" >
+                                            <payment-history-chart :paymentdata="transaction.payment_histories"/>
+                                        </div>
+                                        <div class="md-layout-item md-size-45">
+                                            <md-table v-if="transaction.payment_histories.length>0" >
+                                                <md-table-row>
+                                                    <md-table-head>Paid For</md-table-head>
+                                                    <md-table-head>Amount</md-table-head>
+                                                </md-table-row>
+                                                <md-table-row v-for="(p,i) in transaction.payment_histories" :key="i">
+                                                    <md-table-cell><p> {{p.payment_type}}</p>
+                                                    </md-table-cell>
+                                                    <md-table-cell> {{readable(p.amount)}}
+                                                    </md-table-cell>
+                                                </md-table-row>
+                                            </md-table>
                                         </div>
 
                                     </div>
@@ -173,6 +175,7 @@
 import { timing } from '../../mixins/timing'
 import { currency } from '../../mixins/currency'
 import VodacomTransactionDetail from './VodacomTransactionDetail'
+import PaymentHistoryChart from './PaymentHistoryChart'
 import AirtelTransactionDetail from './AirtelTransactionDetail'
 import Widget from '../../shared/widget'
 import { TransactionService } from '../../services/TransactionService'
@@ -184,6 +187,7 @@ export default {
         AirtelTransactionDetail,
         Widget,
         VodacomTransactionDetail,
+        PaymentHistoryChart
     },
     mixins: [timing, currency],
     created () {
@@ -199,13 +203,13 @@ export default {
             transactionId: null,
             transaction: null,
             personName: null,
-            personId: null,
+            personId: null
         }
     },
     computed: {
         ot: function () {
             return this.transaction.original_transaction
-        },
+        }
     },
     methods: {
         async getDetail (id) {
@@ -224,7 +228,7 @@ export default {
             try {
                 let person = await this.personService.getPerson(personId)
                 this.personName =
-                    person.name + ' ' + person.surname
+                        person.name + ' ' + person.surname
                 this.personId = person.id
             } catch (e) {
                 this.alertNotify('error', e.message)
@@ -237,11 +241,11 @@ export default {
                 type: type,
                 title: type + ' !',
                 text: message,
-                speed: 0,
+                speed: 0
             })
         },
 
-    },
+    }
 }
 </script>
 
@@ -274,5 +278,8 @@ export default {
         margin-top: 2vh;
 
 
+    }
+    p:first-letter {
+        text-transform:capitalize;
     }
 </style>

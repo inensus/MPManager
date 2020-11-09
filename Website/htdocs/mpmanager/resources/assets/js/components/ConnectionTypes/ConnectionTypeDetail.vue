@@ -226,7 +226,6 @@ export default {
     },
     created () {
         this.subConnectionType.connection_type_id = this.$route.params.id
-        console.log(this.subConnectionType.connection_type_id)
         this.getSubConnectionTypes(this.subConnectionType.connection_type_id)
         this.getConnectionTypeDetail(this.subConnectionType.connection_type_id)
         this.getTariffs()
@@ -241,7 +240,6 @@ export default {
         async updateSubConnectionType(subType){
             let validator = await this.$validator.validateAll()
             if (!validator) {
-
                 return
             }
             this.$swal({
@@ -305,7 +303,7 @@ export default {
             this.showNewSubType = !this.showNewSubType
         },
         clearForm(){
-            this.subConnectionType.name=null,
+            this.subConnectionType.name=null
             this.subConnectionType.tariff_id=null
         },
         async saveSubType(subConnectionType) {

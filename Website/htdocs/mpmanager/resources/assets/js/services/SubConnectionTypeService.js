@@ -47,7 +47,7 @@ export class SubConnectionTypeService {
             }
             let response = await this.repository.store(subConnectionType_PM)
             if(response.status === 201){
-                this.subConnectionTypes.push(response.data.data)
+                return this.getSubConnectionTypes(subConnectionType_PM.connection_type_id)
             }else{
                 return new ErrorHandler(response.error, 'http', response.status)
             }

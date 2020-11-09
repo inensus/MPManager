@@ -1,8 +1,10 @@
 <?php
+
 namespace App\Console\Commands;
+
 use Illuminate\Console\Command;
 
-class RoutesGenerator  extends Command
+class RoutesGenerator extends Command
 {
     /**
      * The name and signature of the console command.
@@ -28,7 +30,7 @@ class RoutesGenerator  extends Command
 
         $exportedRoutes = 'resources/assets/js/ExportedRoutes.js';
         file_put_contents($routeTmp, file($exportedRoutes));
-        $this->removeLine($routeTmp,'last');
+        $this->removeLine($routeTmp, 'last');
 
         $directories = glob('resources/assets/js/plugins' . '/*', GLOB_ONLYDIR);
         if (count($directories) > 0) {
@@ -44,14 +46,15 @@ class RoutesGenerator  extends Command
 
     private function createPluginRoutesTmp($src, $coreRoutesTmp)
     {
-        $packageRoutes =  $src . "/js/routes.js";
-        $packageRoutesTmp =  $src . "/js/routes.tmp";
+        $packageRoutes = $src . "/js/routes.js";
+        $packageRoutesTmp = $src . "/js/routes.tmp";
         fopen($packageRoutesTmp, 'w');
         file_put_contents($packageRoutesTmp, file($packageRoutes));
         $this->removeLine($packageRoutesTmp, 'first');
         $this->removeLine($packageRoutesTmp, 'last');
         $this->appendLines($packageRoutesTmp, $coreRoutesTmp);
     }
+
     private function removeLine($packageRoutesTmp, $type)
     {
         $lines = file($packageRoutesTmp);
@@ -65,12 +68,21 @@ class RoutesGenerator  extends Command
         $file = join('', $lines);
         file_put_contents($packageRoutesTmp, $file);
     }
+
     private function appendLines($packageRoutesTmp, $coreRoutesTmp)
     {
+       
         $lines = file($packageRoutesTmp);
         $tmp = fopen($coreRoutesTmp, 'a+');
+        $counter =1;
         foreach ($lines as $key => $value) {
-            fwrite($tmp, $value);
+              if ($counter%5===0||$counter%5==1){
+                  $newLine = str_pad($value, strlen($value) + 2, ' ', STR_PAD_LEFT);
+              }else{
+                  $newLine = str_pad($value, strlen($value) + 4, ' ', STR_PAD_LEFT);
+              }
+            fwrite($tmp, $newLine);
+            $counter ++;
         }
         fclose($tmp);
     }

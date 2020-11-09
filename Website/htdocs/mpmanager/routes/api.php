@@ -177,8 +177,8 @@ Route::group(['prefix' => 'pv'], static function () {
 
 });
 // Reports
-Route::group(['prefix' => 'reports', 'middleware' => 'jwt.verify'], function () {
-    Route::get('/', 'ReportController@index');
+Route::group(['prefix' => 'reports'], function () {
+    Route::get('/', [ 'uses' => 'ReportController@index', 'middleware' => 'jwt.verify']);
     Route::get('/{id}/download', 'ReportController@download');
 });
 // Revenue

@@ -8,7 +8,7 @@
                 <md-table-head >Date</md-table-head>
             </md-table-row>
             <template v-for="(ticket,index) in ticketList" >
-                <md-table-row @click="openTicket(index)" :key="index">
+                <md-table-row @click="openTicket(index)"  :key="'tic'+index">
                     <md-table-cell><md-icon>{{showTicket === index ? 'keyboard_arrow_down' : 'keyboard_arrow_right'}}</md-icon></md-table-cell>
                     <md-table-cell >{{ticket.name}}</md-table-cell>
                     <md-table-cell v-if="ticket.category">{{ticket.category.label_name}}</md-table-cell>
@@ -66,8 +66,8 @@
 
                                     <div
                                         class="comment-item"
-                                        v-for="comment in ticket.comments"
-                                        :key="comment.id"
+                                        v-for="(comment,index) in ticket.comments"
+                                        :key="'com'+index"
                                     >
                                         <md-icon>person</md-icon>
                                         {{comment.comment}}
@@ -164,7 +164,7 @@ export default {
                 let name = this.$store.getters['auth/authenticationService'].authenticateUser.name
                 let username = this.$store.getters['auth/authenticationService'].authenticateUser.email
                 let newComment = await this.ticketCommentService.createComment(this.newComment, ticket.id, name, username)
-                if (ticket.category.out_source) {
+                if (ticket.category!==null &&ticket.category.out_source) {
                     await this.smsService.sendToPerson(this.newComment, ticket.owner.id, this.senderId)
                 }
                 this.showComments = false

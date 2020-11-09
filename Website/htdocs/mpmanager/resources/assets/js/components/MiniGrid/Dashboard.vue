@@ -111,7 +111,7 @@
                         <span style="float: left">
                     Period : {{this.startDate}} - {{this.endDate}}
                 </span>
-                            <md-button class="md-raised" @click="openDatePicker">
+                            <md-button class="md-raised" @click="openDatePicker" v-show="!selectorOpened">
                                 <md-icon>calendar_today</md-icon>
                                 Select Period
                             </md-button>
@@ -394,7 +394,8 @@ export default {
         Widget,
         Datepicker,
         Stepper,
-        RedirectionModal
+        RedirectionModal,
+
     },
     mixins: [currency],
     created () {
@@ -491,8 +492,8 @@ export default {
     },
     data () {
         return {
-            subscriber:{
-                revenue_trends:'mini-grid-revenue-trends'
+            subscriber: {
+                revenue_trends: 'mini-grid-revenue-trends'
             },
             miniGridService: new MiniGridService(),
             revenueService: new RevenueService(),
@@ -559,7 +560,7 @@ export default {
                 colors: ['#739e73', '#448aff', '#78002e', '#dce775',],
                 height: 220,
             },
-            donutChartOptions: { // options for donut chart
+            donutChartOptions: {
                 pieHole: 1,
                 legend: 'bottom',
                 height: 300,
@@ -621,20 +622,21 @@ export default {
             chartTmpData: [],
             redirectionUrl: '/locations/add-village',
             imperativeItem: 'City',
-            redirectDialogActive: false
+            redirectDialogActive: false,
+            selectorOpened: false
         }
     },
     methods: {
-        closeModal(){
+        closeModal () {
             this.ModalVisibility = false
         },
         closeDatePicker () {
+            this.selectorOpened = false
             this.expanded = true
         },
         openDatePicker () {
+            this.selectorOpened = true
             this.expanded = false
-            this.tab = 'monthly'
-
         },
         editMiniGrid () {
             this.showModal = true
@@ -755,7 +757,7 @@ export default {
                     }
 
                 }
-                EventBus.$emit('widgetContentLoaded',this.subscriber.revenue_trends,this.trendChartData.base.length)
+                EventBus.$emit('widgetContentLoaded', this.subscriber.revenue_trends, this.trendChartData.base.length)
 
             } catch (e) {
                 this.redirectDialogActive = true
@@ -1008,6 +1010,37 @@ export default {
                     con, parseInt(connectionRev)
                 ])
             }
+            let value = donutData.reduce((acc, curr) => {
+                if (curr[1] > 0) {
+                    acc = true
+                }
+                return acc
+            }, false)
+            if (value) {
+                this.donutChartOptions = {
+                    pieHole: 1,
+                    legend: 'bottom',
+                    height: 300,
+                }
+            } else {
+                donutData = []
+                donutData.push(['Connection Name', 'Revenue'])
+                donutData.push(['', { v: 1, f: 'No Data' }])
+                this.donutChartOptions.chartArea = {
+                    left: '15%'
+                }
+                this.donutChartOptions.colors = ['transparent']
+                this.donutChartOptions.pieSliceBorderColor = '#9e9e9e'
+                this.donutChartOptions.pieSliceText = 'value'
+                this.donutChartOptions.pieSliceTextStyle = {
+                    color: '#9e9e9e'
+                }
+                this.donutChartOptions.tooltip = {
+                    trigger: 'none'
+                }
+
+            }
+
             return donutData
 
         },
@@ -1464,5 +1497,3 @@ export default {
         background: #90CAF9 !important;
     }
 </style>
-
-
