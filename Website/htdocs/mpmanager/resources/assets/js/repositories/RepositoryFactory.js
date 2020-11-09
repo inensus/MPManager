@@ -1,6 +1,7 @@
 import AgentRepository from './AgentRepository'
 import AgentCommissionRepository from './AgentCommissionRepository'
-import AgentAssignedApplianceRepository from './AgentAssignedApplianceRepository'
+import AgentAssignedApplianceRepository
+    from './AgentAssignedApplianceRepository'
 import AgentBalanceHistoryRepository from './AgentBalanceHistoryRepository'
 import AgentChargeRepository from './AgentChargeRepository'
 import AgentSoldApplianceRepository from './AgentSoldApplianceRepository'
@@ -36,6 +37,7 @@ import UserRepository from './UserRepository'
 import ReportsRepository from './ReportsRepository'
 import BookKeepingRepository from './BookKeepingRepository'
 import TimeOfUsageRepository from './TimeOfUsageRepository'
+import GenerationAssetsRepository from './GenerationAssetsRepository'
 
 const repositories = {
     'asset': AssetRepository,
@@ -73,9 +75,10 @@ const repositories = {
     'ticketUser': TicketUserRepository,
     'ticketLabel': TicketLabelRepository,
     'user': UserRepository,
-    'reports':ReportsRepository,
-    'bookKeeping':BookKeepingRepository,
-    'timeOfUsage':TimeOfUsageRepository
+    'reports': ReportsRepository,
+    'bookKeeping': BookKeepingRepository,
+    'timeOfUsage': TimeOfUsageRepository,
+    'generationAssets': GenerationAssetsRepository,
 }
 
 export default {
