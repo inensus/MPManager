@@ -8,19 +8,14 @@
                         <widget title="Provider Specific Information" :show-spinner="false">
                             <md-card>
                                 <md-card-content>
-
-
                                     <vodacom-transaction-detail
                                         :ot="ot"
                                         v-if="transaction.original_transaction_type === 'vodacom_transaction'"
                                     />
-
                                     <airtel-transaction-detail
                                         :ot="ot"
                                         v-if="transaction.original_transaction_type === 'airtel_transaction'"
                                     />
-
-
                                 </md-card-content>
                             </md-card>
                         </widget>
@@ -120,9 +115,7 @@
 
                                             </div>
                                         </div>
-                                        <div class="md-layout-item md-size-60" style="margin: auto;" width="7of12">
-                                            <payment-history-chart :paymentdata="transaction.payment_histories"/>
-                                        </div>
+
                                     </div>
                                 </md-card-content>
                                 <md-card-content v-if="ot.status===-1">
@@ -180,7 +173,6 @@
 import { timing } from '../../mixins/timing'
 import { currency } from '../../mixins/currency'
 import VodacomTransactionDetail from './VodacomTransactionDetail'
-import PaymentHistoryChart from './PaymentHistoryChart'
 import AirtelTransactionDetail from './AirtelTransactionDetail'
 import Widget from '../../shared/widget'
 import { TransactionService } from '../../services/TransactionService'
@@ -192,7 +184,6 @@ export default {
         AirtelTransactionDetail,
         Widget,
         VodacomTransactionDetail,
-        PaymentHistoryChart
     },
     mixins: [timing, currency],
     created () {
@@ -208,13 +199,13 @@ export default {
             transactionId: null,
             transaction: null,
             personName: null,
-            personId: null
+            personId: null,
         }
     },
     computed: {
         ot: function () {
             return this.transaction.original_transaction
-        }
+        },
     },
     methods: {
         async getDetail (id) {
@@ -233,7 +224,7 @@ export default {
             try {
                 let person = await this.personService.getPerson(personId)
                 this.personName =
-                        person.name + ' ' + person.surname
+                    person.name + ' ' + person.surname
                 this.personId = person.id
             } catch (e) {
                 this.alertNotify('error', e.message)
@@ -246,11 +237,11 @@ export default {
                 type: type,
                 title: type + ' !',
                 text: message,
-                speed: 0
+                speed: 0,
             })
         },
 
-    }
+    },
 }
 </script>
 

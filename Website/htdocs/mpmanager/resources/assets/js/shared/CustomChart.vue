@@ -3,8 +3,12 @@
         <md-card >
             <md-card-content>
                 <div v-if="show > 0 " style="min-height: 300px">
-                    <div v-if="show === 1"  style="position: absolute; width: 100%; min-height: 300px; background-color: white; color: #0a0a0c; top: 0; left: 0; z-index:999;">
-                        Preparing Chart Data
+                    <div v-if="show === 1"
+                         style="position: absolute; width: 100%; min-height: 300px; background-color: white; color: #0a0a0c; top: 0; left: 0; z-index:999;">
+                        <div class="prepare-data">
+
+                            <h4>Preparing Chart Data</h4>
+                        </div>
                     </div>
                     <div id="dashboard" ref="dash">
                         <div id="chart_div" ref="chart"></div>
@@ -13,6 +17,7 @@
                 </div>
                 <div v-else>
                     <div align="center">
+                        <h3>Loading Chart Data</h3>
                         <img width="200px" align="center" src="/storage/spinner/spinner.gif" alt="">
                     </div>
                 </div>
@@ -57,11 +62,12 @@ export default {
             show: 0,
             options: {
                 title: this.title,
-                curveType: 'none',
+                interpolateNulls: false,
+                //curveType: 'none',
                 legend: { position: this.legend },
                 hAxis: {
                     textStyle: {
-                        fontSize: 12
+                        fontSize: 12,
                     },
                     gridlines: {
                         count: -1,
@@ -209,5 +215,15 @@ export default {
 </script>
 
 <style scoped>
+    .prepare-data {
+        position: relative;
+        top: 100px;
+        left: 45%;
+
+    }
+
+    .prepare-data > h4 {
+        color: #0c5460;
+    }
 
 </style>

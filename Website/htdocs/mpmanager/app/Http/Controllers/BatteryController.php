@@ -74,6 +74,7 @@ class BatteryController extends Controller
         if($limit){
             $batteryReadings->take($limit);
         }
+        $batteryReadings->orderBy('read_out');
         $batteryReadings->latest();
         return new ApiResource($batteryReadings->get()->reverse()->values());
     }
