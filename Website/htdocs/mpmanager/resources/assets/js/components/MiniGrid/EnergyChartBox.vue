@@ -47,9 +47,9 @@
                 :chart-type="'bar'"
                 :title="'Energy Status'"
                 :subscriber="subscriber.energyStatus"
-            ></custom-chart>-->
+            ></custom-chart>
 
-        </div>
+        </div>-->
 
 
     </div>
