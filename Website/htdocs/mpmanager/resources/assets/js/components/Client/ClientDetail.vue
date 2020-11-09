@@ -10,7 +10,7 @@
             </div>
             <div class="md-layout-item md-size-45">
                 <payment-flow/>
-                <deferred-payments :person-id="person.id" v-if="person!==null"/>
+                <payment-detail/>
             </div>
 
             <div class="md-layout-item md-size-100">
@@ -20,7 +20,7 @@
 
             <div class="md-layout-item md-size-50">
                 <div class="client-detail-card">
-                    <payment-detail/>
+                    <deferred-payments :person-id="person.id" v-if="person!==null"/>
                 </div>
                 <div class="client-detail-card">
                     <ticket/>
