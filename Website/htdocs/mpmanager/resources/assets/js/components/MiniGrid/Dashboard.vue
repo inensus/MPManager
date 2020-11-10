@@ -169,7 +169,7 @@
                 <div style="margin-top:1rem">&nbsp;</div>
 
 
-                <div class="md-layout-item md-size-100">
+                <div class="md-layout-item md-size-100" v-if="enableDataStream ">
                     <energy-chart-box :mini-grid-id="miniGridId"/>
                 </div>
 

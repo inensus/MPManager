@@ -3,7 +3,7 @@
         <md-toolbar class="md-dense">
             <div class="md-toolbar-section-start">
                 <h3 class="md-title" > Battery & PV Charts </h3>
-                <div class="md-subheader" ><span><b> Resolution:</b> 3 Days</span>&nbsp; | &nbsp;<span><b> Period:</b> {{  }} - {{ todayDate }}</span>  </div>
+                <!--<div class="md-subheader" ><span><b> Resolution:</b> 3 Days</span>&nbsp; | &nbsp;<span><b> Period:</b> {{  }} - {{ todayDate }}</span>  </div>-->
             </div>
             <!--<div class="md-toolbar-section-end">
                 <md-button class="md-icon-button">
