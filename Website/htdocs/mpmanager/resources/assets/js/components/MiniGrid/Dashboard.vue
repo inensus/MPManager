@@ -677,7 +677,9 @@ export default {
                 closedTicketChartData.push(['Period'])
                 for (let category in this.ticketsData.categories) {
                     openedTicketChartData[0].push(this.ticketsData.categories[category].label_name)
+                    openedTicketChartData[0].push({ type: 'string', role: 'tooltip' })
                     closedTicketChartData[0].push(this.ticketsData.categories[category].label_name)
+                    closedTicketChartData[0].push({ type: 'string', role: 'tooltip' })
                 }
 
                 for (let oT in this.ticketsData) {
@@ -688,10 +690,13 @@ export default {
 
                     let ticketChartDataOpened = [oT]
                     let ticketChartDataClosed = [oT]
+
                     for (let tD in ticketCategoryData) {
+
                         let ticketData = ticketCategoryData[tD]
-                        ticketChartDataOpened.push(ticketData.opened)
-                        ticketChartDataClosed.push(ticketData.closed)
+                        ticketChartDataOpened.push(ticketData.opened, oT + '\n' + [tD] + ' : ' + ticketData.opened + ' Opened')
+                        ticketChartDataClosed.push(ticketData.closed, oT + '\n' + [tD] + ' : ' + ticketData.closed + ' Closed')
+
                     }
 
                     openedTicketChartData.push(ticketChartDataOpened)
@@ -822,6 +827,7 @@ export default {
             this.dateSelected(startingPeriodDateObj)
         },
         getBatchData () {
+            this.selectorOpened = false
             this.expanded = true
             this.highlighted.base = this.highlighted.tmpBase
             this.highlighted.compared = this.highlighted.tmpCompared
