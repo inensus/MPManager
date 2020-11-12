@@ -39,6 +39,7 @@ Route::group([
         });
         Route::group(['prefix' => 'ticket'], function () {
             Route::get('/', 'AgentTicketController@index');
+            Route::get('/{ticketId}', 'AgentTicketController@show');
             Route::get('/customer/{customerId}', 'AgentTicketController@agentCustomerTickets');
             Route::post('/', 'AgentTicketController@store');
         });
