@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\AgentTicket;
+
 use App\Http\Requests\CreateAgentTicketRequest;
 use App\Http\Resources\ApiResource;
 use App\Services\AgentTicketService;
