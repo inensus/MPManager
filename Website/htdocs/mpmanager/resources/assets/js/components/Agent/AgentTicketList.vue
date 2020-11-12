@@ -121,11 +121,11 @@ export default {
         EventBus.$off('pageLoaded', this.reloadList)
     },
     methods: {
-        reloadList (subscriber, data) {
+        async reloadList (subscriber, data) {
             if (subscriber !== this.subscriber){
                 return
             }
-            this.agentTicketService.updateList(data)
+            await  this.agentTicketService.updateList(data)
             this.loaded = true
             EventBus.$emit('widgetContentLoaded',this.subscriber,this.agentTicketService.list.length)
 
