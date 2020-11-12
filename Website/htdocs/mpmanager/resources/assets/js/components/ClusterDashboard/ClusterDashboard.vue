@@ -33,7 +33,7 @@
                             :constantMarkerUrl="miniGridIcon"
                             :center="center"
                             :markingInfos="markingInfos"
-
+                            :parentName="'Top'"
                         />
                     </md-card-content>
 
