@@ -266,8 +266,8 @@ class AgentService implements IUserService
                             ->where('trigger_Type', '!=', 'agent_receipt')
                             ->where('date', '=',
                                 $h->date)->last();
-                        $period[$key]['balance'] = $lastRow->amount + $lastRow->available_balance;
-                        $period[$key]['due'] = ((-1 * $lastRow->amount) + $lastRow->due_to_supplier) - (1 * $lastComissionRow->amount);
+                        $period[$key]['balance'] = $lastRow!=null? $lastRow->amount + $lastRow->available_balance:null;
+                        $period[$key]['due'] = $lastRow!=null?((-1 * $lastRow->amount) + $lastRow->due_to_supplier) - (1 * $lastComissionRow->amount):null;
 
                     }
                 }
