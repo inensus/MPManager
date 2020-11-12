@@ -8,6 +8,9 @@
             <div class="md-toolbar-section-start">
 
                 <h4 class="chic-title" v-text="title"></h4>
+
+            </div>
+            <div class="md-toolbar-section-end">
                 <div class="search-area">
                     <div class="search-input" v-if="search">
                         <div class="md-layout md-gutter">
@@ -18,7 +21,7 @@
                                 <md-input style="color: white!important;" v-model="searchTerm"></md-input>
                                 <div v-if="searching">
                                 <span style="margin-right: 15px;">Search Results for: <u>{{searchTerm}}</u>
-                                    <md-icon @click="showAllEntries"  class="pointer">cancel</md-icon></span>
+                                    <md-icon @click="showAllEntries" class="pointer">cancel</md-icon></span>
                                 </div>
                                 <md-icon style="color: white;">search</md-icon>
                             </md-field>
@@ -26,8 +29,6 @@
                     </div>
 
                 </div>
-            </div>
-            <div class="md-toolbar-section-end">
                 <md-button
                     :class="setButtonColor()"
                     @click="widgetAction"
@@ -37,8 +38,9 @@
                     <md-tooltip md-direction="top">{{ buttonText }}</md-tooltip>
                     <md-icon>{{ buttonIcon }}</md-icon>
                 </md-button>
-                <md-button  v-if="showRefreshButton" @click="refreshButtonClicked" class="md-icon-button md-dense md-raised"
-                            :class="{'refresh-button' : isActive}">
+                <md-button v-if="showRefreshButton" @click="refreshButtonClicked"
+                           class="md-icon-button md-dense md-raised"
+                           :class="{'refresh-button' : isActive}">
                     <md-tooltip md-direction="top">Refresh</md-tooltip>
                     <md-icon>cached</md-icon>
                 </md-button>
@@ -49,24 +51,26 @@
 
         <md-card>
             <md-card-content class="nopadding">
-            <div v-if="showData">
+                <div v-if="showData">
                     <slot></slot>
-            </div>
-            <div v-else name="emptyState" >
-                <div v-if="showEmptyState" name="emptyState" class="empty-state">
-                    <md-empty-state
-                        :md-icon="icon"
-                        :md-description="emptyStateDescription"
-                        :md-label="getEmptyStateLabel">
-                        <md-button v-if="button" @click="widgetAction" class="md-primary md-raised">{{getEmptyStateButtonText}}</md-button>
-                    </md-empty-state>
                 </div>
-                <div v-else class="loading-state">
-                    <div>
-                        <img src="/storage/spinner/spinner.gif" alt="">
+                <div v-else name="emptyState">
+                    <div v-if="showEmptyState" name="emptyState" class="empty-state">
+                        <md-empty-state
+                            :md-icon="icon"
+                            :md-description="emptyStateDescription"
+                            :md-label="getEmptyStateLabel">
+                            <md-button v-if="button" @click="widgetAction" class="md-primary md-raised">
+                                {{getEmptyStateButtonText}}
+                            </md-button>
+                        </md-empty-state>
+                    </div>
+                    <div v-else class="loading-state">
+                        <div>
+                            <img src="/storage/spinner/spinner.gif" alt="">
+                        </div>
                     </div>
                 </div>
-            </div>
 
             </md-card-content>
         </md-card>
@@ -84,17 +88,17 @@
 </template>
 
 <script>
-import {Paginator} from '../classes/paginator'
-import {EventBus} from './eventbus'
+import { Paginator } from '../classes/paginator'
+import { EventBus } from './eventbus'
 import Paginate from './Paginate'
 
 const debounce = require('debounce')
 export default {
     name: 'Widget',
-    components: {Paginate},
+    components: { Paginate },
 
     props: {
-        emptyStateDescription:{
+        emptyStateDescription: {
             type: String,
             default: null,
             required: false
@@ -103,13 +107,13 @@ export default {
             type: String,
             default: 'default'
         },
-        buttonIcon:{
-            type:String,
-            default:'add'
+        buttonIcon: {
+            type: String,
+            default: 'add'
         },
-        showRefreshButton:{
-            type:Boolean,
-            default:false,
+        showRefreshButton: {
+            type: Boolean,
+            default: false,
         },
         title: String,
         id: String,
@@ -118,8 +122,8 @@ export default {
         buttonColor: String,
         paginator: Paginator,
         search: {},
-        subscriber:{
-            type:String,
+        subscriber: {
+            type: String,
         },
         route_name: String,
         headless: {
@@ -130,81 +134,79 @@ export default {
             type: Boolean,
             default: false
         },
-        resetKey:{
-            default:0
+        resetKey: {
+            default: 0
         },
     },
 
-    mounted() {
+    mounted () {
         //listen for a remote trigger for ending the search
         EventBus.$on('search.end', this.cancelSearching)
-        if(this.subscriber === null || this.subscriber === undefined){
+        if (this.subscriber === null || this.subscriber === undefined) {
             return this.showData = true
-        }else{
+        } else {
             EventBus.$on('widgetContentLoaded', this.checkDataLength)
         }
 
     },
-    beforeDestroy() {
+    beforeDestroy () {
         EventBus.$off('search.end', this.cancelSearching)
     },
-    data() {
+    data () {
         return {
             searching: false,
             searchTerm: '',
             icon: 'post_add',
             showEmptyState: false,
-            showData:false,
+            showData: false,
             isActive: false
         }
     },
     methods: {
-        refreshButtonClicked(){
+        refreshButtonClicked () {
             this.isActive = true
             this.$emit('refreshButtonClicked')
 
-
-
         },
-        widgetAction(){
-            this.$emit('widgetAction',this.subscriber)
+        widgetAction () {
+            this.$emit('widgetAction', this.subscriber)
         },
-        validateSubscriber(subscriber){
+        validateSubscriber (subscriber) {
             return this.subscriber === subscriber
         },
-        checkDataLength(subscriber,dataLength)  {
-            console.log(subscriber,dataLength)
-            if(!this.validateSubscriber(subscriber)){
+        checkDataLength (subscriber, dataLength) {
+            console.log(subscriber, dataLength)
+            if (!this.validateSubscriber(subscriber)) {
                 return
             }
-            if(dataLength === 0){
+            if (dataLength === 0) {
                 this.showData = false
                 this.showEmptyState = true
-            }else if(dataLength === null || dataLength === undefined){
+            } else if (dataLength === null || dataLength === undefined) {
                 this.showData = false
                 this.showEmptyState = false
-            }else{
+            } else {
                 this.showData = true
                 this.showEmptyState = false
             }
         },
-        defaultCallback() {
+        defaultCallback () {
             alert('default button click')
         },
-        doSearch(data) {
+        doSearch (data) {
             this.searching = true
             EventBus.$emit('searching', data)
         },
-        showAllEntries() {
+        showAllEntries () {
             this.searching = false
             this.searchTerm = ''
             EventBus.$emit('end_searching')
         },
-        cancelSearching() {
+        cancelSearching () {
             this.searching = false
             this.searchTerm = ''
         },
-        setButtonColor(){
+        setButtonColor () {
             if (this.buttonColor === undefined) {
                 return 'btn-primary'
             } else if (this.buttonColor === 'green') {
@@ -219,17 +221,17 @@ export default {
         }
     },
     computed: {
-        getEmptyStateLabel(){
-            if(this.title === null || this.title === undefined){
+        getEmptyStateLabel () {
+            if (this.title === null || this.title === undefined) {
                 return 'No Data Found'
-            }else{
+            } else {
                 return 'No Data Found for ' + this.title
             }
         },
-        getEmptyStateButtonText(){
-            if(this.title === null || this.title === undefined){
+        getEmptyStateButtonText () {
+            if (this.title === null || this.title === undefined) {
                 return 'Create Your First Record'
-            }else{
+            } else {
                 return 'Create the First ' + this.title + ' Record'
             }
         }
@@ -249,14 +251,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-    .refresh-button{
-        animation: rotate 1.4s ease 0.5s ;
+    .refresh-button {
+        animation: rotate 1.4s ease 0.5s;
     }
+
     @keyframes rotate {
-        0%{
+        0% {
             transform: rotate(360deg);
         }
     }
+
     .full-width-input-with-icon {
         width: calc(100% - 32px) !important;
     }
@@ -295,6 +299,7 @@ export default {
         line-height: 22px;
         font-size: 1rem;
         margin-left: 5px;
+        white-space: pre;
     }
 
     .chic-button {
@@ -408,7 +413,7 @@ export default {
     .search-area {
         float: right;
         margin: auto;
-        width: 60% !important;
+        width: 80% !important;
     }
 
     .search-input {
@@ -420,10 +425,24 @@ export default {
     .pointer {
         cursor: pointer;
     }
-    .empty-state{
-        width: 100%; height: 20%; margin: auto;
+
+    .empty-state {
+        width: 100%;
+        height: 20%;
+        margin: auto;
     }
-    .loading-state{
-        width: 30%; height: 30%; margin: auto;
+
+    .loading-state {
+        width: 30%;
+        height: 30%;
+        margin: auto;
+    }
+
+    .md-toolbar-section-start {
+        width: 40%;
+    }
+
+    .md-toolbar-section-end {
+        width: 60%;
     }
 </style>
