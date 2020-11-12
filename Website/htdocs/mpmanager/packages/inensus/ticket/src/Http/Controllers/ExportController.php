@@ -53,7 +53,7 @@ class ExportController
      * @return TicketResource
      */
     public function index(): TicketResource
-    {  dd("kema.");
+    {
         $reports = $this->outsourceReport->get();
         return new TicketResource($reports);
     }
