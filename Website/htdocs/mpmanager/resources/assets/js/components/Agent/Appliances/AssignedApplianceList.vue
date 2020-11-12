@@ -5,7 +5,7 @@
         :class="'col-sm-6 col-md-5'"
         :button-text="'Assign new Appliance'"
         :button="true"
-        title="Assigned Appliances"
+        title="Assigned Appliance"
         color="orange"
         :subscriber="subscriber"
         @widgetAction="addNewAppliance"

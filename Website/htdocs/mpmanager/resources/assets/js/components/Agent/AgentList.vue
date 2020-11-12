@@ -2,7 +2,7 @@
     <div>
         <AddAgent :addAgent="addNewAgent"/>
         <widget
-            :title="'Agents'"
+            :title="'Agent'"
             :search="true"
             :subscriber="subscriber"
             :button="true"
