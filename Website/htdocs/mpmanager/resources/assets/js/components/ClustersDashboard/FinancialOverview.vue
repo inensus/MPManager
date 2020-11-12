@@ -6,6 +6,7 @@
         button-text="Set Period"
         button-color="red"
         @widgetAction="showPeriod"
+        button-icon="calendar_today"
     >
         <div v-if="setPeriod" class="period-selector">
             <p>Select a period for income data</p>
