@@ -5,7 +5,7 @@
             :class="'col-sm-6 col-md-5'"
             :button-text="'Add Receipt'"
             :button="true"
-            title="Last Receipts"
+            title="Receipt"
             @widgetAction="newReceipt"
             :paginator="agentReceiptService.paginator"
             :subscriber="subscriber"

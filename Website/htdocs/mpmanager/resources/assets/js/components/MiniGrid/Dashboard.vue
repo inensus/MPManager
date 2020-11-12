@@ -258,34 +258,30 @@
                     <widget :id="'revenue-trends'" :title="'Revenue Trends'" :subscriber="subscriber.revenue_trends"
                     >
                         <div class="md-layout md-gutter">
-                            <div class="md-layout-item">
+                            <div class="md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-100">
                                 <GChart
                                     type="ColumnChart"
                                     :data="trendChartData.base"
-                                    :options="chartOptionsSmall"
+                                    :options="chartOptions"
                                     :resizeDebounce="500"
                                 />
                             </div>
-                            <div class="md-layout-item">
+                            <div class="md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-100">
                                 <GChart
-                                    type="ColumnChart"
-                                    :data="trendChartData.compare"
-                                    :options="chartOptionsSmall"
+                                    type="LineChart"
+                                    :data="trendChartData.overview"
+                                    :options="chartOptions"
                                     :resizeDebounce="500"
                                 />
                             </div>
                         </div>
 
 
-                        <GChart
-                            type="LineChart"
-                            :data="trendChartData.overview"
-                            :options="chartOptions"
-                            :resizeDebounce="500"
-                        />
+
 
                     </widget>
                 </div>
+
                 <div class="md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-100">
                     <widget :id="'ticketing-trends'" :title="'Tickets Overview'">
                         <div class="col-sm-12" style="margin: 2vh;">
@@ -743,7 +739,7 @@ export default {
                     }
                     tmpChartData.push(totalRev)
                     this.trendChartData.base.push(tmpChartData)
-
+                    this.trendChartData.base.splice(50)
                 }
 
                 if (Object.keys(this.highlighted.compared).length > 0) { //compare data is also available.

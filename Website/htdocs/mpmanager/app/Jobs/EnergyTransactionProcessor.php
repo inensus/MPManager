@@ -96,7 +96,7 @@ class EnergyTransactionProcessor implements ShouldQueue
             TokenProcessor::dispatch($transactionData)->allOnConnection('redis')->onQueue(\config('services.queues.token'));
         } else {
             event('transaction.successful', [$transactionData->transaction]);
-            SmsProcessor::dispatch($transactionData,
+            SmsProcessor::dispatch($transactionData->transaction,
                 SmsTypes::ACCESS_RATE_PAYMENT)->allOnConnection('redis')->onQueue(\config('services.queues.sms'));
         }
 

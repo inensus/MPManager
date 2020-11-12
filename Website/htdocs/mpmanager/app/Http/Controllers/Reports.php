@@ -530,13 +530,16 @@ class Reports
                     //store column to get them later when payments are placed
                     $accessRate = $meterParameter->tariff()->first()->accessRate()->first();
                     //merge two cells if tariff has access rate
-                    if ($accessRate->amount > 0) {
-                        $nextColumn = $startingColumn;
-                        ++$nextColumn;
-                        $sheet->mergeCells($startingColumn . $startingRow . ':' . $nextColumn . $startingRow);
-                        ++$startingColumn;
-                        break;
+                    if ($accessRate){
+                        if ($accessRate->amount > 0) {
+                            $nextColumn = $startingColumn;
+                            ++$nextColumn;
+                            $sheet->mergeCells($startingColumn . $startingRow . ':' . $nextColumn . $startingRow);
+                            ++$startingColumn;
+                            break;
+                        }
                     }
+
 
                 }
 

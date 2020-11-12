@@ -19,7 +19,10 @@
                                         :ot="ot"
                                         v-if="transaction.original_transaction_type === 'airtel_transaction'"
                                     />
-
+                                    <agent-transaction-detail
+                                        :ot="ot"
+                                        v-if="transaction.original_transaction_type === 'agent_transaction'"
+                                    />
 
                                 </md-card-content>
                             </md-card>
@@ -139,7 +142,9 @@
                         <widget
                             color="red"
                             title="Outgoing sms"
-                            :show-spinner="false">
+                            :show-spinner="false"
+                            v-show="transaction.original_transaction_type !== 'agent_transaction'"
+                        >
                             <md-card>
                                 <md-card-content v-if="transaction.sms">
 
@@ -177,6 +182,7 @@ import { currency } from '../../mixins/currency'
 import VodacomTransactionDetail from './VodacomTransactionDetail'
 import PaymentHistoryChart from './PaymentHistoryChart'
 import AirtelTransactionDetail from './AirtelTransactionDetail'
+import AgentTransactionDetail from '../Agent/AgentTransactionDetail'
 import Widget from '../../shared/widget'
 import { TransactionService } from '../../services/TransactionService'
 import { PersonService } from '../../services/PersonService'
@@ -187,6 +193,7 @@ export default {
         AirtelTransactionDetail,
         Widget,
         VodacomTransactionDetail,
+        AgentTransactionDetail,
         PaymentHistoryChart
     },
     mixins: [timing, currency],

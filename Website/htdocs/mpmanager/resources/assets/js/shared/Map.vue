@@ -362,11 +362,18 @@ export default {
                                     router.push({ path: '/clusters/' + clusterId })
                                 })
                             }
+
                             if (parent === 'MiniGrid') {
                                 nonEditableLayers.addLayer(layer)
                                 map.addLayer(nonEditableLayers)
+                            } else if (parent === 'Top') {
+                                layer.bindTooltip('Cluster :' + layer.feature.properties.popupContent)
+                                console.log(layer.feature.properties.popupContent)
+                                editableLayer.addLayer(layer)
+
                             } else {
                                 editableLayer.addLayer(layer)
+
                             }
                             let geoDataItem = {
                                 leaflet_id: layer._leaflet_id,

@@ -5,7 +5,8 @@
         id="cluster-map">
         <Map
             :geoData="geoData"
-            :center="center">
+            :center="center"
+            :parentName="'Top'">
 
         </Map>
 
