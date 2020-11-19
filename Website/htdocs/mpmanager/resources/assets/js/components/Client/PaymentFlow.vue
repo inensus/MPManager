@@ -1,14 +1,13 @@
 <template>
 
     <widget
-        title="Payment Flow"
+        :title="$tc('phrases.paymentFlow')"
         icon="money"
     >
         <md-card>
             <md-card-header>
                 <div class="md-title">
-                    Monthly Avg.
-                    <span class="txt-color-blue" id="flow_total">{{paymentSum}}</span>
+                    <span class="txt-color-blue" id="flow_total">{{$tc('phrases.paymentFlow',2,{currency:paymentSum[0], count:paymentSum[1]})}}</span>
                 </div>
             </md-card-header>
 
@@ -18,23 +17,23 @@
                         <GChart type="ColumnChart" :data="chartData" :options="chartOptions"/>
                     </div>
                     <div class="md-layout-item md-size-100">
-                        Average Period
+                        {{ $tc('phrases.averagePeriod') }}
                         <span class="txt-color-yellow">{{paymentPeriod}}</span>
                     </div>
                     <div class="md-layout-item md-size-100" >
-                        Last Payment
+                        {{ $tc('phrases.lastPayment') }}
                         <span
                             :class=" parseInt(lastPayment) < parseInt(paymentPeriod) ? 'txt-color-green': 'txt-color-red'"
                         >{{lastPayment}}</span>
                     </div>
                     <div class="md-layout-item md-size-100">
-                        AccessRate Debt
+                        {{ $tc('phrases.accessRateDebt') }}
                         <span
                             :class=" parseInt(accessDebt) == 0 ? 'txt-color-green': 'txt-color-red'"
                         >{{accessDebt}}</span>
                     </div>
                     <div class="md-layout-item md-size-100">
-                        Deferred Debt
+                        {{ $tc('phrases.deferredDebt') }}
                         <span
                             :class=" parseInt(deferredDebt) == 0 ? 'txt-color-green': 'txt-color-red'"
                         >{{deferredDebt}}</span>
@@ -79,7 +78,7 @@ export default {
             chartData: [],
             chartOptions: {
                 chart: {
-                    title: 'Customer Payment Flow',
+                    title: this.$tc('phrases.paymentFlow'),
                 },
                 colors: ['#1b9e77', '#d95f02', '#7570b3']
             },
@@ -87,9 +86,8 @@ export default {
             paymentPeriod: 0,
             flow: [],
             loaded: false,
-
             accessDebt: 0,
-            deferredDebt: 0
+            deferredDebt: 0,
         }
     },
     computed: {
@@ -113,14 +111,9 @@ export default {
             }
 
             let result = total === 0 ? 0 : Math.round((total / paidMonths), 2)
+            let paymentFlow = [this.readable(result) + cur, paidMonths.toString() ]
 
-            return (
-                this.readable(result) +
-                    cur + ' ' +
-                    'Over ' +
-                    paidMonths.toString() +
-                    'Months'
-            )
+            return (paymentFlow)
         }
     },
     created () {
@@ -133,7 +126,7 @@ export default {
             axios
                 .get(resources.paymenthistories + personId + '/flow')
                 .then(response => {
-                    this.chartData = [['Month', 'Sale']]
+                    this.chartData = [[this.$tc('words.month'), this.$tc('words.sale')]]
                     this.flow = []
                     //  this.flow = response.data;
                     for (let i = 0; i < response.data.length; i++) {

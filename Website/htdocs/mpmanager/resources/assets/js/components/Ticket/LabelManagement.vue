@@ -1,31 +1,28 @@
 <template>
     <div class="row">
         <widget v-if="newLabel"
-            title="New Category Label"
+            :title="$tc('phrases.newCategory')"
             color="red">
             <md-card >
-                <md-card-header>
-                    <div class="md-title">Categories for Tickets</div>
-                </md-card-header>
                 <md-card-content>
                     <div class="md-layout md-gutter">
                         <div class="md-layout-item">
-                            <md-field :class="{'md-invalid': errors.has('name')}">
+                            <md-field :class="{'md-invalid': errors.has($tc('words.name'))}">
                                 <md-input type="text"
                                           v-model="ticketLabelService.newLabelName"
-                                          placeholder="Name"
-                                          name="name"
+                                          :placeholder="$tc('words.name')"
+                                          :name="$tc('words.name')"
                                           id="name"
                                           v-validate="'required|min:3'"
                                 ></md-input>
-                                <span class="md-error">{{ errors.first('name') }}</span>
+                                <span class="md-error">{{ errors.first($tc('words.name')) }}</span>
                             </md-field>
                         </div>
                         <div class="md-layout-item">
-                            <md-field :class="{'md-invalid': errors.has('color')}">
-                                <label>Select Color</label>
+                            <md-field :class="{'md-invalid': errors.has($tc('phrases.selectColor'))}">
+                                <label>{{ $tc('phrases.selectColor') }}</label>
                                 <md-select v-model="ticketLabelService.currentColor"
-                                           name="color"
+                                           :name="$tc('phrases.selectColor')"
                                            id="color"
                                            v-validate="'required'">
 
@@ -38,26 +35,26 @@
 
                                     </md-option>
                                 </md-select>
-                                <span class="md-error">{{ errors.first('color') }}</span>
+                                <span class="md-error">{{ errors.first($tc('phrases.selectColor')) }}</span>
                             </md-field>
                         </div>
                     </div>
                     <div class="md-layout md-subheader">
 
                         <md-checkbox v-model="ticketLabelService.outSourcing" class="form-control"
-                                     id="outsourcing">Outsourcing
+                                     id="outsourcing">{{ $tc('words.outsourcing') }}
                         </md-checkbox>
 
                     </div>
                     <div class="md-layout">
 
-                             <span class="md-subheader">That tickets will be payed out to a third party person (non Employee)
+                             <span class="md-subheader">{{$tc('phrases.ticketLabels',1)}}
                     </span>
 
                     </div>
                     <div class="md-layout">
                         <span class="md-subheader">
-                            By any question please get in touch with &nbsp; <md-icon>email</md-icon> ako@inensus.com
+                            {{$tc('phrases.ticketLabels',2,{email: ' ako@inensus.com'})}}
                     </span>
 
                     </div>
@@ -67,16 +64,16 @@
                 <md-progress-bar md-mode="indeterminate" v-if="loading"/>
                 <md-card-actions>
 
-                    <md-button class="md-raised md-primary" @click="saveLabel">Add Category</md-button>
-                    <md-button class="md-raised md-accent" @click="() => {newLabel = false}">Cancel</md-button>
+                    <md-button class="md-raised md-primary" @click="saveLabel">{{ $tc('words.save') }}</md-button>
+                    <md-button class="md-raised md-accent" @click="() => {newLabel = false}">{{ $tc('words.close') }}</md-button>
                 </md-card-actions>
             </md-card>
         </widget>
 
         <widget
-            :title="'Ticket Categories'"
+            :title="$tc('phrases.ticketCategories')"
             :button="true"
-            :button-text="'New Categorie'"
+            :button-text="$tc('phrases.newCategory')"
             @widgetAction="() => {newLabel = true}"
             color="green"
             :subscriber="subscriber">
@@ -125,7 +122,7 @@ export default {
         return {
             ticketLabelService: new TicketLabelService(),
             newLabel: false,
-            headers: ['ID', 'Name', 'Color', 'Outsourcing'],
+            headers: [this.$tc('words.id'), this.$tc('words.name'), this.$tc('words.color'), this.$tc('words.outsourcing')],
             tableName: 'Category',
             loading: false,
             subscriber:'ticket-labels'
@@ -154,7 +151,7 @@ export default {
                 try {
                     this.loading = true
                     await this.ticketLabelService.createLabel(this.ticketLabelService.newLabelName, this.ticketLabelService.currentColor, this.ticketLabelService.outSourcing)
-                    this.alertNotify('success', 'New category added successfully.')
+                    this.alertNotify('success', this.$tc('phrases.newCategory',2))
                     await this.getLabels()
                     this.loading = false
                 } catch (e) {

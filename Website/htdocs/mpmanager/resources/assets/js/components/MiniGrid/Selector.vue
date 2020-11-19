@@ -3,7 +3,7 @@
         <md-dialog :md-active.sync="modalVisibility" :md-click-outside-to-close="false"
         >
             <md-dialog-title>
-                Select Mini-Grid
+                {{ $tc('phrases.selectMiniGrid',1) }}
             </md-dialog-title>
             <md-dialog-content>
                 <div class="md-layout md-gutter">
@@ -19,7 +19,7 @@
                                         <div v-show="miniGrid.data_stream === 1"
                                              class="selection-active">
                                             <md-icon>check</md-icon>
-                                            <md-tooltip md-direction="top">MiniGrid Data-logger is active
+                                            <md-tooltip md-direction="top"> {{ $tc('phrases.selectMiniGrid',2) }}
                                             </md-tooltip>
                                         </div>
 

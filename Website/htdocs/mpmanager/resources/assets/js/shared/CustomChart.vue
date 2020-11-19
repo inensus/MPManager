@@ -7,7 +7,7 @@
                          style="position: absolute; width: 100%; min-height: 300px; background-color: white; color: #0a0a0c; top: 0; left: 0; z-index:999;">
                         <div class="prepare-data">
 
-                            <h4>Preparing Chart Data</h4>
+                            <h4>{{ $tc('phrases.preparingChartData') }}</h4>
                         </div>
                     </div>
                     <div id="dashboard" ref="dash">
@@ -17,7 +17,7 @@
                 </div>
                 <div v-else>
                     <div align="center">
-                        <h3>Loading Chart Data</h3>
+                        <h3>{{ $tc('phrases.loadingChartData') }}</h3>
                         <img width="200px" align="center" src="/storage/spinner/spinner.gif" alt="">
                     </div>
                 </div>
@@ -94,7 +94,7 @@ export default {
 
             },
             control: {
-                filterColumnLabel: 'Date',
+                filterColumnLabel: this.$tc('words.date'),
                 ui: {
                     chartOptions: {
                         height: 50,
@@ -177,9 +177,9 @@ export default {
         },
         drawBarChart () {
             let data = new google.visualization.DataTable()
-            data.addColumn('date', 'Date')
-            data.addColumn('number', 'Generated')
-            data.addColumn('number', 'Sold')
+            data.addColumn('date', this.$tc('words.date'))
+            data.addColumn('number', this.$tc('words.generate',2))
+            data.addColumn('number', this.$tc('words.sell',2))
             data.addRows([
                 [new Date(2020, 7, 10), 3, 2.25],
                 [new Date(2020, 7, 11), 5, 3.5],

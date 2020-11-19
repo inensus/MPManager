@@ -3,9 +3,9 @@
         <md-table>
             <md-table-row>
                 <md-table-head></md-table-head>
-                <md-table-head >Subject</md-table-head>
-                <md-table-head >Category</md-table-head>
-                <md-table-head >Date</md-table-head>
+                <md-table-head >{{ $tc('words.subject') }}</md-table-head>
+                <md-table-head >{{ $tc('words.category') }}</md-table-head>
+                <md-table-head >{{ $tc('words.date') }}</md-table-head>
             </md-table-row>
             <template v-for="(ticket,index) in ticketList" >
                 <md-table-row @click="openTicket(index)"  :key="'tic'+index">
@@ -24,7 +24,7 @@
                             <div class="md-layout md-gutter md-size-100 " >
 
                                 <div class="md-layout-item md-size-100">
-                                    <span class="md-subheader">Ticket Details</span>
+                                    <span class="md-subheader">{{ $tc('phrases.ticketDetails') }}</span>
 
                                 </div>
 
@@ -34,10 +34,10 @@
                                 <div class="md-layout-item md-size-70">
 
                                     <span v-if="ticket.assignedTo" >
-                                       <b> Assigned to: {{ticket.assignedTo.user_name}}</b>
+                                       <b> {{ $tc('phrases.assignTo',2) }}: {{ticket.assignedTo.user_name}}</b>
                                     </span>
                                     <span v-else>
-                                         <b> Assigned to: - </b>
+                                         <b> {{ $tc('phrases.assignTo',2) }}: - </b>
                                     </span>
                                 </div>
 
@@ -82,13 +82,13 @@
                             <div class="md-layout-item md-size-95 new-comment-area" v-if="showComments">
 
                                 <md-field>
-                                    <label for="">New Comment</label>
+                                    <label for="">{{ $tc('phrases.newComment') }}</label>
                                     <md-textarea md-autogrow v-model="newComment"></md-textarea>
                                     <md-button
                                         type="submit"
                                         class="md-primary md-dense"
                                         @click="sendComment(ticket)"
-                                    >Save
+                                    >{{ $tc('words.save') }}
                                     </md-button>
                                 </md-field>
 
@@ -153,7 +153,7 @@ export default {
             try {
                 await this.ticketService.closeTicket(id)
                 EventBus.$emit('listChanged')
-                this.alertNotify('success', 'Ticket closed successfully.')
+                this.alertNotify('success', this.$tc('phrases.ticketNotify',1))
             } catch (e) {
                 this.alertNotify('error', e.message)
             }
@@ -169,7 +169,7 @@ export default {
                 }
                 this.showComments = false
                 EventBus.$emit('listChanged')
-                this.alertNotify('success', 'Comment send successfully.')
+                this.alertNotify('success', this.$tc('phrases.ticketNotify',2))
                 ticket.comments.push(newComment)
                 this.showComments=false
                 this.newComment=null

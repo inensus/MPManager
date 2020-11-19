@@ -1,7 +1,7 @@
 <template>
     <widget
         :subscriber="subscriber"
-        title="Agent Tickets"
+        :title="$tc('phrases.agentTicket',1)"
         :paginator="agentTicketService.paginator"
     >
         <md-list
@@ -44,7 +44,7 @@
 
                     <div class="md-layout-item md-size-100">
                         <em class="pull-right-label-primary" style="cursor:pointer">
-                            <small @click="showComment(ticket)">Comments</small>
+                            <small @click="showComment(ticket)">{{ $tc('words.comment',1) }}</small>
 
                             {{ticket.comments.length}}
                         </em>
@@ -72,23 +72,7 @@
                 </div>
             </md-list-item>
         </md-list>
-        <md-list class="md-triple-line ticket-area">
-            <md-list-item class="text-center no-ticket"
-                          data-v-aec15928
-                          data-v-e03de5b4
 
-
-                          v-if="agentTicketService.list.length === 0 ">
-                <h4 data-v-aec15928 data-v-e03de5b4 style="font-weight: 500;">
-                    No tickets
-                    found
-                </h4>
-            </md-list-item>
-        </md-list>
-        <!--<div class="well" v-if="agentTicketService.list.length === 0">No tickets found</div>-->
-        <div class="row" style="text-align: center" v-if="loaded === false">
-            <h5>Tickets are Loading</h5>
-        </div>
     </widget>
 
 </template>

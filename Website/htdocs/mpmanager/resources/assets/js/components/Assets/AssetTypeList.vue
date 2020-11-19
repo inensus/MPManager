@@ -2,11 +2,11 @@
     <div>
         <add-asset-type :addNewAssetType="addNewAssetType"/>
         <widget
-            :title="'Asset Types'"
+            :title="$tc('phrases.assetType')"
             :subscriber="subscriber"
             :route_name="'/assets/types'"
             :button="true"
-            button-text="New Asset Type"
+            :button-text="$tc('phrases.newAssetType')"
             @widgetAction="showAddAssetType"
             :paginator="assetService.paginator"
             color="green"
@@ -42,13 +42,13 @@
                              v-if="asset_type.edit"
                              @click="updateAssetType(asset_type)">
                             <md-icon>save</md-icon>
-                            Save
+                            {{ $tc('words.save') }}
                         </div>
                         <div class="md-layout-item" v-else :disabled="loading"
                              style="display: inline-block; cursor: pointer; color:#ac2925; float:right"
                              @click="deleteAssetType(asset_type)">
                             <md-icon>delete</md-icon>
-                            Delete
+                            {{ $tc('words.delete') }}
                         </div>
                     </md-table-cell>
 
@@ -77,8 +77,7 @@ export default {
             subscriber: 'asset-list',
             assetService: new AssetService(),
             assetTypes: [],
-            headers: ['ID', 'Asset Type', 'Price', 'Last Update', '#'],
-            tableName: 'Asset Type',
+            headers: [this.$tc('words.id'), this.$tc('words.name'), this.$tc('words.price'), this.$tc('phrases.lastUpdate'), '#'],
             resetKey: 0,
             loading: false,
         }
@@ -122,8 +121,7 @@ export default {
             asset_type.edit = false
             try {
                 await this.assetService.updateAsset(asset_type)
-                this.alertNotify('success', asset_type.name + ' has updated.')
-                this.alertNotify('success', asset_type.name + ' has deleted.')
+                this.alertNotify('success', this.$tc('phrases.deleteAssetType',3))
                 this.resetKey++
             } catch (e) {
                 this.alertNotify('error', e.message)
@@ -133,18 +131,18 @@ export default {
         async deleteAssetType (asset_type) {
             this.$swal({
                 type: 'question',
-                title: 'Delete Asset Type',
-                text: 'Are you sure to delete the asset type ' + asset_type + '?',
+                title: this.$tc('phrases.deleteAssetType',0),
+                text: this.$tc('phrases.deleteAssetType',2),
                 showCancelButton: true,
-                cancelButtonText: 'Cancel',
-                confirmButtonText: 'Delete'
+                cancelButtonText: this.$tc('words.cancel'),
+                confirmButtonText: this.$tc('words.delete')
             }).then(async response => {
                 if(response){
                     try {
                         this.loading = true
                         await this.assetService.deleteAsset(asset_type)
                         this.loading = false
-                        this.alertNotify('success', asset_type.name + ' has deleted.')
+                        this.alertNotify('success', this.$tc('phrases.deleteAssetType',1))
                         this.resetKey++
                     } catch (e) {
                         this.loading = false

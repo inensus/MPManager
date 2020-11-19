@@ -4,7 +4,7 @@
 
         <div class="md-layout">
             <div class="md-layout-item md-subheader">
-                Mobile Provider
+                {{ $tc('phrases.mobileProvider') }}
             </div>
             <div class="md-layout-item md-subheader n-font">
                 <img class="logo" alt="logo" :src="imgLogo" style="max-height: 35px;"/>
@@ -13,7 +13,7 @@
         <hr class="hr-d">
         <div class="md-layout">
             <div class="md-layout-item md-subheader">
-                Originator Conversation Id
+                {{$tc('phrases.originatorConversationId')}}
             </div>
             <div class="md-layout-item md-subheader n-font">
                 {{ot.originator_conversation_id}}
@@ -22,7 +22,7 @@
         <hr class="hr-d">
         <div class="md-layout">
             <div class="md-layout-item md-subheader">
-                Conversation Id
+                {{$tc('phrases.conversationId')}}
             </div>
             <div class="md-layout-item md-subheader n-font">
                 {{ot.conversation_id}}
@@ -31,7 +31,7 @@
         <hr class="hr-d">
         <div class="md-layout">
             <div class="md-layout-item md-subheader">
-                Mpesa Receipt
+                {{$tc('phrases.mpesaReceipt')}}
             </div>
             <div class="md-layout-item md-subheader n-font">
                 {{ot.mpesa_receipt}}
@@ -40,7 +40,7 @@
         <hr class="hr-d">
         <div class="md-layout">
             <div class="md-layout-item md-subheader">
-                Transaction ID
+                {{ $tc('phrases.transactionId') }}
             </div>
             <div class="md-layout-item md-subheader n-font">
                 {{ot.transaction_id}}

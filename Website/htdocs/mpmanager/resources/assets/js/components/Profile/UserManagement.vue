@@ -1,82 +1,82 @@
 <template>
     <div class="row">
         <widget
-            title="User Management"
-            :button-text="'NEW USER'"
+            :title="$tc('phrases.userManagement')"
+            :button-text="$tc('phrases.newUser')"
             :button="true"
             @widgetAction="showNewUser = true"
             :subscriber="subscriber"
             :paginator="adminService.paginator"
         >
-            <form v-if="showNewUser" @submit.prevent="submitCreateForm" data-vv-scope="form-create">
+            <form v-if="showNewUser" @submit.prevent="submitCreateForm">
                 <div class="edit-container">
                     <md-card>
                         <md-card-header>
                             <div style="float:right; cursor:pointer" @click="()=>{showNewUser = false}">
-                                <md-icon>close</md-icon>&nbsp;Close
+                                <md-icon>close</md-icon>&nbsp;{{ $tc('words.close') }}
                             </div>
                         </md-card-header>
                         <md-card-content class="md-layout md-gutter">
                             <div class="md-layout-item md-size-50 md-small-size-100">
-                                <md-field :class="{'md-invalid': errors.has('form-create.name')}">
-                                    <label>Name</label>
+                                <md-field :class="{'md-invalid': errors.has($tc('words.name'))}">
+                                    <label>{{ $tc('words.name') }}</label>
                                     <md-input
                                         v-model="user.name"
                                         v-validate="'required|min:2|max:20'"
-                                        name="name"
+                                        :name="$tc('words.name')"
                                         id="name"
                                     />
                                     <md-icon>create</md-icon>
-                                    <span class="md-error">{{ errors.first('form-create.name') }}</span>
+                                    <span class="md-error">{{ errors.first($tc('words.name')) }}</span>
                                 </md-field>
                             </div>
 
                             <div class="md-layout-item md-size-50 md-small-size-100">
-                                <md-field :class="{'md-invalid': errors.has('form-create.email')}">
-                                    <label>Email</label>
+                                <md-field :class="{'md-invalid': errors.has($tc('words.email'))}">
+                                    <label>{{ $tc('words.email') }}</label>
                                     <md-input
                                         type="text"
-                                        name="email"
+                                        :name="$tc('words.email')"
                                         id="email"
                                         v-model="user.email"
                                         v-validate="'required|email'"
                                     />
                                     <md-icon>email</md-icon>
-                                    <span class="md-error">{{ errors.first('form-create.email') }}</span>
+                                    <span class="md-error">{{ errors.first($tc('words.email')) }}</span>
                                 </md-field>
                             </div>
                             <div class="md-layout-item md-size-50 md-small-size-100">
-                                <md-field :class="{'md-invalid': errors.has('form-create.password')}">
-                                    <label for="password">Password</label>
+                                <md-field :class="{'md-invalid': errors.has($tc('words.password'))}">
+                                    <label for="password">{{ $tc('words.password') }}</label>
                                     <md-input
                                         type="password"
-                                        name="password"
+                                        :name="$tc('words.password')"
                                         id="password"
                                         v-validate="'required|min:3|max:15'"
                                         v-model="user.password"
                                         ref="passwordRef"
                                     />
 
-                                    <span class="md-error">{{ errors.first('form-create.password') }}</span>
+                                    <span class="md-error">{{ errors.first($tc('words.password')) }}</span>
                                 </md-field>
                             </div>
 
                             <div class="md-layout-item md-size-50 md-small-size-100">
-                                <md-field :class="{'md-invalid': errors.has('form-create.confirmPassword')}">
-                                    <label for="confirmPassword">Confirm Password</label>
+                                <md-field :class="{'md-invalid': errors.has($tc('phrases.confirmPassword'))}">
+                                    <label for="confirmPassword">{{ $tc('phrases.confirmPassword') }}</label>
                                     <md-input
                                         type="password"
-                                        name="confirmPassword"
+                                        :name="$tc('phrases.confirmPassword')"
                                         id="confirmPassword"
                                         v-model="user.confirmPassword"
                                         v-validate="'required|confirmed:$passwordRef|min:3|max:15'"
                                     />
-                                    <span class="md-error">{{ errors.first('form-create.confirmPassword') }}</span>
+                                    <span class="md-error">{{ errors.first($tc('phrases.confirmPassword')) }}</span>
                                 </md-field>
                             </div>
                         </md-card-content>
                         <md-card-actions>
-                            <md-button type="submit" class="md-primary btn-sell">Create</md-button>
+                            <md-button type="submit" class="md-primary btn-sell">{{ $tc('words.create') }}</md-button>
                         </md-card-actions>
                     </md-card>
                 </div>
@@ -91,10 +91,10 @@
                             >
                                 <md-table md-card style="margin-left: 0">
                                     <md-table-row>
-                                        <md-table-head>ID</md-table-head>
-                                        <md-table-head>Name</md-table-head>
-                                        <md-table-head>E-Mail</md-table-head>
-                                        <md-table-head>Phone</md-table-head>
+                                        <md-table-head>{{ $tc('words.id') }}</md-table-head>
+                                        <md-table-head>{{ $tc('words.name') }}</md-table-head>
+                                        <md-table-head>{{ $tc('words.email') }}</md-table-head>
+                                        <md-table-head>{{ $tc('words.phone') }}</md-table-head>
                                     </md-table-row>
 
                                     <md-table-row
@@ -118,46 +118,46 @@
 
 
         <md-dialog :md-active.sync="modalVisibility">
-            <md-dialog-title>Edit User</md-dialog-title>
+            <md-dialog-title>{{ $tc('words.edit') }}</md-dialog-title>
 
             <div class="edit-container">
-                <form class="md-layout md-gutter" data-vv-scope="form-edit">
+                <form class="md-layout md-gutter">
                     <div class="md-layout-item md-size-50 md-small-size-100">
-                        <md-field :class="{'md-invalid': errors.has('form-edit.name')}">
-                            <label>Name</label>
+                        <md-field :class="{'md-invalid': errors.has($tc('words.name'))}">
+                            <label>{{ $tc('words.name') }}</label>
                             <md-input
                                 disabled
                                 v-model="user.name"
                                 v-validate="'required|min:2|max:20'"
-                                name="name"
+                                :name="$tc('words.name')"
                                 id="name"
                             />
                             <md-icon>create</md-icon>
-                            <span class="md-error">{{ errors.first('form-edit.name') }}</span>
+                            <span class="md-error">{{ errors.first($tc('words.name')) }}</span>
                         </md-field>
                     </div>
 
                     <div class="md-layout-item md-size-50 md-small-size-100">
                         <md-field>
-                            <label>Phone</label>
+                            <label>{{ $tc('words.phone') }}</label>
                             <md-input type="text" name="phone" id="phone" v-model="user.phone"/>
                             <md-icon>phone</md-icon>
                         </md-field>
                     </div>
                     <div class="md-layout-item md-size-50 md-small-size-100">
                         <md-field>
-                            <label>street</label>
+                            <label>{{ $tc('words.street') }}</label>
                             <md-input v-model="user.street" name="street" id="street"/>
                             <md-icon>contacts</md-icon>
                         </md-field>
                     </div>
                     <div class="md-layout-item md-size-50 md-small-size-100">
-                        <md-field :class="{'md-invalid': errors.has('form-edit.city')}">
-                            <label for="city">City</label>
-                            <md-select v-model="selectedCity" name="city" id="city" v-validate="'required'">
+                        <md-field :class="{'md-invalid': errors.has($tc('words.city'))}">
+                            <label for="city">{{ $tc('words.city') }}</label>
+                            <md-select v-model="selectedCity" :name="$tc('words.city')" id="city" v-validate="'required'">
                                 <md-option v-for="c in cities" :key="c.id" :value="c.id">{{ c.name }}</md-option>
                             </md-select>
-                            <span class="md-error">{{ errors.first('form-edit.city') }}</span>
+                            <span class="md-error">{{ errors.first($tc('words.city')) }}</span>
                         </md-field>
                     </div>
                 </form>
@@ -166,14 +166,14 @@
 
 
             <md-dialog-actions>
-                <md-button class="md-accent" @click="closeModal()">Close</md-button>
+                <md-button class="md-accent" @click="closeModal()">{{ $tc('words.close') }}</md-button>
 
                 <md-button
 
                     class="md-primary btn-lg"
                     @click="submitEditForm()"
 
-                >Save
+                >{{ $tc('words.save') }}
                 </md-button>
             </md-dialog-actions>
         </md-dialog>
@@ -298,7 +298,7 @@ export default {
             try {
                 let response = await this.adminService.updateDetails(this.user)
                 if (response.status === 200) {
-                    this.alertNotify('success', 'The update has been done.')
+                    this.alertNotify('success', this.$tc('words.profile',2))
                 } else {
                     this.alertNotify('error', response.error)
                 }
@@ -314,7 +314,7 @@ export default {
                 let response = await this.adminService.createUser(this.user)
 
                 if (response.error == undefined) {
-                    this.alertNotify('success', 'New user created.')
+                    this.alertNotify('success', this.$tc('phrases.newUser',2))
                     this.showNewUser = false
                     this.cities = []
                     this.user.id = this.users.length+1

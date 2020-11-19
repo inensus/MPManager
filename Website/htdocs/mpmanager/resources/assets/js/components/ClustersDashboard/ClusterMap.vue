@@ -1,7 +1,7 @@
 <template>
 
     <widget
-        title="Cluster Map"
+        :title="$tc('phrases.clusterMap')"
         id="cluster-map">
         <Map
             :geoData="geoData"

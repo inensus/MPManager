@@ -2,40 +2,39 @@
 
     <md-dialog :md-active.sync="assignNewAppliance">
         <!-- assing new appliance -->
-        <form novalidate class="md-layout" @submit.prevent="saveAppliance"
-              data-vv-scope="Appliance-Form">
+        <form novalidate class="md-layout" @submit.prevent="saveAppliance">
             <md-card class="md-layout-item">
                 <md-card-header>
                     <div style="float:right; cursor:pointer" @click="hide()">
-                        <md-icon>close</md-icon>&nbsp;Close
+                        <md-icon>close</md-icon>&nbsp;{{ $tc('words.close')}}
                     </div>
                 </md-card-header>
                 <md-card-content>
-                    <md-field :class="{'md-invalid': errors.has('Appliance-Form.applianceTypes')}">
-                        <label for="applianceTypes">Appliance </label>
-                        <md-select name="applianceTypes" id="applianceTypes" v-model="newAppliance.id"
+                    <md-field :class="{'md-invalid': errors.has($tc('words.appliance'))}">
+                        <label>{{ $tc('words.appliance')}} </label>
+                        <md-select :name="$tc('words.appliance')" id="applianceTypes" v-model="newAppliance.id"
                                    v-validate="'required'">
-                            <md-option disabled value>&#45;&#45;Select&#45;&#45;</md-option>
+                            <md-option disabled value>&#45;&#45;{{ $tc('words.select')}}&#45;&#45;</md-option>
                             <md-option
                                 v-for="(applianceType) in applianceTypes"
                                 :value="applianceType.id" :key="applianceType.id"
                             >{{applianceType.name}}
                             </md-option>
                         </md-select>
-                        <span class="md-error">{{ errors.first('Appliance-Form.applianceTypes') }}</span>
+                        <span class="md-error">{{ errors.first($tc('words.appliance')) }}</span>
                     </md-field>
 
-                    <md-field :class="{'md-invalid': errors.has('Appliance-Form.cost')}">
-                        <label for="cost">Cost </label>
-                        <md-input type="text" name="cost" id="cost" v-model="newAppliance.cost"
+                    <md-field :class="{'md-invalid': errors.has($tc('words.cost'))}">
+                        <label for="cost">{{ $tc('words.cost')}} </label>
+                        <md-input type="text" :name="$tc('words.cost')" id="cost" v-model="newAppliance.cost"
                                   v-validate="'required'"/>
-                        <span class="md-error">{{ errors.first('Appliance-Form.cost') }}</span>
+                        <span class="md-error">{{ errors.first($tc('words.cost')) }}</span>
                     </md-field>
                     <md-progress-bar md-mode="indeterminate" v-if="loading"/>
                 </md-card-content>
                 <md-card-actions>
                     <md-button role="button" type="submit" class="md-raised md-primary" :disabled="loading">
-                        Assign Appliance
+                        {{ $tc('phrases.assignAppliance',0)}}
                     </md-button>
 
                 </md-card-actions>
@@ -87,7 +86,7 @@ export default {
             }
         },
         async saveAppliance () {
-            let validator = await this.$validator.validateAll('Appliance-Form')
+            let validator = await this.$validator.validateAll()
 
             if (validator) {
                 this.loading = true
@@ -96,7 +95,7 @@ export default {
                     await this.assignedApplianceService.assignAppliance(this.newAppliance, userId, this.agentId)
                     this.loading = false
                     this.applianceAssigned()
-                    this.alertNotify('success', 'Agent added successfully')
+                    this.alertNotify('success', this.$tc('phrases.assignAppliance',3))
                 } catch (e) {
                     this.loading = false
                     this.alertNotify('error', e.message)

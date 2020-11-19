@@ -19,13 +19,13 @@
                             <md-menu-item class="menu-item">
                                 <router-link :to="{path: '/profile'}" class="link">
                                     <md-icon>person</md-icon>
-                                    Profile
+                                    {{$tc('words.profile')}}
                                 </router-link>
                             </md-menu-item>
                             <md-menu-item>
                                 <router-link :to="{path: '/profile/management'}" class="link">
                                     <md-icon>people</md-icon>
-                                    User Management
+                                    {{$tc('phrases.userManagement')}}
                                 </router-link>
                             </md-menu-item>
                         </md-menu-content>

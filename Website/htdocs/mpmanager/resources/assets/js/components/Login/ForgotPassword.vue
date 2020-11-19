@@ -2,7 +2,7 @@
     <div class="content-field">
         <div class="header">
             <h1 class="title">MicroPowerManager</h1>
-            <h5 class="subtitle">Forgot Password</h5>
+            <h5 class="subtitle">{{$tc('phrases.forgotPassword')}}</h5>
             <div class="title-divider">&nbsp;</div>
 
         </div>
@@ -11,13 +11,13 @@
                 <md-card class="md-layout-item">
                     <md-card-header>
                         <div class="">
-                            <div class="subtitle">Please insert your email address that you use in system.</div>
+                            <div class="subtitle">{{$tc('phrases.forgotPassword',2)}}</div>
                         </div>
                     </md-card-header>
 
                     <md-card-content>
                         <md-field :class="{'md-invalid': errors.has('form-forgot.email')}">
-                            <label>Email</label>
+                            <label>{{ $tc('words.email') }}</label>
                             <md-input
                                 type="email"
                                 name="email"
@@ -35,7 +35,7 @@
                     <md-progress-bar md-mode="indeterminate" v-if="sending"/>
 
                     <md-card-actions>
-                        <md-button type="submit" class="md-primary btn-log" :disabled="sending">Send</md-button>
+                        <md-button type="submit" class="md-primary btn-log" :disabled="sending">{{ $tc('words.send') }}</md-button>
                     </md-card-actions>
                 </md-card>
             </form>

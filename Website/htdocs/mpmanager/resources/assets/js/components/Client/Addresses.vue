@@ -2,9 +2,9 @@
     <div>
         <widget
             :id="'client-addresses'"
-            :title="'Addresses'"
+            :title="$tc('words.address',1)"
             :button="true"
-            :button-text="'new Address'"
+            :button-text="$tc('phrases.newAddress')"
             color="green"
             @widgetAction="addNewAddress"
             :paginator="addresses.paginator"
@@ -12,31 +12,31 @@
         >
                 <md-table style="width:100%" v-model="addresses.list" md-card md-fixed-header>
                     <md-table-row @click="editAddress(item, index)" slot="md-table-row" slot-scope="{ item, index }">
-                        <md-table-cell md-label="Id" md-sort-by="id" md-numeric>{{ item.id }}</md-table-cell>
-                        <md-table-cell md-label="Street" md-sort-by="street">{{ item.street }}</md-table-cell>
-                        <md-table-cell md-label="City" md-sort-by="city">{{ item.city }}</md-table-cell>
-                        <md-table-cell md-label="Phone" md-sort-by="phone">{{ item.phone }}</md-table-cell>
-                        <md-table-cell md-label="Is Primary" md-sort-by="primary">
+                        <md-table-cell :md-label="$tc('words.id')" md-sort-by="id" md-numeric>{{ item.id }}</md-table-cell>
+                        <md-table-cell :md-label="$tc('words.street')" md-sort-by="street">{{ item.street }}</md-table-cell>
+                        <md-table-cell :md-label="$tc('words.city')" md-sort-by="city">{{ item.city }}</md-table-cell>
+                        <md-table-cell :md-label="$tc('words.phone')" md-sort-by="phone">{{ item.phone }}</md-table-cell>
+                        <md-table-cell :md-label="$tc('words.primary')" md-sort-by="primary">
                             <input type="checkbox" readonly :checked="item.primary" onclick="return false;"/>
                         </md-table-cell>
                     </md-table-row>
                 </md-table>
 
         </widget>
-        <md-dialog class="adress-edit-container" :md-active.sync="modalVisibility">
-            <md-dialog-title v-if="editFlag">Update Address</md-dialog-title>
-            <md-dialog-title v-if="!editFlag">Register New Address</md-dialog-title>
+        <md-dialog class="address-edit-container" :md-active.sync="modalVisibility">
+            <md-dialog-title v-if="editFlag">{{$tc('phrases.updateAddress')}}</md-dialog-title>
+            <md-dialog-title v-if="!editFlag">{{$tc('phrases.newAddress')}}</md-dialog-title>
              <md-dialog-content class="md-scrollbar">
                             <div class="md-layout md-gutter">
                                 <div class="md-layout-item md-size-50 md-small-size-100">
                                     <md-field name="city">
-                                        <label for="city">City</label>
+                                        <label for="city">{{$tc('words.city')}}</label>
                                         <md-select name="city" id="city" v-model="newAddress.city_id">
                                             <md-option
                                                 value="0"
                                                 disabled
                                                 v-if="!editFlag || newAddress.city_id===null">
-                                                City
+                                                {{$tc('words.city')}}
                                             </md-option>
                                             <md-option
                                                 v-for="city in cities"
@@ -50,7 +50,7 @@
 
                                 <div class="md-layout-item md-size-50 md-small-size-100">
                                     <md-field>
-                                        <label for="Street">Street</label>
+                                        <label for="Street">{{$tc('words.street')}}</label>
                                         <md-input type="text" id="Street" name="Street" v-model="newAddress.street"/>
                                     </md-field>
                                 </div>
@@ -60,7 +60,7 @@
                             <div class="md-layout md-gutter md-size-100">
                                 <div class="md-layout-item md-size-50 md-small-size-100">
                                     <md-field name="email">
-                                        <label for="email">Email</label>
+                                        <label for="email">{{$tc('words.email')}}</label>
                                         <md-input type="email" name="email"
                                         v-model = "newAddress.email"/>
                                     </md-field>
@@ -68,7 +68,7 @@
 
                                 <div class="md-layout-item md-size-50 md-small-size-100">
                                     <md-field name="phone">
-                                        <label for="phone">Phone</label>
+                                        <label for="phone">{{$tc('words.phone')}}</label>
                                         <md-input
                                             name="phone"
                                             id="phone"
@@ -82,19 +82,19 @@
                             <div class="md-layout md-size-100">
                                 <div class="md-layout-item md-size-100">
                                     <label>
-                                        <input type="checkbox" v-model="newAddress.primary"/>Primary Address
+                                        <input type="checkbox" v-model="newAddress.primary"/>{{$tc('words.primary')}}
                                     </label>
                                 </div>
                             </div>
 
              </md-dialog-content>
             <md-dialog-actions>
-                <md-button class="md-accent" @click="closeModal()">Close</md-button>
+                <md-button class="md-accent" @click="closeModal()">{{$tc('words.close')}}</md-button>
 
                 <md-button
                     class="md-primary btn-lg"
                     @click="saveAddress()"
-                    v-text="(editFlag ? 'Update' : 'Save')"
+                    v-text="(editFlag ? this.$tc('words.update') : this.$tc('words.save'))"
                 />
             </md-dialog-actions>
 
@@ -210,7 +210,7 @@ export default {
             if (!('city_id' in this.newAddress) || !this.newAddress.city_id) {
                 this.$swal({
                     type: 'error',
-                    title: 'Missing Field',
+                    title: this.$tc('phrase.missingField'),
                     text: 'City is required'
                 })
                 return false
@@ -218,7 +218,7 @@ export default {
                 if (this.newAddress.phone.length === 0) {
                     this.$swal({
                         type: 'error',
-                        title: 'Missing Field',
+                        title: this.$tc('phrase.missingField'),
                         text: 'Phone number is required'
                     })
                     return false
@@ -229,7 +229,7 @@ export default {
                     } else {
                         this.$swal({
                             type: 'error',
-                            title: 'Missing Fields',
+                            title: this.$tc('phrase.missingField'),
                             text: 'Phone format is, +CountryCode Number (+255123123123) '
                         })
                         return false
@@ -247,7 +247,7 @@ export default {
 </script>
 
 <style lang="css" scoped>
-    .adress-edit-container {
+    .address-edit-container {
         padding: 1rem;
     }
 </style>

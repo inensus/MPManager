@@ -3,20 +3,20 @@
         <widget
             :subscriber="subscriber"
             color="green"
-            title="User Tickets"
+            :title="$tc('phrases.userTicket',2)"
             :paginator="tickets.paginator"
             :button="true"
-            :button-text="'New Ticket'"
+            :button-text="$tc('phrases.newTicket')"
             @widgetAction="openModal"
             :resetKey="resetKey"
         >
 
                 <md-table>
                     <md-table-row>
-                        <md-table-head class="md-subheader">Subject</md-table-head>
-                        <md-table-head >Category</md-table-head>
-                        <md-table-head>Status</md-table-head>
-                        <md-table-head>Date</md-table-head>
+                        <md-table-head class="md-subheader">{{ $tc('words.subject') }}</md-table-head>
+                        <md-table-head >{{ $tc('words.category') }}</md-table-head>
+                        <md-table-head>{{ $tc('words.status') }}</md-table-head>
+                        <md-table-head>{{ $tc('words.date') }}</md-table-head>
                     </md-table-row>
                     <template v-for="(ticket,index) in tickets.list" >
                         <md-table-row @click="openTicket(index)" :key="index">
@@ -32,7 +32,7 @@
                                 <div class="ticket-desc">
                                     <div class="md-layout md-gutter md-size-100">
                                         <div class="md-layout-item md-size-70">
-                                            <span class="md-subheader">Ticket Details</span>
+                                            <span class="md-subheader">{{ $tc('phrases.ticketDetails') }}</span>
                                         </div>
                                         <div class="md-layout-item md-size-30">
                                             <div class="md-layout-item md-size-100">
@@ -69,13 +69,13 @@
                                     <div class="md-layout-item md-size-95 new-comment-area"  v-if="ticket.newComment">
 
                                         <md-field>
-                                            <label for="">New Comment</label>
+                                            <label for="">{{ $tc('phrases.newComment') }}</label>
                                             <md-textarea md-autogrow v-model="ticket.commentMessage"></md-textarea>
                                             <md-button
                                                 type="submit"
                                                 class="md-primary md-dense"
                                                 @click="saveComment(ticket)"
-                                            >Save</md-button>
+                                            >{{ $tc('words.save') }}</md-button>
                                         </md-field>
 
                                     </div>
@@ -91,13 +91,13 @@
 
 
         <md-dialog :md-active.sync="showModal">
-            <md-dialog-title>New Ticket</md-dialog-title>
+            <md-dialog-title>{{ $tc('phrases.newTicket') }}</md-dialog-title>
             <md-dialog-content class="md-scrollbar">
                 <form novalidate class="md-layout md-gutter" >
 
                         <div class="md-layout-item md-size-100 ">
                             <md-field name="title">
-                                <label for="title">Title</label>
+                                <label for="title">{{ $tc('words.title') }}</label>
                                 <md-input type="text" v-model="newTicket.title" id="title" name="title" />
                             </md-field>
                         </div>
@@ -108,7 +108,7 @@
                                 name="ticketDueDate"
                                 md-immediately
                                 id="ticketDueDate"
-                                v-model="newTicket.dueDate"> <label for="ticketDueDate">Due Date</label></md-datepicker>
+                                v-model="newTicket.dueDate"> <label for="ticketDueDate">{{ $tc('phrases.dueDate') }}</label></md-datepicker>
 
 
                         </div>
@@ -117,9 +117,9 @@
                         <div class="md-layout-item md-size-100 ">
 
                             <md-field name="ticketPriority">
-                                <label for="ticketPriority">Category</label>
+                                <label for="ticketPriority">{{ $tc('words.category') }}</label>
                                 <md-select v-model="newTicket.label" name="ticketPriority" id="ticketPriority">
-                                    <md-option value="0" disabled>-- Select Category --</md-option>
+                                    <md-option value="0" disabled>-- {{ $tc('words.select') }} --</md-option>
                                     <md-option
                                         v-for="(label,index) in labels"
                                         :value="label.id"
@@ -132,9 +132,9 @@
 
                         <div  class="md-layout-item md-size-100 ">
                             <md-field name="ticketAssignedTo">
-                                <label for="ticketAssignedTo">Assign To</label>
+                                <label for="ticketAssignedTo">{{ $tc('phrases.assignTo',0) }}</label>
                                 <md-select name="ticketAssignedTo" id="ticketAssignedTo" v-model="newTicket.assignedPerson">
-                                    <md-option disabled selected>No one</md-option>
+                                    <md-option disabled selected>{{ $tc('phrases.noOne') }}</md-option>
                                     <md-option v-for="user in users" :value="user.id" :key="user.id">{{user.name}}</md-option>
                                 </md-select>
 
@@ -145,14 +145,14 @@
                         <div class="md-layout-item md-size-100">
 
                             <md-field>
-                                <label for="description">Description</label>
+                                <label for="description">{{ $tc('words.description') }}</label>
                                 <md-textarea type="text" id="description" name="description" />
                             </md-field>
                         </div>
                         <md-dialog-actions class="md-layout-item md-size-100" >
-                        <md-button class="md-accent" @click="closeModal()">Close</md-button>
+                        <md-button class="md-accent" @click="closeModal()">{{ $tc('words.close') }}</md-button>
 
-                        <md-button class="md-primary btn-lg" @click="saveTicket()">Save</md-button>
+                        <md-button class="md-primary btn-lg" @click="saveTicket()">{{ $tc('words.save') }}</md-button>
 
                     </md-dialog-actions>
                 </form>

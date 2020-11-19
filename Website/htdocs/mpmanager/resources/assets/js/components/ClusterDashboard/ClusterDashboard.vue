@@ -2,7 +2,7 @@
     <div>
         <md-card style="margin-bottom: 3rem">
             <md-card-header>
-                Cluster : <span style="font-size: 1.3rem; font-weight: bold"
+                {{ $tc('words.cluster') }} : <span style="font-size: 1.3rem; font-weight: bold"
                                 v-if="clusterData"> {{clusterData.name}}</span>
             </md-card-header>
         </md-card>

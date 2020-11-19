@@ -3,9 +3,9 @@
         <add-agent-balance :addNewBalance="showNewBalance" :agent-id="agentId"/>
     <widget
         :class="'col-sm-6 col-md-5'"
-        :button-text="'Add Balance'"
+        :button-text="$tc('phrases.addBalance')"
         :button="true"
-        title="Balance Histories"
+        :title="$tc('phrases.balanceHistories')"
         :button-color="'red'"
         @widgetAction="showAddBalance"
         :paginator="agentBalanceHistoryService.paginator"
@@ -49,7 +49,7 @@ export default {
             newBalance: {},
             loading: false,
             resetKey: 0,
-            headers: ['ID', 'Type', 'Amount', 'Date'],
+            headers: [this.$tc('words.id'), this.$tc('words.type'), this.$tc('words.amount'), this.$tc('words.date')],
             tableName: 'Agent Balance History'
         }
     },

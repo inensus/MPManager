@@ -18,11 +18,11 @@ export default {
                 type: 'question',
                 allowOutsideClick: false,
                 allowEscapeKey: false,
-                title: 'Password Protected Zone',
-                text: 'Please enter the password to access this area',
+                title: this.$tc('phrases.passwordProtected'),
+                text: this.$tc('phrases.passwordProtected',2),
                 inputType: 'password',
                 input: 'password',
-                inputPlaceholder: 'Password',
+                inputPlaceholder: this.$tc('words.password'),
 
                 inputValidator: (value) => {
                     //TODO: get the value from config file
@@ -30,7 +30,7 @@ export default {
                     if (value !== this.password) {
                         this.$swal({
                             type: 'error',
-                            text: 'Wrong Password',
+                            text: this.$tc('phrases.wrongPassword'),
                             timer: 1000,
                         }).then(() => {
                             this.$router.replace('/')

@@ -2,42 +2,42 @@
     <div>
         <widget
             v-if="addNewAssetType"
-            title="Add New Asset Type"
+            :title="$tc('phrases.newAssetType')"
             color="red"
             >
             <md-card>
                 <md-card-content>
-                    <md-field :class="{'md-invalid': errors.has('asset')}">
-                        <label>Asset Type Name</label>
+                    <md-field :class="{'md-invalid': errors.has($tc('words.name'))}">
+                        <label>{{ $tc('words.name') }}</label>
                         <md-input v-model="assetService.asset.name"
-                                  placeholder="Asset Type Name"
+                                  :placeholder="$tc('words.name')"
                                   type="text"
-                                  name="asset"
+                                  :name="$tc('words.name')"
                                   id="asset"
                                   v-validate="'required|min:4'"
                         ></md-input>
-                        <span class="md-error">{{ errors.first('asset') }}</span>
+                        <span class="md-error">{{ errors.first($tc('words.name') )}}</span>
                     </md-field>
 
-                    <md-field :class="{'md-invalid': errors.has('asset_price')}">
-                        <label>Asset Price</label>
+                    <md-field :class="{'md-invalid': errors.has($tc('words.price'))}">
+                        <label>{{ $tc('words.price') }}</label>
                         <md-input v-model="assetService.asset.price"
-                                  placeholder="Asset Price"
+                                  :placeholder="$tc('words.price')"
                                   type="text"
-                                  name="asset_price"
+                                  :name="$tc('words.price')"
                                   id="asset_price"
                                   v-validate="'required|numeric'"
                         ></md-input>
-                        <span class="md-error">{{ errors.first('asset_price') }}</span>
+                        <span class="md-error">{{ errors.first($tc('words.price')) }}</span>
                     </md-field>
                     <md-progress-bar md-mode="indeterminate" v-if="loading"/>
                 </md-card-content>
                 <md-card-actions>
                     <md-button class="md-raised md-primary" @click="saveAsset()" :disabled="loading">
-                        Save
+                        {{ $tc('words.save') }}
                     </md-button>
                     <md-button class="md-raised " @click="closeAddComponent()">
-                        Close
+                        {{ $tc('words.close') }}
                     </md-button>
                 </md-card-actions>
             </md-card>
@@ -83,7 +83,7 @@ export default {
                 this.loading = true
                 await this.assetService.createAsset()
                 this.loading = false
-                this.alertNotify('success', 'AssetType has registered.')
+                this.alertNotify('success', this.$tc('phrases.newAssetType',2))
                 EventBus.$emit('AssetTypeAdded', )
             } catch (e) {
                 this.loading = false

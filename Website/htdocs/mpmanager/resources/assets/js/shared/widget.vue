@@ -17,10 +17,10 @@
 
                             <md-field>
 
-                                <label style="color: white!important;">Search ..</label>
+                                <label style="color: white!important;">{{$tc('words.search')}} ..</label>
                                 <md-input style="color: white!important;" v-model="searchTerm"></md-input>
                                 <div v-if="searching">
-                                <span style="margin-right: 15px;">Search Results for: <u>{{searchTerm}}</u>
+                                <span style="margin-right: 15px;">{{ $tc('phrases.searchResultFor') }}: <u>{{searchTerm}}</u>
                                     <md-icon @click="showAllEntries" class="pointer">cancel</md-icon></span>
                                 </div>
                                 <md-icon style="color: white;">search</md-icon>
@@ -41,7 +41,7 @@
                 <md-button v-if="showRefreshButton" @click="refreshButtonClicked"
                            class="md-icon-button md-dense md-raised"
                            :class="{'refresh-button' : isActive}">
-                    <md-tooltip md-direction="top">Refresh</md-tooltip>
+                    <md-tooltip md-direction="top">{{$tc('words.refresh')}}</md-tooltip>
                     <md-icon>cached</md-icon>
                 </md-button>
             </div>
@@ -148,6 +148,7 @@ export default {
             EventBus.$on('widgetContentLoaded', this.checkDataLength)
         }
 
+
     },
     beforeDestroy () {
         EventBus.$off('search.end', this.cancelSearching)
@@ -221,18 +222,18 @@ export default {
         }
     },
     computed: {
-        getEmptyStateLabel () {
-            if (this.title === null || this.title === undefined) {
-                return 'No Data Found'
-            } else {
-                return 'No Data Found for ' + this.title
+        getEmptyStateLabel(){
+            if(this.title === null || this.title === undefined){
+                return this.$tc('phrases.noData',2)
+            }else{
+                return this.$tc('phrases.noDataFoundFor',1,{data: this.title})
             }
         },
-        getEmptyStateButtonText () {
-            if (this.title === null || this.title === undefined) {
-                return 'Create Your First Record'
-            } else {
-                return 'Create the First ' + this.title + ' Record'
+        getEmptyStateButtonText(){
+            if(this.title === null || this.title === undefined){
+                return this.$tc('phrases.createFirsRecord',1)
+            }else{
+                return this.$tc('phrases.createFirsRecord',2,{data:  this.title })
             }
         }
 

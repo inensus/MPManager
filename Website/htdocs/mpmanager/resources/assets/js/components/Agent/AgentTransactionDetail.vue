@@ -2,7 +2,7 @@
     <div>
         <div class="md-layout">
             <div class="md-layout-item md-subheader">
-                Agent Transaction
+                {{ $tc('phrases.agentTransaction') }}
             </div>
             <div class="md-layout-item md-subheader n-font">
                 <img class="logo" alt="logo" src="https://image.flaticon.com/icons/svg/99/99395.svg"
@@ -12,7 +12,7 @@
         <hr class="hr-d">
         <div class="md-layout">
             <div class="md-layout-item md-subheader">
-                Name
+                {{ $tc('words.name') }}
             </div>
             <div class="md-layout-item md-subheader n-font">
                 {{agentService.agent.name}}
@@ -21,7 +21,7 @@
         <hr class="hr-d">
         <div class="md-layout">
             <div class="md-layout-item md-subheader">
-                Phone
+                {{ $tc('words.phone') }}
             </div>
             <div class="md-layout-item md-subheader n-font">
                 {{agentService.agent.phone}}
@@ -30,7 +30,7 @@
         <hr class="hr-d">
         <div class="md-layout">
             <div class="md-layout-item md-subheader">
-                Email
+                {{ $tc('words.email') }}
             </div>
             <div class="md-layout-item md-subheader n-font">
                 {{agentService.agent.email}}
@@ -39,7 +39,7 @@
         <hr class="hr-d">
         <div class="md-layout">
             <div class="md-layout-item md-subheader">
-                Mini-Grid
+                {{ $tc('words.miniGrid') }}
             </div>
             <div class="md-layout-item md-subheader n-font">
                 {{agentService.agent.miniGrid}}
@@ -48,7 +48,7 @@
         <hr class="hr-d">
         <div class="md-layout">
             <div class="md-layout-item md-subheader">
-                Transaction ID
+                {{ $tc('words.transaction') }}
             </div>
             <div class="md-layout-item md-subheader n-font">
                 {{ot.id}}
@@ -57,7 +57,7 @@
         <hr class="hr-d">
         <div class="md-layout">
             <div class="md-layout-item md-subheader">
-                Token
+                {{ $tc('words.token') }}
             </div>
             <div class="md-layout-item md-subheader n-font">
                 6664 8965 0265 8232 7729

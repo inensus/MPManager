@@ -2,7 +2,7 @@
     <div>
         <widget
             :id="'target-list'"
-            :title="'Target'"
+            :title="$tc('words.target',2)"
             :button="true"
             :buttonText="'New Target'"
             :paginator="targets.paginator"
@@ -15,9 +15,9 @@
                     <md-table>
 
                         <md-table-row>
-                            <md-table-head :colspan="expandedRow>=0 ? 3:1">Period</md-table-head>
-                            <md-table-head>For</md-table-head>
-                            <md-table-head>Sub Targets</md-table-head>
+                            <md-table-head :colspan="expandedRow>=0 ? 3:1">{{ $tc('words.period') }}</md-table-head>
+                            <md-table-head>{{ $tc('words.for') }}</md-table-head>
+                            <md-table-head>{{ $tc('phrases.subTargets') }}</md-table-head>
                         </md-table-row>
                         <template v-for="(target,index) in targets.list" >
                             <md-table-row :key="index">
@@ -26,11 +26,11 @@
                                 <md-table-cell v-if="target.target.subTargets.length>0" style="cursor: pointer">
                                     <div v-if="index === expandedRow" @click="collapseTarget()">
                                         <md-icon>arrow_drop_down</md-icon>
-                                        Collapse
+                                        {{ $tc('words.collapse') }}
                                     </div>
                                     <div v-else @click="expandTarget(index)">
                                         <md-icon>arrow_right</md-icon>
-                                        Expand
+                                        {{ $tc('words.expand') }}
                                     </div>
 
                                 </md-table-cell>
@@ -42,9 +42,9 @@
                                     v-for="(subTarget, subIndex) in target.target.subTargets"
                                     :key="subIndex">
                                     <md-table-cell>{{subTarget.connections.name}}</md-table-cell>
-                                    <md-table-cell>Revenue</md-table-cell>
+                                    <md-table-cell>{{ $tc('words.revenue') }}</md-table-cell>
                                     <md-table-cell> {{subTarget.revenue}}</md-table-cell>
-                                    <md-table-cell>New connections</md-table-cell>
+                                    <md-table-cell>{{ $tc('phrases.newConnection',2) }}</md-table-cell>
                                     <md-table-cell>{{subTarget.newConnections}}</md-table-cell>
                                 </md-table-row>
                             </template>

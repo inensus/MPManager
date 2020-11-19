@@ -2,7 +2,7 @@
     <div>
         <widget
             :id="'book-keeping'"
-            :title="'Payment Requests'"
+            :title="$tc('phrases.paymentRequests')"
             :paginator="bookKeepingService.paginator"
             :search="false"
             :subscriber="subscriber"
@@ -13,12 +13,12 @@
                   <md-table-head v-for="(item, index) in headers" :key="index">{{item}}</md-table-head>
               </md-table-row>
                 <md-table-row  slot="md-table-row" slot-scope="{ item }">
-                    <md-table-cell md-sort-by="id" md-label="ID"> {{ item.id}}</md-table-cell>
-                    <md-table-cell md-label="Date"> {{ item.date}}</md-table-cell>
-                    <md-table-cell md-label="File">
+                    <md-table-cell md-sort-by="id" :md-label="$tc('words.id')"> {{ item.id}}</md-table-cell>
+                    <md-table-cell :md-label="$tc('words.date')"> {{ item.date}}</md-table-cell>
+                    <md-table-cell :md-label="$tc('words.file')">
                         <div @click="download(item.id,'/book-keeping')">
                             <md-icon style="cursor: pointer;">save</md-icon>
-                            <span > Download</span>
+                            <span > {{ $tc('words.download') }}</span>
                         </div>
 
                     </md-table-cell>
@@ -53,8 +53,7 @@ export default {
             bookKeepingService: new BookKeepingService(),
             list: [],
             subscriber: 'bookKeeping',
-            headers: ['ID', 'Date', 'File'],
-            tableName: 'Outsource Report'
+            headers: [this.$tc('words.id'), this.$tc('words.date'), this.$tc('words.file')],
         }
     },
     methods: {

@@ -3,9 +3,9 @@
         <assign-appliance  :assignNewAppliance="showNewAppliance" :agent-id="agentId"/>
     <widget
         :class="'col-sm-6 col-md-5'"
-        :button-text="'Assign new Appliance'"
+        :button-text="$tc('phrases.assignAppliance',0)"
         :button="true"
-        title="Assigned Appliance"
+        :title="$tc('phrases.assignAppliance',1)"
         color="orange"
         :subscriber="subscriber"
         @widgetAction="addNewAppliance"
@@ -16,7 +16,8 @@
 
                 <md-table>
                     <md-table-row>
-                        <md-table-head v-for="(item, index) in headers" :key="index">{{item}}</md-table-head>
+                        <md-table-head>{{$tc('words.name')}}</md-table-head>
+                        <md-table-head>{{$tc('words.cost')}}</md-table-head>
                     </md-table-row>
                     <md-table-row v-for="(item, index) in assignedApplianceTypes" :key="index">
                         <md-table-cell md-label="Name" md-sort-by="name">{{item.applianceType}}</md-table-cell>
@@ -54,8 +55,6 @@ export default {
             loading: false,
             assignedApplianceTypes: [],
             applianceTypes: [],
-            headers: ['Name', 'Cost'],
-            tableName: 'Assigned Appliance'
         }
     },
     props: {

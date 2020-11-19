@@ -1,7 +1,7 @@
 <template>
     <widget
 
-        :title="'Last Transactions'"
+        :title="$tc('phrases.lastTransactions')"
         :paginator="transactions.paginator"
         color="green"
         :subscriber="subscriber"
@@ -17,23 +17,23 @@
                                 slot-scope="{ item }"
                             >
                                 <md-table-cell
-                                    md-label="Payment Type"
+                                    :md-label="$tc('phrases.paymentType')"
                                     md-sort-by="payment_type"
                                     md-numeric
                                 >{{ item.payment_type }}
                                 </md-table-cell>
-                                <md-table-cell md-label="Sender" md-sort-by="sender">{{ item.sender }}</md-table-cell>
-                                <md-table-cell md-label="Amount" md-sort-by="amount">{{ item.amount + ' ' + appConfig.currency}}
+                                <md-table-cell :md-label="$tc('words.sender')" md-sort-by="sender">{{ item.sender }}</md-table-cell>
+                                <md-table-cell :md-label="$tc('words.amount')" md-sort-by="amount">{{ item.amount + ' ' + appConfig.currency}}
                                 </md-table-cell>
-                                <md-table-cell md-label="Paid For" md-sort-by="paid_for_type">{{ item.paid_for_type }}
+                                <md-table-cell :md-label="$tc('phrases.paidFor')" md-sort-by="paid_for_type">{{ item.paid_for_type }}
                                 </md-table-cell>
                                 <md-table-cell
-                                    md-label="Payment Service"
+                                    :md-label="$tc('phrases.paymentService')"
                                     md-sort-by="payment_service"
                                 >{{ item.payment_service }}
                                 </md-table-cell>
                                 <md-table-cell
-                                    md-label="Created At"
+                                    :md-label="$tc('phrases.createdAt')"
                                     md-sort-by="paid_for_type"
                                 >{{timeForHuman(item.created_at)}}
                                 </md-table-cell>
@@ -56,7 +56,7 @@
                                     id="datatable_col_reorder_previous">
                                     <a href="javascript:void(0);" aria-controls="datatable_col_reorder"
                                        data-dt-idx="0"
-                                       tabindex="0" @click="getTransactions(--currentPage)">Previous</a>
+                                       tabindex="0" @click="getTransactions(--currentPage)">$tc('words.previous')</a>
                                 </li>
 
                                 <li v-for="(page,index) in totalPages" :class="page === currentPage ? 'active' : ''" :key="index"><a
@@ -67,7 +67,7 @@
                                     id="datatable_col_reorder_next">
                                     <a href="javascript:void(0);" aria-controls="datatable_col_reorder"
                                        data-dt-idx="8"
-                                       tabindex="0" @click="getTransactions(++currentPage)">Next</a>
+                                       tabindex="0" @click="getTransactions(++currentPage)">{{ $tc('words.next') }}</a>
                                 </li>
                             </ul>
                         </div>
@@ -101,8 +101,7 @@ export default {
             to: 0,
             total: 0,
             totalPages: 0,
-            headers: ['Payment Type', 'Sender', 'Amount','Paid For','Payment Service','Created At'],
-            tableName: 'Transactions',
+
         }
     },
     mounted () {

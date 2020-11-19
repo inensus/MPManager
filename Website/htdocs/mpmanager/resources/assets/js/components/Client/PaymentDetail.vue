@@ -1,17 +1,17 @@
 <template>
     <div>
-        <widget :title="' Payment Overview '+ periodName"
+        <widget :title="$tc('phrases.paymentOverview',0, {period: periodName}) "
                 :subscriber="subscriber"
         >
             <div slot="tabbar">
                 <md-field>
-                    <label class="period-style">Period</label>
+                    <label class="period-style">{{ $tc('words.period') }}</label>
                     <md-select class="period-style md-has-value" name="period" id="period" v-model="period"
                                @md-selected="getFlow">
-                        <md-option value="D">Daily</md-option>
-                        <md-option value="W">Weekly</md-option>
-                        <md-option value="M">Monthly</md-option>
-                        <md-option value="Y">Annually</md-option>
+                        <md-option value="D">{{ $tc('words.day',2) }}</md-option>
+                        <md-option value="W">{{ $tc('words.week',2) }}</md-option>
+                        <md-option value="M">{{ $tc('words.month',2) }}</md-option>
+                        <md-option value="Y">{{ $tc('words.annually') }}</md-option>
 
                     </md-select>
                 </md-field>
@@ -74,22 +74,22 @@ export default {
         getFlow (period = 'M') {
             switch (period) {
             case 'Y':
-                this.periodName = 'Annually'
+                this.periodName = this.$tc('words.annually')
                 break
             case 'M':
-                this.periodName = 'Monthly'
+                this.periodName = this.$tc('words.month',2)
                 break
             case 'W':
-                this.periodName = 'Weekly'
+                this.periodName = this.$tc('words.week',2)
                 break
             case 'D':
-                this.periodName = 'Daily'
+                this.periodName = this.$tc('words.day',2)
                 break
 
             }
             axios.get(resources.paymenthistories + this.personId + '/payments/' + period)
                 .then(response => {
-                    this.chartData = [['Period', 'Energy', 'Access Rate', 'Loan Rate']]
+                    this.chartData = [[this.$tc('words.period'), this.$tc('words.energy'), this.$tc('phrases.accessRate'), this.$tc('phrases.loanRate')]]
 
                     let data = response.data
                     for (let x in data) {

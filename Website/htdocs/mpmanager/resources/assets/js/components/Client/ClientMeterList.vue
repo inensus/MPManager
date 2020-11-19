@@ -2,7 +2,7 @@
 
     <div>
         <widget
-            :title="' Meters '"
+            :title="$tc('words.meter',2)"
             color="green"
             :subscriber="subscriber"
         >
@@ -13,13 +13,13 @@
                             <md-table-cell md-label="#" >
                                 <md-icon @click="setMapCenter(meter.id)" style="cursor:pointer;">place</md-icon>
                             </md-table-cell>
-                            <md-table-cell md-label="ID" md-sort-by="id">{{ item.id }}</md-table-cell>
-                            <md-table-cell md-label="Serial Nr" md-sort-by="serial_number">{{ item.serial_number }}
+                            <md-table-cell :md-label="$tc('words.id')" md-sort-by="id">{{ item.id }}</md-table-cell>
+                            <md-table-cell :md-label="$tc('phrases.serialNumber')" md-sort-by="serial_number">{{ item.serial_number }}
                             </md-table-cell>
-                            <md-table-cell md-label="Max Cur." md-sort-by="max_current">{{ item.max_current }}
+                            <md-table-cell :md-label="$tc('phrases.maxCurrent')" md-sort-by="max_current">{{ item.max_current }}
                             </md-table-cell>
-                            <md-table-cell md-label="Phase" md-sort-by="phase">{{ item.phase }}</md-table-cell>
-                            <md-table-cell md-label="Tariff" md-sort-by="tariff.name">{{ item.tariff.name}}
+                            <md-table-cell :md-label="$tc('words.phase')" md-sort-by="phase">{{ item.phase }}</md-table-cell>
+                            <md-table-cell :md-label="$tc('words.tariff')" md-sort-by="tariff.name">{{ item.tariff.name}}
                                 {{item.tariff.price}}
                             </md-table-cell>
                         </md-table-row>

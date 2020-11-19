@@ -3,22 +3,22 @@
 
         <widget
             :class="'col-sm-6 col-md-5'"
-            :button-text="'Assign new Asset'"
+            :button-text="$tc('phrases.assignAppliance',0)"
             :button="true"
-            title="Sold Assets"
+            :title="$tc('phrases.soldAppliances')"
             :button-color="'red'"
             :subscriber="subscriber"
             @widgetAction="soldNewAsset"
         >
-            <confirmation-box title="Edit Rate" @confirmed="editRate"></confirmation-box>
+            <confirmation-box :title="$tc('phrases.editRate')" @confirmed="editRate"></confirmation-box>
             <!-- assing new asset -->
 
             <div>
                     <md-table>
                         <md-table-row>
-                            <md-table-head>Name</md-table-head>
-                            <md-table-head>Cost</md-table-head>
-                            <md-table-head>Rates</md-table-head>
+                            <md-table-head>{{ $tc('words.name') }}</md-table-head>
+                            <md-table-head>{{ $tc('words.cost') }}</md-table-head>
+                            <md-table-head>{{ $tc('words.rate',1) }}</md-table-head>
                         </md-table-row>
                         <md-table-row v-for="(item, index) in assetPersonService.list" :key="index">
                             <md-table-cell md-label="Name" md-sort-by="name">{{item.asset_type.name}}</md-table-cell>
@@ -31,7 +31,7 @@
                                     @click="showDetails(index)"
                                 >
                                     <md-icon>remove_red_eye</md-icon>
-                                    Details
+                                    {{ $tc('words.detail',1) }}
                                 </div>
                             </md-table-cell>
                         </md-table-row>
@@ -48,11 +48,11 @@
                         </div>
                     </md-card-header>
                     <md-card-content>
-                        <md-field>
-                            <label for="asset_types">Asset Type</label>
-                            <md-select name="asset_types" id="asset_types" v-model="newAsset.id"
+                        <md-field :class="{'md-invalid': errors.has($tc('phrases.assetType'))}">
+                            <label for="asset_types">{{$tc('phrases.assetType')}}</label>
+                            <md-select :name="$tc('phrases.assetType')" id="asset_types" v-model="newAsset.id"
                             >
-                                <md-option disabled value>--Select--</md-option>
+                                <md-option disabled value>--{{ $tc('words.select') }}--</md-option>
                                 <md-option
                                     :value="assetType.id"
                                     v-for="assetType in assetService.list"
@@ -60,26 +60,27 @@
                                 >{{assetType.name}}
                                 </md-option>
                             </md-select>
+                            <span class="md-error">{{ errors.first($tc($tc('phrases.assetType'))) }}</span>
                         </md-field>
-                        <md-field :class="{'md-invalid': errors.has('Cost')}">
-                            <label for="Cost">Cost (TZS)</label>
+                        <md-field :class="{'md-invalid': errors.has($tc('words.cost'))}">
+                            <label for="Cost">{{$tc('words.cost')}}</label>
                             <md-input type="number"
-                                      name="Cost"
+                                      :name="$tc('words.cost')"
                                       id="Cost"
                                       v-model="newAsset.cost"
                                       v-validate="'required'"/>
-                            <span class="md-error">{{ errors.first('Cost') }}</span>
+                            <span class="md-error">{{ errors.first($tc('phrases.ratesCount')) }}</span>
                         </md-field>
 
-                        <md-field :class="{'md-invalid': errors.has('rate')}">
-                            <label for="rate">Rate Count</label>
+                        <md-field :class="{'md-invalid': errors.has($tc('words.rate'))}">
+                            <label for="rate">{{ $tc('phrases.ratesCount') }}</label>
                             <md-input type="number"
-                                      name="rate"
+                                      :name="$tc('phrases.ratesCount')"
                                       id="rate"
                                       v-model="newAsset.rate"
-                                      v-validate="'required'"
+                                      v-validate="'required|numeric'"
                             />
-                            <span class="md-error">{{ errors.first('rate') }}</span>
+                            <span class="md-error">{{ errors.first($tc('words.rate')) }}</span>
                         </md-field>
                         <div v-if="newAsset.rate">
                             <div v-for="x in parseInt(newAsset.rate)" :key="x"
@@ -92,7 +93,7 @@
 
                     </md-card-content>
                     <md-card-actions>
-                        <md-button type="submit" class="md-primary btn-sell">Sell Asset</md-button>
+                        <md-button type="submit" class="md-primary btn-sell">{{ $tc('words.sell') }}</md-button>
                     </md-card-actions>
                 </md-card>
             </form>
@@ -105,29 +106,29 @@
 
             <div class="md-layout md-gutter dialog-place">
                 <div class="md-layout-item md-size-100">
-                    <span>Total Cost :</span>
+                    <span>{{ $tc('phrases.totalCost') }} :</span>
                     <span>{{readable(selectedAsset.total_cost)}}</span>
                     <br/>
-                    <span>Sold At :</span>
+                    <span>{{ $tc('phrases.soldDate')}}:</span>
                     <span>{{formatReadableDate(selectedAsset.created_at)}}</span>
                     <br/>
-                    <span>Rates Count :</span>
+                    <span>{{ $tc('phrases.ratesCount') }} :</span>
                     <span>{{selectedAsset.rate_count}}</span>
                 </div>
                 <div class="md-layout-item md-size-100">
-                    <strong>Rates</strong>
+                    <strong>{{$tc('words.rates',2)}}</strong>
                 </div>
                 <div class="md-layout-item md-size-100">
                     <md-table>
                         <md-table-row>
                             <md-table-head>
-                                <strong>Cost</strong>
+                                <strong>{{ $tc('words.cost') }}</strong>
                             </md-table-head>
                             <md-table-head>
-                                <strong>Remaining Amount</strong>
+                                <strong>{{ $tc('phrases.remainingAmount') }}</strong>
                             </md-table-head>
                             <md-table-head>
-                                <strong>Due Date</strong>
+                                <strong>{{ $tc('phrases.dueDate') }}</strong>
                             </md-table-head>
                             <md-table-head>
                                 <strong>#</strong>
@@ -174,7 +175,7 @@
 
             </div>
             <md-dialog-actions>
-                <md-button class="md-accent" @click="toggleModal()">Close</md-button>
+                <md-button class="md-accent" @click="toggleModal()">{{$tc('words.close')}}}</md-button>
             </md-dialog-actions>
         </md-dialog>
     </div>
@@ -218,8 +219,7 @@ export default {
                 cost: 1,
                 rate: 1
             },
-            headers: ['Name', 'Cost', 'Rates'],
-            tableName: 'Sold Assets',
+            headers: [this.$tc('words.name'), this.$tc('words.cost'), this.$tc('words.rate',1)],
 
         }
     },
@@ -254,7 +254,7 @@ export default {
             try {
                 await this.assetRateService.editAssetRate(data.id, data.remaining, this.adminId)
                 this.editRow = null
-                this.alertNotify('success', 'Asset Rate updated successfully.')
+                this.alertNotify('success', this.$tc('phrases.ratesCount',2))
             } catch (e) {
                 this.alertNotify('error', e.message)
             }
@@ -276,39 +276,33 @@ export default {
             }
         },
         async saveAsset () {
-            if (this.newAsset.id === null) {
+            let validator = await this.$validator.validateAll()
+
+            if (validator) {
                 this.$swal({
-                    type: 'error',
-                    title: 'Asset not selected',
-                    text:
-                            'Please select an asset type from the list before you can sell/store it.'
-                })
+                    type: 'question',
+                    title: this.$tc('phrases.sellAsset', 0),
+                    text: this.$tc('phrases.sellAsset', 2, { cost: this.newAsset.cost }),
+                    showCancelButton: true,
+                    cancelButtonText: this.$tc('words.cancel'),
+                    confirmButtonText: this.$tc('words.sell')
+                }).then(async response => {
+                    console.log(response)
+                    try {
+                        let validator = await this.$validator.validateAll()
+                        if (validator) {
+                            await this.assetPersonService.saveAsset(this.newAsset.id, this.personId, this.newAsset)
+                            this.showNewAsset = false
+                            this.clearForm()
+                            this.alertNotify('success', this.$tc('phrases.sellAsset', 1))
+                            await this.getAssetList()
+                        }
 
-                return
-            }
-            this.$swal({
-                type: 'question',
-                title: 'Save Asset',
-                text: 'Are you sure to sell the asset for ' + this.newAsset.cost + '?',
-                showCancelButton: true,
-                cancelButtonText: 'Cancel',
-                confirmButtonText: 'Sell'
-            }).then(async response => {
-                console.log(response)
-                try {
-                    let validator = await this.$validator.validateAll()
-                    if (validator) {
-                        await this.assetPersonService.saveAsset(this.newAsset.id, this.personId, this.newAsset)
-                        this.showNewAsset = false
-                        this.clearForm()
-                        this.alertNotify('success', 'New asset sold successfully.')
-                        await this.getAssetList()
+                    } catch (e) {
+                        this.alertNotify('error', e.message)
                     }
-
-                } catch (e) {
-                    this.alertNotify('error', e.message)
-                }
-            })
+                })
+            }
         },
         getRate (index, rateCount, cost) {
             if (index === parseInt(rateCount)) {

@@ -1,7 +1,7 @@
 <template>
 
     <widget
-        title="Cluster Map"
+        :title="$tc('phrases.clusterMap')"
         id="cluster-map">
         <div style="padding: 10px">
             <div id="map" class="map" style="height: 500px;"></div>

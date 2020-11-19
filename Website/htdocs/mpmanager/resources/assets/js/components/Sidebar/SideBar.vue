@@ -45,7 +45,7 @@
                     <md-list-item :md-expand="menu.sub_menu_items.length !== 0">
                         <!-- add icon if icon is defined -->
                         <md-icon v-if="menu.md_icon !== ''" class="c-white icon-box">{{menu.md_icon}}</md-icon>
-                        <span class="md-list-item-text c-white">{{menu.name}}</span>
+                        <span class="md-list-item-text c-white">{{translateMenuItem(menu.name)}}</span>
                         <md-list slot="md-expand" v-if="menu.sub_menu_items.length !== 0" class="no-bg">
                             <md-list-item v-for="(sub,index) in menu.sub_menu_items"
                                           :key="index"
@@ -53,7 +53,7 @@
                             >
                                 <router-link :to="sub.url_slug" class="sub-menu">
                                     <md-list-item class="md-inset c-white">
-                                        <span class="md-list-item-text c-white"> {{sub.name}}</span>
+                                        <span class="md-list-item-text c-white"> {{$t('menu.subMenu.'+sub.name)}}</span>
                                     </md-list-item>
                                 </router-link>
                             </md-list-item>
@@ -105,6 +105,15 @@ export default {
     provide () {
         return {
             autoClose: this.autoClose
+        }
+    },
+    methods:{
+        translateMenuItem (name){
+            if(this.$tc('menu.'+name) !== name){
+                return name
+            }else{
+                return this.$tc('menu.'+name)
+            }
         }
     },
     computed: {

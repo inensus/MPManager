@@ -6,7 +6,7 @@
             <BookKeeping/>
             <!-- monthly reports-->
             <Reports :id="'weekly-report'"
-                     :title="'Weekly Reports'"
+                     :title="$tc('phrases.weeklyReports')"
                      :subscriber="'weeklyReport'"
                      :paginator="reportService.paginatorWeekly"
 
@@ -16,7 +16,7 @@
         <div class="md-layout-item md-size-50">
 
             <Reports :id="'monthly-report'"
-                     :title="'Monthly reports'"
+                     :title="$tc('phrases.monthlyReports')"
                      :subscriber="'monthlyReport'"
                      :paginator="reportService.paginatorMonthly"
 

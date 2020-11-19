@@ -2,7 +2,7 @@
     <widget
         :class="'col-sm-6 col-md-5'"
         :button="false"
-        title="Sold Appliances"
+        :title="$tc('phrases.soldAppliances')"
         :button-color="'red'"
         :paginator="agentSoldApplianceService.paginator"
         :subscriber="subscriber"
@@ -39,7 +39,7 @@ export default {
         return {
             subscriber: 'agent-sold-appliances',
             agentSoldApplianceService: new AgentSoldApplianceService(this.agentId),
-            headers: ['ID', 'Appliance', 'Amount', 'Customer', 'Sold Date'],
+            headers: [this.$tc('words.id'), this.$tc('words.appliance'), this.$tc('words.amount'), this.$tc('words.customer'), this.$tc('phrases.soldDate')],
             tableName: 'Sold Appliance'
         }
     },
