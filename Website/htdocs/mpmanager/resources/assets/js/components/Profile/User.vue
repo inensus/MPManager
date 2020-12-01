@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <widget
-            title="Profile"
+            :title="$tc('words.profile')"
         >
             <form class="md-layout" data-vv-scope="address">
                 <md-card class="md-layout-item md-size-100">
@@ -9,23 +9,23 @@
                         <div class="md-layout md-gutter">
                             <div
                                 class="md-layout-item md-size-50 md-small-size-100">
-                                <md-field :class="{'md-invalid': errors.has('address.name')}">
-                                    <label>Name</label>
+                                <md-field :class="{'md-invalid': errors.has($tc('words.name'))}">
+                                    <label>{{ $tc('words.name') }}</label>
                                     <md-input
                                         v-model="user.name"
                                         v-validate="'required|min:2|max:20'"
-                                        name="name"
+                                        :name="$tc('words.name')"
                                         id="name"
                                     />
                                     <md-icon>create</md-icon>
-                                    <span class="md-error">{{ errors.first('address.name') }}</span>
+                                    <span class="md-error">{{ errors.first($tc('words.name')) }}</span>
                                 </md-field>
                             </div>
 
                             <div
                                 class="md-layout-item md-size-50 md-small-size-100">
                                 <md-field>
-                                    <label>Email</label>
+                                    <label>{{ $tc('words.email') }}</label>
                                     <md-input
                                         readonly
                                         v-model="user.email"
@@ -39,7 +39,7 @@
                             <div
                                 class="md-layout-item md-size-50 md-small-size-100">
                                 <md-field>
-                                    <label>Phone</label>
+                                    <label>{{ $tc('words.phone') }}</label>
                                     <md-input type="number" v-model="user.phone"/>
                                     <md-icon>phone</md-icon>
                                 </md-field>
@@ -47,7 +47,7 @@
                             <div
                                 class="md-layout-item md-size-50 md-small-size-100">
                                 <md-field>
-                                    <label>street</label>
+                                    <label>{{ $tc('words.street') }}</label>
                                     <md-input v-model="user.street"/>
                                     <md-icon>contacts</md-icon>
                                 </md-field>
@@ -55,27 +55,27 @@
 
 
                             <div class="md-layout-item md-size-50 md-small-size-100">
-                                <md-field :class="{'md-invalid': errors.has('address.city')}">
-                                    <label for="city">City</label>
+                                <md-field :class="{'md-invalid': errors.has($tc('words.city'))}">
+                                    <label for="city">{{ $tc('words.city') }}</label>
                                     <md-select v-model="selectedCity"
                                                required
-                                               name="city"
+                                               :name="$tc('words.city')"
                                                id="city"
                                                v-validate.initial="'required'"
-                                               :class="{'md-invalid': errors.has('address.city')}">
+                                               :class="{'md-invalid': errors.has($tc('words.city'))}">
                                         <md-option v-for="c in cities" :key="c.id" :value="c.id">{{ c.name }}
                                         </md-option>
                                     </md-select>
-                                    <span class="md-error">{{ errors.first('address.city') }}</span>
+                                    <span class="md-error">{{ errors.first($tc('words.city')) }}</span>
                                 </md-field>
                             </div>
                             <div
                                 class="md-layout-item md-size-100">
-                                <md-button class="md-primary save-button" @click="updateDetails()">Save</md-button>
+                                <md-button class="md-primary save-button" @click="updateDetails()">{{ $tc('words.save') }}</md-button>
                                 <md-button
                                     class="md-primary change-button"
                                     @click="modalVisibility=true"
-                                >Change Password
+                                >{{ $tc('phrases.changePassword') }}
                                 </md-button>
                             </div>
                         </div>
@@ -86,33 +86,33 @@
 
 
         <md-dialog :md-active.sync=modalVisibility>
-            <md-dialog-title>Change Password</md-dialog-title>
+            <md-dialog-title>{{ $tc('phrases.changePassword') }}</md-dialog-title>
             <md-dialog-content>
                 <div class="password-edit-container">
                     <form class="md-layout" data-vv-scope="password">
-                        <md-field :class="{'md-invalid': errors.has('password.password')}">
-                            <label for="password">Password</label>
+                        <md-field :class="{'md-invalid': errors.has($tc('words.password'))}">
+                            <label for="password">{{ $tc('words.password') }}</label>
                             <md-input
                                 type="password"
-                                name="password"
+                                :name="$tc('words.password')"
                                 id="password"
                                 v-validate="'required|min:3|max:15'"
                                 v-model="changePassForm.password"
                                 ref="passwordRef"
                             />
-                            <span class="md-error">{{ errors.first('password.password') }}</span>
+                            <span class="md-error">{{ errors.first($tc('words.password')) }}</span>
                         </md-field>
 
-                        <md-field :class="{'md-invalid': errors.has('password.confirmPassword')}">
-                            <label for="confirmPassword">Confirm Password</label>
+                        <md-field :class="{'md-invalid': errors.has($tc('phrases.confirmPassword'))}">
+                            <label for="confirmPassword">{{ $tc('phrases.confirmPassword') }}</label>
                             <md-input
                                 type="password"
-                                name="confirmPassword"
+                                :name="$tc('phrases.confirmPassword')"
                                 id="confirmPassword"
                                 v-model="changePassForm.confirmPassword"
                                 v-validate="'required|confirmed:$passwordRef|min:3|max:15'"
                             />
-                            <span class="md-error">{{ errors.first('password.confirmPassword') }}</span>
+                            <span class="md-error">{{ errors.first($tc('phrases.confirmPassword')) }}</span>
                         </md-field>
 
                         <!-- <md-progress-bar md-mode="indeterminate" v-if="sending" /> -->
@@ -121,8 +121,8 @@
             </md-dialog-content>
 
             <md-dialog-actions>
-                <md-button class="md-raised md-primary" @click="submitForm">Save</md-button>
-                <md-button @click="modalVisibility = false">Close</md-button>
+                <md-button class="md-raised md-primary" @click="submitForm">{{ $tc('words.save') }}</md-button>
+                <md-button @click="modalVisibility = false">{{ $tc('words.close') }}</md-button>
             </md-dialog-actions>
 
         </md-dialog>
@@ -199,7 +199,6 @@ export default {
         async updateDetails () {
             let validation = await this.$validator.validateAll('address')
             if (!validation) {
-                this.alertNotify('Warning', 'Please fill all required field')
                 return
             }
             if (this.selectedCity !== undefined) {
@@ -208,7 +207,7 @@ export default {
             try {
                 let response = await this.adminService.updateDetails(this.user)
                 if (response.status === 200) {
-                    this.alertNotify('success', 'The update has been done.')
+                    this.alertNotify('success', this.$tc('words.profile',2))
                 } else {
                     this.alertNotify('error', response.error.message)
                 }
@@ -233,7 +232,7 @@ export default {
                     password
                 )
                 if (response.status === 200) {
-                    this.alertNotify('success', 'Password updated.')
+                    this.alertNotify('success', this.$tc('words.profile',2))
                 } else {
                     this.alertNotify('error', response.error)
                 }

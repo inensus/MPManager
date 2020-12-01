@@ -14,13 +14,13 @@
                     </md-table-row>
 
                     <md-table-row slot="md-table-row" slot-scope="{ item }">
-                        <md-table-cell md-sort-by="id" md-label="ID">{{item.id}}</md-table-cell>
-                        <md-table-cell md-label="Date">{{item.date}}</md-table-cell>
-                        <md-table-cell md-label="Name">{{item.name}}</md-table-cell>
-                        <md-table-cell md-label="File">
+                        <md-table-cell md-sort-by="id" :md-label="$tc('words.id')">{{item.id}}</md-table-cell>
+                        <md-table-cell :md-label="$tc('words.date')">{{item.date}}</md-table-cell>
+                        <md-table-cell :md-label="$tc('words.name')">{{item.name}}</md-table-cell>
+                        <md-table-cell :md-label="$tc('words.file')">
                             <div  style="cursor: pointer;" @click="download(item.id, '/download')">
                                 <md-icon>save</md-icon>
-                                <span> Download</span>
+                                <span> {{ $tc('words.download') }}</span>
                             </div>
                         </md-table-cell>
                     </md-table-row>
@@ -51,8 +51,7 @@ export default {
         return {
             reportService: new ReportsService(),
             list: [],
-            headers: ['ID', 'Date', 'Name', 'File'],
-            tableName: 'Report'
+            headers: [this.$tc('words.id'), this.$tc('words.date'), this.$tc('words.name'), this.$tc('words.file')],
         }
     },
     mounted () {

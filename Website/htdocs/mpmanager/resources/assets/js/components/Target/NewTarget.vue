@@ -1,5 +1,5 @@
 <template>
-    <widget title="Target Valid Until"
+    <widget :title="$tc('phrases.newTarget')"
             id="new-target"
             color="red"
     >
@@ -10,58 +10,58 @@
                         <md-progress-bar md-mode="indeterminate"/>
                     </div>
                     <div class="md-layout-item ">
-                        <md-field :class="{'md-invalid': errors.has('assigned_for')}">
-                            <label> Assigned for</label>
+                        <md-field :class="{'md-invalid': errors.has($tc('phrases.assignFor',2))}">
+                            <label> {{ $tc('phrases.assignFor',2) }}</label>
                             <md-select
-                                name="assigned_for"
+                                :name="$tc('phrases.assignFor',2)"
                                 v-model="targetAssignType"
                                 @md-selected="onTargetTypeChange"
                                 v-validate="'required'"
                             >
-                                <md-option selected disabled> -- Select destination for target --</md-option>
-                                <md-option value="cluster">Cluster</md-option>
-                                <md-option value="mini-grid">Mini Grid</md-option>
+                                <md-option selected disabled> -- {{ $tc('phrases.newTarget',2) }} --</md-option>
+                                <md-option value="cluster">{{ $tc('words.cluster') }}</md-option>
+                                <md-option value="mini-grid">{{ $tc('words.miniGrid') }}</md-option>
                             </md-select>
-                            <span class="md-error">{{ errors.first('assigned_for') }}</span>
+                            <span class="md-error">{{ errors.first($tc('phrases.assignFor',2)) }}</span>
                         </md-field>
                     </div>
 
                     <div class="md-layout-item ">
-                        <md-field :class="{'md-invalid': errors.has('assigned_to')}">
-                            <label> Assigned to</label>
+                        <md-field :class="{'md-invalid': errors.has($tc('phrases.assignTo',2))}">
+                            <label> {{ $tc('phrases.assignTo',2) }}</label>
                             <md-select :disabled="targetDestinations.length===0 || dataIsLoading === true"
                                        v-model="targetAssignId"
                                        v-validate="'required'"
-                                       name="assigned_to"
+                                       :name="$tc('phrases.assignTo',2)"
                             >
-                                <md-option selected disabled> -- Select destination for target --</md-option>
+                                <md-option selected disabled> -- {{ $tc('phrases.newTarget',2) }} --</md-option>
                                 <md-option v-for="(targetDestination,index) in targetDestinations"
                                            :key="index"
                                            :value="targetDestination.id">
                                     {{targetDestination.name}}
                                 </md-option>
                             </md-select>
-                            <span class="md-error">{{ errors.first('assigned_to') }}</span>
+                            <span class="md-error">{{ errors.first($tc('phrases.assignTo',2)) }}</span>
                         </md-field>
                     </div>
 
                     <div class="md-layout-item ">
 
                         <md-datepicker
-                            :class="{'md-invalid': errors.has('valid_to')}"
-                            name="valid_to"
+                            :class="{'md-invalid': errors.has($tc('phrases.validUntil'))}"
+                            :name="$tc('phrases.validUntil')"
                             v-validate.initial="'required'"
                             :md-model-type="String"
                             md-immediately
                             v-model="targetValidUntil"
                         >
-                            <label>Valid until</label>
-                            <span class="md-error">{{ errors.first('valid_to') }}</span>
+                            <label>{{ $tc('phrases.validUntil') }}</label>
+                            <span class="md-error">{{ errors.first($tc('phrases.validUntil')) }}</span>
                         </md-datepicker>
                     </div>
                 </div>
 
-                <h3>Targets for Connection Types</h3>
+                <h3>{{ $tc('phrases.targetsForConnectionTypes') }}</h3>
 
 
                 <md-table>
@@ -69,7 +69,7 @@
                         <md-table-cell> {{connection.name}}</md-table-cell>
                         <md-table-cell>
                             <md-field>
-                                <label>New Connections</label>
+                                <label>{{ $tc('phrases.newConnection',2) }}</label>
                                 <md-input type="number"
                                           class="form-control full-width"
                                           v-model="connection.target.newConnection"
@@ -79,7 +79,7 @@
 
                         <md-table-cell>
                             <md-field>
-                                <label>Connected Power</label>
+                                <label>{{ $tc('phrases.connectedPower') }}</label>
                                 <md-input type="number"
                                           class="form-control full-width"
                                           v-model="connection.target.connectedPower"
@@ -89,7 +89,7 @@
 
                         <md-table-cell>
                             <md-field>
-                                <label>Energy(kWh) / Month</label>
+                                <label>{{ $tc('words.energy') }}(kWh) / {{ $tc('words.month') }}</label>
                                 <md-input type="number"
                                           class="form-control full-width"
                                           v-model="connection.target.energyPerMonth"/>
@@ -98,7 +98,7 @@
 
                         <md-table-cell>
                             <md-field>
-                                <label>Revenue / Month</label>
+                                <label>{{ $tc('words.revenue') }} / {{ $tc('words.month') }}</label>
                                 <md-input type="number"
                                           class="form-control full-width"
                                           v-model="connection.target.totalRevenue"/>
@@ -107,7 +107,7 @@
 
                         <md-table-cell>
                             <md-field>
-                                <label>Avg Revenue / Month</label>
+                                <label>{{ $tc('phrases.avgRevenue') }} / {{ $tc('words.month') }}</label>
                                 <md-input type="text"
                                           class="form-control full-width"
                                           v-model="connection.target.averageRevenuePerMonth"/>
@@ -122,7 +122,7 @@
                     </md-table-row>
 
                     <md-table-row>
-                        <md-table-cell>Total</md-table-cell>
+                        <md-table-cell>{{ $tc('words.total') }}</md-table-cell>
                         <md-table-cell>{{total['newConnection']}}</md-table-cell>
                         <md-table-cell>{{total['connectedPower']}}</md-table-cell>
                         <md-table-cell>{{total['energyPerMonth']}}</md-table-cell>
@@ -140,7 +140,7 @@
 
                 <md-button class="md-dense md-raised md-primary" @click="submitTarget">
                     <md-icon>save</md-icon>
-                    Save Target
+                    {{ $tc('words.save') }}
                 </md-button>
             </md-card-actions>
 
@@ -228,24 +228,16 @@ export default {
         async submitTarget () {
             let validation = await this.$validator.validateAll()
             if (!validation) {
-                this.alertNotify('Warning', 'Please fill all required field')
+                this.alertNotify('warn', this.$tc('phrases.newTargetNotify',1))
                 return
             }
 
-            if (this.targetValidUntil === '') {
-                this.$swal('Period not selected', 'Please select the start date for the period from the date picker', 'error')
-                return
-            }
-            if (this.targetAssignId === null) {
-                this.$swal('Target not selected', 'Please select either a cluster or a mini-grid.', 'error')
-                return
-            }
 
             this.targets.store(this.targetValidUntil, this.targetAssignType, this.targetAssignId,
                 this.connectionTypes.list
             )
             //success message
-            this.$swal('Success', 'Target stored successfully', 'success')
+            this.$swal('Success', this.$tc('phrases.newTargetNotify',2), 'success')
         },
         addCustomers (newConnections, connections) {
             return parseInt(newConnections) + parseInt(connections)

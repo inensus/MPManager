@@ -5,10 +5,10 @@
         <add/>
 
         <widget id="tariff-list"
-                title="Tariffs"
+                :title="$tc('words.tariff',2)"
                 :button="true"
                 :subscriber="subscriber"
-                buttonText="New Tariff"
+                :buttonText="$tc('phrases.newTariff')"
                 @widgetAction="showNewTariff"
                 color="green">
 
@@ -19,9 +19,9 @@
                 md-card>
 
                 <md-table-row slot="md-table-row" slot-scope="{ item }">
-                    <md-table-cell md-label="ID" md-sort-by="id" md-numeric>{{ item.id }}</md-table-cell>
-                    <md-table-cell md-label="Name" md-sort-by="name">{{ item.name }}</md-table-cell>
-                    <md-table-cell md-label="kWh Price" md-numeric>
+                    <md-table-cell :md-label="$tc('words.id')" md-sort-by="id" md-numeric>{{ item.id }}</md-table-cell>
+                    <md-table-cell :md-label="$tc('words.name')" md-sort-by="name">{{ item.name }}</md-table-cell>
+                    <md-table-cell :md-label="$tc('words.price') + '/ kWh'" md-numeric>
                         {{ readable(item.price/100)}} {{item.currency}}
                     </md-table-cell>
                     <md-table-cell md-label="Access Rate" md-numeric md-sort-by="accessRate.amount">
@@ -30,22 +30,22 @@
                         </div>
                         <div v-else>-</div>
                     </md-table-cell>
-                    <md-table-cell md-label="Access Rate Period in Days"
+                    <md-table-cell :md-label="$tc('phrases.accessRatePeriodInDays')"
                                    md-numeric
                     >
                         <div v-if="item.accessRate.period">
-                            {{ item.accessRate.period }} Days
+                            {{ item.accessRate.period }} {{ $tc('words.day') }}
                         </div>
                         <div v-else>-</div>
 
                     </md-table-cell>
                     <md-table-cell md-label="#">
                         <md-button class="md-icon-button" @click="editTariff(item.id)">
-                            <md-tooltip md-direction="top">Edit</md-tooltip>
+                            <md-tooltip md-direction="top">{{ $tc('words.edit') }}</md-tooltip>
                             <md-icon>edit</md-icon>
                         </md-button>
                         <md-button class="md-icon-button" @click="showConfirmation(item.id)">
-                            <md-tooltip md-direction="top">Delete</md-tooltip>
+                            <md-tooltip md-direction="top">{{ $tc('words.delete') }}</md-tooltip>
                             <md-icon>delete</md-icon>
                         </md-button>
                     </md-table-cell>
@@ -71,8 +71,6 @@ export default {
             subscriber:'tariff-list',
             tariffService: new TariffService(),
             tariffList: [],
-            headers: ['ID', 'Name', 'kWh Price', 'Access Rate', 'Access Rate Period in Days','#'],
-            tableName: 'Tariff',
             loading:false
         }
     },
@@ -105,7 +103,7 @@ export default {
                 this.loading = true
                 await this.tariffService.deleteTariff(id)
                 this.loading = false
-                this.alertNotify('success', 'Tariff deleted successfully.')
+                this.alertNotify('success', this.$tc('phrases.tariffNotify',1))
                 await  this.getTariffs()
             } catch (e) {
                 this.loading = false
@@ -117,7 +115,7 @@ export default {
                 this.loading = true
                 await this.tariffService.changeMetersTariff(currentId,changeId)
                 this.loading = false
-                this.alertNotify('success', 'Tariff changed on using meters successfully.')
+                this.alertNotify('success', this.$tc('phrases.tariffNotify',2))
             } catch (e) {
                 this.loading = false
                 this.alertNotify('error', e.message)
@@ -135,17 +133,17 @@ export default {
             },{})
             let swalOptions={
                 type: 'question',
-                title: 'Delete',
+                title: this.$tc('words.delete'),
                 showCancelButton: true,
-                confirmButtonText: 'I\'m sure',
-                cancelButtonText: 'Cancel',
+                confirmButtonText: this.$tc('words.yes'),
+                cancelButtonText: this.$tc('words.no'),
             }
             if(usageCount>0){
                 swalOptions.input= 'select'
                 swalOptions.inputOptions= tariffObj
-                swalOptions.text= 'This tariff has using by '+ usageCount +' of meters.You have to decide change meters  tariffs. Are you sure delete this tariff? '
+                swalOptions.text= this.$tc('phrases.tariffNotify2',2,{usageCount: usageCount})
             }else{
-                swalOptions.text= 'Are you sure delete this tariff?'
+                swalOptions.text= this.$tc('phrases.tariffNotify2',1)
             }
             this.$swal(
                 swalOptions

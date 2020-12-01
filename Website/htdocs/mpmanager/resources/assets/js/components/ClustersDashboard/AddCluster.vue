@@ -1,7 +1,7 @@
 <template>
     <div>
         <widget
-            title="Add New Cluster"
+            :title="$tc('phrases.newCluster',1)"
             color="green"
         >
 
@@ -11,17 +11,17 @@
                     <div class="md-layout md-gutter">
                         <div
                             class="md-layout-item md-xlarge-size-33 md-large-size-33 md-medium-size-33 md-small-size-100">
-                            <md-field class="{'md-invalid': errors.has('clusterName')}">
-                                <label>Cluster Name</label>
+                            <md-field :class="{'md-invalid': errors.has($tc('words.name'))}">
+                                <label>{{ $tc('words.name') }}</label>
                                 <md-input
 
                                     v-model="clusterName"
-                                    name="clusterName"
+                                    :name="$tc('words.name')"
                                     id="clusterName"
                                     v-validate="'required|min:3'"
                                 />
 
-                                <span class="md-error">{{ errors.first('asset') }}</span>
+                                <span class="md-error">{{ errors.first($tc('words.name')) }}</span>
                             </md-field>
                         </div>
                         <div
@@ -32,7 +32,7 @@
                         <div
                             class="md-layout-item md-xlarge-size-33 md-large-size-33 md-medium-size-33 md-small-size-100">
 
-                            <md-button class="md-primary save-button" @click="saveCluster()">Save</md-button>
+                            <md-button class="md-primary save-button" @click="saveCluster()">{{ $tc('words.save') }}</md-button>
                         </div>
 
                         <div
@@ -58,10 +58,7 @@
                                     </md-list-item>
                                 </div>
                                 <div v-if="geoDataItems.length<1 && typed===true && clusterName!==''">
-                                    <h4 style="color:#797979;margin-left: 1rem">There is no result for
-                                        "{{clusterName}}". Please use
-                                        "Draw a polygon" tool for draw your cluster
-                                        area.</h4>
+                                    <h4 style="color:#797979;margin-left: 1rem">{{$tc('phrases.newCluster',2,{clusterName: clusterName})}}</h4>
                                 </div>
                             </md-list>
                         </div>
@@ -89,32 +86,32 @@
             :md-close-on-esc="false"
             :md-click-outside-to-close="false"
         >
-            <md-dialog-title>Naming Cluster</md-dialog-title>
+            <md-dialog-title>{{ $tc('phrases.namingCluster') }}</md-dialog-title>
             <md-dialog-content>
 
                 <div class="md-layout md-gutter">
                     <div class="md-layout-item md-large-size-100 md-medium-size-100 md-small-size-100">
                         <p>
-                            You did not enter a name to the cluster. Please assign a name to the cluster.
+                            {{ $tc('phrases.newClusterNotify',0) }}
                         </p>
 
                     </div>
                     <div class="md-layout-item md-large-size-100 md-medium-size-100 md-small-size-100">
-                        <md-field class="{'md-invalid': errors.has('clusterName')}">
-                            <label>Cluster Name</label>
+                        <md-field :class="{'md-invalid': errors.has($tc('words.name'))}">
+                            <label>{{ $tc('words.name') }}</label>
                             <md-input
 
                                 v-model="clusterName"
-                                name="clusterName"
+                                :name="$tc('words.name')"
                                 v-validate="'required|min:3'"
                             />
 
-                            <span class="md-error">{{ errors.first('asset') }}</span>
+                            <span class="md-error">{{ errors.first($tc('words.name')) }}</span>
                         </md-field>
                     </div>
                     <div class="md-layout-item md-large-size-100 md-medium-size-100 md-small-size-100">
 
-                        <md-button class="md-primary save-button" @click="saveCluster()">Save</md-button>
+                        <md-button class="md-primary save-button" @click="saveCluster()">{{ $tc('words.save') }}</md-button>
                     </div>
                 </div>
             </md-dialog-content>
@@ -238,16 +235,16 @@ export default {
             if (this.selectedLocation === null || this.selectedLocation === undefined) {
                 this.$swal({
                     type: 'error',
-                    title: 'Cluster Location not selected',
-                    text: 'Please select/draw a location for the cluster',
+                    title: this.$tc('phrases.newClusterNotify',1),
+                    text: this.$tc('phrases.newClusterNotify',2),
                 })
                 return
             }
             if (this.user === null) {
                 this.$swal({
                     type: 'error',
-                    title: 'Cluster Manager not selected',
-                    text: 'Please select a cluster manager.',
+                    title:  this.$tc('phrases.newClusterNotify2',0),
+                    text:  this.$tc('phrases.newClusterNotify2',1),
                 })
                 return
             }
@@ -257,7 +254,7 @@ export default {
             }
             try {
                 await this.clusterService.createCluster(this.selectedLocation.type, this.selectedLocation, this.clusterName, this.user)
-                this.alertNotify('success', 'The Cluster you add is stored successfully.')
+                this.alertNotify('success',  this.$tc('phrases.newClusterNotify2',2))
                 await this.$router.replace('/clusters')
             } catch (e) {
                 this.alertNotify('error', e.message)

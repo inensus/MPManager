@@ -2,7 +2,7 @@
     <div>
 
         <widget
-            title="Sms List"
+            :title="$tc('phrases.smsList')"
             :subscriber="subscriber"
             @widgetAction="() => {this.showModal = true}"
             color="green"
@@ -20,7 +20,7 @@
                                     <md-table-toolbar>
                                         <md-field>
                                             <md-input v-model="filterNumber" type="text" class="form-control"
-                                                      placeholder="Search"
+                                                      :placeholder="$tc('words.search')"
                                             ></md-input>
                                         </md-field>
                                     </md-table-toolbar>
@@ -67,7 +67,7 @@
                     <div class="md-layout md-gutter">
                         <div class="md-layout-item md-size-75">
                             <md-field>
-                                <label>Message Text</label>
+                                <label>{{ $tc('phrases.messageText') }}</label>
                                 <md-textarea v-model="message"
                                 ></md-textarea>
                             </md-field>
@@ -76,7 +76,7 @@
                         <div class="md-layout-item md-size-20">
                             <md-button @click="sendSms" :disabled="loading" class="md-raised md-primary"
                                        style=" height: 10vh; width: 100%;">
-                                Send
+                                {{ $tc('words.send') }}
                             </md-button>
                         </div>
                     </div>
@@ -155,14 +155,14 @@ export default {
         },
         async sendSms () {
             if (this.message.length <= 3) {
-                this.alertNotify('warn', 'Message should contain more than 3 letters')
+                this.alertNotify('warn', this.$tc('phrases.smsListNotify',1))
                 return
             }
             try {
                 this.loading = true
                 await this.smsService.sendToNumber('person', this.message, this.selectedNumber, this.senderId)
                 this.loading = false
-                this.alertNotify('success', 'The Sms is send out')
+                this.alertNotify('success', this.$tc('phrases.smsListNotify',2))
                 this.message = ''
                 this.smsDetail(this.selectedNumber)
             } catch (e) {

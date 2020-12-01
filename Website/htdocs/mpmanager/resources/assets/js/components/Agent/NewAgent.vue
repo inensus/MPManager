@@ -2,51 +2,51 @@
     <div>
         <widget
             v-if="addAgent"
-            title="Add New Agent"
+            :title="$tc('phrases.newAgent')"
             color="red"
         >
             <md-card>
                 <md-card-content>
                     <div class="md-layout md-gutter">
                         <div class="md-layout-item md-large-size-100 md-medium-size-100 md-small-size-100">
-                            <form class="md-layout md-gutter" data-vv-scope="Agent-Form">
+                            <form class="md-layout md-gutter">
                                 <!--name-->
                                 <div class="md-layout-item md-large-size-50 md-medium-size-50 md-small-size-50 ">
-                                    <md-field :class="{'md-invalid': errors.has('Agent-Form.name')}"
+                                    <md-field :class="{'md-invalid': errors.has($tc('words.name'))}"
                                     >
-                                        <label for="name">Name</label>
+                                        <label for="name">  {{ $tc('words.name') }}</label>
                                         <md-input
                                             id="name"
-                                            name="name"
+                                            :name="$tc('words.name')"
                                             v-model="newAgent.name"
                                             v-validate="'required|min:3'"
                                         />
-                                        <span class="md-error">{{ errors.first('Agent-Form.name') }}</span>
+                                        <span class="md-error">{{ errors.first($tc('words.name')) }}</span>
                                     </md-field>
                                 </div>
 
                                 <!--surname-->
                                 <div class="md-layout-item md-large-size-50 md-medium-size-50 md-small-size-50 ">
-                                    <md-field :class="{'md-invalid': errors.has('Agent-Form.surname')}"
+                                    <md-field :class="{'md-invalid': errors.has($tc('words.surname'))}"
                                     >
-                                        <label for="surname">Surname</label>
+                                        <label for="surname">  {{ $tc('words.surname') }}</label>
                                         <md-input
                                             id="surname"
-                                            name="surname"
+                                            :name="$tc('words.surname')"
                                             v-model="newAgent.surname"
                                             v-validate="'required|min:3'"
                                         />
-                                        <span class="md-error">{{ errors.first('Agent-Form.surname') }}</span>
+                                        <span class="md-error">{{ errors.first($tc('words.surname')) }}</span>
                                     </md-field>
                                 </div>
 
                                 <!--minigrid-->
                                 <div class="md-layout-item md-large-size-50 md-medium-size-50 md-small-size-50 ">
-                                    <md-field :class="{'md-invalid': errors.has('Agent-Form.miniGridName')}">
-                                        <label>Mini Grid</label>
+                                    <md-field :class="{'md-invalid': errors.has($tc('words.miniGrid'))}">
+                                        <label>  {{ $tc('words.miniGrid') }}</label>
                                         <md-select
                                             v-model="newAgent.miniGridId"
-                                            name="miniGridName"
+                                            :name="$tc('words.miniGrid')"
                                             id="miniGridName"
                                             v-validate="'required'"
 
@@ -56,40 +56,40 @@
                                                 {{mg.name}}
                                             </md-option>
                                         </md-select>
-                                        <span class="md-error">{{ errors.first('Agent-Form.miniGridName') }}</span>
+                                        <span class="md-error">{{ errors.first($tc('words.miniGrid')) }}</span>
 
                                     </md-field>
                                 </div>
 
                                 <!--phone-->
                                 <div class="md-layout-item md-large-size-50 md-medium-size-50 md-small-size-50">
-                                    <md-field :class="{'md-invalid': errors.has('Agent-Form.phone')}">
-                                        <label for="phone">Phone</label>
+                                    <md-field :class="{'md-invalid': errors.has($tc('words.phone'))}">
+                                        <label for="phone">  {{ $tc('words.phone') }}</label>
 
                                         <md-input
                                             type="text"
                                             id="phone"
-                                            name="phone"
+                                            :name="$tc('words.phone')"
                                             v-validate="'required'"
                                             v-model="newAgent.phone"
-                                            placeholder="Phone (+___ _+9___ ____)"
+                                            placeholder="(+___ _+9___ ____)"
                                         />
-                                        <span class="md-error">{{ errors.first('form-user.phone') }}</span>
+                                        <span class="md-error">{{ errors.first($tc('words.phone')) }}</span>
                                     </md-field>
                                 </div>
 
                                 <!--email-->
                                 <div class="md-layout-item md-large-size-50 md-medium-size-50 md-small-size-50 ">
-                                    <md-field :class="{'md-invalid': errors.has('Agent-Form.email')}"
+                                    <md-field :class="{'md-invalid': errors.has($tc('words.email'))}"
                                     >
-                                        <label for="email">Email</label>
+                                        <label for="email">  {{ $tc('words.email') }}</label>
                                         <md-input
                                             id="email"
-                                            name="email"
+                                            :name="$tc('words.email')"
                                             v-model="newAgent.email"
                                             v-validate="'required|min:3'"
                                         />
-                                        <span class="md-error">{{ errors.first('Agent-Form.email') }}</span>
+                                        <span class="md-error">{{ errors.first($tc('words.email')) }}</span>
                                     </md-field>
                                 </div>
 
@@ -100,75 +100,75 @@
                                     <md-datepicker name="birthDate" id="birthDate" md-immediately
                                                    v-model="newAgent.birthday"
                                     >
-                                        <label for="birth-date">Birthday :</label>
+                                        <label for="birth-date">  {{ $tc('words.birthday') }} :</label>
                                     </md-datepicker>
 
 
                                 </div>
                                 <div class="md-layout-item md-large-size-50 md-medium-size-50 md-small-size-50 ">
-                                    <md-field :class="{'md-invalid': errors.has('Agent-Form.gender')}"
+                                    <md-field :class="{'md-invalid': errors.has($tc('words.gender'))}"
                                     >
 
 
-                                        <label for="gender">Gender :</label>
-                                        <md-select name="gender" id="gender" v-model="newAgent.gender"
+                                        <label for="gender">  {{ $tc('words.gender') }} :</label>
+                                        <md-select :name="$tc('words.gender')" id="gender" v-model="newAgent.gender"
                                                    v-validate="'required'">
-                                            <md-option disabled v-if="newAgent.gender==null">-- Select --
+                                            <md-option disabled v-if="newAgent.gender==null">--   {{ $tc('words.select') }} --
                                             </md-option>
-                                            <md-option value="male">Male</md-option>
-                                            <md-option value=" female">Female</md-option>
+                                            <md-option value="male">  {{ $tc('words.male') }}</md-option>
+                                            <md-option value=" female">  {{ $tc('words.female') }}</md-option>
                                         </md-select>
 
-                                        <span class="md-error">{{ errors.first('Agent-Form.gender') }}</span>
+                                        <span class="md-error">{{ errors.first($tc('words.gender')) }}</span>
 
                                     </md-field>
                                 </div>
                                 <div class="md-layout-item md-large-size-50 md-medium-size-50 md-small-size-50 ">
-                                    <md-field :class="{'md-invalid': errors.has('Agent-Form.commission')}"
+                                    <md-field :class="{'md-invalid': errors.has($tc('phrases.commissionType'))}"
                                     >
 
-                                        <label for="commission">Commission Type :</label>
-                                        <md-select name="commission" id="commission" v-validate="'required'"
+                                        <label for="commission">  {{ $tc('phrases.commissionType') }}:</label>
+                                        <md-select :name="$tc('phrases.commissionType')" id="commission" v-validate="'required'"
                                                    v-model="newAgent.commissionTypeId">
                                             <md-option v-for="(commission) in agentCommissions"
                                                        :value="commission.id" :key="commission.id">{{commission.name}}
                                             </md-option>
 
                                         </md-select>
-                                        <span class="md-error">{{ errors.first('Agent-Form.commission') }}</span>
+                                        <span class="md-error">{{ errors.first($tc('phrases.commissionType')) }}</span>
 
                                     </md-field>
                                 </div>
                                 <!--password-->
                                 <div class="md-layout-item md-large-size-50 md-medium-size-50 md-small-size-50 ">
-                                    <md-field :class="{'md-invalid': errors.has('Agent-Form.password')}"
+                                    <md-field :class="{'md-invalid': errors.has($tc('words.password'))}"
                                     >
-                                        <label for="email">Password</label>
+                                        <label for="email">{{ $tc('words.password') }}</label>
                                         <md-input
                                             id="password"
-                                            name="password"
+                                            :name="$tc('words.password')"
                                             v-model="newAgent.password"
                                             v-validate="'required|min:3|max:15'"
                                             ref="passwordRef"
                                             type="password"
                                         />
-                                        <span class="md-error">{{ errors.first('Agent-Form.password') }}</span>
+                                        <span class="md-error">{{ errors.first($tc('words.password')) }}</span>
                                     </md-field>
                                 </div>
 
                                 <!--confirmPassword-->
                                 <div class="md-layout-item md-large-size-50 md-medium-size-50 md-small-size-50 ">
-                                    <md-field :class="{'md-invalid': errors.has('Agent-Form.confirmPassword')}"
+                                    <md-field :class="{'md-invalid': errors.has($tc('phrases.confirmPassword'))}"
                                     >
-                                        <label for="email">Confirm Password</label>
+                                        <label for="email">{{ $tc('phrases.confirmPassword') }}</label>
                                         <md-input
                                             id="confirmPassword"
-                                            name="confirmPassword"
+                                           :name="$tc('phrases.confirmPassword')"
                                             v-model="confirmPassword"
                                             v-validate="'required|confirmed:$passwordRef'"
                                             type="password"
                                         />
-                                        <span class="md-error">{{ errors.first('Agent-Form.confirmPassword') }}</span>
+                                        <span class="md-error">{{ errors.first($tc('phrases.confirmPassword')) }}</span>
                                     </md-field>
                                 </div>
                             </form>
@@ -180,9 +180,9 @@
                 </md-card-content>
                 <md-card-actions>
 
-                    <md-button role="button" class="md-raised md-primary" :disabled="loading" @click="saveAgent">Save
+                    <md-button role="button" class="md-raised md-primary" :disabled="loading" @click="saveAgent">{{ $tc('words.save') }}
                     </md-button>
-                    <md-button role="button" class="md-raised" @click="hide">Close</md-button>
+                    <md-button role="button" class="md-raised" @click="hide">{{ $tc('words.close') }}</md-button>
                 </md-card-actions>
             </md-card>
         </widget>
@@ -272,7 +272,7 @@ export default {
         },
         async saveAgent () {
 
-            let validator = await this.$validator.validateAll('Agent-Form')
+            let validator = await this.$validator.validateAll()
 
             if (validator) {
                 this.loading = true
@@ -280,7 +280,7 @@ export default {
                     await this.agentService.createAgent()
                     this.loading = false
                     this.hide()
-                    this.alertNotify('success', 'Agent added successfully')
+                    this.alertNotify('success', this.$tc('phrases.newAgent',1))
                 } catch (e) {
                     this.loading = false
                     this.alertNotify('error', e.message)

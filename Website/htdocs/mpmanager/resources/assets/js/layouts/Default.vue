@@ -17,15 +17,13 @@
             :md-close-on-esc="false"
             :md-click-outside-to-close="false"
         >
-            <md-dialog-title>Session is about to expire</md-dialog-title>
+            <md-dialog-title>{{ $tc('phrases.expireSession') }}</md-dialog-title>
             <md-dialog-content>
-                Your session expires in <strong>{{expires_in}}</strong> seconds.<br>If you want to extend your session
-                for the next 60(sixty) minutes, please confirm this window.
+                {{$tc('phrases.expireSessionLabel',2,{expires_in: expires_in})}}<br>{{$tc('phrases.expireSessionLabel',1)}}
             </md-dialog-content>
 
             <md-dialog-actions>
-                <md-button class="md-primary md-raised" @click="extendToken" :disabled="confirmed">Confirm &amp;
-                    Extend
+                <md-button class="md-primary md-raised" @click="extendToken" :disabled="confirmed">{{$tc('words.confirm')}}
                 </md-button>
             </md-dialog-actions>
         </md-dialog>

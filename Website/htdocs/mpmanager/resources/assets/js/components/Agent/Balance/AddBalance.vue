@@ -3,24 +3,23 @@
         <!-- new balance -->
         <md-dialog :md-active.sync="addNewBalance"  >
             <md-dialog-title>
-                Add Balance
+                {{ $tc('phrases.addBalance') }}
             </md-dialog-title>
-        <form novalidate class="md-layout md-size-100" @submit.prevent="saveBalance"
-              data-vv-scope="Balance-Form">
+        <form novalidate class="md-layout md-size-100" @submit.prevent="saveBalance">
                 <div class="md-layout-item md-size-90" style="margin: auto">
-                    <md-field :class="{'md-invalid': errors.has('Balance-Form.amount')}">
-                        <label for="amount">Amount </label>
-                        <md-input name="amount" id="amount" v-model="agentChargeService.newBalance.amount"
+                    <md-field :class="{'md-invalid': errors.has($tc('words.amount'))}">
+                        <label for="amount">{{ $tc('words.amount') }} </label>
+                        <md-input :name="$tc('words.amount')" id="amount" v-model="agentChargeService.newBalance.amount"
                                   v-validate="'required|min_value:0'" type="number"/>
-                        <span class="md-error">{{ errors.first('Balance-Form.amount') }}</span>
+                        <span class="md-error">{{ errors.first($tc('words.amount')) }}</span>
                     </md-field>
                     <md-progress-bar md-mode="indeterminate" v-if="loading"/>
                 </div>
                 <md-dialog-actions class="md-layout-item md-size-90" style="margin: auto">
                     <md-button role="button" type="submit" class="md-raised md-primary" :disabled="loading">
-                        + Balance
+                        + {{ $tc('words.balance') }}
                     </md-button>
-                    <md-button @click="hide()" class="md-raised md-accent"><md-icon>close</md-icon> Close</md-button>
+                    <md-button @click="hide()" class="md-raised md-accent"><md-icon>close</md-icon> {{$tc('words.close')}}</md-button>
 
                 </md-dialog-actions>
         </form>
@@ -58,7 +57,7 @@ export default {
     methods: {
 
         async saveBalance () {
-            let validator = await this.$validator.validateAll('Balance-Form')
+            let validator = await this.$validator.validateAll()
 
             if (validator) {
 
@@ -69,7 +68,7 @@ export default {
                     await this.agentChargeService.addNewBalance()
                     this.loading = false
                     this.balanceAdded()
-                    this.alertNotify('success', 'Agent added successfully')
+                    this.alertNotify('success', this.$tc('phrases.addBalance',1))
                 } catch (e) {
                     this.loading = false
                     this.alertNotify('error', e.message)

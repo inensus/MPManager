@@ -4,36 +4,36 @@
                   @stored="getEmployees"
                   @closed=" () => {this.newUser = false}"></new-user>
         <widget
-            title="New Maintenance Request"
-            button-text="New Maintenance Service Provider"
+            :title="$tc('phrases.newMaintenanceRequest')"
+            :button-text="$tc('phrases.newMaintenanceUser')"
             :button="true"
             @widgetAction="openNewUser"
             color="green"
         >
 
-            <form @submit.prevent="submitMaintainForm" data-vv-scope="form-maintain">
+            <form @submit.prevent="submitMaintainForm">
                 <md-card>
                     <md-card-content>
                         <div class="md-layout md-gutter">
                             <div class="md-layout-item md-size-100">
-                                <md-field :class="{'md-invalid': errors.has('form-maintain.title')}">
-                                    <label for="title">Title</label>
+                                <md-field :class="{'md-invalid': errors.has($tc('phrases.jobTitle'))}">
+                                    <label for="title">{{ $tc('phrases.jobTitle') }}</label>
                                     <md-input v-model="maintenanceData.title" type="text" class="input-w form-control"
                                               id="title"
-                                              name="title"
+                                              :name="$tc('phrases.jobTitle')"
                                               v-validate="'required'"
-                                              placeholder="Job Title"></md-input>
-                                    <span class="md-error">{{ errors.first('form-maintain.title') }}</span>
+                                              :placeholder="$tc('phrases.jobTitle')"></md-input>
+                                    <span class="md-error">{{ errors.first($tc('phrases.jobTitle')) }}</span>
                                 </md-field>
                             </div>
                             <div class="md-layout-item md-size-50">
-                                <md-field :class="{'md-invalid': errors.has('form-maintain.employee')}">
-                                    <label for="employee">Assigned To</label>
+                                <md-field :class="{'md-invalid': errors.has($tc('words.employee'))}">
+                                    <label for="employee">{{$tc('phrases.assignTo')}}</label>
                                     <md-select id="employee"
-                                               name="employee"
+                                               :name="$tc('words.employee')"
                                                v-validate="'required'"
                                                v-model="maintenanceData.assigned">
-                                        <md-option value="" disabled selected>-- Select --</md-option>
+                                        <md-option value="" disabled selected>-- {{$tc('words.select')}} --</md-option>
                                         <template v-for="employee in employees" >
                                             <md-option :key="employee.person.id"
                                                        v-if="employee.person"
@@ -45,14 +45,14 @@
                                         </template>
 
                                     </md-select>
-                                    <span class="md-error">{{ errors.first('form-maintain.title') }}</span>
+                                    <span class="md-error">{{ errors.first($tc('words.employee')) }}</span>
                                 </md-field>
                             </div>
                             <div class="md-layout-item md-size-50">
-                                <md-field :class="{'md-invalid': errors.has('form-maintain.category')}">
-                                    <label for="category">Category</label>
+                                <md-field :class="{'md-invalid': errors.has($tc('words.category'))}">
+                                    <label for="category">{{$tc('words.category')}}</label>
                                     <md-select id="category"
-                                               name="category"
+                                               :name="$tc('words.category')"
                                                v-validate="'required'"
                                                v-model="maintenanceData.category">
                                         <md-option value="" disabled selected>-- Select --</md-option>
@@ -61,34 +61,35 @@
                                             {{category.label_name}}
                                         </md-option>
                                     </md-select>
-                                    <span class="md-error">{{ errors.first('form-maintain.category') }}</span>
+                                    <span class="md-error">{{ errors.first($tc('words.category')) }}</span>
 
                                 </md-field>
                             </div>
                             <div class="md-layout-item md-size-50">
-                                <md-field :class="{'md-invalid': errors.has('form-maintain.amount')}">
-                                    <label for="amount">Amount</label>
+                                <md-field :class="{'md-invalid': errors.has($tc('words.amount'))}">
+                                    <label for="amount">{{$tc('words.amount')}}</label>
                                     <span class="md-prefix">$</span>
-                                    <md-input v-model="maintenanceData.amount" type="text" id="amount" name="amount"
+                                    <md-input v-model="maintenanceData.amount" type="text" id="amount" :name="$tc('words.amount')"
                                               v-validate="'required'"
-                                              placeholder="Amount"></md-input>
-                                    <span class="md-error">{{ errors.first('form-maintain.amount') }}</span>
+                                              :placeholder="$tc('words.amount')"></md-input>
+                                    <span class="md-error">{{ errors.first($tc('words.amount')) }}</span>
                                 </md-field>
                             </div>
                             <div class="md-layout-item md-size-50">
                                 <div>
-                                    <md-datepicker v-model="selectedDue" name="date" v-validate="'required'"
+                                    <md-datepicker v-model="selectedDue" :name="$tc('words.date')" v-validate="'required'"
                                                    md-immediately>
-                                        <label>Due Date</label>
+                                        <label>{{$tc('phrases.dueDate')}}</label>
                                     </md-datepicker>
-                                    <span class="md-error">{{ errors.first('form-maintain.date') }}</span>
+                                    <span class="md-error">{{ errors.first($tc('words.date')) }}</span>
                                 </div>
                             </div>
                             <div class="md-layout-item md-size-100">
-                                <md-field :class="{'md-invalid': errors.has('form-maintain.description')}">
-                                    <label for="description">Description</label>
-                                    <md-textarea id="description" name="description" v-validate="'required'"
+                                <md-field :class="{'md-invalid': errors.has($tc('words.description'))}">
+                                    <label for="description">{{$tc('words.description')}}</label>
+                                    <md-textarea id="description" :name="$tc('words.description')" v-validate="'required'"
                                                  v-model="maintenanceData.description"></md-textarea>
+                                    <span class="md-error">{{ errors.first($tc('words.description'))}}</span>
                                 </md-field>
                             </div>
                         </div><!-- end layout -->
@@ -98,7 +99,7 @@
                     <md-card-actions>
                         <md-button class="md-raised md-primary" type="submit" :disabled="loading">
                             <md-icon>save</md-icon>
-                            Save
+                            {{$tc('words.save')}}
                         </md-button>
                     </md-card-actions>
                 </md-card>
@@ -172,7 +173,7 @@ export default {
             this.maintenanceService.setDueDate(date)
         },
         async submitMaintainForm () {
-            let validator = await this.$validator.validateAll('form-maintain')
+            let validator = await this.$validator.validateAll()
             if (validator) {
                 await this.saveTicket()
             }
@@ -183,7 +184,7 @@ export default {
                 console.log(this.maintenanceData)
                 await this.ticketService.createMaintenanceTicket(this.maintenanceData)
                 await this.smsService.sendMaintenanceSms(this.maintenanceData)
-                this.alertNotify('success', 'The Task created successfully. The Person will also be notified by sms')
+                this.alertNotify('success', this.$tc('phrases.newMaintenanceRequest',2))
                 this.maintenanceService.resetMaintenance()
                 this.loading = false
             } catch (e) {

@@ -1,15 +1,15 @@
 <template>
 
     <widget
-        :title="'Details'+ (currentMap === 0 ? '[Open Street Maps]': '[Google Maps]')"
+        :title="$tc('words.detail',2) + (currentMap === 0 ? ' [Open Street]': ' [Google]')"
         id="client-map"
     >
         <div slot="tabbar">
             <md-field>
-                <label for="map">Map Provider</label>
+                <label for="map">{{ $tc('phrases.mapProvider') }}</label>
                 <md-select @md-selected="mapSelected">
-                    <md-option value="0">Open Street Map</md-option>
-                    <md-option value="1">Google Maps</md-option>
+                    <md-option value="0">Open Street</md-option>
+                    <md-option value="1">Google</md-option>
                 </md-select>
             </md-field>
         </div>
@@ -79,21 +79,21 @@ export default {
         this.getMeterPoints(this.meterIds)
         EventBus.$on('getEditedGeoDataItems', (editedItems) => {
             this.$swal({
-                title: 'Relocate Meter',
-                text: 'Are you sure you want to relocate the selected meters?',
+                title: this.$tc('phrases.relocateMeter',0),
+                text: this.$tc('phrases.relocateMeter',1),
                 type: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Relocate',
-                cancelButtonText: 'Dismiss'
+                confirmButtonText: this.$tc('words.relocate'),
+                cancelButtonText: this.$tc('words.dismiss'),
             }).then((result) => {
 
                 if (result) {
                     editedItems.forEach(async (e) => {
                         try {
                             await this.meterService.updateMeter(e.id, e.lat, e.lng)
-                            this.alertNotify('success', 'Meter is relocated successfully')
+                            this.alertNotify('success', this.$tc('phrases.relocateMeter',2))
                         } catch (e) {
                             this.alertNotify('error', e.message)
                         }

@@ -1,7 +1,7 @@
 <template>
     <!-- modal-->
     <div>
-        <widget title="New Sms" color="red">
+        <widget :title="$tc('phrases.newSms')" color="red">
             <md-card class="md-size-80">
                 <md-card-header>
 
@@ -9,26 +9,26 @@
                         <md-tab
                             role="presentation"
                             :class="tab==='person' ? 'active' :''"
-                            md-label="People"
+                            :md-label="$tc('words.people')"
                             @click="tab='person'"
                             exact
                         ></md-tab>
                         <md-tab
                             role="presentation"
                             :class="tab==='group' ? 'active' :''"
-                            md-label="Connection Group"
+                            :md-label="$tc('phrases.connectionGroup')"
                             @click="tab='group'"
                         ></md-tab>
                         <md-tab
                             role="presentation"
                             :class="tab==='type' ? 'active' :''"
-                            md-label="Connection Type"
+                            :md-label="$tc('phrases.connectionType')"
                             @click="tab='type'"
                         ></md-tab>
                         <md-tab
                             role="presentation"
                             :class="tab==='all' ? 'active' :''"
-                            md-label="Whole Village"
+                            :md-label="$tc('phrases.wholeVillage')"
                             @click="tab='all'"
                         ></md-tab>
                     </md-tabs>
@@ -53,9 +53,9 @@
                         </div>
                         <div class="md-layout-item md-size-100" v-if="tab !=='person'">
                             <md-field>
-                                <label>Mini Grid</label>
+                                <label>{{ $tc('words.miniGrid') }}</label>
                                 <md-select id="miniGrid_select" v-model="miniGrid">
-                                    <md-option value="0">All</md-option>
+                                    <md-option value="0">{{ $tc('words.all') }}</md-option>
                                     <md-option v-for="mg in miniGridList" :value="mg.id" :key="mg.id">{{mg.name}}
                                     </md-option>
                                 </md-select>
@@ -70,7 +70,7 @@
                                 @md-opened="searchForPerson"
                                 @md-selected="[resultList.id !== -1 ? selectCustomer : null]"
                             >
-                                <label for="receiver">Receiver</label>
+                                <label for="receiver">{{ $tc('words.receiver') }}</label>
 
                                 <template slot="md-autocomplete-item" slot-scope="{ item }">{{ item.name}}
                                     {{item.surname}}
@@ -80,9 +80,9 @@
 
                         <div class="md-layout-item md-size-100" v-if="tab==='type' || tab ==='group'">
                             <md-field>
-                                <label>Receiver</label>
+                                <label>{{ $tc('words.receiver') }}</label>
                                 <md-select id="receiver_select" v-model="receiver">
-                                    <md-option value selected>-- Select--</md-option>
+                                    <md-option value selected>-- {{ $tc('words.select') }} --</md-option>
                                     <md-option v-for="r in resultList" :value="r.id" :key="r.id">{{r.name}}</md-option>
                                 </md-select>
                             </md-field>
@@ -90,7 +90,7 @@
 
                         <div class="md-layout-item md-size-100">
                             <md-field>
-                                <label for="receiver">Message</label>
+                                <label for="receiver">{{ $tc('words.message') }}</label>
                                 <md-textarea
                                     rows="10"
                                     class="form-control"
@@ -104,7 +104,7 @@
                 </md-card-content>
                 <md-card-actions>
                     <div class="md-layout">
-                        <md-button class="md-raised md-primary" @click="sendConfirm">Send</md-button>
+                        <md-button class="md-raised md-primary" @click="sendConfirm">{{ $tc('words.send') }}</md-button>
                     </div>
                 </md-card-actions>
             </md-card>
@@ -261,9 +261,9 @@ export default {
             this.$swal({
                 type: 'question',
                 allowOutsideClick: false,
-                title: 'Confirm Bulk Sms',
-                text: 'Are you sure to send the bulk sms?',
-                cancelButtonText: 'No, dont send it!',
+                title: this.$tc('phrases.bulkSms',0),
+                text: this.$tc('phrases.bulkSms',1),
+                cancelButtonText: this.$tc('words.cancel'),
                 showCancelButton: true,
             }).then((value) => {
                 if (value.value === true)
@@ -275,7 +275,7 @@ export default {
             if (this.tab === 'person') {
                 receivers = this.receiverList.map(x => x.stored ? x.receiver.addresses[0].phone : x.receiver)
             } else {
-                if (this.receiver === '-- Select --') {
+                if (this.receiver === '-- ' + this.$tc('words.select') + ' --') {
                     alert('Select a receiver from the list')
                     return
                 }
@@ -283,7 +283,7 @@ export default {
             }
             try {
                 await this.smsService.sendBulk(this.tab, this.miniGrid, receivers, this.message, this.senderId)
-                this.alertNotify('success', 'The Sms(es) are send out')
+                this.alertNotify('success', this.$tc('phrases.bulksms',2))
                 this.$emit('smsSent')
                 this.message = ''
                 this.customerSearchTerm = ''

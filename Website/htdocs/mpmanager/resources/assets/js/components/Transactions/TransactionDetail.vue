@@ -5,7 +5,7 @@
                 <div
                     class="md-layout-item  md-xlarge-size-50  md-large-size-50 md-medium-size-50  md-small-size-100 md-xsmall-size-100">
                     <div class="transaction-detail-card">
-                        <widget title="Provider Specific Information" :show-spinner="false">
+                        <widget :title="$tc('phrases.providerSpecificInformation')" :show-spinner="false">
                             <md-card>
                                 <md-card-content>
 
@@ -41,26 +41,26 @@
                             <md-card>
                                 <md-card-content>
                                     <div class="md-layout">
-                                        <div class="md-layout-item md-subheader">Sender</div>
+                                        <div class="md-layout-item md-subheader">{{ $tc('words.sender') }}</div>
                                         <div class="md-layout-item md-subheader n-font">{{transaction.sender}}</div>
                                     </div>
                                     <hr class="hr-d">
                                     <div class="md-layout">
-                                        <div class="md-layout-item md-subheader">Amount</div>
+                                        <div class="md-layout-item md-subheader">{{ $tc('words.amount') }}</div>
                                         <div class="md-layout-item md-subheader n-font">
                                             {{readable(transaction.amount)}}
                                         </div>
                                     </div>
                                     <hr class="hr-d">
                                     <div class="md-layout">
-                                        <div class="md-layout-item md-subheader">Payment Type</div>
+                                        <div class="md-layout-item md-subheader">{{ $tc('words.paymentType') }}</div>
                                         <div class="md-layout-item md-subheader n-font"><span
-                                            v-text="transaction.type === 'energy' ? 'Energy' : 'Deferred Payment'"></span>
+                                            v-text="transaction.type === 'energy' ? $tc('words.energy') : $tc('phrases.deferredPayment')"></span>
                                         </div>
                                     </div>
                                     <hr class="hr-d">
                                     <div class="md-layout">
-                                        <div class="md-layout-item md-subheader">Meter</div>
+                                        <div class="md-layout-item md-subheader">{{ $tc('words.meter') }}</div>
                                         <div class="md-layout-item md-subheader n-font">
                                             <router-link
                                                 :to="{path: '/meters/' + transaction.message}"
@@ -71,7 +71,7 @@
                                     </div>
                                     <hr class="hr-d">
                                     <div class="md-layout">
-                                        <div class="md-layout-item md-subheader">Customer</div>
+                                        <div class="md-layout-item md-subheader">{{ $tc('words.customer') }}</div>
                                         <div class="md-layout-item md-subheader n-font">
                                             <router-link
                                                 :to="{path: '/people/' + personId}"
@@ -82,7 +82,7 @@
                                     </div>
                                     <hr class="hr-d">
                                     <div class="md-layout">
-                                        <div class="md-layout-item md-subheader">Date</div>
+                                        <div class="md-layout-item md-subheader">{{ $tc('words.date') }}</div>
                                         <div class="md-layout-item md-subheader n-font">
                                             {{timeForHuman(transaction.created_at)}}
                                             <small>{{transaction.created_at}}</small></div>
@@ -109,8 +109,8 @@
                                         <div class="md-layout-item md-size-45">
                                             <md-table v-if="transaction.payment_histories.length>0" >
                                                 <md-table-row>
-                                                    <md-table-head>Paid For</md-table-head>
-                                                    <md-table-head>Amount</md-table-head>
+                                                    <md-table-head>{{ $tc('phrases.paidFor') }}</md-table-head>
+                                                    <md-table-head>{{ $tc('words.amount') }}</md-table-head>
                                                 </md-table-row>
                                                 <md-table-row v-for="(p,i) in transaction.payment_histories" :key="i">
                                                     <md-table-cell><p> {{p.payment_type}}</p>
@@ -149,13 +149,13 @@
                                 <md-card-content v-if="transaction.sms">
 
                                     <div class="md-layout md-gutter md-size-100">
-                                        <div class="md-layout-item md-subheader md-size-20">To</div>
+                                        <div class="md-layout-item md-subheader md-size-20">{{ $tc('words.to') }}</div>
                                         <div class="md-layout-item md-subheader md-size-80">
                                             {{transaction.sms.receiver}}
                                         </div>
                                     </div>
                                     <div class="md-layout md-gutter md-size-100">
-                                        <div class="md-layout-item md-subheader md-size-20">Body</div>
+                                        <div class="md-layout-item md-subheader md-size-20">{{ $tc('words.body') }}</div>
                                         <div class="md-layout-item md-subheader md-size-75 message-box">
 
                                             {{transaction.sms.body}}

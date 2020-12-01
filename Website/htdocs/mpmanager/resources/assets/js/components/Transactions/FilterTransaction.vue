@@ -1,6 +1,6 @@
 <template>
     <div style="margin: 1vh;">
-        <h2 class="filter-header">Filter Transactions</h2>
+        <h2 class="filter-header">{{ $tc('words.filter') }}</h2>
         <div class="md-layout">
             <div
                 class="md-layout-item  md-xlarge-size-100  md-large-size-100 md-medium-size-100  md-small-size-100 md-xsmall-size-100">
@@ -27,7 +27,7 @@
                 class="md-layout-item  md-xlarge-size-100  md-large-size-100 md-medium-size-100  md-small-size-100 md-xsmall-size-100">
                 <md-field>
                     <md-select v-model="provider_" name="provider" id="provider" @md-selected="setProvider">
-                        <md-option value="All Network Providers">All Network Providers</md-option>
+                        <md-option value="All Network Providers">{{ $tc('phrases.allNetworkProviders') }}</md-option>
                         <md-option value="Airtel">Airtel</md-option>
                         <md-option value="Vodacom">Vodacom</md-option>
                     </md-select>
@@ -42,9 +42,9 @@
                         id="transaction"
                         @md-selected="seTransaction"
                     >
-                        <md-option value="All Transactions">All Transactions</md-option>
-                        <md-option value="Only Approved">Only Approved</md-option>
-                        <md-option value="Only Rejected">Only Rejected</md-option>
+                        <md-option value="All Transactions">{{ $tc('phrases.allTransactions') }}</md-option>
+                        <md-option value="Only Approved">{{ $tc('phrases.onlyApproved') }}</md-option>
+                        <md-option value="Only Rejected">{{ $tc('phrases.onlyRejected') }}</md-option>
                     </md-select>
                 </md-field>
             </div>
@@ -56,7 +56,7 @@
                     md-immediately
                     :md-model-type="String"
                 >
-                    <label>From date</label>
+                    <label>{{ $tc('phrases.fromDate') }}</label>
                 </md-datepicker>
             </div>
 
@@ -66,13 +66,13 @@
                     v-model="filter.to"
                     md-immediately
                     :md-model-type="String">
-                    <label>To date</label>
+                    <label>{{ $tc('phrases.toDate') }}</label>
                 </md-datepicker>
             </div>
         </div>
 
         <div class="md-layout-item">
-            <md-button class="md-raised md-primary " v-if="!loading" @click="submitFilter">Search</md-button>
+            <md-button class="md-raised md-primary " v-if="!loading" @click="submitFilter">{{ $tc('words.search') }}</md-button>
             <md-progress-bar md-mode="indeterminate" v-if="loading"/>
         </div>
     </div>

@@ -2,11 +2,11 @@
     <div>
         <AddAgent :addAgent="addNewAgent"/>
         <widget
-            :title="'Agent'"
+            :title="$tc('words.agent')"
             :search="true"
             :subscriber="subscriber"
             :button="true"
-            button-text="New Agent"
+            :button-text="$tc('phrases.newAgent')"
             @widgetAction="showAddNewAgent"
             :paginator="agentService.paginator"
             color="green"
@@ -54,7 +54,7 @@ export default {
             addNewAgent: false,
             agentService: new AgentService(),
             searchTerm: '',
-            headers: ['ID', 'Name', 'Email', 'MiniGrid', 'Balance'],
+            headers: [this.$tc('words.id'), this.$tc('words.name'), this.$tc('words.email'), this.$tc('words.miniGrid'), this.$tc('words.balance')],
             tableName: 'Agent'
         }
     },

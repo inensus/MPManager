@@ -2,7 +2,7 @@
     <div class="md-layout">
         <md-toolbar class="md-dense">
             <div class="md-toolbar-section-start">
-                <h3 class="md-title" > Battery & PV Charts </h3>
+                <h3 class="md-title" > {{$tc('phrases.batteryPvCharts')}} </h3>
                 <!--<div class="md-subheader" ><span><b> Resolution:</b> 3 Days</span>&nbsp; | &nbsp;<span><b> Period:</b> {{  }} - {{ todayDate }}</span>  </div>-->
             </div>
             <!--<div class="md-toolbar-section-end">
@@ -29,7 +29,7 @@
             <custom-chart
                 :data="generationAssetsService.chartData"
                 :chart-type="'line'"
-                :title="'Energy'"
+                :title="$tc('words.energy')"
                 :subscriber="subscriber.energy"
             ></custom-chart>
         </div>
@@ -37,7 +37,7 @@
             <custom-chart
                 :data="batteryService.stateChartData"
                 :chart-type="'line'"
-                :title="'Battery Charge Status'"
+                :title="$tc('phrases.batteryChargeStatus')"
                 :subscriber="subscriber.battery"
             ></custom-chart>
 

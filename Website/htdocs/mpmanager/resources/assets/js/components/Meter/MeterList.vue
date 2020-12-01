@@ -2,7 +2,7 @@
     <div class="page-container">
         <widget
             :id="'meter-list'"
-            :title="'Meters'"
+            :title="$tc('words.meter',2)"
             :paginator="meters.paginator"
             :search="true"
             :subscriber="subscriber"
@@ -12,18 +12,18 @@
 
                     <md-table md-card style="margin-left: 0">
                         <md-table-row>
-                            <md-table-head>ID</md-table-head>
+                            <md-table-head>{{ $tc('words.id') }}</md-table-head>
                             <md-table-head>
                                 <md-icon>add</md-icon>
-                                Serial Number
+                                {{ $tc('phrases.serialNumber') }}
                             </md-table-head>
                             <md-table-head>
                                 <md-icon>add</md-icon>
-                                Tariff
+                                {{ $tc('words.add') }}
                             </md-table-head>
-                            <md-table-head>Manufacturer</md-table-head>
-                            <md-table-head>Type</md-table-head>
-                            <md-table-head>Last update</md-table-head>
+                            <md-table-head>{{ $tc('words.cluster', 2) }}</md-table-head>
+                            <md-table-head>{{ $tc('words.type') }}</md-table-head>
+                            <md-table-head>{{ $tc('phrases.lastUpdate') }}</md-table-head>
                         </md-table-row>
 
                         <md-table-row
@@ -39,13 +39,8 @@
                             <md-table-cell>{{ meter.manufacturer.manufacturerName}}</md-table-cell>
                             <md-table-cell>
                                 {{meter.type}}
-                                <span
-                                    v-if="meter.online"
-                                    class="label label-success"
-                                    style="padding: 5px; font-size: 1.2rem"
-                                >
-              <i class="fa fa-globe"></i>
-            </span>
+                                <md-icon v-if="meter.online">wifi</md-icon>
+
                             </md-table-cell>
                             <md-table-cell>{{meter.lastUpdate}}</md-table-cell>
                         </md-table-row>
@@ -69,8 +64,7 @@ export default {
             meters: new Meters(),
             manufacturers: new Manufacturers(),
             subscriber: 'meterList',
-            headers: ['ID', 'Serial Number', 'Tariff', 'Manufacturer', 'Type', 'Last update'],
-            tableName: 'Meter',
+
         }
     },
 
@@ -96,18 +90,17 @@ export default {
         confirmDelete (meter) {
             this.$swal({
                 type: 'question',
-                title: 'Delete Meter',
+                title: this.$tc('phrases.deleteMeter'),
                 width: '25%',
-                confirmButtonText: 'Confirm',
+                confirmButtonText: this.$tc('words.confirm'),
                 showCancelButton: true,
-                cancelButtonText: 'Cancel',
+                cancelButtonText: this.$tc('words.cancel'),
                 focusCancel: true,
                 html:
                         '<div style="text-align: left; padding-left: 5rem" class="checkbox">' +
                         '  <label>' +
                         '    <input type="checkbox" name="confirmation" id="confirmation" >' +
-                        '   I confirm to delete ' +
-                        meter.serialNumber +
+                        this.$tc('phrases.deleteMeter',2,{serialNumber: meter.serialNumber}) +
                         '  </label>' +
                         '</div>'
             }).then(result => {
@@ -131,7 +124,7 @@ export default {
 
                         Toast.fire({
                             type: 'warning',
-                            title: 'You have to confirm to delete the meter'
+                            title: this.$tc('phrases.deleteMeterNotify',1)
                         })
                     }
                 }
@@ -150,7 +143,7 @@ export default {
 
                 Toast.fire({
                     type: 'success',
-                    title: 'Meter Deleted successfully'
+                    title: this.$tc('phrases.deleteMeterNotify',2)
                 }).then(() => {
                     location.reload()
                 })

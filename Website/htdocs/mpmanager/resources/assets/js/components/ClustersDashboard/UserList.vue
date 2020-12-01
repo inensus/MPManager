@@ -7,7 +7,7 @@
                 v-model="selectedUser"
                 name="user"
                 id="user"
-                placeholder="Assign Cluster Manager"
+                :placeholder="$tc('phrases.assignClusterManager')"
             >
 
                 <md-option v-for="(user) in users" :value="user.id" :key="user.id">{{user.name}}</md-option>

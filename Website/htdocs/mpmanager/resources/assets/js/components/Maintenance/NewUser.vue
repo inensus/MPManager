@@ -1,47 +1,46 @@
 <template>
     <div>
         <widget v-if="newUser"
-                title="New Maintenance User"
+                :title="$tc('phrases.newMaintenanceUser')"
                 color="red"
               >
             <div>
 
-                <form @submit.prevent="submitNewUserForm" data-vv-scope="form-user">
+                <form @submit.prevent="submitNewUserForm" >
                     <md-card>
                         <md-card-content>
                             <div class="md-layout md-gutter">
                                 <div class="md-layout-item md-size-50">
-                                    <md-field :class="{'md-invalid': errors.has('form-user.name')}">
-                                        <label for="name">Name</label>
+                                    <md-field :class="{'md-invalid': errors.has($tc('words.name'))}">
+                                        <label for="name">{{ $tc('words.name') }}</label>
 
-                                        <md-input type="text" name="name" id="name"
+                                        <md-input type="text" :name="$tc('words.name')" id="name"
                                                   v-model="maintenanceService.personData.name"
                                                   placeholder="Name"
                                                   v-validate="'required|min:3'"/>
-                                        <span class="md-error">{{ errors.first('form-user.name') }}</span>
+                                        <span class="md-error">{{ errors.first($tc('words.name')) }}</span>
                                     </md-field>
                                 </div>
                                 <div class="md-layout-item md-size-50">
-                                    <md-field :class="{'md-invalid': errors.has('form-user.surname')}">
-                                        <label for="surname">Surname</label>
+                                    <md-field :class="{'md-invalid': errors.has($tc('words.surname'))}">
+                                        <label for="surname">{{ $tc('words.surname') }}</label>
 
                                         <md-input type="text" v-validate="'required'"
                                                   v-model="maintenanceService.personData.surname"
                                                   id="surname"
-                                                  name="surname"
+                                                  :name="$tc('words.surname')"
                                                   placeholder="Surname"/>
-                                        <span class="md-error">{{ errors.first('form-user.surname') }}</span>
+                                        <span class="md-error">{{ errors.first($tc('words.surname')) }}</span>
                                     </md-field>
                                 </div>
 
                                 <div class="md-layout-item md-size-50">
-                                    <md-field :class="{'md-invalid': errors.has('form-user.mini-grids')}">
-                                        <label for="mini-grids" class="control-label">Responsible For (Mini
-                                            Grid)</label>
+                                    <md-field :class="{'md-invalid': errors.has($tc('words.miniGrid'))}">
+                                        <label for="mini-grids" class="control-label">{{ $tc('words.miniGrid') }}</label>
 
-                                        <md-select v-validate="'required'" id="mini-grids" name="mini-grids"
+                                        <md-select v-validate="'required'" id="mini-grids" :name="$tc('words.miniGrid')"
                                                    v-model="maintenanceService.personData.mini_grid_id">
-                                            <md-option value selected disabled>&#45;&#45; Select &#45;&#45;</md-option>
+                                            <md-option value selected disabled>&#45;&#45; {{ $tc('words.select') }} &#45;&#45;</md-option>
                                             <md-option
                                                 v-for="(miniGrid,index) in miniGrids"
                                                 :value="miniGrid.id"
@@ -49,47 +48,48 @@
                                             >{{miniGrid.name}}
                                             </md-option>
                                         </md-select>
-                                        <span class="md-error">{{ errors.first('form-user.mini-grids') }}</span>
+                                        <span class="md-error">{{ errors.first($tc('words.miniGrid')) }}</span>
                                     </md-field>
                                 </div>
                                 <div class="md-layout-item md-size-50">
-                                    <md-field :class="{'md-invalid': errors.has('form-user.phone')}">
-                                        <label for="phone">Phone</label>
+                                    <md-field :class="{'md-invalid': errors.has($tc('words.phone'))}">
+                                        <label for="phone">{{ $tc('words.phone') }}</label>
 
                                         <md-input
                                             type="text"
                                             id="phone"
-                                            name="phone"
+                                            :name="$tc('words.phone')"
                                             v-validate="'required'"
                                             v-model="maintenanceService.personData.phone"
-                                            placeholder="Phone (+___ _+9___ ____)"
+                                            placeholder="(+___ _+9___ ____)"
                                         />
-                                        <span class="md-error">{{ errors.first('form-user.phone') }}</span>
+                                        <span class="md-error">{{ errors.first($tc('words.phone')) }}</span>
                                     </md-field>
                                 </div>
                                 <div class="md-layout-item md-size-50">
-                                    <md-field :class="{'md-invalid': errors.has('form-user.city')}">
-                                        <label for="city">Living In</label>
+                                    <md-field :class="{'md-invalid': errors.has($tc('words.city'))}">
+                                        <label >{{ $tc('phrases.livingIn') }}</label>
 
-                                        <md-select id="city" v-validate="'required'" name="city"
+                                        <md-select id="city" v-validate="'required'" :name="$tc('words.city')"
                                                    v-model="maintenanceService.personData.city_id">
-                                            <md-option value selected disabled>&#45;&#45; Select &#45;&#45;</md-option>
+                                            <md-option value selected disabled>&#45;&#45; {{ $tc('words.select') }} &#45;&#45;</md-option>
                                             <md-option
                                                 v-for="(city,index) in cities"
                                                 :value="city.id"
                                                 :key="index"
                                             >{{city.name}}
                                             </md-option>
-                                            <span class="md-error">{{ errors.first('form-user.city') }}</span>
+
                                         </md-select>
+                                        <span class="md-error">{{ errors.first($tc('words.city')) }}</span>
                                     </md-field>
                                 </div>
                             </div>
                             <md-progress-bar md-mode="indeterminate" v-if="loading"/>
                         </md-card-content>
                         <md-card-actions>
-                            <md-button class="md-primary btn-lg" :disabled="loading" type="submit">Save</md-button>
-                            <md-button class="md-accent" @click="onClose()">Close</md-button>
+                            <md-button class="md-primary btn-lg" :disabled="loading" type="submit">{{ $tc('words.save') }}</md-button>
+                            <md-button class="md-accent" @click="onClose()">{{ $tc('words.close') }}</md-button>
                         </md-card-actions>
                     </md-card>
 
@@ -179,7 +179,7 @@ export default {
         },
         async submitNewUserForm () {
 
-            let validator = await this.$validator.validateAll('form-user')
+            let validator = await this.$validator.validateAll()
             if (!validator) {
 
                 return
@@ -188,7 +188,7 @@ export default {
                 this.loading = true
                 await this.maintenanceService.createMaintenance(this.maintenanceService.personData)
                 this.loading = false
-                this.alertNotify('success', 'Maintenance Person Created')
+                this.alertNotify('success', this.$tc('phrases.newMaintenanceUser',2))
                 this.maintenanceService.resetPersonData()
                 this.onClose()
             } catch (e) {

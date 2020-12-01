@@ -1,9 +1,9 @@
 <template>
     <div>
         <widget :button="true"
-                :button-text="'Filter'"
+                :button-text="$tc('words.filter')"
                 @widgetAction="() => {filterTicket=true}"
-                title="List of Tickets"
+                :title="$tc('words.ticket',2)"
                 button-icon="filter_list"
         >
 
@@ -13,7 +13,7 @@
             </div>
             <div class="md-layout md-gutter">
                 <div class="md-layout-item md-size-50 md-medium-size-100">
-                    <widget title="Opened Ticket"
+                    <widget :title="$tc('phrases.openTicket')"
                             :subscriber="subscriber.opened"
                             :paginator="ticketService.openedPaginator"
                             :resetKey="resetKey"
@@ -26,7 +26,7 @@
 
                 </div>
                 <div class="md-layout-item md-size-50 md-medium-size-100">
-                    <widget title="Closed Ticket"
+                    <widget :title="$tc('phrases.closedTicket')"
                             :subscriber="subscriber.closed"
                             :paginator="ticketService.closedPaginator"
                             :resetKey="resetKey"

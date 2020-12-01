@@ -1,9 +1,8 @@
 <template>
     <widget
-        :title="'Sms History ('+smses.length+')' "
+        :title="$tc('phrases.smsHistory') + ' (' + smses.length + ')' "
         color="green"
         :subscriber="subscriber"
-        :button-text="'Sms History'"
     >
         <div>
             <md-content class="md-scrollbar">
@@ -26,7 +25,7 @@
                                     <div class="md-layout-item md-size-95 sms-body">
                                         <a v-if="sms.direction === 0 " href="javascript:void(0);"
                                            class="username">{{ sms.personName}}</a>
-                                        <a v-else href="javascript:void(0);" class="username">System</a>
+                                        <a v-else href="javascript:void(0);" class="username">{{ $tc('words.system') }}</a>
                                     </div>
                                 </div>
                                 <div class="md-layout-item md-size-100">
@@ -44,11 +43,11 @@
                 <div class="md-layout md-gutter md-size-100" style="margin: 2vh">
                     <div class="md-layout-item md-size-85">
                         <md-field>
-                            <md-textarea placeholder="Write a message..." v-model="message"></md-textarea>
+                            <md-textarea :placeholder="$tc('phrases.writeMessage')" v-model="message"></md-textarea>
                         </md-field>
                     </div>
                     <div class="md-layout-item md-size-15">
-                        <md-button type="submit" class="md-primary md-raised" @click="sendSms">Send it</md-button>
+                        <md-button type="submit" class="md-primary md-raised" @click="sendSms">{{$tc('words.send')}}</md-button>
                     </div>
                 </div>
 
@@ -107,7 +106,7 @@ export default {
         },
         sendSms () {
             if (this.message.length <= 3) {
-                alert('Message should contain more than 3 letters')
+                alert(this.$tc('phrases.messageNotify'))
                 return
             }
             axios

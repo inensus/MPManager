@@ -1,8 +1,9 @@
 <template>
 
     <widget
-        title="MiniGrid Map"
+        :title="$tc('phrases.miniGridMap')"
         id="miniGrid-map">
+
         <Map
             :geoData="geoData"
             :center="center"
@@ -77,21 +78,21 @@ export default {
         this.getMiniGrid(this.miniGridId)
         EventBus.$on('getEditedGeoDataItems', (editedItems) => {
             this.$swal({
-                title: 'Relocate Meter',
-                text: 'Are you sure you want to relocate the selected meters?',
+                title: this.$tc('phrases.relocateMeter',1),
+                text: this.$tc('phrases.relocateMeter',2),
                 type: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Relocate',
-                cancelButtonText: 'Dismiss'
+                confirmButtonText: this.$tc('words.relocate'),
+                cancelButtonText: this.$tc('words.dismiss')
             }).then((result) => {
 
                 if (result) {
                     editedItems.forEach(async (e) => {
                         try {
                             await this.meterService.updateMeter(e.id,e.lat,e.lng)
-                            this.alertNotify('success', 'Meter is relocated successfully')
+                            this.alertNotify('success',  this.$tc('phrases.relocateMeter',3))
                         } catch (e) {
                             this.alertNotify('error', e.message)
                         }

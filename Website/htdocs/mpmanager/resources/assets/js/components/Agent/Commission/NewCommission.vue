@@ -1,59 +1,58 @@
 <template>
     <widget v-if="addNewCommission"
-            title="New Commission"
+            :title="$tc('phrases.addCommissionType')"
     >
 
-        <form novalidate class="md-layout" @submit.prevent="saveCommission"
-              data-vv-scope="Commission-Form">
+        <form novalidate class="md-layout" @submit.prevent="saveCommission">
             <md-card class="md-layout-item">
                 <md-card-header>
                     <div style="float:right; cursor:pointer" @click="hide()">
-                        <md-icon>close</md-icon>&nbsp;Close
+                        <md-icon>close</md-icon>&nbsp;{{ $tc('words.close') }}
                     </div>
                 </md-card-header>
                 <md-card-content>
-                    <md-field :class="{'md-invalid': errors.has('Commission-Form.name')}">
-                        <label for="name">Name </label>
-                        <md-input name="name" id="name" v-model="agentCommissionService.agentCommission.name"
+                    <md-field :class="{'md-invalid': errors.has($tc('words.name'))}">
+                        <label >{{ $tc('words.name') }} </label>
+                        <md-input :name="$tc('words.name')" id="name" v-model="agentCommissionService.agentCommission.name"
                                   v-validate="'required|min:3'"
                         />
-                        <span class="md-error">{{ errors.first('Commission-Form.name') }}</span>
+                        <span class="md-error">{{ errors.first($tc('words.name')) }}</span>
                     </md-field>
 
-                    <md-field :class="{'md-invalid': errors.has('Commission-Form.energyCommission')}">
-                        <label for="energyCommission">Energy Commission </label>
-                        <md-input name="energyCommission" id="energyCommission"
+                    <md-field :class="{'md-invalid': errors.has($tc('phrases.energyCommission'))}">
+                        <label >{{ $tc('phrases.energyCommission') }} </label>
+                        <md-input :name="$tc('phrases.energyCommission')" id="energyCommission"
                                   v-model="agentCommissionService.agentCommission.energyCommission"
                                   v-validate="'required|min_value:0'" type="number"
                         />
-                        <span class="md-error">{{ errors.first('Commission-Form.energyCommission') }}</span>
+                        <span class="md-error">{{ errors.first($tc('phrases.energyCommission')) }}</span>
                     </md-field>
 
-                    <md-field :class="{'md-invalid': errors.has('Commission-Form.applianceCommission')}">
-                        <label for="applianceCommission">Appliance Commission </label>
-                        <md-input name="applianceCommission" id="applianceCommission"
+                    <md-field :class="{'md-invalid': errors.has($tc('phrases.applianceCommission'))}">
+                        <label >{{ $tc('phrases.applianceCommission') }} </label>
+                        <md-input :name="$tc('phrases.applianceCommission')" id="applianceCommission"
                                   v-model="agentCommissionService.agentCommission.applianceCommission"
                                   v-validate="'required|min_value:0'" type="number"
                         />
-                        <span class="md-error">{{ errors.first('Commission-Form.applianceCommission') }}</span>
+                        <span class="md-error">{{ errors.first($tc('phrases.applianceCommission')) }}</span>
                     </md-field>
 
-                    <md-field :class="{'md-invalid': errors.has('Commission-Form.riskBalance')}">
-                        <label for="riskBalance">Risk Balance (must be negative)</label>
-                        <md-input name="riskBalance"
+                    <md-field :class="{'md-invalid': errors.has($tc('phrases.riskBalance'))}">
+                        <label >{{ $tc('phrases.riskBalance') }} ({{ $tc('phrases.mustBeNegative') }})</label>
+                        <md-input :name="$tc('phrases.riskBalance')"
                                   id="riskBalance"
                                   max="0"
                                   v-model="agentCommissionService.agentCommission.riskBalance"
                                   v-validate="'required|max_value:0'" type="number"
                         />
-                        <span class="md-error">{{ errors.first('Commission-Form.riskBalance') }}</span>
+                        <span class="md-error">{{ errors.first($tc('phrases.riskBalance')) }}</span>
                     </md-field>
 
                     <md-progress-bar md-mode="indeterminate" v-if="loading"/>
                 </md-card-content>
                 <md-card-actions>
                     <md-button role="button" type="submit" class="md-raised md-primary" :disabled="loading">
-                        Save
+                        {{ $tc('words.save') }}
                     </md-button>
 
                 </md-card-actions>
@@ -91,7 +90,7 @@ export default {
     methods: {
 
         async saveCommission () {
-            let validator = await this.$validator.validateAll('Commission-Form')
+            let validator = await this.$validator.validateAll()
 
             if (validator) {
                 this.loading = true
@@ -99,7 +98,7 @@ export default {
                     await this.agentCommissionService.createAgentCommission()
                     this.loading = false
                     this.commissionAdded()
-                    this.alertNotify('success', 'Agent commission added successfully')
+                    this.alertNotify('success', this.$tc('phrases.addCommissionType',2))
                 } catch (e) {
                     this.loading = false
                     this.alertNotify('error', e.message)

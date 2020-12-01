@@ -3,9 +3,9 @@
         <new-commission :addNewCommission="showNewCommission"/>
         <widget
             :class="'col-sm-6 col-md-5'"
-            :button-text="'Add Commission Type'"
+            :button-text="$tc('phrases.addCommissionType')"
             :button="true"
-            title="Commission Types"
+            :title="$tc('phrases.commissionType',2)"
             @widgetAction="newCommission"
             color="green"
             :subscriber="subscriber"
@@ -21,13 +21,13 @@
                             <md-table-cell md-sort-by="id" md-label="ID">{{item.id}}</md-table-cell>
                             <md-table-cell md-label="Name">
                                 <div v-if="editCommission === item.id">
-                                    <md-field :class="{'md-invalid': errors.has('name')}">
-                                        <label for="name">Name </label>
-                                        <md-input name="name" id="name"
+                                    <md-field :class="{'md-invalid': errors.has($tc('words.name'))}">
+                                        <label for="name">{{$tc('words.name')}} </label>
+                                        <md-input :name="$tc('words.name')" id="name"
                                                   v-model="item.name"
                                                   v-validate="'required|min:3'"
                                         />
-                                        <span class="md-error">{{ errors.first('name') }}</span>
+                                        <span class="md-error">{{ errors.first($tc('words.name')) }}</span>
                                     </md-field>
 
                                 </div>
@@ -39,13 +39,13 @@
 
                                 <div v-if="editCommission === item.id">
 
-                                    <md-field :class="{'md-invalid': errors.has('energyCommission')}">
-                                        <label for="energyCommission">Energy Commission </label>
-                                        <md-input name="energyCommission" id="energyCommission"
+                                    <md-field :class="{'md-invalid': errors.has($tc('phrases.energyCommission'))}">
+                                        <label>{{$tc('phrases.energyCommission')}} </label>
+                                        <md-input :name="$tc('phrases.energyCommission')" id="energyCommission"
                                                   v-model="item.energyCommission"
                                                   v-validate="'required|min_value:0'" type="number"
                                         />
-                                        <span class="md-error">{{ errors.first('energyCommission') }}</span>
+                                        <span class="md-error">{{ errors.first($tc('phrases.energyCommission')) }}</span>
                                     </md-field>
 
                                 </div>
@@ -56,14 +56,14 @@
                             <md-table-cell md-label="Appliance Commission">
                                 <div v-if="editCommission === item.id">
 
-                                    <md-field :class="{'md-invalid': errors.has('applianceCommission')}">
-                                        <label for="applianceCommission">Appliance Commission </label>
-                                        <md-input name="applianceCommission" id="applianceCommission"
+                                    <md-field :class="{'md-invalid': errors.has($tc('phrases.applianceCommission'))}">
+                                        <label>{{ $tc('phrases.applianceCommission') }} </label>
+                                        <md-input :name="$tc('phrases.applianceCommission')" id="applianceCommission"
                                                   v-model="item.applianceCommission"
                                                   v-validate="'required|min_value:0'" type="number"
                                         />
                                         <span
-                                            class="md-error">{{ errors.first('applianceCommission') }}</span>
+                                            class="md-error">{{ errors.first($tc('phrases.applianceCommission')) }}</span>
                                     </md-field>
 
                                 </div>
@@ -74,15 +74,15 @@
                             <md-table-cell md-label="Risk Balance">
                                 <div v-if="editCommission === item.id">
 
-                                    <md-field :class="{'md-invalid': errors.has('riskBalance')}">
-                                        <label for="riskBalance">Risk Balance (must be negative)</label>
-                                        <md-input name="riskBalance"
+                                    <md-field :class="{'md-invalid': errors.has($tc('phrases.riskBalance'))}">
+                                        <label>{{ $tc('phrases.riskBalance')}} ({{ $tc('phrases.mustBeNegative') }})</label>
+                                        <md-input :name="$tc('phrases.riskBalance')"
                                                   id="riskBalance"
                                                   max="0"
                                                   v-model="item.riskBalance"
                                                   v-validate="'required|max_value:0'" type="number"
                                         />
-                                        <span class="md-error">{{ errors.first('riskBalance') }}</span>
+                                        <span class="md-error">{{ errors.first($tc('phrases.riskBalance')) }}</span>
                                     </md-field>
 
                                 </div>
@@ -94,22 +94,22 @@
                                 <div v-if="editCommission === item.id">
 
                                     <md-button class="md-icon-button" @click="updateCommission(item)">
-                                        <md-tooltip md-direction="top">Save</md-tooltip>
+                                        <md-tooltip md-direction="top">{{ $tc('words.save') }}</md-tooltip>
                                         <md-icon>save</md-icon>
                                     </md-button>
                                     <md-button class="md-icon-button" @click="editCommission = null">
-                                        <md-tooltip md-direction="top">Close</md-tooltip>
+                                        <md-tooltip md-direction="top">{{ $tc('words.close') }}</md-tooltip>
                                         <md-icon>close</md-icon>
                                     </md-button>
 
                                 </div>
                                 <div v-else>
                                     <md-button class="md-icon-button" @click="editCommission = item.id">
-                                        <md-tooltip md-direction="top">Edit</md-tooltip>
+                                        <md-tooltip md-direction="top">{{ $tc('words.edit') }}</md-tooltip>
                                         <md-icon>edit</md-icon>
                                     </md-button>
                                     <md-button class="md-icon-button" @click="confirmDelete(item)">
-                                        <md-tooltip md-direction="top">Delete</md-tooltip>
+                                        <md-tooltip md-direction="top">{{ $tc('words.delete') }}</md-tooltip>
                                         <md-icon>delete</md-icon>
                                     </md-button>
                                 </div>
@@ -132,7 +132,9 @@ export default {
             subscriber:'agent-commission-list',
             agentCommissionService: new AgentCommissionService(),
             showNewCommission: false,
-            headers: ['ID', 'Name', 'Energy Commission', 'Appliance Commission', 'Risk Balance', '#'],
+            headers: [this.$tc('words.id'), this.$tc('words.name'),
+                this.$tc('phrases.energyCommission'), this.$tc('phrases.applianceCommission'),
+                this.$tc('phrases.riskBalance'), '#'],
             tableName: 'Agent Commission Types',
             editCommission: null,
             loading: false
@@ -175,7 +177,7 @@ export default {
             try {
                 this.loading = true
                 await this.agentCommissionService.updateAgentCommission(commission)
-                this.alertNotify('success', 'Agent commission updated!')
+                this.alertNotify('success', this.$tc('phrases.agentCommissionUpdated'))
                 await this.getAgentCommissions()
                 this.loading = false
             } catch (e) {
@@ -187,20 +189,17 @@ export default {
 
             this.$swal({
                 type: 'question',
-                title: 'Delete Agent Commission',
+                title: this.$tc('phrases.deleteAgentCommission'),
                 width: '35%',
-                confirmButtonText: 'Confirm',
+                confirmButtonText: this.$tc('words.confirm'),
                 showCancelButton: true,
-                cancelButtonText: 'Cancel',
+                cancelButtonText: this.$tc('words.cancel'),
                 focusCancel: true,
                 html:
                         '<div style="text-align: left; padding-left: 5rem" class="checkbox">' +
                         '  <label>' +
                         '    <input type="checkbox" name="confirmation" id="confirmation" >' +
-                        '   I confirm that ' +
-                        commission.name +
-                        ' ' +
-                        ' will be deleted' +
+                        this.$tc('phrases.deleteAgentCommission',2,{ commissionName: commission.name }) +
                         '  </label>' +
                         '</div>'
             }).then(result => {
@@ -218,7 +217,7 @@ export default {
             try {
                 this.loading = true
                 await this.agentCommissionService.deleteAgentCommission(commissionId)
-                this.alertNotify('success', 'Agent commission deleted!')
+                this.alertNotify('success', this.$tc('phrases.agentCommissionDeleted'))
                 await this.getAgentCommissions()
                 this.loading = false
             } catch (e) {

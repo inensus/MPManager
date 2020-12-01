@@ -2,27 +2,25 @@
     <widget
         v-if="showAdd"
         :id="'new-connection-type'"
-        :title="'Add New Connection Type'"
+        :title="$tc('phrases.newConnectionType')"
         color="red"
         >
 
 
         <md-card>
-            <md-card-header>
-                Name of the Connection
-            </md-card-header>
+
             <md-card-content>
                 <div class="md-layout md-gutter">
                     <div class="md-layout-item">
-                        <md-field :class="{'md-invalid': errors.has('name')}">
-                            <label for="name">Connection Name</label>
+                        <md-field :class="{'md-invalid': errors.has($tc('words.name'))}">
+                            <label for="name">{{ $tc('words.name') }}</label>
                             <md-input
                                 id="name"
-                                name="name"
+                                :name="$tc('words.name')"
                                 v-model="connectionType.name"
                                 v-validate="'required|min:3'"
                             />
-                            <span class="md-error">{{ errors.first('name') }}</span>
+                            <span class="md-error">{{ errors.first($tc('words.name')) }}</span>
                         </md-field>
 
                     </div>
@@ -30,9 +28,9 @@
             </md-card-content>
 
             <md-card-actions>
-                <md-button role="button" class="md-raised md-primary" @click="store">Save
+                <md-button role="button" class="md-raised md-primary" @click="store">{{ $tc('words.save') }}
                 </md-button>
-                <md-button role="button" class="md-raised" @click="hide">Close</md-button>
+                <md-button role="button" class="md-raised" @click="hide">{{ $tc('words.close') }}</md-button>
             </md-card-actions>
         </md-card>
     </widget>
@@ -72,7 +70,7 @@ export default {
             try {
 
                 await this.connectionTypeService.createConnectionType(this.connectionType.name)
-                this.alertNotify('success', 'ConnectionType has registered.')
+                this.alertNotify('success', this.$tc('phrases.newConnectionType',2))
                 EventBus.$emit('connectionTypeAdded', this.connectionType)
             } catch (e) {
                 this.alertNotify('error', e.message)

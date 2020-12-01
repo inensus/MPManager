@@ -1,9 +1,9 @@
 <template>
 
     <widget
-        title="Details"
+        :title="$tc('words.detail',2)"
         :button="true"
-        button-text="Delete Person"
+        :button-text="$tc('phrases.deleteCustomer',0)"
         @widgetAction="confirmDelete"
         button-icon="delete"
         :show-spinner="false">
@@ -25,21 +25,22 @@
                     </div>
                     <div class="md-layout-item md-size-100">&nbsp;</div>
                     <div class="md-layout-item md-size-15">
-                        <md-icon>wc</md-icon> Gender:
+                        <md-icon>wc</md-icon>
+                        {{$tc('words.gender')}}:
                     </div>
                     <div class="md-layout-item md-size-15">
                         {{this.personService.person.gender}}
                     </div>
 
                     <div class="md-layout-item md-size-20">
-                        <md-icon>school</md-icon>&nbsp;Education:
+                        <md-icon>school</md-icon>&nbsp;{{$tc('words.education')}}:
                     </div>
                     <div class="md-layout-item md-size-15">
                         {{this.personService.person.education}}
                     </div>
 
                     <div class="md-layout-item md-size-15">
-                        <md-icon>cake</md-icon>&nbsp;Birth Date:
+                        <md-icon>cake</md-icon>&nbsp;{{$tc('words.birthday')}}:
                     </div>
                     <div class="md-layout-item md-size-15">
                         {{this.personService.person.birthDate}}
@@ -53,7 +54,7 @@
                             <md-card class="md-layout-item md-size-100">
                                 <md-card-content>
                                     <md-field>
-                                        <label for="person-title">Title</label>
+                                        <label for="person-title">{{$tc('words.title')}}</label>
                                         <md-input
                                             type="text"
                                             name="person-title"
@@ -63,33 +64,33 @@
                                     </md-field>
 
                                     <md-field>
-                                        <label for="name">Name</label>
+                                        <label for="name">{{$tc('words.name')}}</label>
                                         <md-input type="text" name="name" id="name"
                                                   v-model="personService.person.name"/>
                                     </md-field>
 
                                     <md-field>
-                                        <label for="surname">Surname</label>
+                                        <label for="surname">{{$tc('words.surname')}}</label>
                                         <md-input type="text" name="surname" id="surname"
                                                   v-model="personService.person.surname"/>
                                     </md-field>
 
                                     <md-datepicker md-immediately  name="birthDate" v-model="personService.person.birthDate">
-                                        <label for="birth-date">Birth Date :</label>
+                                        <label for="birth-date">{{$tc('words.birthday')}} :</label>
                                     </md-datepicker>
 
                                     <md-field>
-                                        <label for="gender">Gender :</label>
+                                        <label for="gender">{{$tc('words.gender')}} :</label>
                                         <md-select name="gender" id="gender" v-model="personService.person.gender">
-                                            <md-option disabled v-if="personService.person.gender==null">-- Select --
+                                            <md-option disabled v-if="personService.person.gender==null">-- {{$tc('words.select')}} --
                                             </md-option>
-                                            <md-option value="male">Male</md-option>
-                                            <md-option value=" female">Female</md-option>
+                                            <md-option value="male">{{$tc('words.male')}}</md-option>
+                                            <md-option value=" female">{{$tc('words.female')}}</md-option>
                                         </md-select>
                                     </md-field>
 
                                     <md-field>
-                                        <label for="education">Education</label>
+                                        <label for="education">{{$tc('words.education')}}</label>
                                         <md-input
                                             type="text"
                                             name="education"
@@ -99,10 +100,10 @@
                                     </md-field>
                                 </md-card-content>
                                 <md-card-actions>
-                                    <md-button type="submit" @click="updatePerson" class="md-primary btn-save">Save
+                                    <md-button type="submit" @click="updatePerson" class="md-primary btn-save">{{$tc('words.save')}}
                                     </md-button>
                                     <md-button type="button" @click="editPerson = false" class="md-accent btn-save">
-                                        Cancel
+                                        {{$tc('words.cancel')}}
                                     </md-button>
                                 </md-card-actions>
                             </md-card>
@@ -151,21 +152,17 @@ export default {
         confirmDelete () {
             this.$swal({
                 type: 'question',
-                title: 'Delete Customer',
+                title: this.$tc('phrases.deleteCustomer',0),
                 width: '35%',
-                confirmButtonText: 'Confirm',
+                confirmButtonText: this.$tc('words.confirm'),
                 showCancelButton: true,
-                cancelButtonText: 'Cancel',
+                cancelButtonText: this.$tc('words.cancel'),
                 focusCancel: true,
                 html:
                         '<div style="text-align: left; padding-left: 5rem" class="checkbox">' +
                         '  <label>' +
                         '    <input type="checkbox" name="confirmation" id="confirmation" >' +
-                        '   I confirm that ' +
-                        this.personService.person.name +
-                        ' ' +
-                        this.personService.person.surname +
-                        ' will be deleted' +
+                    this.$tc('phrases.deleteCustomerNotify',0,{name: this.personService.person.name, surname: this.personService.person.surname}) +
                         '  </label>' +
                         '</div>'
             }).then(result => {
@@ -203,7 +200,7 @@ export default {
 
             Toast.fire({
                 type: 'success',
-                title: 'Customer Deleted successfully'
+                title: this.$tc('phrases.deleteCustomer',1)
             }).then(x => {
                 console.log(x)
                 window.history.back()

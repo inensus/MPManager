@@ -1,6 +1,6 @@
 <template>
     <widget
-        :title="'Finance Overview  (Period : ' +periodText + ')'"
+        :title="$tc('phrases.financeOverview',0, {period: periodText})"
         :id="'clusters-finance-overview'"
         button
         button-text="Set Period"
@@ -10,16 +10,16 @@
 
     >
         <div v-if="setPeriod" class="period-selector">
-            <p>Select a period for income data</p>
+            <p>{{ $tc('phrases.selectPeriod') }}</p>
             <div class="md-layout md-gutter">
                 <div class="md-layout-item md-size-100">
                     <md-datepicker v-model="period.from" md-immediately>
-                        <label>From Date</label>
+                        <label>{{ $tc('phrases.fromDate') }}</label>
                     </md-datepicker>
                 </div>
                 <div class="md-layout-item md-size-100">
                     <md-datepicker v-model="period.to" md-immediately>
-                        <label>To Date</label>
+                        <label>{{ $tc('phrases.toDate') }}</label>
                     </md-datepicker>
                 </div>
             </div>
@@ -28,7 +28,7 @@
             <div style="margin-top: 5px;">
                 <md-progress-bar md-mode="indeterminate" v-if="loading"/>
                 <button style="width:100%;" class="btn btn-primary" v-if="!loading" @click="getClusterFinancialData">
-                    Send
+                    {{ $tc('words.send') }}
                 </button>
             </div>
         </div>
@@ -41,7 +41,7 @@
                 <md-card class="chart-card">
                     <md-card-header>
                         <md-card-header-text>
-                            Revenue Line
+                            {{ $tc('phrases.revenueLine') }}
                         </md-card-header-text>
                         <md-menu class="md-medium-hide" md-size="big" md-direction="bottom-end">
                             <md-button class="md-icon-button" md-menu-trigger
@@ -70,7 +70,7 @@
                 <md-card class="chart-card">
                     <md-card-header>
                         <md-card-header-text>
-                            Bar Chart
+                            {{ $tc('phrases.revenueColumns') }}
                         </md-card-header-text>
                         <md-menu class="md-medium-hide" md-size="big" md-direction="bottom-end">
                             <md-button class="md-icon-button" md-menu-trigger
@@ -99,7 +99,7 @@
                 <md-card class="chart-card">
                     <md-card-header>
                         <md-card-header-text>
-                            Percentiles of the Revenue
+                            {{ $tc('phrases.revenuePercentiles') }}
                         </md-card-header-text>
                         <md-menu class="md-medium-hide" md-size="big" md-direction="bottom-end">
                             <md-button class="md-icon-button" md-menu-trigger
@@ -265,7 +265,7 @@ export default {
         columnChartData (summary) {
             let data = []
             let summaryRevenue = 0
-            data.push(['MiniGrid Name', 'Revenue'])
+            data.push([this.$tc('words.miniGrid'), this.$tc('words.revenue')])
             for (let i in this.financialData) {
                 let cD = this.financialData[i]
                 if (summary) {

@@ -2,29 +2,29 @@
     <div class="page-container" id="widget-grid">
         <div class="md-layout md-gutter">
             <div class="md-layout-item md-size-35 md-small-size-100">
-                <widget :title="'Overview'" class="col-sm-5" :id="'meter-overview'">
+                <widget :title="$tc('words.overview')" class="col-sm-5" :id="'meter-overview'">
                     <md-card>
                         <md-card-header>
-                            <div class="md-title">Basic</div>
+                            <div class="md-title">{{ $tc('words.basic') }}</div>
                         </md-card-header>
 
                         <md-card-content v-if="meter!==null && meter.loaded===true">
                             <div class="md-layout">
-                                <div class="md-layout-item">Registered</div>
+                                <div class="md-layout-item">{{ $tc('words.register',2) }}</div>
                                 <div class="md-layout-item">{{meter.registered}}</div>
                             </div>
                             <div class="md-layout">
-                                <div class="md-layout-item">Owner</div>
+                                <div class="md-layout-item">{{ $tc('words.owner') }}</div>
                                 <div class="md-layout">
                                     <div class="md-layout-item">
                                         <a href="javascript:void(0)" @click="navigateOwner(meter.owner.id)">
                                             {{meter.owner.name}}
                                             {{meter.owner.surname}}
                                         </a>
-                                        <i class="fa fa-pencil" @click="showOwnerEdit = true"></i>
+                                      <span style="cursor:pointer" @click="showOwnerEdit = true"><md-icon >edit</md-icon></span>
                                     </div>
                                     <div class="md-layout-item" v-if="showOwnerEdit" >
-                                        <div class="md-layout-item">New Owner</div>
+                                        <div class="md-layout-item">{{$tc('phrases.newOwner')}}</div>
 
                                         <md-autocomplete
                                             v-model="customerSearchTerm"
@@ -33,7 +33,7 @@
                                             @md-opened="searchFor"
                                             @md-selected="selectCustomer"
                                         >
-                                            <label>Customer Name</label>
+                                            <label>{{ $tc('words.customer') }}</label>
                                             <template slot="md-autocomplete-item" slot-scope="{ item }">{{ item.name }}</template>
                                         </md-autocomplete>
                                         <md-button v-if="showOwnerEdit" class="md-icon-button md-primary" @click="saveNewOwner()"><md-icon>save</md-icon></md-button>
@@ -43,27 +43,27 @@
 
                             </div>
                             <div class="md-layout">
-                                <div class="md-layout-item">Total Revenue</div>
+                                <div class="md-layout-item">{{$tc('phrases.totalRevenue')}}</div>
                                 <div class="md-layout-item">
                                     <div v-if="meter.totalRevenue">{{ readable(meter.totalRevenue)}} TZS</div>
-                                    <div v-else>No Data</div>
+                                    <div v-else>{{$tc('phrases.noData')}}</div>
                                 </div>
                             </div>
                             <div class="md-layout">
-                                <div class="md-layout-item">Last Payment</div>
-                                <div class="md-layout-item">3 days ago</div>
+                                <div class="md-layout-item">{{$tc('phrases.lastPayment')}}</div>
+                                <div class="md-layout-item">{{$tc('phrases.3daysAgo')}}</div>
                             </div>
                         </md-card-content>
                     </md-card>
 
                     <md-card>
                         <md-card-header>
-                            <div class="md-title">Meter Details</div>
+                            <div class="md-title">{{$tc('phrases.meterDetail',2)}}</div>
                         </md-card-header>
 
                         <md-card-content v-if="meter!==null && meter.loaded===true">
                             <div class="md-layout">
-                                <div class="md-layout-item">Manufacturer</div>
+                                <div class="md-layout-item">{{ $tc('words.manufacturer') }}</div>
                                 <div
                                     class="md-layout-item"
                                 >{{meter.manufacturer.name}} ( {{meter.manufacturer.website}})
@@ -71,20 +71,20 @@
                             </div>
 
                             <div class="md-layout">
-                                <div class="md-layout-item">Serial Number</div>
+                                <div class="md-layout-item">{{$tc('phrases.serialNumber')}}</div>
                                 <div class="md-layout-item">{{meter.serialNumber}}</div>
                             </div>
                             <div class="md-layout">
-                                <div class="md-layout-item">Tariff</div>
+                                <div class="md-layout-item">{{ $tc('words.tariff') }}</div>
                                 <div class="md-layout-item">
                                     <div v-if="editTariff===false" class="col-sm-6">
                                         {{meter.tariff.name}}
-                                        <i class="fa fa-pencil" @click="editTariff = true"></i>
+                                       <span style="cursor: pointer" @click="editTariff = true"><md-icon>edit</md-icon></span>
                                     </div>
                                     <div class="md-layout" v-else>
                                         <div class="md-layout-item">
                                             <md-field>
-                                                <label for="tariff">Tariff</label>
+                                                <label for="tariff">{{ $tc('words.tariff') }}</label>
                                                 <md-select name="tariff" v-model="newTariff">
                                                     <md-option v-for="tariff in tariffs"
                                                                :key="tariff.id" :value="tariff.id">
@@ -104,17 +104,17 @@
                                 </div>
                             </div>
                             <div class="md-layout">
-                                <div class="md-layout-item">Connection Type</div>
+                                <div class="md-layout-item">{{$tc('phrases.connectionType')}}</div>
                                 <div class="md-layout-item">
                                     <div v-if="editConnection===false" class="col-sm-6">
                                         {{meter.connection.name}}
-                                        <i class="fa fa-pencil" @click="editConnection = true"></i>
+                                      <span style="cursor: pointer" @click="editConnection = true"><md-icon>edit</md-icon></span>
                                     </div>
                                     <div class="md-layout" v-else>
                                         <div class="md-layout-item">
 
                                             <md-field>
-                                                <label for="connectiontype">Connection Type</label>
+                                                <label for="connectiontype">{{$tc('phrases.connectionType')}}</label>
                                                 <md-select name="connectiontype"
                                                            v-model="newConnectionType">
                                                     <md-option v-for="connectionType in connectionTypes.list"
@@ -134,8 +134,8 @@
                                 </div>
                             </div>
                             <div class="md-layout">
-                                <div class="md-layout-item">Last Payment</div>
-                                <div class="md-layout-item">3 days ago</div>
+                                <div class="md-layout-item">{{$tc('phrases.lastPayment')}}</div>
+                                <div class="md-layout-item">{{$tc('phrases.3daysAgo')}}</div>
                             </div>
                         </md-card-content>
                     </md-card>
@@ -145,7 +145,7 @@
             <div class="md-layout-item md-size-65 md-small-size-100">
                 <widget
                     v-if="transactions!==null"
-                    :title="'Meter Transactions'"
+                    :title="$tc('phrases.meterTransaction')"
                     class="col-sm-7"
                     :id="'meter-transactions'"
                     :paginator="transactions.paginator"
@@ -188,7 +188,7 @@
 
         <div style="margin-top: 1rem;"></div>
 
-        <widget v-if="meter.meterType.online !== 0" :title="'Meter Readings'" class="col-sm-12" :id="'meter-readings'">
+        <widget v-if="meter.meterType.online !== 0" :title="$tc('phrases.meterReadings')" class="col-sm-12" :id="'meter-readings'">
             <div role="menu" slot="tabbar">
                 <button
                     class="md-button dropdown-toggle btn-xs"
@@ -208,7 +208,7 @@
                     </div>
 
                     <div v-if="chartData.length===0 && loading === false" class="text-center">
-                        <h2>NO DATA for {{dates.dateOne}} - {{dates.dateTwo}}</h2>
+                        <h2>{{ $tc('phrases.noData') }} {{dates.dateOne}} - {{dates.dateTwo}}</h2>
                     </div>
 
                 </md-card-content>
@@ -320,7 +320,8 @@ export default {
                 difference: 0
             },
             loading: true,
-            headers: ['ID', 'Provider', 'Amount', 'Paid for', 'In Return', 'Date'],
+            headers: [this.$tc('words.id'), this.$tc('words.provider'), this.$tc('words.amount'),
+                this.$tc('phrases.paidFor'), this.$tc('phrases.inReturn'), this.$tc('words.date')],
             tableName: 'Meter Transactions'
         }
     },
@@ -363,7 +364,7 @@ export default {
                         this.chartData = []
                         return
                     }
-                    this.chartData.push(['Date', 'Consumption', 'Credit'])
+                    this.chartData.push([this.$tc('words.date'), this.$tc('words.consumption'), this.$tc('words.credit')])
                     this.chartData = this.chartData.concat(this.consumptions.data)
                 })
         },
@@ -435,8 +436,8 @@ export default {
                     } else {
                         this.$swal({
                             type: 'error',
-                            title: 'Unexpected error',
-                            text: 'Please get in touch with your system admin.'
+                            title: this.$tc('phrases.meterDetailNotify',0),
+                            text: this.$tc('phrases.meterDetailNotify',2)
                         })
                     }
                     this.editTariff = false
@@ -447,26 +448,19 @@ export default {
             if (this.newOwner === null) {
                 this.$swal({
                     type: 'error',
-                    title: 'New Owner is required!',
-                    text: 'Please select a new owner.'
+                    title: this.$tc('phrases.meterDetailNotify',3),
+                    text: this.$tc('phrases.meterDetailNotify2',0)
                 })
                 return
             }
             this.$swal({
                 type: 'success',
-                title: 'Re-Assigning Meter?',
-                text:
-                        'Are you sure to assign the meter from ' +
-                        this.newOwner.name +
-                        ' ' +
-                        this.newOwner.surname +
-                        ' to ' +
-                        this.meter.owner.name +
-                        ' ' +
-                        this.meter.owner.surname,
+                title: this.$tc('phrases.meterDetailNotify2',1),
+                text: this.$tc('phrases.meterDetailNotify2',3,
+                    {newName:this.newOwner.name , name:this.meter.owner.name + ' ' + this.meter.owner.surname}),
                 showCancelButton: true,
-                confirmButtonText: 'I\'m sure',
-                cancelButtonText: 'Cancel'
+                confirmButtonText: this.$tc('words.confirm'),
+                cancelButtonText: this.$tc('words.cancel'),
             }).then(result => {
                 console.log(result)
                 if (result.value) {
@@ -485,8 +479,8 @@ export default {
                             } else {
                                 this.$swal({
                                     type: 'error',
-                                    title: 'Unexpected error',
-                                    text: 'Please get in touch with your system admin.'
+                                    title: this.$tc('phrases.meterDetailNotify'),
+                                    text: this.$tc('phrases.meterDetailNotify',2)
                                 })
                             }
                         })

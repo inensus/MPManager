@@ -2,57 +2,57 @@
     <div class="content-field">
         <div class="header">
             <h1 class="title">MicroPowerManager</h1>
-            <h5 class="subtitle">The easiest way to manage your Mini-Grid</h5>
+            <h5 class="subtitle">{{ $tc('phrases.loginNotify',1) }}</h5>
             <div class="title-divider">&nbsp;</div>
-            <div class="description" v-if="authError">Authentication failed. Check your credentials</div>
+            <div class="description" v-if="authError">{{ $tc('phrases.loginNotify',2) }}</div>
         </div>
         <div class="content">
-            <form class="md-layout" @submit.prevent="validateUser" data-vv-scope="Login-Form">
+            <form class="md-layout" @submit.prevent="validateUser" >
                 <md-card class="md-layout-item">
                     <md-card-header>
                         <div class="md-title"></div>
                     </md-card-header>
 
                     <md-card-content>
-                        <md-field :class="{'md-invalid': errors.has('Login-Form.email')}">
-                            <label for="email">Email</label>
+                        <md-field :class="{'md-invalid': errors.has($tc('words.email'))}">
+                            <label for="email">{{ $tc('words.email') }}</label>
                             <md-input
                                 type="email"
-                                name="email"
+                                :name="$tc('words.email')"
                                 id="email"
                                 autocomplete="email"
                                 v-model="form.email"
                                 :disabled="sending"
                                 v-validate="'required|email'"
                             />
-                            <span class="md-error">{{ errors.first('Login-Form.email') }}</span>
+                            <span class="md-error">{{ errors.first($tc('words.email')) }}</span>
                         </md-field>
 
-                        <md-field :class="{'md-invalid': errors.has('Login-Form.password')}">
-                            <label for="password">Password</label>
+                        <md-field :class="{'md-invalid': errors.has($tc('words.password'))}">
+                            <label for="password">{{ $tc('words.password') }}</label>
                             <md-input
                                 type="password"
-                                name="password"
+                                :name="$tc('words.password')"
                                 id="password"
                                 v-model="form.password"
                                 :disabled="sending"
                                 v-validate="'required|min:6|max:15'"
                             />
-                            <span class="md-error">{{ errors.first('Login-Form.password') }}</span>
+                            <span class="md-error">{{ errors.first($tc('words.password')) }}</span>
                         </md-field>
                     </md-card-content>
 
                     <md-progress-bar md-mode="indeterminate" v-if="sending"/>
 
                     <md-card-actions>
-                        <md-button type="submit" class="md-primary btn-log" :disabled="sending">Sign In</md-button>
+                        <md-button type="submit" class="md-primary btn-log" :disabled="sending">{{ $tc('phrases.signIn') }}</md-button>
                     </md-card-actions>
                 </md-card>
             </form>
             <div class="forgot-password">
                 <router-link :to="{path: '/forgot-password'}" class="link">
                     <md-icon>lock</md-icon>
-                    Forgot Password
+                    {{ $tc('phrases.forgotPassword') }}
                 </router-link>
 
 
@@ -102,7 +102,7 @@ export default {
         },
         async validateUser () {
 
-            let validator = await this.$validator.validateAll('Login-Form')
+            let validator = await this.$validator.validateAll()
 
             if (validator) {
                 await this.authenticate()

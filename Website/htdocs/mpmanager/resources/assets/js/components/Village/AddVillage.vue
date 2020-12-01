@@ -1,26 +1,26 @@
 <template>
     <div>
-        <widget title="Add New Village" color="green" >
+        <widget :title="$tc('phrases.newVillage')" color="green" >
             <md-card class="md-layout-item md-size-100">
                 <md-card-content>
                     <div class="md-layout md-gutter md-size-100">
                         <div class="md-layout-item md-size-70">
-                            <md-field :class="{'md-invalid': errors.has('cityName')}">
-                                <label for="city_name"> Village Name </label>
+                            <md-field :class="{'md-invalid': errors.has($tc('words.name'))}">
+                                <label for="city_name">{{ $tc('words.name') }} </label>
                                 <md-input
                                     id="cityName"
-                                    name="cityName"
+                                    :name="$tc('words.name')"
                                     v-model="cityName"
                                     v-validate="'required|min:3'"/>
-                                <span class="md-error">{{ errors.first('cityName') }}</span>
+                                <span class="md-error">{{ errors.first($tc('words.name')) }}</span>
                             </md-field>
                         </div>
                         <div class="md-layout-item md-size-30">
-                            <md-field :class="{'md-invalid': errors.has('miniGridName')}">
-                                <label>Mini Grid</label>
+                            <md-field :class="{'md-invalid': errors.has($tc('words.miniGrid'))}">
+                                <label>{{ $tc('words.miniGrid') }}</label>
                                 <md-select
                                     v-model="selectedMiniGridId"
-                                    name="miniGridName"
+                                    :name="$tc('words.miniGrid')"
                                     id="miniGridName"
                                     v-validate="'required'"
                                     @md-selected="selectMiniGrid"
@@ -30,7 +30,7 @@
                                         {{mg.name}}
                                     </md-option>
                                 </md-select>
-                                <span class="md-error">{{ errors.first('city_miniGrid') }}</span>
+                                <span class="md-error">{{ errors.first($tc('words.miniGrid')) }}</span>
                             </md-field>
                         </div>
 
@@ -39,37 +39,37 @@
                     <div class="md-layout md-gutter md-size-100">
                         <div class="md-layout md-gutter md-size-60" style="padding-left: 1.5rem !important;">
                             <form class="md-layout md-gutter" @submit.prevent="validatePoints"
-                                  data-vv-scope="Points-Form" style="padding-left: 1.5rem !important;"
+                                   style="padding-left: 1.5rem !important;"
                             >
                                 <div class="md-layout-item md-size-30">
-                                    <md-field :class="{'md-invalid': errors.has('Points-Form.latitude')}">
-                                        <label for="latitude">Latitude</label>
+                                    <md-field :class="{'md-invalid': errors.has($tc('words.latitude'))}">
+                                        <label for="latitude">{{ $tc('words.latitude') }}</label>
                                         <md-input
                                             id="latitude"
-                                            name="latitude"
+                                            :name="$tc('words.latitude')"
                                             v-model="cityLatLng.lat"
                                             step="any"
                                             maxlength="8"
                                             v-validate="'required|decimal:5|max:8'"/>
-                                        <span class="md-error">{{ errors.first('Points-Form.latitude') }}</span>
+                                        <span class="md-error">{{ errors.first($tc('words.latitude')) }}</span>
 
                                     </md-field>
                                 </div>
                                 <div class="md-layout-item md-size-30">
-                                    <md-field :class="{'md-invalid': errors.has('Points-Form.longitude')}">
-                                        <label for="longitude">Longitude</label>
+                                    <md-field :class="{'md-invalid': errors.has($tc('words.longitude'))}">
+                                        <label for="longitude">{{ $tc('words.longitude') }}</label>
                                         <md-input
                                             id="longitude"
-                                            name="longitude"
+                                            :name="$tc('words.longitude')"
                                             v-model="cityLatLng.lon"
                                             step="any"
                                             maxlength="8"
                                             v-validate="'required|decimal:5|max:8'"/>
-                                        <span class="md-error">{{ errors.first('Points-Form.longitude') }}</span>
+                                        <span class="md-error">{{ errors.first($tc('words.longitude')) }}</span>
                                     </md-field>
                                 </div>
                                 <div class="md-layout-item md-size-40">
-                                    <md-button type="submit" class="md-primary set-button">Set Points</md-button>
+                                    <md-button type="submit" class="md-primary set-button">{{ $tc('phrases.setPoints') }}</md-button>
 
                                 </div>
                             </form>
@@ -77,7 +77,7 @@
                         </div>
 
                         <div class="md-layout-item md-size-40">
-                            <md-button class="md-primary save-button" @click="getValidateVillage()">Save</md-button>
+                            <md-button class="md-primary save-button" @click="getValidateVillage()">{{ $tc('words.save') }}</md-button>
 
                         </div>
                     </div>
@@ -231,12 +231,12 @@ export default {
 
         async saveVillage () {
             let validator = await this.$validator.validateAll()
-            let validatorPoints = await this.$validator.validateAll('Points-Form')
+            let validatorPoints = await this.$validator.validateAll()
             if (validator && validatorPoints) {
                 try {
                     this.loading = true
                     const city = await this.cityService.createCity(this.cityName, this.clusterId, this.selectedMiniGridId, this.geoData)
-                    this.alertNotify('success', 'The Village you add is stored successfully.')
+                    this.alertNotify('success', this.$tc('phrases.newVillageNotify',1))
                     this.loading = false
                     await this.$router.replace('/dashboards/mini-grid/' + city.data.data.mini_grid.id)
                 } catch (e) {

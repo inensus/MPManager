@@ -1,6 +1,6 @@
 <template>
     <widget
-        title="Tariff Detail"
+        :title="$tc('phrases.tariffDetail')"
     >
         <md-card>
 
@@ -11,30 +11,29 @@
                         <form class="md-layout md-gutter" data-vv-scope="Tariff-Form">
                             <div
                                 class="md-layout-item  md-xlarge-size-100 md-large-size-50 md-medium-size-50 md-small-size-50 ">
-                                <md-field :class="{'md-invalid': errors.has('Tariff-Form.tariff_name')}"
+                                <md-field :class="{'md-invalid': errors.has('Tariff-Form.' + $tc('words.name'))}"
                                 >
-                                    <label for="tariff_name">Tariff Name</label>
+                                    <label for="tariff_name">{{ $tc('words.name') }}</label>
                                     <md-input
                                         id="tariff_name"
-                                        name="tariff_name"
+                                        :name="$tc('words.name')"
                                         v-model="tariffService.tariff.name"
                                         v-validate="'required|min:3'"
                                     />
-                                    <span class="md-error">{{ errors.first('Tariff-Form.tariff_name') }}</span>
+                                    <span class="md-error">{{ errors.first('Tariff-Form.' + $tc('words.name')) }}</span>
                                 </md-field>
                             </div>
                             <div
                                 class="md-layout-item md-xlarge-size-50 md-large-size-50 md-medium-size-50 md-small-size-50 ">
-                                <md-field :class="{'md-invalid': errors.has('Tariff-Form.kwh_price')}">
-                                    <label for="kwh_price">kWh Price (last two digits represents two decimals ex: 100 =
-                                        1.00)</label>
+                                <md-field :class="{'md-invalid': errors.has('Tariff-Form.' + $tc('words.price'))}">
+                                    <label for="kwh_price">{{$tc('phrases.newTariffLabels')}}</label>
                                     <md-input id="kwh_price"
-                                              name="kwh_price"
+                                              :name="$tc('words.price')"
                                               v-model="tariffService.tariff.price"
                                               v-validate="'required|integer'"
                                               @change="tariffPriceChange()"
                                     />
-                                    <span class="md-error">{{ errors.first('Tariff-Form.kwh_price') }}</span>
+                                    <span class="md-error">{{ errors.first('Tariff-Form.' + $tc('words.price')) }}</span>
                                 </md-field>
                             </div>
 
@@ -49,29 +48,29 @@
 
                             <div
                                 class="md-layout-item md-xlarge-size-50 md-large-size-50 md-medium-size-50 md-small-size-50 ">
-                                <md-field :class="{'md-invalid': errors.has('Access-Rate-Form.access_rate_price')}">
-                                    <label for="access_rate_price">Access Rate Price </label>
+                                <md-field :class="{'md-invalid': errors.has('Access-Rate-Form.' + $tc('phrases.accessRatePrice'))}">
+                                    <label for="access_rate_price">{{ $tc('phrases.accessRatePrice') }} </label>
                                     <md-input id="access_rate_price"
-                                              name="access_rate_price"
+                                              :name="$tc('phrases.accessRatePrice')"
                                               v-model="tariffService.tariff.accessRate.amount"
                                               v-validate="'required|integer'"
                                     />
                                     <span
-                                        class="md-error">{{ errors.first('Access-Rate-Form.access_rate_price') }}</span>
+                                        class="md-error">{{ errors.first('Access-Rate-Form.' + $tc('phrases.accessRatePrice')) }}</span>
                                 </md-field>
                             </div>
                             <div
                                 class="md-layout-item md-xlarge-size-50 md-large-size-50 md-medium-size-50 md-small-size-50 ">
                                 <md-field
-                                    :class="{'md-invalid': errors.has('Access-Rate-Form.access_rate_period')}">
-                                    <label for="ar_period">Access Rate Period in days </label>
+                                    :class="{'md-invalid': errors.has('Access-Rate-Form.' + $tc('phrases.accessRatePeriodInDays'))}">
+                                    <label for="ar_period">{{ $tc('phrases.accessRatePeriodInDays') }} </label>
                                     <md-input id="ar_period"
-                                              name="access_rate_period"
+                                              :name="$tc('phrases.accessRatePeriodInDays')"
                                               v-model="tariffService.tariff.accessRate.period"
                                               v-validate="'required|integer|min_value:1'"
                                     />
                                     <span
-                                        class="md-error">{{ errors.first('Access-Rate-Form.access_rate_period') }}</span>
+                                        class="md-error">{{ errors.first('Access-Rate-Form.' + $tc('phrases.accessRatePeriodInDays')) }}</span>
                                 </md-field>
                             </div>
                         </form>
@@ -79,7 +78,7 @@
 
                     </div>
                     <div class="md-layout-item md-xlarge-size-100 md-large-size-100 md-medium-size-100 md-small-size-100">
-                        <md-checkbox v-model="hasAccessRate" @change="accessRateChange($event)">Enable access rate?</md-checkbox>
+                        <md-checkbox v-model="hasAccessRate" @change="accessRateChange($event)">{{ $tc('phrases.enableAccessRate') }}?</md-checkbox>
                     </div>
 
 
@@ -88,7 +87,7 @@
 
                         <md-button role="button" class="md-raised md-secondary" @click="addComponent('component')">
                             <md-icon>add</md-icon>
-                            Add Additional Cost Component
+                            {{ $tc('phrases.addAdditionalCostComponent') }}
                         </md-button>
                     </div>
                     <div class="md-layout-item md-xlarge-size-100 md-large-size-100 md-medium-size-100 md-small-size-100"
@@ -97,29 +96,29 @@
                             <div
                                 class="md-layout-item md-xlarge-size-45 md-large-size-45 md-medium-size-45 md-small-size-45">
 
-                                <md-field :class="{'md-invalid': errors.has('Component-Form.name')}">
-                                    <label for="name">Name</label>
+                                <md-field :class="{'md-invalid': errors.has('Component-Form.' + $tc('words.name'))}">
+                                    <label for="name">{{ $tc('words.name') }}</label>
                                     <md-input
                                         id="name"
-                                        name="name"
+                                        :name="$tc('words.name')"
                                         v-model="component.name"
                                         v-validate="'required|min:3'"
                                     />
-                                    <span class="md-error">{{ errors.first('Component-Form.name') }}</span>
+                                    <span class="md-error">{{ errors.first('Component-Form.' + $tc('words.name')) }}</span>
                                 </md-field>
                             </div>
                             <div
                                 class="md-layout-item md-xlarge-size-45 md-large-size-45 md-medium-size-45 md-small-size-45">
 
-                                <md-field :class="{'md-invalid': errors.has('Component-Form.price')}">
-                                    <label for="price">Component Price</label>
+                                <md-field :class="{'md-invalid': errors.has('Component-Form.' + $tc('phrases.componentPrice'))}">
+                                    <label for="price">{{ $tc('phrases.componentPrice') }}</label>
                                     <md-input
                                         id="price"
-                                        name="price"
+                                        :name="$tc('phrases.componentPrice')"
                                         v-model="component.price"
                                         v-validate="'required|integer'"
                                     />
-                                    <span class="md-error">{{ errors.first('Component-Form.price') }}</span>
+                                    <span class="md-error">{{ errors.first('Component-Form.' + $tc('phrases.componentPrice')) }}</span>
                                 </md-field>
                             </div>
                             <div
@@ -137,11 +136,11 @@
                     <div class="md-layout-item  md-xlarge-size-100 md-large-size-100 md-medium-size-100 md-small-size-100">
                         <md-button role="button" :disabled="tariffService.conflicts.length>0" class="md-raised md-secondary" @click="addComponent('usage')">
                             <md-icon>add</md-icon>
-                            Add TOU
+                            {{$tc('phrases.addTou')}}
                         </md-button>
                         <div v-if="tariffService.tariff.tous.length>0" role="alert" class="alert alert-info">
-                            <strong> Attention!</strong>
-                            In order to use this field, the meters that will use the tariff must be suitable for time of usages.
+                            <strong> {{ $tc('words.attention') }}!</strong>
+                            {{$tc('phrases.newTariffLabels',2)}}
                         </div>
                     </div>
                     <div class="md-layout-item md-xlarge-size-100 md-large-size-100 md-medium-size-100 md-small-size-100"
@@ -150,7 +149,7 @@
                             <div class="md-layout-item md-xlarge-size-20 md-large-size-20 md-medium-size-20 md-small-size-20">
 
                                 <md-field :class="{'md-invalid': errors.has('Tou-Form.start'+tou.id)}">
-                                    <label for="name">Start</label>
+                                    <label for="name">{{ $tc('words.start') }}</label>
                                     <md-select v-model="tou.start" name="start" id="start" @md-selected="touSelected($event)">
                                         <md-option v-for="time in tariffService.times"
                                                    :value="time.time"
@@ -163,7 +162,7 @@
                             <div class="md-layout-item md-xlarge-size-20 md-large-size-20 md-medium-size-20 md-small-size-20">
 
                                 <md-field :class="{'md-invalid': errors.has('Tou-Form.end'+tou.id)}">
-                                    <label for="end">End</label>
+                                    <label for="end">{{ $tc('words.end') }}</label>
                                     <md-select v-model="tou.end" name="end" id="end"  @md-selected="touSelected($event)">
                                         <md-option v-for="time in tariffService.times"
                                                    :value="time.time"
@@ -175,23 +174,23 @@
                             </div>
                             <div class="md-layout-item md-xlarge-size-20 md-large-size-20 md-medium-size-20 md-small-size-20">
 
-                                <md-field :class="{'md-invalid': errors.has('Tou-Form.value')}">
-                                    <label for="value">Value </label>
+                                <md-field :class="{'md-invalid': errors.has('Tou-Form.' + $tc('words.value'))}">
+                                    <label for="value">{{ $tc('words.value') }} </label>
                                     <md-input
                                         placeholder="% of normal tariff"
                                         id="value"
-                                        name="value"
+                                        :name="$tc('words.value')"
                                         min="1"
                                         v-model="tou.value"
                                         v-validate="'required|decimal|min_value:1'"
                                         @change="touValueChange(tou)"
                                     />
-                                    <span class="md-error">{{ errors.first('Tou-Form.value') }}</span>
+                                    <span class="md-error">{{ errors.first('Tou-Form.' + $tc('words.value')) }}</span>
                                 </md-field>
                             </div>
                             <div class="md-layout-item md-xlarge-size-15 md-large-size-15 md-medium-size-15 md-small-size-15">
                                 <md-field >
-                                    <label for="value">Cost </label>
+                                    <label for="value">{{ $tc('words.cost') }} </label>
                                     <md-input
                                         :disabled="true"
                                         v-model="tou.cost"
@@ -213,9 +212,8 @@
 
                     <!--Social-Tariffs-->
                     <div class="md-layout-item  md-xlarge-size-100 md-large-size-100 md-medium-size-100 md-small-size-100">
-                        <a @click="showSocialOptions()" v-if="!tariffService.socialOptions" class="show-tariff-link">Show social
-                            tariff options</a>
-                        <a @click="showSocialOptions()" v-else class="show-tariff-link">Hide social tariff options</a>
+                        <a @click="showSocialOptions()" v-if="!tariffService.socialOptions" class="show-tariff-link">{{$tc('phrases.socialTariffOptions',1)}}</a>
+                        <a @click="showSocialOptions()" v-else class="show-tariff-link">{{$tc('phrases.socialTariffOptions',2)}}</a>
                     </div>
                     <div class="md-layout-item  md-xlarge-size-100 md-large-size-100 md-medium-size-100 md-small-size-100"
                         v-if="tariffService.socialOptions">
@@ -223,24 +221,24 @@
                             <div
                                 class="md-layout-item md-xlarge-size-30 md-large-size-30 md-medium-size-30 md-small-size-30 ">
 
-                                <h3>Daily allowance at social tariff</h3>
+                                <h3>{{$tc('phrases.socialTariffLabels')}}</h3>
 
 
                             </div>
                             <div
                                 class="md-layout-item md-xlarge-size-20 md-large-size-20 md-medium-size-20 md-small-size-20 ">
-                                <md-field :class="{'md-invalid': errors.has('Social-Form.daily_allowance')}">
+                                <md-field :class="{'md-invalid': errors.has('Social-Form.' + $tc('phrases.socialTariffLabels'))}">
 
                                     <md-input id="daily_allowance"
                                               type="number"
                                               min="0"
-                                              name="daily_allowance"
+                                              :name="$tc('phrases.socialTariffLabels')"
                                               v-model="tariffService.tariff.socialTariff.dailyAllowance"
                                               v-validate="'required|integer'"
                                               class="social-input"
                                     />
 
-                                    <span class="md-error">{{ errors.first('Social-Form.daily_allowance') }}</span>
+                                    <span class="md-error">{{ errors.first('Social-Form.' + $tc('phrases.socialTariffLabels')) }}</span>
                                     <span class="md-suffix">Wh.</span>
                                 </md-field>
 
@@ -252,23 +250,23 @@
                                 class="md-layout-item md-xlarge-size-30 md-large-size-30 md-medium-size-30 md-small-size-30 "
                             >
 
-                                <h3>Social tariff</h3>
+                                <h3>{{$tc('phrases.socialTariff',0)}}</h3>
 
                             </div>
                             <div
                                 class="md-layout-item md-xlarge-size-20 md-large-size-20 md-medium-size-20 md-small-size-20 "
                             >
-                                <md-field :class="{'md-invalid': errors.has('Social-Form.social_price')}">
-                                    <label for="social_price">Price per kWh </label>
+                                <md-field :class="{'md-invalid': errors.has('Social-Form.' + $tc('words.price'))}">
+                                    <label for="social_price">{{$tc('phrases.socialTariff',1)}}</label>
                                     <md-input
                                         id="social_price"
-                                        name="social_price"
+                                        :name="$tc('words.price')"
                                         min="0"
                                         v-model="tariffService.tariff.socialTariff.price"
                                         v-validate="'required|integer'"
                                         class="social-input"
                                     />
-                                    <span class="md-error">{{ errors.first('Social-Form.social_price') }}</span>
+                                    <span class="md-error">{{ errors.first('Social-Form.' + $tc('words.price')) }}</span>
                                     <span class="md-suffix">{{appConfig.currency}}</span>
                                 </md-field>
                             </div>
@@ -279,25 +277,25 @@
                                 class="md-layout-item md-xlarge-size-50 md-large-size-30 md-medium-size-30 md-small-size-30 "
                             >
 
-                                <h3>Initial energy budget</h3>
+                                <h3>{{$tc('phrases.socialTariff',2)}}</h3>
 
 
                             </div>
                             <div
                                 class="md-layout-item md-xlarge-size-20 md-large-size-20 md-medium-size-20 md-small-size-20 "
                             >
-                                <md-field :class="{'md-invalid': errors.has('Social-Form.initial_energy_budget')}">
+                                <md-field :class="{'md-invalid': errors.has('Social-Form.' + $tc('phrases.socialTariff',2))}">
 
                                     <md-input id="initial_energy_budget"
                                               type="number"
                                               min="0"
-                                              name="initial_energy_budget"
+                                              :name="$tc('phrases.socialTariff',2)"
                                               v-model="tariffService.tariff.socialTariff.initialEnergyBudget"
                                               v-validate="'required|integer'"
                                               class="social-input"
                                     />
                                     <span
-                                        class="md-error">{{ errors.first('Social-Form.initial_energy_budget') }}</span>
+                                        class="md-error">{{ errors.first('Social-Form.' + $tc('phrases.socialTariff',2)) }}</span>
                                     <span class="md-suffix">Wh.</span>
                                 </md-field>
                             </div>
@@ -308,25 +306,25 @@
                                 class="md-layout-item md-xlarge-size-30 md-large-size-30 md-medium-size-30 md-small-size-30"
                             >
 
-                                <h3>Maximum stacked energy</h3>
+                                <h3>{{ $tc('phrases.socialTariffLabels',2) }}</h3>
 
 
                             </div>
                             <div
                                 class="md-layout-item md-xlarge-size-20 md-large-size-20 md-medium-size-20 md-small-size-20 "
                             >
-                                <md-field :class="{'md-invalid': errors.has('Social-Form.maximum_stacked_energy')}">
+                                <md-field :class="{'md-invalid': errors.has('Social-Form.' + $tc('phrases.socialTariffLabels',2))}">
 
                                     <md-input id="maximum_stacked_energy"
                                               type="number"
                                               min="0"
-                                              name="maximum_stacked_energy"
+                                              :name="$tc('phrases.socialTariffLabels',2)"
                                               v-model="tariffService.tariff.socialTariff.maximumStackedEnergy"
                                               v-validate="'required|integer'"
                                               class="social-input"
                                     />
                                     <span
-                                        class="md-error">{{ errors.first('Social-Form.maximum_stacked_energy') }}</span>
+                                        class="md-error">{{ errors.first('Social-Form.' + $tc('phrases.socialTariffLabels',2)) }}</span>
                                     <span class="md-suffix">Wh.</span>
                                 </md-field>
                             </div>
@@ -340,8 +338,8 @@
             </md-card-content>
 
             <md-card-actions>
-                <md-button role="button" class="md-raised md-primary" :disabled="loading" @click="showConfirmation">Save</md-button>
-                <md-button role="button" class="md-raised" @click="hide">Close</md-button>
+                <md-button role="button" class="md-raised md-primary" :disabled="loading" @click="showConfirmation">{{ $tc('words.save') }}</md-button>
+                <md-button role="button" class="md-raised" @click="hide">{{ $tc('words.close') }}</md-button>
             </md-card-actions>
         </md-card>
 
@@ -383,17 +381,17 @@ export default {
             let usageCount = countObject[0].count
             let text = ''
             if (usageCount > 0) {
-                text = 'This tariff has using by ' + usageCount + ' of meters. Are you sure update this tariff?'
+                text = this.$tc('phrases.tariffNotify',2,{usageCount: usageCount})
             } else {
-                text = 'Are you sure update this tariff?'
+                text = this.$tc('phrases.tariffDetail',2)
             }
             this.$swal({
                 type: 'question',
-                title: 'Update',
+                title: this.$tc('words.update'),
                 text: text,
                 showCancelButton: true,
-                confirmButtonText: 'I\'m sure',
-                cancelButtonText: 'Cancel',
+                confirmButtonText: this.$tc('words.yes'),
+                cancelButtonText: this.$tc('words.no'),
             }).then((result) => {
                 if (result.value) {
                     this.updateTariff()
@@ -422,7 +420,7 @@ export default {
                     this.tariffService.setCurrency(this.appConfig.currency)
                     await this.tariffService.saveTariff('update')
                     this.loading = false
-                    this.alertNotify('success', 'Tariff has registered successfully.')
+                    this.alertNotify('success', this.$tc('phrases.newTariff',2))
                     this.$router.push({ path: '/tariffs' })
                 } catch (e) {
                     this.loading = false
@@ -553,6 +551,9 @@ export default {
 
     .alert-info .alert-link {
         color: #245269
+    }
+    .show-tariff-link {
+        cursor: pointer
     }
 
 </style>

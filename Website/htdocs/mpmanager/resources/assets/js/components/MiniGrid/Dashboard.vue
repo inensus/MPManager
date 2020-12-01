@@ -6,18 +6,18 @@
                 <md-toolbar class="md-primary">
                     <div class="md-layout-item md-size-60">
                         <md-tabs class="md-primary" md-alignment="left" md-active-tab="tab-monthly">
-                            <md-tab id="tab-weekly" md-label="Weekly" @click="tab = 'weekly'"></md-tab>
-                            <md-tab id="tab-monthly" md-label="Monthly" @click="tab = 'monthly'"></md-tab>
-                            <md-tab id="tab-anual" md-label="Anual" @click="tab = 'anual'"></md-tab>
+                            <md-tab id="tab-weekly" :md-label="$tc('words.week',2)" @click="tab = 'weekly'"></md-tab>
+                            <md-tab id="tab-monthly" :md-label="$tc('words.month',2)" @click="tab = 'monthly'"></md-tab>
+                            <md-tab id="tab-annually" :md-label="$tc('words.annually')" @click="tab = 'annually'"></md-tab>
 
                         </md-tabs>
                     </div>
 
                     <div class="md-toolbar-section-end">
                         <md-button class="md-raised  md-dense" @click="getBatchData"
-                                   :disabled="Object.keys(highlighted.base).length===0">Apply
+                                   :disabled="Object.keys(highlighted.base).length===0">{{ $tc('words.apply') }}
                         </md-button>
-                        <md-button class="md-raised md-accent md-dense" @click="closeDatePicker">Close</md-button>
+                        <md-button class="md-raised md-accent md-dense" @click="closeDatePicker">{{ $tc('words.close') }}</md-button>
                     </div>
 
                 </md-toolbar>
@@ -26,14 +26,14 @@
                 <div class="md-layout md-size-90">
                     <div class="text-center md-layout md-gutter" v-if="tab==='weekly'" :key="tab">
                         <div class="md-layout-item md-size-50" style="margin-bottom: 1vh;">
-                            <h4>Compared Week</h4>
+                            <h4>{{ $tc('words.compared') }}</h4>
                             <datepicker :inline="true" @selected="dateSelectedCompared"
                                         :highlighted="highlighted.compared"
                                         :monday-first="true"
                                         :disabledDates="disabled"></datepicker>
                         </div>
                         <div class="md-layout-item md-size-50" style="margin-bottom: 1vh;">
-                            <h4>Base Week</h4>
+                            <h4>{{ $tc('words.base') }}</h4>
                             <datepicker :inline="true" @selected="dateSelectedBase" :highlighted="highlighted.base"
                                         :monday-first="true"
                                         :disabledDates="disabled"></datepicker>
@@ -44,7 +44,7 @@
 
                     <div class="text-center md-layout md-gutter" v-if="tab==='monthly'" :key="tab">
                         <div class="md-layout-item md-size-50" style="margin-bottom: 1vh;">
-                            <h4>Compared Month</h4>
+                            <h4>{{ $tc('words.compared') }}</h4>
                             <datepicker :inline="true"
                                         :minimum-view="'month'"
                                         :maximum-view="'year'"
@@ -53,7 +53,7 @@
                                         :disabledDates="disabled"/>
                         </div>
                         <div class="md-layout-item md-size-50" style="margin-bottom: 1vh;">
-                            <h4>Base Month</h4>
+                            <h4>{{ $tc('words.base') }}</h4>
                             <datepicker :inline="true"
                                         :minimum-view="'month'"
                                         :maximum-view="'year'"
@@ -66,9 +66,9 @@
                     </div>
 
 
-                    <div class="text-center md-layout md-gutter" v-if="tab==='anual'" :key="tab">
+                    <div class="text-center md-layout md-gutter" v-if="tab==='annually'" :key="tab">
                         <div class="md-layout-item md-size-50" style="margin-bottom: 1vh;">
-                            <h4>Compared Year</h4>
+                            <h4>{{ $tc('words.compared') }}</h4>
                             <datepicker :inline="true"
                                         :minimum-view="'year'"
                                         :maximum-view="'year'"
@@ -77,7 +77,7 @@
                                         :disabledDates="disabled"/>
                         </div>
                         <div class="md-layout-item md-size-50" style="margin-bottom: 1vh;">
-                            <h4>Base Year</h4>
+                            <h4>{{ $tc('words.base') }}</h4>
                             <datepicker :inline="true"
                                         :minimum-view="'year'"
                                         :maximum-view="'year'"
@@ -97,23 +97,23 @@
                     <md-toolbar style="margin-bottom: 3rem;">
 
                     <span class="md-title" v-if="miniGridData">
-                    MiniGrid <strong>{{ miniGridData.name}}</strong>
+                    {{ $tc('words.miniGrid') }} <strong>{{ miniGridData.name}}</strong>
                         <md-icon @click="editMiniGrid">plumbing</md-icon>
 
                 </span>
                         <md-switch v-model="enableDataStream" @change="onDataStreamChange($event)" :disabled="switching"
                                    class="data-stream-switch">
-                            <span v-if="!enableDataStream">Activate Data-logger </span>
-                            <span v-else> Deactivate Data-logger</span>
+                            <span v-if="!enableDataStream">{{ $tc('words.activate') }}  {{ $tc('phrases.dataLogger',0) }} </span>
+                            <span v-else> {{ $tc('words.deactivate') }}  {{ $tc('phrases.dataLogger',0) }} </span>
                         </md-switch>
                         <div class="md-toolbar-section-end">
 
                         <span style="float: left">
-                    Period : {{this.startDate}} - {{this.endDate}}
+                    {{ $tc('words.period') }} : {{this.startDate}} - {{this.endDate}}
                 </span>
                             <md-button class="md-raised" @click="openDatePicker" v-show="!selectorOpened">
                                 <md-icon>calendar_today</md-icon>
-                                Select Period
+                                {{ $tc('phrases.selectPeriod') }}
                             </md-button>
 
                         </div>
@@ -123,7 +123,7 @@
                     <box
                         :center-text="true"
                         :color="[ '#ffa726','#fb8c00']"
-                        header-text="Sold energy (based on transactions)"
+                        :header-text="$tc('phrases.soldEnergy')"
                         :header-text-color="'#dddddd'"
                         :sub-text="soldEnergy.toString() +'kWh'"
                         :sub-text-color="'#e3e3e3'"
@@ -136,7 +136,7 @@
 
                          :center-text="true"
                          :color="[ '#ef5350','#e53935']"
-                         header-text="Processed Transactions"
+                         :header-text="$tc('phrases.processedTransactions')"
                          :header-text-color="'#dddddd'"
                          :sub-text="readable(currentTransaction[0].amount).toString() "
                          :sub-text-color="'#e3e3e3'"
@@ -149,7 +149,7 @@
 
                          :center-text="true"
                          :color="[ '#6eaa44','#578839']"
-                         header-text="Revenue"
+                         :header-text="$tc('words.revenue')"
                          :header-text-color="'#dddddd'"
                          :sub-text="readable(currentTransaction[0].revenue).toString() +this.appConfig.currency"
                          :sub-text-color="'#e3e3e3'"
@@ -178,7 +178,7 @@
                     <widget
                         :id="'revenue-pie'"
                         :headless="true"
-                        :title="'Revenue Per Customer Type'"
+                        :title="$tc('phrases.revenuePerCustomerType')"
                         color="red">
 
                         <GChart v-if="donutData.length>0"
@@ -189,7 +189,7 @@
                         </GChart>
                         <div v-else class="text-center">
                             <h4>
-                                <b>No data for selected period</b> {{Object.keys(donutData).length}}
+                                <b>{{ $tc('phrases.revenuePerCustomerType',2) }}</b> {{Object.keys(donutData).length}}
                             </h4>
                         </div>
                     </widget>
@@ -198,7 +198,7 @@
                     <widget
                         :id="'revenue-targets'"
                         :headless="true"
-                        :title="'Revenue Targets Per Customer Type'"
+                        :title="$tc('phrases.revenueTargetsPerCustomerType')"
                         color="green">
 
                         <div class="row" v-if="batchRevenues.revenueList !== null && donutData.length>0"
@@ -217,7 +217,7 @@
 
                                         </md-progress-bar>
                                         <md-tooltip md-delay="300" md-direction="bottom">
-                                            Targetted Revenue:
+                                            {{ $tc('phrases.revenueTargetsPerCustomerType',2) }}:
                                             {{ targetPercentage(batchRevenues.revenueList.revenue[index],
                                             revenue.revenue, false)}} %
                                             {{readable(batchRevenues.revenueList.revenue[index])}}
@@ -255,7 +255,7 @@
                     />
                 </div>
                 <div class="md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-100">
-                    <widget :id="'revenue-trends'" :title="'Revenue Trends'" :subscriber="subscriber.revenue_trends"
+                    <widget :id="'revenue-trends'" :title="$tc('phrases.revenueTrends')" :subscriber="subscriber.revenue_trends"
                     >
                         <div class="md-layout md-gutter">
                             <div class="md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-100">
@@ -283,9 +283,9 @@
                 </div>
 
                 <div class="md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-100">
-                    <widget :id="'ticketing-trends'" :title="'Tickets Overview'">
+                    <widget :id="'ticketing-trends'" :title="$tc('phrases.ticketsOverview')">
                         <div class="col-sm-12" style="margin: 2vh;">
-                            <h5>Opened Tickets are on the left side and resolved tickets on the right side</h5>
+                            <h5>{{ $tc('phrases.ticketsOverview',2) }}</h5>
                             <GChart
                                 type="ColumnChart"
                                 :data="openedTicketChartData"
@@ -307,17 +307,17 @@
                         <div class="modal-container">
                             <md-card class="md-size-100">
                                 <md-card-header>
-                                    <h3>Edit MiniGrid {{miniGridData.name}}</h3>
+                                    <h3>{{ $tc('words.edit') }} {{miniGridData.name}}</h3>
                                 </md-card-header>
                                 <md-card-content>
                                     <md-field>
-                                        <label for="mini-grid-name">Name</label>
+                                        <label for="mini-grid-name">{{ $tc('words.name') }}</label>
                                         <md-input type="text" id="mini-grid-name" class="form-control"
                                                   :value="miniGridData.name"></md-input>
                                     </md-field>
 
                                     <md-field>
-                                        <label for="mini-grid-location">Location (Lat, Lon)</label>
+                                        <label for="mini-grid-location">{{ $tc('words.location') }}</label>
                                         <md-input type="text" id="mini-grid-location"
                                                   class="form-control"
                                                   :value="miniGridData.location!== undefined ? miniGridData.location.points: ''"
@@ -329,11 +329,11 @@
                                 <md-card-actions>
                                     <md-button class="md-raised md-accent" @click="showModal = false">
                                         <md-icon>cancel</md-icon>
-                                        Close
+                                        {{ $tc('words.close') }}
                                     </md-button>
 
                                     <md-button @click="updateMiniGrid" class="md-raised md-primary">
-                                        Update
+                                        {{ $tc('words.update') }}
                                     </md-button>
                                 </md-card-actions>
                             </md-card>
@@ -669,8 +669,8 @@ export default {
             try {
                 this.ticketsData = await this.revenueService.getTicketsData(this.miniGridId)
 
-                openedTicketChartData.push(['Period'])
-                closedTicketChartData.push(['Period'])
+                openedTicketChartData.push([this.$tc('words.period')])
+                closedTicketChartData.push([this.$tc('words.period')])
                 for (let category in this.ticketsData.categories) {
                     openedTicketChartData[0].push(this.ticketsData.categories[category].label_name)
                     openedTicketChartData[0].push({ type: 'string', role: 'tooltip' })
@@ -690,8 +690,8 @@ export default {
                     for (let tD in ticketCategoryData) {
 
                         let ticketData = ticketCategoryData[tD]
-                        ticketChartDataOpened.push(ticketData.opened, oT + '\n' + [tD] + ' : ' + ticketData.opened + ' Opened')
-                        ticketChartDataClosed.push(ticketData.closed, oT + '\n' + [tD] + ' : ' + ticketData.closed + ' Closed')
+                        ticketChartDataOpened.push(ticketData.opened, oT + '\n' + [tD] + ' : ' + ticketData.opened + this.$tc('words.open',2))
+                        ticketChartDataClosed.push(ticketData.closed, oT + '\n' + [tD] + ' : ' + ticketData.closed + this.$tc('words.close',2))
 
                     }
 
@@ -711,8 +711,8 @@ export default {
 
         },
         async fillRevenueTrends () {
-            this.trendChartData.base = [['Date']]
-            this.trendChartData.compare = [['Date']]
+            this.trendChartData.base = [[this.$tc('words.date')]]
+            this.trendChartData.compare = [[this.$tc('words.date')]]
 
             try {
                 this.revenueTrends = await this.revenueService.getMiniGridRevenueTrends(this.miniGridId, this.startDate, this.endDate)
@@ -722,8 +722,8 @@ export default {
                         this.trendChartData.base[0].push(tariffNames)
                         this.trendChartData.compare[0].push(tariffNames)
                     }
-                    this.trendChartData.base[0].push('Total')
-                    this.trendChartData.compare[0].push('Total')
+                    this.trendChartData.base[0].push(this.$tc('words.total'))
+                    this.trendChartData.compare[0].push(this.$tc('words.total'))
                     if (this.tab !== 'weekly') {
                         break
                     }
@@ -770,7 +770,7 @@ export default {
                 this.switching = true
                 let data_stream = this.enableDataStream === true ? 1 : 0
                 await this.miniGridService.setMiniGridDataStream(this.miniGridId, data_stream)
-                let message = value === true ? 'Data Logger is activated.' : 'Data Logger is deactivated.'
+                let message = value === true ? this.$tc('phrases.dataLogger',1) : this.$tc('phrases.dataLogger',2)
                 this.alertNotify('success', message)
                 this.isLoggerActive = value
                 this.enableDataStream = value
@@ -790,14 +790,14 @@ export default {
         },
         //get all data from the beginning of the time
         async fillRevenueTrendsOverview () {
-            this.trendChartData.overview = [['Date']]
+            this.trendChartData.overview = [this.$tc('words.date')]
             try {
                 this.revenueTrends = await this.revenueService.getMiniGridRevenueTrends(this.miniGridId, '2018-08-01', this.highlighted.base.to)
                 for (let dt in this.revenueTrends) {
                     for (let tariffNames in this.revenueTrends[dt]) {
                         this.trendChartData.overview[0].push(tariffNames)
                     }
-                    this.trendChartData.overview[0].push('Total')
+                    this.trendChartData.overview[0].push(this.$tc('words.total'))
                     break
                 }
                 for (let x in this.revenueTrends) {
@@ -971,7 +971,7 @@ export default {
                         includeDisabled: true // Highlight disabled dates
                     }
                 }
-            } else if (this.tab === 'anual') {
+            } else if (this.tab === 'annually') {
                 let date = moment(val)
                 if (base) {
                     this.highlighted.tmpBase = {
@@ -1000,7 +1000,7 @@ export default {
         },
         // get all periods from donut data and maps them into one array
         initDonutData () {
-            this.donutData = this.initializeCharts(['Connection Name', 'Revenue'])
+            this.donutData = this.initializeCharts([this.$tc('words.connection'), this.$tc('words.revenue')])
         },
         initializeCharts (initValue) {
             let donutData = [initValue]
@@ -1026,8 +1026,8 @@ export default {
                 }
             } else {
                 donutData = []
-                donutData.push(['Connection Name', 'Revenue'])
-                donutData.push(['', { v: 1, f: 'No Data' }])
+                donutData.push([this.$tc('words.connection'), this.$tc('words.revenue')])
+                donutData.push(['', { v: 1, f: this.$tc('phrases.noData') }])
                 this.donutChartOptions.chartArea = {
                     left: '15%'
                 }

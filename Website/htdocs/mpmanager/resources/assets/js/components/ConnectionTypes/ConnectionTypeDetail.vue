@@ -2,7 +2,7 @@
     <div>
         <widget
             :id="'connection-type-detail'"
-            :title="'Connection Type Details'"
+            :title="$tc('phrases.connectionTypeDetails')"
             :subscriber="subscriber.detail"
         >
             <md-card>
@@ -10,12 +10,12 @@
             <div class="md-layout md-gutter">
                 <div class="md-layout-item md-size-50">
                    <div class="md-layout">
-                       <div class="md-layout-item md-subheader">ID</div>
+                       <div class="md-layout-item md-subheader">{{ $tc('words.id') }}</div>
                        <div class="md-layout-item md-subheader n-font">{{subConnectionType.connection_type_id}}</div>
                    </div>
                     <hr class="hr-d">
                     <div class="md-layout">
-                       <div class="md-layout-item md-subheader">Name</div>
+                       <div class="md-layout-item md-subheader">{{ $tc('words.name') }}</div>
                        <div v-if="editConnectionType" class="md-layout-item md-subheader n-font">
                            {{connectionType.name}}
                            <md-button class="md-icon-button" @click="toggleEditConnectionType">
@@ -24,15 +24,15 @@
 
                        </div>
                         <div v-else class="md-layout-item md-subheader n-font">
-                            <md-field :class="{'md-invalid': errors.has('connectionTypeName')}">
-                                <label for="connectionTypeName">Edit Connection Type Name</label>
+                            <md-field :class="{'md-invalid': errors.has($tc('phrases.connectionType'))}">
+                                <label for="connectionTypeName">{{ $tc('phrases.editConnectionType') }}</label>
                                 <md-input
                                     id="connectionTypeName"
-                                    name="connectionTypeName"
+                                    :name="$tc('phrases.connectionType')"
                                     v-model="connectionType.name"
                                     v-validate="'required|min:3'"
                                 />
-                                <span class="md-error">{{ errors.first('connectionTypeName') }}</span>
+                                <span class="md-error">{{ errors.first($tc('phrases.connectionType')) }}</span>
                                 <md-button class="md-icon-button" @click="editConnectionTypeName">
                                     <md-icon>save</md-icon>
                                 </md-button>
@@ -45,18 +45,18 @@
                    </div>
                     <hr class="hr-d">
                     <div class="md-layout">
-                       <div class="md-layout-item md-subheader">Created Date</div>
+                       <div class="md-layout-item md-subheader">{{ $tc('words.createdAt') }}</div>
                        <div class="md-layout-item md-subheader n-font">{{formatReadableDate(connectionType.created_at)}}</div>
                    </div>
                 </div>
                 <div class="md-layout-item md-size-50">
                     <div class="md-layout">
-                        <div class="md-layout-item md-subheader">Meters</div>
+                        <div class="md-layout-item md-subheader">{{ $tc('words.meter',2) }}</div>
                         <div class="md-layout-item md-subheader n-font">{{connectionType.meter_parameters_count}}</div>
                     </div>
                     <hr class="hr-d">
                     <div class="md-layout">
-                        <div class="md-layout-item md-subheader">Sub Types</div>
+                        <div class="md-layout-item md-subheader">{{ $tc('phrases.subTypes')  }}</div>
                         <div class="md-layout-item md-subheader n-font">{{subConnectionTypeService.subConnectionTypes.length}}</div>
                     </div>
 
@@ -66,7 +66,7 @@
             </md-card>
         </widget>
         <widget
-            :title="'Add New Sub Connection Type' "
+            :title="$tc('phrases.newSubConnectionType') "
             :id="'add-sub-connection-type'"
             color="red"
             v-if = "showNewSubType"
@@ -76,43 +76,43 @@
                 <md-card-content>
                     <div class="md-layout md-gutter">
                         <div class="md-layout-item md-size-50">
-                            <md-field :class="{'md-invalid': errors.has('name')}">
-                                <label for="name">Sub Connection Name</label>
+                            <md-field :class="{'md-invalid': errors.has($tc('words.name'))}">
+                                <label for="name">{{$tc('words.name')}}</label>
                                 <md-input
                                     id="name"
-                                    name="name"
+                                    :name="$tc('words.name')"
                                     v-model="subConnectionType.name"
                                     v-validate="'required|min:3'"
                                 />
-                                <span class="md-error">{{ errors.first('name') }}</span>
+                                <span class="md-error">{{ errors.first($tc('words.name')) }}</span>
                             </md-field>
 
                         </div>
                         <div class="md-layout-item md-size-50">
-                            <md-field :class="{'md-invalid': errors.has('tariff')}">
-                                <label for="tariff">Select Tariff</label>
-                                <md-select v-model="subConnectionType.tariff_id" v-validate="'required'" name="tariff" id="tariff">
+                            <md-field :class="{'md-invalid': errors.has($tc('words.tariff'))}">
+                                <label for="tariff">{{$tc('words.tariff')}}</label>
+                                <md-select v-model="subConnectionType.tariff_id" v-validate="'required'" :name="$tc('words.tariff')" id="tariff">
                                     <md-option v-for="t in tariff" :key="t.id" :value="t.id">{{t.name}}</md-option>
                                 </md-select>
-                                <span class="md-error">{{ errors.first('tariff') }}</span>
+                                <span class="md-error">{{ errors.first($tc('words.tariff')) }}</span>
                             </md-field>
                         </div>
                     </div>
                 </md-card-content>
 
                 <md-card-actions>
-                    <md-button role="button" class="md-raised md-primary" @click="saveSubType(subConnectionType)">Save
+                    <md-button role="button" class="md-raised md-primary" @click="saveSubType(subConnectionType)">{{$tc('words.save')}}
                     </md-button>
-                    <md-button role="button" class="md-raised" @click="addSubType">Close</md-button>
+                    <md-button role="button" class="md-raised" @click="addSubType">{{$tc('words.close')}}</md-button>
                 </md-card-actions>
             </md-card>
 
         </widget>
         <widget
-            :title="'Sub Connection Types'"
+            :title="$tc('phrases.subConnectionTypes')"
             :id="'sub-connection-types'"
             :button="true"
-            :button-text="'New Sub Connection Type'"
+            :button-text="$tc('phrases.newSubConnectionType')"
             @widgetAction="addSubType"
             :color="'green'"
             :subscriber="subscriber.subTypes">
@@ -121,9 +121,9 @@
                         <md-table>
                             <md-table-row>
                                 <md-table-head>#</md-table-head>
-                                <md-table-head>ID</md-table-head>
-                                <md-table-head>Name</md-table-head>
-                                <md-table-head>Tariff Name</md-table-head>
+                                <md-table-head>{{$tc('words.id')}}</md-table-head>
+                                <md-table-head>{{$tc('words.name')}}</md-table-head>
+                                <md-table-head>{{$tc('words.tariff')}}</md-table-head>
                                 <md-table-head></md-table-head>
 
                             </md-table-row>
@@ -132,15 +132,15 @@
                                 <md-table-cell>{{subType.id}}</md-table-cell>
                                 <md-table-cell>
                                     <div v-if="editSubConnectionType === subType.id">
-                                        <md-field :class="{'md-invalid': errors.has('subConnectionTypeName')}">
-                                            <label for="subConnectionTypeName">Edit Sub Connection Type Name</label>
+                                        <md-field :class="{'md-invalid': errors.has($tc('words.name'))}">
+                                            <label for="subConnectionTypeName">{{ $tc('phrases.editSubConnectionType') }}</label>
                                             <md-input
                                                 id="subConnectionTypeName"
-                                                name="subConnectionTypeName"
+                                                :name="$tc('words.name')"
                                                 v-model="subType.name"
                                                 v-validate="'required|min:3'"
                                             />
-                                            <span class="md-error">{{ errors.first('subConnectionTypeName') }}</span>
+                                            <span class="md-error">{{ errors.first($tc('words.name')) }}</span>
 
                                         </md-field>
                                     </div>
@@ -150,12 +150,12 @@
                                 </md-table-cell>
                                 <md-table-cell>
                                     <div v-if="editSubConnectionType === subType.id">
-                                        <md-field :class="{'md-invalid': errors.has('tariff')}">
-                                            <label for="tariff">Select Tariff</label>
-                                            <md-select v-model="subType.tariff_id" v-validate="'required'" name="tariff" id="tariff">
+                                        <md-field :class="{'md-invalid': errors.has($tc('words.tariff'))}">
+                                            <label for="tariff">{{$tc('words.tariff')}}</label>
+                                            <md-select v-model="subType.tariff_id" v-validate="'required'" :name="$tc('words.tariff')" id="tariff">
                                                 <md-option v-for="t in tariff" :key="t.id" :value="t.id">{{t.name}}</md-option>
                                             </md-select>
-                                            <span class="md-error">{{ errors.first('tariff') }}</span>
+                                            <span class="md-error">{{ errors.first($tc('words.tariff')) }}</span>
                                         </md-field>
                                     </div>
                                     <div v-else>
@@ -244,17 +244,17 @@ export default {
             }
             this.$swal({
                 type: 'question',
-                title: 'Edit Sub Connection Type ',
-                text: 'Are you sure to changing this sub connection type',
+                title: this.$tc('phrases.editSubConnectionType'),
+                text: this.$tc('phrases.editSubConnectionTypeNotify',1),
                 showCancelButton: true,
-                cancelButtonText: 'No',
-                confirmButtonText: 'Yes'
+                cancelButtonText: this.$tc('words.no'),
+                confirmButtonText: this.$tc('words.yes')
             }).then(response => {
                 if(this.checkConfirm(response)){
                     try {
                         this.subConnectionTypeService.updateSubConnectionType(subType)
                         this.editSubConnectionType = null
-                        this.alertNotify('success', 'Sub Connection Updated Successfully')
+                        this.alertNotify('success', this.$tc('phrases.editSubConnectionTypeNotify',2))
                     }catch (e) {
                         this.alertNotify('error', e.message)
                     }
@@ -270,18 +270,18 @@ export default {
             }
             this.$swal({
                 type: 'question',
-                title: 'Edit Sub Connection Type ',
-                text: 'Are you sure to change of connection type name for ' + this.connectionType.name + '?',
+                title: this.$tc('phrases.editConnectionType'),
+                text: this.$tc('phrases.editConnectionTypeNotify',2,{name: this.connectionType.name}),
                 showCancelButton: true,
-                cancelButtonText: 'No',
-                confirmButtonText: 'Yes'
+                cancelButtonText: this.$tc('words.no'),
+                confirmButtonText: this.$tc('words.yes')
             }).then(response => {
                 if(this.checkConfirm(response))
                 {
                     try {
                         this.connectionTypeService.updateConnectionType(this.connectionType)
                         this.toggleEditConnectionType()
-                        this.alertNotify('success', 'Connection Type Name Updated Successfully ')
+                        this.alertNotify('success', this.$tc('phrases.editConnectionTypeNotify',1))
                     }catch (e) {
                         this.alertNotify('error', e.message)
                     }
@@ -313,7 +313,7 @@ export default {
             }
             try {
                 await this.subConnectionTypeService.createSubConnectionType(subConnectionType)
-                this.alertNotify('success', 'SubConnectionType has registered.')
+                this.alertNotify('success', this.$tc('phrases.newSubConnectionType',2))
                 this.addSubType()
                 this.clearForm()
             }catch (e) {

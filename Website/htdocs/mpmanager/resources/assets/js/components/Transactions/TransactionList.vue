@@ -5,12 +5,12 @@
                 class="md-layout-item  md-xlarge-size-100  md-large-size-100 md-medium-size-100  md-small-size-100 md-xsmall-size-100">
                 <div style="float:right;padding-bottom: 1rem;">
                     <md-field>
-                        <label for="period">Period</label>
+                        <label for="period">{{ $tc('words.period') }}</label>
                         <md-select v-model="period" name="period" id="period" @md-selected="getPeriod">
-                            <md-option value="Yesterday">Yesterday</md-option>
-                            <md-option value="Same day last week">Same day last week</md-option>
-                            <md-option value="Past 7 days">Past 7 days</md-option>
-                            <md-option value="Past 30 days">Past 30 days</md-option>
+                            <md-option value="Yesterday">{{ $tc('words.yesterday') }}</md-option>
+                            <md-option value="Same day last week">{{$tc('phrases.sameDayLastWeek')}}</md-option>
+                            <md-option value="Past 7 days">{{ $tc('phrases.lastXDays',1,{x: 7}) }}</md-option>
+                            <md-option value="Past 30 days">{{ $tc('phrases.lastXDays',1,{x: 30}) }}</md-option>
                         </md-select>
                     </md-field>
                 </div>
@@ -21,7 +21,7 @@
                 <box
                     :center-text="true"
                     :color="[ '#26c6da','#00acc1']"
-                    header-text="Incoming Transactions"
+                    :header-text="$tc('phrases.incomingTransactions')"
                     :header-text-color="'#dddddd'"
                     :sub-text="analyticsData.current.total + '/' + analyticsData.past.total"
                     :sub-text-color="'#e3e3e3'"
@@ -35,7 +35,7 @@
                 <box
                     :center-text="true"
                     :color="[ '#6eaa44','#578839']"
-                    header-text="Confirmed"
+                    :header-text="$tc('words.confirm',2)"
                     :header-text-color="'#dddddd'"
                     :sub-text="analyticsData.current.confirmed + '/' +  analyticsData.past.confirmed"
                     :sub-text-color="'#e3e3e3'"
@@ -49,7 +49,7 @@
                 <box
                     :center-text="true"
                     :color="[ '#ef5350','#e53935']"
-                    header-text="Cancelled"
+                    :header-text="$tc('words.cancel',2)"
                     :header-text-color="'#dddddd'"
                     :sub-text="analyticsData.current.cancelled + '/' +  analyticsData.past.cancelled"
                     :sub-text-color="'#e3e3e3'"
@@ -63,7 +63,7 @@
                 <box
                     :center-text="true"
                     :color="[ '#ffa726','#fb8c00']"
-                    header-text="Revenue"
+                    :header-text="$tc('words.revenue')"
                     :header-text-color="'#dddddd'"
                     :sub-text="readable(analyticsData.current.amount) +                                    appConfig.currency"
                     :sub-text-color="'#e3e3e3'"
@@ -76,14 +76,14 @@
             <div
                 class="md-layout-item  md-xlarge-size-100  md-large-size-100 md-medium-size-100 md-small-size-100  md-xsmall-size-100"
                 v-if="analyticsData === null && loading ===false">
-                <h5>There is not enough data to compare</h5>
+                <h5>{{$tc('phrases.transactionNotify')}}</h5>
             </div>
         </div>
 
 
         <widget
             :id="'transaction-list'"
-            :title="'Transactions'"
+            :title="$tc('words.transaction',2)"
             :paginator="transactionService.paginator"
             :search="false"
             :subscriber="subscriber"
@@ -99,29 +99,29 @@
                         <md-table style="width:100%;" md-card>
                             <md-table-row>
                                 <md-table-head>
-                                    Status
+                                    {{ $tc('words.status') }}
                                 </md-table-head>
                                 <md-table-head>
                                     <md-icon>person</md-icon>
-                                    Service
+                                    {{ $tc('words.service') }}
                                 </md-table-head>
                                 <md-table-head>
                                     <md-icon>phone</md-icon>
-                                    Sender
+                                    {{ $tc('words.sender') }}
                                 </md-table-head>
                                 <md-table-head>
                                     <md-icon>money</md-icon>
-                                    Amount
+                                    {{ $tc('words.amount') }}
                                 </md-table-head>
-                                <md-table-head>Type</md-table-head>
-                                <md-table-head>Message</md-table-head>
+                                <md-table-head> {{ $tc('words.type') }}</md-table-head>
+                                <md-table-head> {{ $tc('words.message') }}</md-table-head>
                                 <md-table-head>
                                     <md-icon>calendar_today</md-icon>
-                                    Sent Date
+                                    {{ $tc('phrases.sentDate') }}
                                 </md-table-head>
                                 <md-table-head>
                                     <md-icon>calendar_view_day</md-icon>
-                                    Process Time
+                                    {{ $tc('phrases.processTime') }}
                                 </md-table-head>
                             </md-table-row>
 
@@ -134,13 +134,13 @@
                             >
                                 <md-table-cell>
                                     <md-icon v-if="transaction.status===1" style="color:green" md-toolt>check_circle_outline
-                                        <md-tooltip md-direction="right">Confirmed</md-tooltip>
+                                        <md-tooltip md-direction="right">{{ $tc('words.confirm',2) }}</md-tooltip>
                                     </md-icon>
                                     <md-icon v-if="transaction.status===0" style="color:goldenrod">contact_support
-                                        <md-tooltip md-direction="right">Processing</md-tooltip>
+                                        <md-tooltip md-direction="right">{{ $tc('words.process',3) }}</md-tooltip>
                                     </md-icon>
                                     <md-icon v-if="transaction.status===-1" style="color:red">cancel
-                                        <md-tooltip md-direction="right">Rejected</md-tooltip>
+                                        <md-tooltip md-direction="right">{{ $tc('words.reject',2) }}</md-tooltip>
                                     </md-icon>
                                 </md-table-cell>
 
@@ -168,8 +168,8 @@
                                 </md-table-cell>
                                 <md-table-cell>
                                     <div v-if="transaction!=undefined">
-                                        In {{timeDiffForHuman(transaction.sentDate, transaction.lastUpdate)}}
-                                        seconds
+                                        {{$tc('phrases.inXSeconds',1,{x: timeDiffForHuman(transaction.sentDate, transaction.lastUpdate) })}}
+
                                     </div>
                                 </md-table-cell>
                             </md-table-row>
@@ -216,8 +216,6 @@ export default {
                 'Past 7 days',
                 'Past 30 days'
             ],
-            headers: ['ID', 'Service', 'Sender', 'Amount', 'Type', 'Message', 'Sent Date', 'Process Time'],
-            tableName: 'Transaction',
             airtelLogo: airtelLogo,
             vodacomLogo: vodacomLogo
         }

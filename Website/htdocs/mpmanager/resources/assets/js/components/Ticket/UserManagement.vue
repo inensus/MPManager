@@ -1,7 +1,7 @@
 <template>
     <div class="row">
         <widget v-if="showNewUser"
-                title="Add New Ticketing User"
+                :title="$tc('phrases.newTicketingUser')"
                 color="red"
                 >
             <form class="md-layout">
@@ -9,24 +9,24 @@
                     <md-card-content>
                         <div class="md-layout md-gutter">
                             <div class="md-layout-item md-size-100">
-                                <md-field :class="{'md-invalid': errors.has('name')}">
-                                    <label>Name</label>
+                                <md-field :class="{'md-invalid': errors.has($tc('words.name'))}">
+                                    <label>{{ $tc('words.name') }}</label>
                                     <md-input
                                         v-model="ticketUserService.newUser.name"
-                                        name="name"
+                                        :name="$tc('words.name')"
                                         id="name"
                                         v-validate="'required|min:3'"></md-input>
-                                    <span class="md-error">{{ errors.first('name') }}</span>
+                                    <span class="md-error">{{ errors.first($tc('words.name')) }}</span>
                                 </md-field>
-                                <md-field :class="{'md-invalid': errors.has('tag')}">
-                                    <label>Ticketing System Tag</label>
+                                <md-field :class="{'md-invalid': errors.has($tc('phrases.ticketingSystemTag'))}">
+                                    <label>{{ $tc('phrases.ticketingSystemTag') }}</label>
                                     <md-input v-model="ticketUserService.newUser.tag"
-                                              name="tag"
+                                              :name="$tc('phrases.ticketingSystemTag')"
                                               id="tag"
                                               v-validate="'required|min:3'"></md-input>
-                                    <span class="md-error">{{ errors.first('tag') }}</span>
+                                    <span class="md-error">{{ errors.first($tc('phrases.ticketingSystemTag')) }}</span>
                                 </md-field>
-                                <md-checkbox v-model="ticketUserService.newUser.outsourcing">User for Outsourcing?
+                                <md-checkbox v-model="ticketUserService.newUser.outsourcing">{{ $tc('phrases.userForOutsourcing') }}
                                 </md-checkbox>
                             </div>
                         </div>
@@ -34,9 +34,9 @@
                     </md-card-content>
 
                     <md-card-actions>
-                        <md-button type="button" @click="saveUser" :disabled="loading" class="md-primary">Create User
+                        <md-button type="button" @click="saveUser" :disabled="loading" class="md-primary md-raised md-dense">{{ $tc('words.save') }}
                         </md-button>
-                        <md-button type="button" @click="showNewUser = false" class="md-accent">Close</md-button>
+                        <md-button type="button" @click="showNewUser = false" class="md-accent md-raised md-dense">{{ $tc('words.close') }}</md-button>
                     </md-card-actions>
                 </md-card>
 
@@ -48,7 +48,7 @@
 
 
         <widget
-            title="UserList"
+            :title="$tc('phrases.userList')"
             :button="true"
             button-text="Add new User"
             @widgetAction="showAddUser"
@@ -57,10 +57,10 @@
         >
                 <md-table v-model="ticketUserService.list" md-sort="name" md-sort-order="asc" md-card>
                     <md-table-row slot="md-table-row" slot-scope="{ item }">
-                        <md-table-cell md-label="ID" md-sort-by="id" md-numeric>{{ item.id }}</md-table-cell>
-                        <md-table-cell md-label="Name" md-sort-by="name">{{ item.name }}</md-table-cell>
-                        <md-table-cell md-label="Tag" md-sort-by="tag">{{ item.tag }}</md-table-cell>
-                        <md-table-cell md-label="Registered Since" md-sort-by="created_at">{{ item.created_at }}
+                        <md-table-cell :md-label="$tc('words.id')" md-sort-by="id" md-numeric>{{ item.id }}</md-table-cell>
+                        <md-table-cell :md-label="$tc('words.name')" md-sort-by="name">{{ item.name }}</md-table-cell>
+                        <md-table-cell :md-label="$tc('words.tag')" md-sort-by="tag">{{ item.tag }}</md-table-cell>
+                        <md-table-cell :md-label="$tc('phrases.createdDate')" md-sort-by="created_at">{{ item.created_at }}
                         </md-table-cell>
                     </md-table-row>
                 </md-table>
@@ -82,8 +82,6 @@ export default {
             subscriber:'ticket-user-list',
             ticketUserService: new TicketUserService(),
             showNewUser: false,
-            headers: ['ID', 'Name', 'Tag', 'Registered Since'],
-            tableName: 'Ticket User',
             loading: false,
         }
 
@@ -103,12 +101,12 @@ export default {
                     let userData = await this.ticketUserService.createUser(this.ticketUserService.newUser.name, this.ticketUserService.newUser.tag, this.ticketUserService.newUser.outsourcing)
 
                     if (userData.error != undefined) {
-                        this.alertNotify('warn', this.ticketUserService.newUser.tag + ' not found in the Ticketing system!')
+                        this.alertNotify('warn',  this.$tc('phrases.ticketUserNotify',2, {tag: this.ticketUserService.newUser.tag}))
                         this.loading = false
                         return
                     }
                     await this.getUsers()
-                    this.alertNotify('success', 'User added successfully.')
+                    this.alertNotify('success', this.$tc('phrases.ticketUserNotify',1))
                     this.loading = false
                 } catch (e) {
                     this.loading = false

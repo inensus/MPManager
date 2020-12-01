@@ -3,9 +3,9 @@
         <new-receipt :addNewReceipt="showNewReceipt" :agent="agent"/>
         <widget
             :class="'col-sm-6 col-md-5'"
-            :button-text="'Add Receipt'"
+            :button-text="$tc('phrases.addReceipt',0)"
             :button="true"
-            title="Receipt"
+            :title="$tc('words.receipt')"
             @widgetAction="newReceipt"
             :paginator="agentReceiptService.paginator"
             :subscriber="subscriber"
@@ -45,7 +45,7 @@ export default {
             agentReceiptService: new AgentReceiptService(this.agentId),
             agentService: new AgentService(),
             resetKey: 0,
-            headers: ['ID', 'Amount', 'Receiver', 'Date'],
+            headers: [this.$tc('words.id'), this.$tc('words.amount'), this.$tc('words.receiver'), this.$tc('words.date')],
             tableName: 'Agent Receipt'
         }
     },

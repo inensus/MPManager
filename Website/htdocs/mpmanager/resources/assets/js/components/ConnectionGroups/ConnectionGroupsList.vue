@@ -3,19 +3,19 @@
         <NewConnectionGroup/>
         <widget
             :id="'connection-Groups-list'"
-            :title="'Connection Groups'"
+            :title="$tc('phrases.connectionGroup',2)"
             :paginator="connectionGroups.paginator"
             :subscriber="subscriber"
             :button="true"
-            :button-text="'New Connection Group'"
+            :button-text="$tc('phrases.newConnectionGroup')"
             @widgetAction="addNew"
             :color="'green'"
         >
                 <md-table md-card style="margin-left: 0">
                     <md-table-row>
                         <md-table-head>#</md-table-head>
-                        <md-table-head>ID</md-table-head>
-                        <md-table-head>Name</md-table-head>
+                        <md-table-head>{{ $tc('words.id') }}</md-table-head>
+                        <md-table-head>{{ $tc('words.name') }}</md-table-head>
                         <md-table-head></md-table-head>
                     </md-table-row>
                     <md-table-row v-for="(Group,index) in connectionGroups" :key="Group.id">
@@ -23,15 +23,15 @@
                         <md-table-cell> {{ Group.id}}</md-table-cell>
                         <md-table-cell>
                             <div v-if="editConnectionGroup === Group.id">
-                                <md-field :class="{'md-invalid': errors.has('ConnectionGroup')}">
-                                    <label for="ConnectionGroup">Edit Connection Group Name</label>
+                                <md-field :class="{'md-invalid': errors.has($tc('words.name'))}">
+                                    <label for="ConnectionGroup">{{ $tc('phrases.editConnectionGroup',0) }}</label>
                                     <md-input
                                         id="ConnectionGroup"
-                                        name="ConnectionGroup"
+                                        :name="$tc('words.name')"
                                         v-model="Group.name"
                                         v-validate="'required|min:3'"
                                     />
-                                    <span class="md-error">{{ errors.first('ConnectionGroup') }}</span>
+                                    <span class="md-error">{{ errors.first($tc('words.name')) }}</span>
 
                                 </md-field>
                             </div>
@@ -111,17 +111,17 @@ export default {
             }
             this.$swal({
                 type: 'question',
-                title: 'Edit Connection Group ',
-                text: 'Are you sure to changing this sub connection group name ',
+                title: this.$tc('phrases.editConnectionGroup',0),
+                text: this.$tc('phrases.editConnectionGroup',1),
                 showCancelButton: true,
-                cancelButtonText: 'No',
-                confirmButtonText: 'Yes'
+                cancelButtonText: this.$tc('words.no'),
+                confirmButtonText: this.$tc('words.yes'),
             }).then(response => {
                 if(this.checkConfirm(response)){
                     try {
                         this.connectionGroupService.updateConnectionGroup(connectionGroup)
                         this.editConnectionGroup = null
-                        this.alertNotify('success', 'Connection Group Updated Successfully')
+                        this.alertNotify('success', this.$tc('phrases.editConnectionGroup',2),)
                     }catch (e) {
                         this.alertNotify('error', e)
                     }

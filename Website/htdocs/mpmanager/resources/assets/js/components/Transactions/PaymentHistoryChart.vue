@@ -23,7 +23,7 @@ export default {
                 ['Paid For', 'Amount']
             ],
             donutChartOptions: {
-                title: 'Payment Distribution',
+                title: this.$tc('phrases.paymentDistribution'),
                 pieHole: 0.4,
                 legend: 'left',
                 height: 300,

@@ -1,8 +1,8 @@
 <template>
     <widget
-        title="Details"
+        :title="$tc('words.detail',1)"
         :button="true"
-        button-text="Delete Agent"
+        :button-text="$tc('words.delete')"
         color="red"
         button-icon="delete"
         @widgetAction="confirmDelete">
@@ -25,7 +25,7 @@
                         class="md-layout-item md-large-size-25 md-medium-size-25 md-small-size-25 md-xsmall-size-25">
                         <h3>
                             <md-icon>account_balance_wallet</md-icon>
-                            Balance:
+                            {{ $tc('words.balance') }}:
                             {{agent.balance}}
                         </h3>
                     </div>
@@ -45,21 +45,21 @@
 
                         <label>
                             <md-icon>wc</md-icon>
-                            Gender:</label>
+                            {{ $tc('words.gender') }}:</label>
                         <span>{{agent.gender}}</span>
                     </div>
                     <div
                         class="md-layout-item md-large-size-25 md-medium-size-25 md-small-size-25 detail-card-second-row ">
                         <label>
                             <md-icon>phone</md-icon>
-                            Phone:</label>
+                            {{ $tc('words.phone') }}:</label>
                         <span>{{agent.phone}}</span>
                     </div>
                     <div
                         class="md-layout-item md-large-size-25 md-medium-size-25 md-small-size-25 detail-card-second-row">
                         <label>
                             <md-icon>cake</md-icon>
-                            Birthday:</label>
+                            {{ $tc('words.birthday') }}:</label>
                         <span>{{agent.birthday}}</span>
 
 
@@ -68,7 +68,7 @@
                         class="md-layout-item md-large-size-25 md-medium-size-25 md-small-size-25 detail-card-second-row">
                         <label>
                             <md-icon>tag</md-icon>
-                            Type</label>
+                            {{ $tc('words.type') }}</label>
                         <span>{{agent.commissionType}} </span>
 
                     </div>
@@ -83,12 +83,12 @@
 
 
                                     <md-field>
-                                        <label for="name">Name</label>
+                                        <label for="name">{{ $tc('words.name') }}</label>
                                         <md-input type="text" name="name" id="name" v-model="agent.name"/>
                                     </md-field>
 
                                     <md-field>
-                                        <label for="surname">Surname</label>
+                                        <label for="surname">{{ $tc('words.surname') }}</label>
                                         <md-input type="text" name="surname" id="surname" v-model="agent.surname"/>
                                     </md-field>
 
@@ -97,16 +97,16 @@
                                     </md-datepicker>
 
                                     <md-field>
-                                        <label for="gender">Gender :</label>
+                                        <label for="gender">{{ $tc('words.gender') }} :</label>
                                         <md-select name="gender" id="gender" v-model="agent.gender">
                                             <md-option disabled v-if="agent.gender==null">-- Select --</md-option>
-                                            <md-option value="male">Male</md-option>
-                                            <md-option value=" female">Female</md-option>
+                                            <md-option value="male">{{ $tc('words.male') }}</md-option>
+                                            <md-option value=" female">{{ $tc('words.female') }}</md-option>
                                         </md-select>
                                     </md-field>
 
                                     <md-field>
-                                        <label for="commission">Commission Type :</label>
+                                        <label for="commission">{{ $tc('phrases.commissionType') }} :</label>
                                         <md-select name="commission" id="commission" v-model="agent.commissionTypeId">
                                             <md-option v-for="(commission) in agentCommissions"
                                                        :value="commission.id" :key="commission.id">{{commission.name}}
@@ -114,7 +114,7 @@
                                         </md-select>
                                     </md-field>
                                     <md-field>
-                                        <label for="phone">Phone</label>
+                                        <label for="phone">{{ $tc('words.phone') }}</label>
                                         <md-input
                                             type="text"
                                             name="phone"
@@ -126,10 +126,10 @@
                                 <md-progress-bar md-mode="indeterminate" v-if="loading"/>
                                 <md-card-actions>
 
-                                    <md-button type="submit" class="md-primary btn-save" :disabled="loading">Save
+                                    <md-button type="submit" class="md-primary btn-save" :disabled="loading">{{ $tc('words.save') }}
                                     </md-button>
                                     <md-button type="button" @click="editAgent = false" class="md-accent btn-save">
-                                        Cancel
+                                        {{ $tc('words.cancel') }}
                                     </md-button>
                                 </md-card-actions>
                             </md-card>
@@ -198,21 +198,17 @@ export default {
         confirmDelete () {
             this.$swal({
                 type: 'question',
-                title: 'Delete Agent',
+                title: this.$tc('phrases.deleteAgent'),
                 width: '35%',
-                confirmButtonText: 'Confirm',
+                confirmButtonText: this.$tc('words.confirm'),
                 showCancelButton: true,
-                cancelButtonText: 'Cancel',
+                cancelButtonText: this.$tc('words.cancel'),
                 focusCancel: true,
                 html:
                         '<div style="text-align: left; padding-left: 5rem" class="checkbox">' +
                         '  <label>' +
                         '    <input type="checkbox" name="confirmation" id="confirmation" >' +
-                        '   I confirm that ' +
-                        this.agent.name +
-                        ' ' +
-                        this.agent.surname +
-                        ' will be deleted' +
+                        this.$tc('phrases.deleteAgent',3, {name: this.agent.name + this.agent.surname}) +
                         '  </label>' +
                         '</div>'
             }).then(result => {
@@ -229,7 +225,7 @@ export default {
             try {
                 this.loading = true
                 await this.agentService.updateAgent(this.agent)
-                this.alertNotify('success', 'Agent edited successfully')
+                this.alertNotify('success', this.$tc('phrases.deleteAgent',2))
                 this.loading = false
                 this.editAgent = false
             } catch (e) {
@@ -241,7 +237,7 @@ export default {
         async deleteAgent () {
             try {
                 await this.agentService.deleteAgent(this.agent)
-                this.alertNotify('success', 'Agent deleted successfully')
+                this.alertNotify('success', this.$tc('phrases.deleteAgent',1))
                 window.history.back()
             } catch (e) {
                 this.alertNotify('error', e.message)

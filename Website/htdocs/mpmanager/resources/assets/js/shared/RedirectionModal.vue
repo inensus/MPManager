@@ -5,7 +5,7 @@
             :md-close-on-esc="false"
             :md-click-outside-to-close="false"
         >
-            <md-dialog-title>Redirection</md-dialog-title>
+            <md-dialog-title>{{ $tc('words.redirect',2) }}</md-dialog-title>
             <md-dialog-content>
 
 
@@ -14,12 +14,12 @@
                             <md-icon style="color: green">priority_high</md-icon>
                         </span>
                     <div class="md-layout-item md-size-100 exclamation-div">
-                        <span>You have to add {{imperativeItem}} for using this place. </span>
+                        <span>{{ $tc('phrases.redirectLabel',1,{imperativeItem: imperativeItem}) }} </span>
                     </div>
                 </div>
                 <div class="md-layout-item md-size-100 exclamation-button-div">
                     <md-button role="button" type="button" class="md-raised md-primary" @click="redirect()">
-                        Redirect
+                        {{ $tc('words.redirect',1) }}
                     </md-button>
                 </div>
 

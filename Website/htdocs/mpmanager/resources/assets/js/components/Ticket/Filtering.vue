@@ -10,7 +10,7 @@
                     name="ticket_categories"
                     placeholder="Category"
                 >
-                    <md-option value>-- Any Category --</md-option>
+                    <md-option value>-- {{ $tc('phrases.anyCategory') }} --</md-option>
                     <md-option
                         :key="index"
                         :value="category.id"
@@ -24,8 +24,8 @@
         <div class="md-layout-item md-size-42">
             <md-field class="md-layout-item">
                 <md-select @md-selected="setPerson" id="assigned_to" name="assigned_to"
-                           placeholder="Assigned To">
-                    <md-option value>-- Any User --</md-option>
+                           :placeholder="$tc('phrases.assignTo',2)">
+                    <md-option value>-- {{ $tc('phrases.anyUser') }} --</md-option>
                     <md-option
                         :key="person.id"
                         :value="person.id"
@@ -38,8 +38,8 @@
 
 
         <div class="md-layout-item md-size-16">
-            <md-button @click="filterTickets" class="md-raised md-primary">Filter</md-button>
-            <md-button class="md-raised md-accent" @click=closeFilter()>Close</md-button>
+            <md-button @click="filterTickets" class="md-raised md-primary">{{ $tc('words.filter') }}</md-button>
+            <md-button class="md-raised md-accent" @click=closeFilter()>{{ $tc('words.close') }}</md-button>
         </div>
 
     </div>

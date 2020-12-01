@@ -1,7 +1,7 @@
 <template>
     <widget
         :class="'col-sm-6 col-md-5'"
-        title="Last Transactions"
+        :title="$tc('phrases.lastTransactions')"
         color="green"
         :paginator="agentTransactionService.paginator"
         :subscriber="subscriber"
@@ -30,8 +30,7 @@ export default {
         return {
             subscriber: 'agent-transactions',
             agentTransactionService: new AgentTransactionService(this.agentId),
-            headers: ['ID', 'Amount', 'Meter', 'Customer', 'Date'],
-            tableName: 'Agent Transaction'
+            headers: [this.$tc('words.id'), this.$tc('words.amount'), this.$tc('words.meter'), this.$tc('words.meter'), this.$tc('words.date')],
         }
     },
     mounted () {

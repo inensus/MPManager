@@ -11,8 +11,8 @@
                         role="status"
                         aria-live="polite"
                     >
-                        Showing {{paginator.from}} to {{paginator.to}}
-                        of {{paginator.totalEntries}} entries
+                        {{$tc('phrases.paginateLabels',1,{from: paginator.from, to: paginator.to, total: paginator.totalEntries})}}
+
                     </div>
                 </div>
             </div>
@@ -26,7 +26,7 @@
                         role="status"
                         aria-live="polite"
                     >
-                        Per Page
+                        {{ $tc('phrases.perPage') }}
                         <select name="per_page" id="per_page" @change="defaultItemsPerPage">
                             <option value="15">15</option>
                             <option value="25">25</option>
@@ -58,8 +58,8 @@
                                     data-dt-idx="0"
                                     tabindex="0"
                                     @click="loadPage(--paginator.currentPage)"
-                                >Previous</a>
-                                <a href="javascript:void(0);" disabled="disabled" v-else>Previous</a>
+                                >{{ $tc('words.previous') }}</a>
+                                <a href="javascript:void(0);" disabled="disabled" v-else>{{ $tc('words.previous') }}</a>
                             </li>
                             <template v-for="(page, index) in paginator.totalPage">
                                 <li
@@ -95,8 +95,8 @@
                                     data-dt-idx="8"
                                     tabindex="0"
                                     @click="loadPage(++paginator.currentPage)"
-                                >Next</a>
-                                <a href="javascript:void(0);" v-else>Next</a>
+                                >{{ $tc('words.next') }}</a>
+                                <a href="javascript:void(0);" v-else>{{ $tc('words.next') }}</a>
                             </li>
                         </ul>
                         <!-- <span v-if="loading">Loading new page</span> -->

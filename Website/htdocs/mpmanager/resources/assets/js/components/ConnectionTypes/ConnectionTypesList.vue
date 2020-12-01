@@ -3,11 +3,11 @@
         <NewConnectionType/>
         <widget
             :id="'connection-types-list'"
-            :title="'Connection Types'"
+            :title="$tc('phrases.connectionType',2)"
             :paginator="connectionTypes.paginator"
             :subscriber="subscriber"
             :button="true"
-            :button-text="'New Connection Type'"
+            :button-text="$tc('phrases.newConnectionType')"
             @widgetAction="addNew"
             :color="'green'"
         >
@@ -15,8 +15,8 @@
                 <md-table md-card style="margin-left: 0">
                     <md-table-row>
                         <md-table-head>#</md-table-head>
-                        <md-table-head>ID</md-table-head>
-                        <md-table-head>Name</md-table-head>
+                        <md-table-head>{{ $tc('words.id') }}</md-table-head>
+                        <md-table-head>{{ $tc('words.name') }}</md-table-head>
                     </md-table-row>
                     <md-table-row v-for="(type,index) in connectionTypes" :key="type.id" @click="connectionTypeDetail(type)" style="cursor: pointer">
                         <md-table-cell> {{ index+1}}</md-table-cell>

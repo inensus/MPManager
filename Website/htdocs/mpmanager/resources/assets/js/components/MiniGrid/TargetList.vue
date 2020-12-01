@@ -1,30 +1,30 @@
 <template>
 
     <widget :id="'revenue-types'"
-            :title="'Revenue Analysis'"
+            :title="$tc('phrases.revenueAnalysis')"
             :subscriber="subscriber">
 
         <md-table>
             <md-table-row>
                 <md-table-head>Type</md-table-head>
-                <md-table-head colspan="2">Connections</md-table-head>
-                <md-table-head :colspan="compareAnalysisAvailable ? 3 : 2">Revenues</md-table-head>
-                <md-table-head class="md-xsmall-hide">Avg Revenue Per Connection</md-table-head>
+                <md-table-head colspan="2">{{ $tc('words.connection',2)}}</md-table-head>
+                <md-table-head :colspan="compareAnalysisAvailable ? 3 : 2">{{ $tc('words.revenue',2)}}</md-table-head>
+                <md-table-head class="md-xsmall-hide">{{ $tc('phrases.avgRevenuePerConnection')}}</md-table-head>
             </md-table-row>
 
 
             <md-table-row>
-                <md-table-head class="md-xsmall-hide">Status now</md-table-head>
-                <md-table-head class="md-xsmall-hide">New Connections/Target</md-table-head>
+                <md-table-head class="md-xsmall-hide">{{ $tc('phrases.statusNow')}}</md-table-head>
+                <md-table-head class="md-xsmall-hide">{{ $tc('phrases.newConnectionsTarget')}}</md-table-head>
                 <md-table-head>
-                    This Period <small>{{base.from +'-'+ base.to}}</small>
+                    {{ $tc('phrases.thisPeriod') }}<small>{{base.from +'-'+ base.to}}</small>
                 </md-table-head>
                 <md-table-head v-if="compareAnalysisAvailable">
-                    Compared Period <small>{{compared.from +'-'+ compared.to}}</small>
+                    {{ $tc('phrases.comparedPeriod') }} <small>{{compared.from +'-'+ compared.to}}</small>
                 </md-table-head>
-                <md-table-head>Target</md-table-head>
-                <md-table-head class="md-xsmall-hide">This period</md-table-head>
-                <md-table-head class="md-xsmall-hide" v-if="compareAnalysisAvailable">Compared Period</md-table-head>
+                <md-table-head>{{ $tc('words.target') }} </md-table-head>
+                <md-table-head class="md-xsmall-hide">{{ $tc('phrases.thisPeriod') }}</md-table-head>
+                <md-table-head class="md-xsmall-hide" v-if="compareAnalysisAvailable">{{ $tc('phrases.comparedPeriod') }}</md-table-head>
             </md-table-row>
 
             <template v-if="batchRevenues.revenueList !== null">
