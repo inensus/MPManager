@@ -38,8 +38,12 @@ import ReportsRepository from './ReportsRepository'
 import BookKeepingRepository from './BookKeepingRepository'
 import TimeOfUsageRepository from './TimeOfUsageRepository'
 import GenerationAssetsRepository from './GenerationAssetsRepository'
+import AddressRepository from './AddressRepository'
+import UserTransactionsRepository from './UserTransactionsRepository'
+import MeterParameterRepository from './MeterParameterRepository'
 
 const repositories = {
+    'address': AddressRepository,
     'asset': AssetRepository,
     'assetPerson':AssetPersonRepository,
     'assetRate':AssetRateRepository,
@@ -61,6 +65,7 @@ const repositories = {
     'map': MappingRepository,
     'meter': MeterRepository,
     'meterType': MeterTypeRepository,
+    'meterParameter': MeterParameterRepository,
     'person': PersonRepository,
     'revenue': RevenueRepository,
     'restriction': RestrictionRepository,
@@ -75,6 +80,7 @@ const repositories = {
     'ticketUser': TicketUserRepository,
     'ticketLabel': TicketLabelRepository,
     'user': UserRepository,
+    'userTransactions': UserTransactionsRepository,
     'reports': ReportsRepository,
     'bookKeeping': BookKeepingRepository,
     'timeOfUsage': TimeOfUsageRepository,

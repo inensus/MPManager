@@ -1,6 +1,7 @@
+import Client from './Client/AxiosClient'
 const resource = {
 
-    'list': '/api/sms/',
+    'list': '/api/sms',
     'byPhone': '/api/sms/phone',
     'search': '/api/sms/search/',
     'groups': '/api/connection-groups',
@@ -12,32 +13,37 @@ const resource = {
 
 export default {
 
-    list(param) {
-        switch (param) {
-        case 'list':
-            return axios.get(`${resource.list}`)
-        case 'groups':
-            return axios.get(`${resource.groups}`)
-        case 'types':
-            return axios.get(`${resource.types}`)
+    list(param, personId) {
+        if(personId !== null){
+            return Client.get(`${resource.list}/${personId}`)
+        }else{
+            switch (param) {
+            case 'list':
+                return Client.get(`${resource.list}`)
+            case 'groups':
+                return Client.get(`${resource.groups}`)
+            case 'types':
+                return Client.get(`${resource.types}`)
+            }
         }
+
 
     },
     send(smsSend_PM,type) {
         switch (type) {
         case 'bulk':
-            return axios.post(`${resource.bulk}`, smsSend_PM)
+            return Client.post(`${resource.bulk}`, smsSend_PM)
         case 'single':
-            return axios.post(`${resource.send}`, smsSend_PM)
+            return Client.post(`${resource.send}`, smsSend_PM)
         }
 
     },
     detail(phone) {
-        return axios.get(`${resource.byPhone}` + '/' + phone)
+        return Client.get(`${resource.byPhone}` + '/' + phone)
     },
 
     search(term){
-        return  axios.get(`${resource.search}` + term)
+        return  Client.get(`${resource.search}` + term)
     }
 
 }

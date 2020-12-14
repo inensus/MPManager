@@ -95,4 +95,32 @@ export class PersonService {
         this.person.surname = x.splice(-1)
         this.person.name = x.join(' ')
     }
+
+    async deletePerson(personId){
+        try {
+            let response = await this.repository.delete(personId)
+            if(response.status === 200 || response.status === 201){
+                return response
+            }else{
+                return new ErrorHandler(response.error, 'http', response.status)
+            }
+        }catch (e) {
+            let erorMessage = e.response.data.data.message
+            return new ErrorHandler(erorMessage, 'http')
+        }
+
+    }
+    async searchPerson(params){
+
+        try {
+            let response = await this.repository.search(params)
+            if(response.status === 200){
+                return response
+            }
+        }catch (e) {
+            let erorMessage = e.response.data.data.message
+            return new ErrorHandler(erorMessage, 'http')
+        }
+
+    }
 }

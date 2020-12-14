@@ -1,26 +1,27 @@
 const resource = 'api/clusters'
+import Client from './Client/AxiosClient'
 export default {
 
     create(cluster){
-        return axios.post(`${resource}`,cluster)
+        return Client.post(`${resource}`,cluster)
     },
     list () {
-        return axios.get(`${resource}/geo`)
+        return Client.get(`${resource}/geo`)
     },
     getGeoLocation (clusterId) {
-        return axios.get(`${resource}/${clusterId}/geo`)
+        return Client.get(`${resource}/${clusterId}/geo`)
     },
     get (clusterId) {
-        return axios.get(`${resource}/${clusterId}`)
+        return Client.get(`${resource}/${clusterId}`)
     },
     getClusterRevenues (clusterId) {
-        return axios.get(`${resource}/${clusterId}/revenue`)
+        return Client.get(`${resource}/${clusterId}/revenue`)
     },
     getClusterCitiesRevenue (clusterId, terms) {
-        return axios.get(`${resource}/${clusterId}/cities-revenue/${terms}`)
+        return Client.get(`${resource}/${clusterId}/cities-revenue/${terms}`)
     },
     getAllRevenues (terms) {
-        return axios.get(`${resource}/revenue/${terms}`)
+        return Client.get(`${resource}/revenue/${terms}`)
     },
 
 }

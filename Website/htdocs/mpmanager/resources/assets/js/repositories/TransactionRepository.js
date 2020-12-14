@@ -1,19 +1,20 @@
 const resource = '/api/transactions'
+import Client from './Client/AxiosClient'
 
 export default {
 
     list () {
-        return axios.get(`${resource}`)
+        return Client.get(`${resource}`)
 
     },
     analytics (period) {
-        return axios.get(`${resource}/analytics/${period}`)
+        return Client.get(`${resource}/analytics/${period}`)
     },
     filteredList (term) {
-        return axios.post(`${resource}/advanced`, term)
+        return Client.post(`${resource}/advanced`, term)
     },
     get (id) {
-        return axios.get(`${resource}/${id}`)
+        return Client.get(`${resource}/${id}`)
     },
 
 }

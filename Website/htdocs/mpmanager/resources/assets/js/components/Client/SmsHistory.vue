@@ -63,6 +63,7 @@ import Widget from '../../shared/widget'
 import { resources } from '../../resources'
 import { EventBus } from '../../shared/eventbus'
 import moment from 'moment'
+import { SmsService } from '../../services/SmsService'
 
 export default {
     name: 'SmsHistory',
@@ -83,6 +84,7 @@ export default {
     },
     data () {
         return {
+            smsService: new SmsService(),
             smses: [],
             message: '',
             subscriber: 'customer-sms-history'
@@ -98,8 +100,8 @@ export default {
             return d.toLocaleDateString()
         },
         getSmsList () {
-            axios.get(resources.sms.list + this.personId).then(response => {
-                this.smses = response.data.data
+            this.smsService.getList(this.personId).then(response => {
+                this.smses = response
                 EventBus.$emit('widgetContentLoaded', this.subscriber, this.smses.length)
                 this.scrollDown()
             })

@@ -85,6 +85,7 @@ import { currency } from '../../mixins/currency'
 import { timing } from '../../mixins/timing'
 import Widget from '../../shared/widget'
 import { EventBus } from '../../shared/eventbus'
+import { UserTransactionsService } from '../../services/UserTransactionsService'
 
 export default {
     name: 'Transactions',
@@ -92,6 +93,7 @@ export default {
     mixins: [currency, timing],
     data () {
         return {
+            userTransactionsService: new UserTransactionsService(),
             subscriber:'client-transactions',
             articleClass: 'col-sm-12',
             personId: null,
@@ -124,17 +126,16 @@ export default {
         },
         getTransactions (page = 1) {
             if (page > this.totalPages) return
-            axios.get(resources.person.list + '/' + this.personId + '/transactions?page=' + page)
-                .then(response => {
-                    let responseData = response.data
-                    this.transactions = responseData.data
-                    this.currentPage = responseData.current_page
-                    this.from = responseData.from
-                    this.to = responseData.to
-                    this.total = responseData.total
-                    this.totalPages = responseData.last_page
-                    EventBus.$emit('widgetContentLoaded',this.subscriber,this.transactions.length)
-                })
+            this.userTransactionsService.getTransactions(this.personId, page).then(response => {
+                let responseData = response.data
+                this.transactions = responseData.data
+                this.currentPage = responseData.current_page
+                this.from = responseData.from
+                this.to = responseData.to
+                this.total = responseData.total
+                this.totalPages = responseData.last_page
+                EventBus.$emit('widgetContentLoaded',this.subscriber,this.transactions.length)
+            })
         },
         loadTransaction (transactionId) {
             this.$router.push({ path: '/transactions/' + transactionId })

@@ -178,7 +178,7 @@ export default {
             })
         },
         deletePerson () {
-            axios.delete(resources.person.delete + this.personService.person.id).then(response => {
+            this.personService.deletePerson(this.personService.person.id).then(response => {
                 if (response.status === 200) {
                     this.showConfirmation()
                 }

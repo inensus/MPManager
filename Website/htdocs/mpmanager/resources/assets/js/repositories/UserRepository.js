@@ -3,10 +3,11 @@ const resource ={
     login: '/api/auth/login',
     refresh: '/api/auth/refresh',
 }
+import Client from './Client/AxiosClient'
 
 export default {
 
     list(paginate){
-        return axios.get(`${resource.list}?paginate=${paginate}`)
+        return Client.get(`${resource.list}?paginate=${paginate}`)
     }
 }

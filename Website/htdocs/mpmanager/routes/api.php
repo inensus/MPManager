@@ -125,6 +125,7 @@ Route::group(['prefix' => 'manufacturers', 'middleware' => 'jwt.verify'], static
     Route::put('/{id}', 'ManufacturerController@update');
 
 });
+
 // Mini-Grids
 Route::group(['prefix' => 'mini-grids', 'middleware' => 'jwt.verify'], static function () {
     Route::get('/', 'MiniGridController@index');
@@ -162,7 +163,6 @@ Route::group(['prefix' => 'people', 'middleware' => 'jwt.verify'], static functi
     Route::put('/{person}/addresses', 'AddressController@update');
     Route::get('/search', 'PersonController@search');
     Route::delete('/{person}', 'PersonController@destroy');
-
     Route::get('/', 'PersonController@index');
     Route::get('/all', 'PersonController@list');
     Route::get('/{person}', 'PersonController@show');
