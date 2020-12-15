@@ -86,7 +86,7 @@
                                             <md-field>
                                                 <label for="tariff">{{ $tc('words.tariff') }}</label>
                                                 <md-select name="tariff" v-model="newTariff">
-                                                    <md-option v-for="tariff in tariffs"
+                                                    <md-option v-for="tariff in tariffService.list"
                                                                :key="tariff.id" :value="tariff.id">
                                                         {{tariff.name}} {{
                                                         tariff.price/100}}
@@ -240,11 +240,12 @@ import { Transactions } from '../../classes/meter/transactions'
 import { EventBus } from '../../shared/eventbus'
 import { Consumptions } from '../../classes/meter/Consumptions'
 import { Meter } from '../../classes/meter/meter'
-import { resources } from '../../resources'
 import { ConnectionTypes } from '../../classes/connection/ConnectionTypes'
 import { currency } from '../../mixins/currency'
 import moment from 'moment'
-
+import { TariffService } from '../../services/TariffService'
+import { PersonService } from '../../services/PersonService'
+import { MeterParameterService } from '../../services/MeterParameterService'
 
 export default {
     name: 'MeterDetail',
@@ -273,6 +274,9 @@ export default {
     },
     data () {
         return {
+            meterParameterService: new MeterParameterService(),
+            personService: new PersonService(),
+            tariffService: new TariffService(),
             subscriber: 'meter.transactions',
             transactions: null,
             consumptions: null,
@@ -287,7 +291,6 @@ export default {
             editTariff: false,
             newTariff: null,
             newConnectionType: null,
-            tariffs: [],
             showOwnerEdit:false,
             //meter connection controlller
             connectionTypes: new ConnectionTypes(),
@@ -340,10 +343,13 @@ export default {
             this.$router.push('/people/' + ownerId)
         },
 
-        getTariffs () {
-            axios.get(resources.tariff.list).then(response => {
-                this.tariffs = response.data.data
-            })
+        async getTariffs () {
+            try {
+                await this.tariffService.getTariffs()
+            }catch (e) {
+                this.alertNotify('error', e.message)
+            }
+
         },
         reloadList (subscriber, data) {
             if (subscriber !== this.subscriber){
@@ -374,27 +380,25 @@ export default {
         },
         searchFor (term) {
             if (term != undefined && term.length > 2) {
-                return axios
-                    .get(resources.person.search, { params: { term: term, paginate: 0 } })
-                    .then(response => {
-                        this.searchNames = []
-                        for (let i in response.data.data) {
-                            let person = response.data.data[i]
-                            this.searchNames.push({
-                                id: person.id,
-                                name: person.name + ' ' + person.surname
-                            })
-                        }
-                        this.hideSearch = false
+                this.personService.searchPerson({ params: { term: term, paginate: 0 } } ).then(response => {
+                    this.searchNames = []
+                    for (let i in response.data.data) {
+                        let person = response.data.data[i]
+                        this.searchNames.push({
+                            id: person.id,
+                            name: person.name + ' ' + person.surname
+                        })
+                    }
+                    this.hideSearch = false
 
-                        return this.searchNames.map(x => ({
-                            id: x.id,
-                            name: x.name,
-                            toLowerCase: () => x.name.toLowerCase(),
-                            toString: () => x.name
-                        }))
-                        // return this.searchNames;
-                    })
+                    return this.searchNames.map(x => ({
+                        id: x.id,
+                        name: x.name,
+                        toLowerCase: () => x.name.toLowerCase(),
+                        toString: () => x.name
+                    }))
+                    // return this.searchNames;
+                })
             } else {
                 this.hideSearch = true
             }
@@ -421,11 +425,7 @@ export default {
         },
 
         updateParameter (meterId, params) {
-            axios
-                .put(
-                    resources.meterparameters.update + this.meter.id + '/parameters',
-                    params
-                )
+            this.meterParameterService.update(meterId,params)
                 .then(response => {
                     if (response.status === 200) {
                         if ('tariff' in response.data.data) {
@@ -434,6 +434,7 @@ export default {
                             this.meter.connection = response.data.data.connection_type
                         }
                     } else {
+
                         this.$swal({
                             type: 'error',
                             title: this.$tc('phrases.meterDetailNotify',0),
@@ -464,13 +465,7 @@ export default {
             }).then(result => {
                 console.log(result)
                 if (result.value) {
-                    axios
-                        .put(
-                            resources.meterparameters.update + this.meter.id + '/parameters',
-                            {
-                                personId: this.newOwner.id
-                            }
-                        )
+                    this.meterParameterService.update(this.meter.id, {personId: this.newOwner.id})
                         .then(response => {
                             if (response.status === 200) {
                                 this.meter.owner = response.data.data.owner

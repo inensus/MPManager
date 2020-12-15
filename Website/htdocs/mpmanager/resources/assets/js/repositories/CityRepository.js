@@ -1,12 +1,12 @@
 const resource = '/api/cities'
-
+import Client from './Client/AxiosClient'
 export default {
 
 
     list() {
-        return axios.get(`${resource}`)
+        return Client.get(`${resource}`)
     },
     create(city){
-        return axios.post(`${resource}`, city)
+        return Client.post(`${resource}`, city)
     }
 }

@@ -1,30 +1,30 @@
 const resource = '/api/mini-grids'
-
+import Client from './Client/AxiosClient'
 export default {
     list () {
-        return axios.get(`${resource}`)
+        return Client.get(`${resource}`)
     },
     create (miniGridPM) {
 
-        return axios.post(`${resource}`, miniGridPM)
+        return Client.post(`${resource}`, miniGridPM)
     },
     get (miniGridId) {
-        return axios.get(`${resource}/${miniGridId}`)
+        return Client.get(`${resource}/${miniGridId}`)
     },
     geoData (miniGridId) {
-        return axios.get(`${resource}/${miniGridId}?relation=1`)
+        return Client.get(`${resource}/${miniGridId}?relation=1`)
     },
     watch(Id,miniGridPM) {
 
-        return axios.put(`${resource}` + '/' + Id,miniGridPM)
+        return Client.put(`${resource}` + '/' + Id,miniGridPM)
     },
     listDataStream(dataStream) {
-        return axios.get(`${resource}`+'?data_stream='+dataStream)
+        return Client.get(`${resource}`+'?data_stream='+dataStream)
     },
     transactions(miniGridId,period){
-        return axios.post(`${resource}/${miniGridId}/transactions`,period)
+        return Client.post(`${resource}/${miniGridId}/transactions`,period)
     },
     soldEnergy(miniGridId,period){
-        return axios.post(`${resource}/${miniGridId}/energy`,period)
+        return Client.post(`${resource}/${miniGridId}/energy`,period)
     }
 }

@@ -10,86 +10,86 @@
             :paginator="addresses.paginator"
             :subscriber="subscriber"
         >
-                <md-table style="width:100%" v-model="addresses.list" md-card md-fixed-header>
-                    <md-table-row @click="editAddress(item, index)" slot="md-table-row" slot-scope="{ item, index }">
-                        <md-table-cell :md-label="$tc('words.id')" md-sort-by="id" md-numeric>{{ item.id }}</md-table-cell>
-                        <md-table-cell :md-label="$tc('words.street')" md-sort-by="street">{{ item.street }}</md-table-cell>
-                        <md-table-cell :md-label="$tc('words.city')" md-sort-by="city">{{ item.city }}</md-table-cell>
-                        <md-table-cell :md-label="$tc('words.phone')" md-sort-by="phone">{{ item.phone }}</md-table-cell>
-                        <md-table-cell :md-label="$tc('words.primary')" md-sort-by="primary">
-                            <input type="checkbox" readonly :checked="item.primary" onclick="return false;"/>
-                        </md-table-cell>
-                    </md-table-row>
-                </md-table>
+            <md-table style="width:100%" v-model="addresses.list" md-card md-fixed-header>
+                <md-table-row @click="editAddress(item, index)" slot="md-table-row" slot-scope="{ item, index }">
+                    <md-table-cell :md-label="$tc('words.id')" md-sort-by="id" md-numeric>{{ item.id }}</md-table-cell>
+                    <md-table-cell :md-label="$tc('words.street')" md-sort-by="street">{{ item.street }}</md-table-cell>
+                    <md-table-cell :md-label="$tc('words.city')" md-sort-by="city">{{ item.city }}</md-table-cell>
+                    <md-table-cell :md-label="$tc('words.phone')" md-sort-by="phone">{{ item.phone }}</md-table-cell>
+                    <md-table-cell :md-label="$tc('words.primary')" md-sort-by="primary">
+                        <input type="checkbox" readonly :checked="item.primary" onclick="return false;"/>
+                    </md-table-cell>
+                </md-table-row>
+            </md-table>
 
         </widget>
         <md-dialog class="address-edit-container" :md-active.sync="modalVisibility">
-            <md-dialog-title v-if="editFlag">{{$tc('phrases.updateAddress')}}</md-dialog-title>
-            <md-dialog-title v-if="!editFlag">{{$tc('phrases.newAddress')}}</md-dialog-title>
-             <md-dialog-content class="md-scrollbar">
-                            <div class="md-layout md-gutter">
-                                <div class="md-layout-item md-size-50 md-small-size-100">
-                                    <md-field name="city">
-                                        <label for="city">{{$tc('words.city')}}</label>
-                                        <md-select name="city" id="city" v-model="newAddress.city_id">
-                                            <md-option
-                                                value="0"
-                                                disabled
-                                                v-if="!editFlag || newAddress.city_id===null">
-                                                {{$tc('words.city')}}
-                                            </md-option>
-                                            <md-option
-                                                v-for="city in cities"
-                                                :key="city.id"
-                                                :value="city.id"
-                                            >{{city.name}}
-                                            </md-option>
-                                        </md-select>
-                                    </md-field>
-                                </div>
+            <md-dialog-title v-if="editFlag">{{ $tc('phrases.updateAddress') }}</md-dialog-title>
+            <md-dialog-title v-if="!editFlag">{{ $tc('phrases.newAddress') }}</md-dialog-title>
+            <md-dialog-content class="md-scrollbar">
+                <div class="md-layout md-gutter">
+                    <div class="md-layout-item md-size-50 md-small-size-100">
+                        <md-field name="city">
+                            <label for="city">{{ $tc('words.city') }}</label>
+                            <md-select name="city" id="city" v-model="newAddress.city_id">
+                                <md-option
+                                    value="0"
+                                    disabled
+                                    v-if="!editFlag || newAddress.city_id===null">
+                                    {{ $tc('words.city') }}
+                                </md-option>
+                                <md-option
+                                    v-for="city in cities"
+                                    :key="city.id"
+                                    :value="city.id"
+                                >{{ city.name }}
+                                </md-option>
+                            </md-select>
+                        </md-field>
+                    </div>
 
-                                <div class="md-layout-item md-size-50 md-small-size-100">
-                                    <md-field>
-                                        <label for="Street">{{$tc('words.street')}}</label>
-                                        <md-input type="text" id="Street" name="Street" v-model="newAddress.street"/>
-                                    </md-field>
-                                </div>
-                            </div>
+                    <div class="md-layout-item md-size-50 md-small-size-100">
+                        <md-field>
+                            <label for="Street">{{ $tc('words.street') }}</label>
+                            <md-input type="text" id="Street" name="Street" v-model="newAddress.street"/>
+                        </md-field>
+                    </div>
+                </div>
 
 
-                            <div class="md-layout md-gutter md-size-100">
-                                <div class="md-layout-item md-size-50 md-small-size-100">
-                                    <md-field name="email">
-                                        <label for="email">{{$tc('words.email')}}</label>
-                                        <md-input type="email" name="email"
-                                        v-model = "newAddress.email"/>
-                                    </md-field>
-                                </div>
+                <div class="md-layout md-gutter md-size-100">
+                    <div class="md-layout-item md-size-50 md-small-size-100">
+                        <md-field name="email">
+                            <label for="email">{{ $tc('words.email') }}</label>
+                            <md-input type="email" name="email"
+                                      v-model="newAddress.email"/>
+                        </md-field>
+                    </div>
 
-                                <div class="md-layout-item md-size-50 md-small-size-100">
-                                    <md-field name="phone">
-                                        <label for="phone">{{$tc('words.phone')}}</label>
-                                        <md-input
-                                            name="phone"
-                                            id="phone"
-                                            v-model="newAddress.phone"
-                                            data-mask="(999) 999-9999"
-                                        />
-                                    </md-field>
-                                </div>
-                            </div>
+                    <div class="md-layout-item md-size-50 md-small-size-100">
+                        <md-field name="phone">
+                            <label for="phone">{{ $tc('words.phone') }}</label>
+                            <md-input
+                                name="phone"
+                                id="phone"
+                                v-model="newAddress.phone"
+                                data-mask="(999) 999-9999"
+                            />
+                        </md-field>
+                    </div>
+                </div>
 
-                            <div class="md-layout md-size-100">
-                                <div class="md-layout-item md-size-100">
-                                    <label>
-                                        <input type="checkbox" v-model="newAddress.primary"/>{{$tc('words.primary')}}
-                                    </label>
-                                </div>
-                            </div>
+                <div class="md-layout md-size-100">
+                    <div class="md-layout-item md-size-100">
+                        <label>
+                            <input type="checkbox" v-model="newAddress.primary"/>{{ $tc('words.primary') }}
+                        </label>
+                    </div>
+                </div>
 
-             </md-dialog-content>
+            </md-dialog-content>
             <md-dialog-actions>
-                <md-button class="md-accent" @click="closeModal()">{{$tc('words.close')}}</md-button>
+                <md-button class="md-accent" @click="closeModal()">{{ $tc('words.close') }}</md-button>
 
                 <md-button
                     class="md-primary btn-lg"
@@ -105,8 +105,9 @@
 
 <script>
 import { EventBus } from '../../shared/eventbus'
-import { Address, Addresses } from '../../classes/person/addresses'
+import { Address, Addresses } from '../../services/AddressService'
 import Widget from '../../shared/widget'
+import { CityService } from '../../services/CityService'
 
 export default {
     name: 'Addresses',
@@ -116,6 +117,7 @@ export default {
     },
     data () {
         return {
+            cityService: new CityService(),
             addresses: new Addresses(this.personId),
             subscriber: 'personAddresses',
             modalVisibility: false,
@@ -137,7 +139,7 @@ export default {
         reloadList (subscriber, data) {
             if (subscriber !== this.subscriber) return
             this.addresses.updateList(data)
-            EventBus.$emit('widgetContentLoaded',this.subscriber, this.addresses.list.length)
+            EventBus.$emit('widgetContentLoaded', this.subscriber, this.addresses.list.length)
         },
         addNewAddress () {
             this.editFlag = false
@@ -162,21 +164,20 @@ export default {
             }
             this.showModal()
         },
-        getCities () {
-            axios.get(resources.city.list).then(response => {
-                this.cities = response.data.data
-            })
+        async getCities () {
+            try {
+                this.cities = await this.cityService.getCities()
+            } catch (e) {
+                this.alertNotify('error', e.message)
+            }
+
         },
         saveAddress () {
             if (this.validateNewAddress()) {
                 this.modalVisibility = false
 
                 if (this.editFlag) {
-
-                    axios.put(
-                        resources.person.addresses + this.personId + '/' + 'addresses',
-                        this.newAddress
-                    ).then((response) => {
+                    this.addresses.updateAddress(this.newAddress).then((response) => {
                         this.addresses.list = this.addresses.list.map(function (
                             item
                         ) {
@@ -193,14 +194,10 @@ export default {
                     })
 
                 } else {
-                    axios
-                        .post(
-                            resources.person.addresses + this.personId + '/' + 'addresses',
-                            this.newAddress
-                        )
-                        .then(response => {
-                            this.addresses.appendList(response.data.data)
-                        })
+
+                    this.addresses.newAddress(this.newAddress).then((response) => {
+                        this.addresses.appendList(response.data.data)
+                    })
                 }
                 this.newAddress = {}
             }
@@ -247,7 +244,7 @@ export default {
 </script>
 
 <style lang="css" scoped>
-    .address-edit-container {
-        padding: 1rem;
-    }
+.address-edit-container {
+    padding: 1rem;
+}
 </style>

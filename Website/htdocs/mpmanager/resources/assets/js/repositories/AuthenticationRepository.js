@@ -1,10 +1,10 @@
 const resource = '/api/auth'
-
+import Client from './Client/AxiosClient'
 export default {
     login (user) {
-        return axios.post(`${resource}/login`, user)
+        return Client.post(`${resource}/login`, user)
     },
     refresh (token) {
-        return axios.post(`${resource}/refresh`, null, { headers: { Authorization: 'Bearer' + token } })
+        return Client.post(`${resource}/refresh`, null, { headers: { Authorization: 'Bearer' + token } })
     }
 }

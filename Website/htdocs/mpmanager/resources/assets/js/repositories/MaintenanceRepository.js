@@ -1,3 +1,4 @@
+import Client from './Client/AxiosClient'
 const resource = {
     'list': '/api/maintenance',
     'create': '/api/maintenance/user',
@@ -5,10 +6,10 @@ const resource = {
 export default {
 
     list () {
-        return axios.get(`${resource.list}`)
+        return Client.get(`${resource.list}`)
     },
     create (personalData) {
-        return axios.post(`${resource.create}`, personalData)
+        return Client.post(`${resource.create}`, personalData)
     }
 
 }

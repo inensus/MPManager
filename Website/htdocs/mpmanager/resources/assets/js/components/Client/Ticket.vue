@@ -170,11 +170,16 @@ import { resources } from '../../resources'
 import { EventBus } from '../../shared/eventbus'
 import { Paginator } from '../../classes/paginator'
 import moment from 'moment'
+import { TicketUserService } from '../../services/TicketUserService'
+import { TicketLabelService} from '../../services/TicketLabelService'
+
 export default {
     name: 'Ticket',
     components: {  Widget },
     data() {
         return {
+            ticketLabelService: new TicketLabelService(),
+            ticketUserService: new TicketUserService(),
             subscriber: 'userTickets',
             tickets: new UserTickets(this.$store.getters.person.id),
             showPriceInput: false,
@@ -322,24 +327,12 @@ export default {
 
             this.tickets.newComment(comment)
         },
-        getUsers() {
-            axios.get(resources.ticket.users).then(response => {
-                let data = response.data.data
-                for (let _user in data) {
-                    let user = data[_user]
-                    this.users[user.id] = {
-                        id: user.extern_id,
-                        name: user.user_name,
-                        tag: user.user_tag,
-                        created_at: user.created_at
-                    }
-                }
-            })
+        async getUsers() {
+            this.users = await this.ticketUserService.getUsers()
+
         },
-        getLabels() {
-            axios.get(resources.ticket.labels).then(response => {
-                this.labels = response.data.data
-            })
+        async getLabels() {
+            this.labels = await this.ticketLabelService.getLabels()
         },
 
         saveTicket() {

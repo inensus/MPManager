@@ -1,16 +1,16 @@
-
+import Client from './Client/AxiosClient'
 const resource = '/api/meters'
 
 
 export default {
 
     geoList(miniGridId){
-        return axios.get(`${resource}/geoList?mini_grid_id=${miniGridId}`)
+        return Client.get(`${resource}/geoList?mini_grid_id=${miniGridId}`)
     },
     get(meterId){
-        return axios.get(`${resource}/${meterId}/all`)
+        return Client.get(`${resource}/${meterId}/all`)
     },
     update(meterId,points){
-        return axios.put(`${resource}/${meterId}`,points)
+        return Client.put(`${resource}/${meterId}`,points)
     }
 }

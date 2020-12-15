@@ -14,7 +14,7 @@
                     <md-option
                         :key="index"
                         :value="category.id"
-                        v-for="(category,index) in categories"
+                        v-for="(category,index) in ticketService.categories"
                     >{{category.label_name}}
                     </md-option>
                 </md-select>
@@ -29,7 +29,7 @@
                     <md-option
                         :key="person.id"
                         :value="person.id"
-                        v-for="person in people"
+                        v-for="person in ticketUserService.list"
                     >{{person.user_name}}
                     </md-option>
                 </md-select>
@@ -47,8 +47,9 @@
 </template>
 
 <script>
-import { resources } from '../../resources'
 import { EventBus } from '../../shared/eventbus'
+import { TicketService } from '../../services/TicketService'
+import { TicketUserService} from '../../services/TicketUserService'
 
 export default {
     name: 'Filtering',
@@ -60,8 +61,8 @@ export default {
     },
     data () {
         return {
-            categories: [],
-            people: [],
+            ticketService: new TicketService(),
+            ticketUserService: new TicketUserService(),
             selectedCategory: '',
             selectedPerson: ''
         }
@@ -73,15 +74,21 @@ export default {
         setPerson (person) {
             this.selectedPerson = person
         },
-        getCategories () {
-            axios.get(resources.ticket.labels).then(response => {
-                this.categories = response.data.data
-            })
+        async getCategories () {
+            try {
+                await this.ticketService.getCategories()
+            }catch (e) {
+                this.alertNotify('error', e.message)
+            }
+
         },
-        getPeople () {
-            axios.get(resources.ticket.users).then(response => {
-                this.people = response.data.data
-            })
+        async getPeople () {
+            try {
+                await this.ticketUserService.getUsers()
+            }catch (e) {
+                this.alertNotify('error', e.message)
+            }
+
         },
         filterTickets () {
             let query = ''

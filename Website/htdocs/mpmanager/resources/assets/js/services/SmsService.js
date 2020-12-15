@@ -108,11 +108,13 @@ export class SmsService {
         return this.receiverList
     }
 
-    async getList () {
+    async getList (personId) {
         try {
-            let response = await this.repository.list('list')
+            let response = await this.repository.list('list',personId)
             if (response.status === 200) {
-
+                if(personId !== null){
+                    return response.data.data
+                }
                 return this.updateList(response.data.data)
             } else {
                 return new ErrorHandler(response.error, 'http', response.status)
