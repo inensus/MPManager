@@ -17,5 +17,6 @@ class DatabaseSeeder extends Seeder
         $this->call(SubConnectionTypeSeeder::class);
         $this->call(MenuItemsSeeder::class);
         $this->call(SubMenuItemsSeeder::class);
+        $this->call(ConnectionGroupSeeder::class);
     }
 }
