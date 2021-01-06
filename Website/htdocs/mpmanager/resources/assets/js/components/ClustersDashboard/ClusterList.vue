@@ -28,12 +28,12 @@
 </template>
 
 <script>
-import { EventBus } from '../../shared/eventbus'
 import '../../shared/TableList'
 import BoxGroup from './BoxGroup'
 import FinancialOverview from './FinancialOverview'
-import { resources } from '../../resources'
+
 import ClusterMap from './ClusterMap'
+import { ClusterService } from '../../services/ClusterService'
 
 export default {
     name: 'ClusterList',
@@ -41,28 +41,16 @@ export default {
     components: { ClusterMap, FinancialOverview, BoxGroup },
     data () {
         return {
-            bcd: {
-                'Home': {
-                    'href': '/'
-                },
-                'Clusters': {
-                    'href': null,
-                },
-            },
+            clusterService: new ClusterService(),
             clusters: null,
-
         }
     },
     mounted () {
-        EventBus.$emit('bread', this.bcd)
         this.getClusterList()
-
     },
     methods: {
-        getClusterList () {
-            axios.get(resources.clusters.list).then((response) => {
-                this.clusters = response.data.data
-            })
+        async getClusterList () {
+            this.clusters = await this.clusterService.getClusters()
         },
 
     },
