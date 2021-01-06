@@ -114,6 +114,11 @@ class Revenue extends Model
             ' AND transactions.original_transaction_type ="vodacom_transaction"' .
             ' LEFT JOIN airtel_transactions on airtel_transactions.id = transactions.original_transaction_id' .
             ' AND transactions.original_transaction_type ="airtel_transaction"' .
+            ' LEFT JOIN third_party_transactions on third_party_transactions.id = transactions.original_transaction_id' .
+            ' AND transactions.original_transaction_type ="third_party_transaction"' .
+
+            ' LEFT JOIN agent_transactions on agent_transactions.id = transactions.original_transaction_id' .
+            ' AND transactions.original_transaction_type ="agent_transaction"' .
             ' WHERE transactions.message=:serialNumber' .
             ' AND( vodacom_transactions.status =1 or airtel_transactions.status = 1)' .
             ' AND DATE(transactions.created_at) between :startDate and :endDate';
@@ -134,6 +139,10 @@ class Revenue extends Model
             ' LEFT JOIN vodacom_transactions on vodacom_transactions.id = transactions.original_transaction_id' .
             ' AND transactions.original_transaction_type ="vodacom_transaction"' .
             ' LEFT JOIN airtel_transactions on airtel_transactions.id = transactions.original_transaction_id' .
+            ' LEFT JOIN third_party_transactions on third_party_transactions.id = transactions.original_transaction_id' .
+            ' AND transactions.original_transaction_type ="third_party_transaction"' .
+            ' LEFT JOIN agent_transactions on agent_transactions.id = transactions.original_transaction_id' .
+            ' AND transactions.original_transaction_type ="agent_transaction"' .
             ' AND transactions.original_transaction_type ="airtel_transaction"' .
             ' WHERE transactions.message in (SELECT serial_number from meters LEFT JOIN meter_parameters on meter_parameters.meter_id = meters.id where meter_parameters.tariff_id=:tariffId)' .
             ' AND( vodacom_transactions.status =1 or airtel_transactions.status = 1)' .
@@ -156,6 +165,11 @@ class Revenue extends Model
             ' AND transactions.original_transaction_type ="vodacom_transaction"' .
             ' LEFT JOIN airtel_transactions on airtel_transactions.id = transactions.original_transaction_id' .
             ' AND transactions.original_transaction_type ="airtel_transaction"' .
+            ' LEFT JOIN third_party_transactions on third_party_transactions.id = transactions.original_transaction_id' .
+            ' AND transactions.original_transaction_type ="third_party_transaction"' .
+
+            ' LEFT JOIN agent_transactions on agent_transactions.id = transactions.original_transaction_id' .
+            ' AND transactions.original_transaction_type ="agent_transaction"' .
             ' WHERE transactions.message in (' .
             ' SELECT serial_number from meters LEFT JOIN meter_parameters on meter_parameters.meter_id = meters.id where meter_parameters.connection_type_id=:connectionId)' .
             ' AND( vodacom_transactions.status =1 or airtel_transactions.status = 1)' .
@@ -179,6 +193,11 @@ class Revenue extends Model
             ' AND transactions.original_transaction_type ="vodacom_transaction"' .
             ' LEFT JOIN airtel_transactions on airtel_transactions.id = transactions.original_transaction_id' .
             ' AND transactions.original_transaction_type ="airtel_transaction"' .
+            ' LEFT JOIN third_party_transactions on third_party_transactions.id = transactions.original_transaction_id' .
+            ' AND transactions.original_transaction_type ="third_party_transaction"' .
+
+            ' LEFT JOIN agent_transactions on agent_transactions.id = transactions.original_transaction_id' .
+            ' AND transactions.original_transaction_type ="agent_transaction"' .
             ' WHERE transactions.message in (SELECT serial_number from meters LEFT JOIN meter_parameters on meter_parameters.meter_id = meters.id where meter_parameters.tariff_id=:tariffId)' .
             ' AND( vodacom_transactions.status =1 or airtel_transactions.status = 1)' .
             ' AND DATE(transactions.created_at) between :startDate and :endDate' .
@@ -199,8 +218,16 @@ class Revenue extends Model
         $sql = 'SELECT sum(transactions.amount) as total, YEARWEEK(transactions.created_at,3) as result_date FROM transactions' .
             ' LEFT JOIN vodacom_transactions on vodacom_transactions.id = transactions.original_transaction_id' .
             ' AND transactions.original_transaction_type ="vodacom_transaction"' .
+           
             ' LEFT JOIN airtel_transactions on airtel_transactions.id = transactions.original_transaction_id' .
             ' AND transactions.original_transaction_type ="airtel_transaction"' .
+
+            ' LEFT JOIN third_party_transactions on third_party_transactions.id = transactions.original_transaction_id' .
+            ' AND transactions.original_transaction_type ="third_party_transaction"' .
+
+            ' LEFT JOIN agent_transactions on agent_transactions.id = transactions.original_transaction_id' .
+            ' AND transactions.original_transaction_type ="agent_transaction"' .
+
             ' WHERE transactions.message in' .
             '(SELECT serial_number from meters' .
             ' LEFT JOIN meter_parameters on meter_parameters.meter_id = meters.id ' .
@@ -208,7 +235,7 @@ class Revenue extends Model
             ' where meter_parameters.connection_type_id=:connectionId ' .
             ' and  addresses.owner_type = "meter_parameter" and addresses.city_id in ( ' . $miniGridId . ' ) ' .
             ')' .
-            ' AND( vodacom_transactions.status =1 or airtel_transactions.status = 1)' .
+            ' AND( vodacom_transactions.status =1 or airtel_transactions.status = 1 or agent_transactions.status=1 or third_party_transactions.status=1)' .
             ' AND DATE(transactions.created_at) between DATE(:startDate) and DATE(:endDate)' .
             ' GROUP BY YEARWEEK(transactions.created_at,3)';
 
