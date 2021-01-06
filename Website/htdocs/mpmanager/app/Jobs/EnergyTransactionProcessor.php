@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Misc\TransactionDataContainer;
 use App\Models\Transaction\Transaction;
+use App\PaymentHandler\AccessRate;
 use App\Sms\SmsTypes;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -53,19 +54,20 @@ class EnergyTransactionProcessor implements ShouldQueue
         $loanContainer->initialize($transactionData->transaction);
 
         $transactionData->transaction->amount = $loanContainer->loanCost();
+        $transactionData->totalAmount = $transactionData->transaction->amount;
         if (empty($loanContainer->paid_rates)) {
             $transactionData->paid_rates = $loanContainer->paid_rates;
         }
         if ($transactionData->transaction->amount > 0) {
             // pay if necessary access rate
-            $transactionData->accessRateDebt = \App\PaymentHandler\AccessRate::payAccessRate($transactionData);
+            $transactionData->accessRateDebt = AccessRate::payAccessRate($transactionData);
             $transactionData->transaction->amount -= $transactionData->accessRateDebt;
         }
 
         if ($transactionData->transaction->amount > 0) {
             //give transaction to token processor
             $meterParameter = $transactionData->meterParameter;
-            $amount = $transactionData->transaction->amount;
+            $transactionData->amount  = $transactionData->transaction->amount;
 
             $kWhToBeCharged = 0.0;
             // get piggy-bank energy
@@ -74,13 +76,13 @@ class EnergyTransactionProcessor implements ShouldQueue
                 // calculate the cost of savings. To achive that, the price (for kWh.) should converted to Wh. (/1000)
                 // the price is x100 in the database to keep the price as integer. The last two digits are decimal parts
                 $savingsCost = $bankAccount->savings * (($bankAccount->socialTariff->price / 1000) / 100);
-                if ($amount >= $savingsCost) {
+                if ($transactionData->amount >= $savingsCost) {
                     $kWhToBeCharged += $bankAccount->savings / 1000;
-                    $amount -= $savingsCost;
+                    $transactionData->amount -= $savingsCost;
                 } else {
-                    $amount = 0;
+                    $transactionData->amount = 0;
                     $kWhToBeCharged += $bankAccount->savings / 1000;
-                    $bankAccount->savings -= $amount / (($bankAccount->socialTariff->price / 1000) / 100);
+                    $bankAccount->savings -= $transactionData->amount / (($bankAccount->socialTariff->price / 1000) / 100);
                 }
 
                 $bankAccount->update();
@@ -88,18 +90,16 @@ class EnergyTransactionProcessor implements ShouldQueue
             } catch (ModelNotFoundException $exception) {
                 // meter has no piggy bank account
             }
-            $kWhToBeCharged += $amount / ($meterParameter->tariff()->first()->total_price / 100);
-            Log::critical($kWhToBeCharged . " charge that amount");
+
             $transactionData->chargedEnergy = round($kWhToBeCharged, 1);
-
-
             TokenProcessor::dispatch($transactionData)->allOnConnection('redis')->onQueue(\config('services.queues.token'));
+
         } else {
             event('transaction.successful', [$transactionData->transaction]);
             SmsProcessor::dispatch($transactionData->transaction,
                 SmsTypes::ACCESS_RATE_PAYMENT)->allOnConnection('redis')->onQueue(\config('services.queues.sms'));
         }
 
-
     }
 }
+

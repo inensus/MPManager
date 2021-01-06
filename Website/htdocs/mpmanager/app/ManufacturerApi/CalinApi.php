@@ -11,8 +11,10 @@ namespace App\ManufacturerApi;
 
 use App\Exceptions\Manufacturer\ApiCallDoesNotSupportedException;
 use App\Lib\IManufacturerAPI;
+use App\Misc\TransactionDataContainer;
 use App\Models\Meter\Meter;
 use App\Models\Meter\MeterToken;
+use App\Models\Transaction\Transaction;
 use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
@@ -26,10 +28,12 @@ class CalinApi implements IManufacturerAPI
      * @var Client
      */
     protected $api;
-
-    public function __construct(Client $httpClient)
+    private $transaction;
+    public function __construct(Client $httpClient,
+        Transaction $transaction)
     {
         $this->api = $httpClient;
+        $this->transaction=$transaction;
     }
 
 
@@ -55,30 +59,46 @@ class CalinApi implements IManufacturerAPI
     public function chargeMeter($transactionContainer): array
     {
 
-        $meter = $transactionContainer->meter;
-        $energy = (float)$transactionContainer->chargedEnergy;
-        $timestamp = time();
-        $cipherText = $this->generateCipherText(
-            $meter->id,
-            config('services.calin.user_id'),
-            $meter->serial_number,
-            'CreditToken',
-            $energy,
-            $timestamp);
+        $meterParameter = $transactionContainer->meterParameter;
+        $transactionContainer->chargedEnergy += $transactionContainer->amount / ($meterParameter->tariff()->first()->total_price / 100);
+        Log::critical('ENERGY TO BE CHARGED float ' . (float)$transactionContainer->chargedEnergy.' Manufacturer => Calin');
 
-        $tokenParams = [
-            'serial_id' => $meter->id,
-            'user_id' => config('services.calin.user_id'),
-            'meter_id' => $meter->serial_number,
-            'token_type' => 'CreditToken',
-            'amount' => $energy,
-            'timestamp' => $timestamp,
-            'ciphertext' => $cipherText,
-        ];
-        return [
-            'token' => $this->tokenRequest($tokenParams),
-            'energy' => $energy
-        ];
+        if (config('app.debug')) {
+            return [
+                'token' => 'debug-token',
+                'energy' => (float)$transactionContainer->chargedEnergy,
+            ];
+        }else{
+
+            $meter = $transactionContainer->meter;
+            $energy = (float)$transactionContainer->chargedEnergy;
+            $timestamp = time();
+            $cipherText = $this->generateCipherText(
+                $meter->id,
+                config('services.calin.user_id'),
+                $meter->serial_number,
+                'CreditToken',
+                $energy,
+                $timestamp);
+            $tokenParams = [
+                'serial_id' => $meter->id,
+                'user_id' => config('services.calin.user_id'),
+                'meter_id' => $meter->serial_number,
+                'token_type' => 'CreditToken',
+                'amount' => $energy,
+                'timestamp' => $timestamp,
+                'ciphertext' => $cipherText,
+            ];
+
+
+          $token =$this->tokenRequest($tokenParams);
+          $this->associateManufacturerTransaction($transactionContainer);
+            return [
+                'token' => $token,
+                'energy' => $energy
+            ];
+        }
+
     }
 
     /**
@@ -107,6 +127,7 @@ class CalinApi implements IManufacturerAPI
             throw new Exception($tokenResult['reason']);
 
         }
+
         return $tokenResult['result'];
     }
 
@@ -128,5 +149,41 @@ class CalinApi implements IManufacturerAPI
     public function clearMeter(Meter $meters)
     {
         throw  new ApiCallDoesNotSupportedException('This api call does not supported');
+    }
+
+    public function associateManufacturerTransaction(TransactionDataContainer $transactionContainer)
+    {
+        $transaction =$this->transaction->newQuery()->with('originalAirtel', 'originalVodacom','orginalAgent','originalThirdParty')->find($transactionContainer->transaction->id);
+        if ($transaction->originalAirtel){
+            $transaction->originalAirtel->update([
+                'manufacturer_transaction_type'=>'calin_transaction',
+                'manufacturer_transaction_id'=>$transaction->id
+            ]);
+            $transaction->originalAirtel->save();
+
+        }else if($transaction->originalVodacom){
+
+            $transaction->originalVodacom->update([
+                'manufacturer_transaction_type'=>'calin_transaction',
+                'manufacturer_transaction_id'=>$transaction->id
+            ]);
+            $transaction->originalVodacom->save();
+
+        }else if($transaction->orginalAgent){
+
+            $transaction->orginalAgent->update([
+                'manufacturer_transaction_type'=>'calin_transaction',
+                'manufacturer_transaction_id'=>$transaction->id
+            ]);
+            $transaction->orginalAgent->save();
+
+        }else if($transaction->originalThirdParty){
+
+            $transaction->originalThirdParty->update([
+                'manufacturer_transaction_type'=>'calin_transaction',
+                'manufacturer_transaction_id'=>$transaction->id
+            ]);
+            $transaction->originalThirdParty->save();
+        }
     }
 }
