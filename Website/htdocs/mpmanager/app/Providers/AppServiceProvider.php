@@ -22,6 +22,7 @@ use App\Models\Meter\MeterTariff;
 use App\Models\Meter\MeterToken;
 use App\Models\MiniGrid;
 use App\Models\Person\Person;
+use App\Models\Transaction\ThirdPartyTransaction;
 use App\Models\Transaction\Transaction;
 use App\Models\Transaction\VodacomTransaction;
 use App\Models\User;
@@ -69,7 +70,8 @@ class AppServiceProvider extends ServiceProvider
                 'appliance' => AssetType::class,
                 'agent_receipt' => AgentReceipt::class,
                 'agent_charge' => AgentCharge::class,
-                'meter_tariff'=>MeterTariff::class
+                'meter_tariff'=>MeterTariff::class,
+                'third_party_transaction'=>ThirdPartyTransaction::class
             ]
         );
     }
