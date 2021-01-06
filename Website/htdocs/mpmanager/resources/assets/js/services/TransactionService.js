@@ -127,6 +127,8 @@ export class TransactionService {
             return transactionData.original_airtel
         } else if (transactionData.original_transaction_type === 'vodacom_transaction') {
             return transactionData.original_vodacom
+        } else if (transactionData.original_transaction_type === 'third_party_transaction') {
+            return transactionData.third_party
         }
     }
 }
