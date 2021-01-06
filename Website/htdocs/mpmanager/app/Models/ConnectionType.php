@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\DB;
  *
  * @property string $name
  */
-class ConnectionType extends Model
+class ConnectionType extends BaseModel
 {
 
     public function subTargets(): HasMany
