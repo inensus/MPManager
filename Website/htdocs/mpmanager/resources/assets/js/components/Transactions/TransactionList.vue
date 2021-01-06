@@ -148,6 +148,8 @@
 
                                     <img v-if="transaction.service==='vodacom_transaction'" class="logo" alt="logo" :src="vodacomLogo" style="max-height: 18px;"/>
                                     <img v-if="transaction.service==='airtel_transaction'" class="logo" alt="logo" :src="airtelLogo" style="max-height: 18px;"/>
+                                    <img v-if="transaction.service==='third_party_transaction'" class="logo" alt="logo"
+                                         src="https://cdn.onlinewebfonts.com/svg/img_229143.png" style="max-height: 18px;"/>
                                     <img v-if="transaction.service==='agent_transaction'"
                                          src="https://image.flaticon.com/icons/svg/99/99395.svg"
                                          style="max-height:18px;"
