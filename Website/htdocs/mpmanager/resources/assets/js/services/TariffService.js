@@ -1,6 +1,8 @@
 import Repository from '../repositories/RepositoryFactory'
 import { ErrorHandler } from '../Helpers/ErrorHander'
 import { TimeOfUsageService } from './TimeOfUsageService'
+import { Paginator } from '../classes/paginator'
+import { resources } from '../resources'
 
 export class TariffService {
     constructor () {
@@ -32,6 +34,7 @@ export class TariffService {
         this.socialOptions = false
         this.times = this.generateTimes()
         this.conflicts = []
+        this.paginator = new Paginator(resources.tariff.list)
     }
 
     fromJson (tariffData) {
@@ -40,7 +43,7 @@ export class TariffService {
             name: tariffData.name,
             price: tariffData.price,
             currency: tariffData.currency,
-            factor: tariffData.factor?tariffData.factor:1,
+            factor: tariffData.factor ? tariffData.factor : 1,
             accessRate: {
                 id: null,
                 amount: null,
@@ -99,6 +102,18 @@ export class TariffService {
             }
         }
         return tariff
+    }
+
+    updateList (data) {
+        this.list = []
+
+        for (let t in data) {
+
+            let tariff = this.fromJson(data[t])
+            this.list.push(tariff)
+
+        }
+        
     }
 
     async getTariffs () {
@@ -381,17 +396,17 @@ export class TariffService {
     }
 
     findConflicts () {
-        let overlaps=[]
-        let data=[]
-        this.tariff.tous.forEach((e)=>{
-            overlaps= this.checkOverlaps(e,data)
+        let overlaps = []
+        let data = []
+        this.tariff.tous.forEach((e) => {
+            overlaps = this.checkOverlaps(e, data)
         })
         this.conflicts = overlaps
     }
 
     checkOverlaps (usage, data) {
-        let overlaps=[]
-        let start =Number(usage.start.split(':')[0])
+        let overlaps = []
+        let start = Number(usage.start.split(':')[0])
         let end = Number(usage.end.split(':')[0])
         // eslint-disable-next-line no-constant-condition
         while (true) {

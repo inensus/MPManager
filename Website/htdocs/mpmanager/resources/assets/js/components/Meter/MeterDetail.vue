@@ -21,23 +21,30 @@
                                             {{meter.owner.name}}
                                             {{meter.owner.surname}}
                                         </a>
-                                      <span style="cursor:pointer" @click="showOwnerEdit = true"><md-icon >edit</md-icon></span>
+                                        <span style="cursor:pointer" @click="showOwnerEdit = true"><md-icon>edit</md-icon></span>
                                     </div>
-                                    <div class="md-layout-item" v-if="showOwnerEdit" >
+                                    <div class="md-layout-item" v-if="showOwnerEdit">
                                         <div class="md-layout-item">{{$tc('phrases.newOwner')}}</div>
 
                                         <md-autocomplete
-                                            v-model="customerSearchTerm"
-                                            :md-options="searchNames"
-                                            @md-changed="searchFor"
-                                            @md-opened="searchFor"
-                                            @md-selected="selectCustomer"
+                                                v-model="customerSearchTerm"
+                                                :md-options="searchNames"
+                                                @md-changed="searchFor"
+                                                @md-opened="searchFor"
+                                                @md-selected="selectCustomer"
                                         >
                                             <label>{{ $tc('words.customer') }}</label>
-                                            <template slot="md-autocomplete-item" slot-scope="{ item }">{{ item.name }}</template>
+                                            <template slot="md-autocomplete-item" slot-scope="{ item }">{{ item.name
+                                                }}
+                                            </template>
                                         </md-autocomplete>
-                                        <md-button v-if="showOwnerEdit" class="md-icon-button md-primary" @click="saveNewOwner()"><md-icon>save</md-icon></md-button>
-                                        <md-button class="md-accent md-icon-button" @click="closeOwnerEdit()"><md-icon>close</md-icon></md-button>
+                                        <md-button v-if="showOwnerEdit" class="md-icon-button md-primary"
+                                                   @click="saveNewOwner()">
+                                            <md-icon>save</md-icon>
+                                        </md-button>
+                                        <md-button class="md-accent md-icon-button" @click="closeOwnerEdit()">
+                                            <md-icon>close</md-icon>
+                                        </md-button>
                                     </div>
                                 </div>
 
@@ -108,7 +115,7 @@
                                 <div class="md-layout-item">
                                     <div v-if="editConnection===false" class="col-sm-6">
                                         {{meter.connection.name}}
-                                      <span style="cursor: pointer" @click="editConnection = true"><md-icon>edit</md-icon></span>
+                                        <span style="cursor: pointer" @click="editConnection = true"><md-icon>edit</md-icon></span>
                                     </div>
                                     <div class="md-layout" v-else>
                                         <div class="md-layout-item">
@@ -144,41 +151,42 @@
 
             <div class="md-layout-item md-size-65 md-small-size-100">
                 <widget
-                    v-if="transactions!==null"
-                    :title="$tc('phrases.meterTransaction')"
-                    class="col-sm-7"
-                    :id="'meter-transactions'"
-                    :paginator="transactions.paginator"
-                    :subscriber="subscriber"
-                    color="green"
+                        v-if="transactions!==null"
+                        :title="$tc('phrases.meterTransaction')"
+                        class="col-sm-7"
+                        :id="'meter-transactions'"
+                        :paginator="transactions.paginator"
+                        :subscriber="subscriber"
+                        color="green"
                 >
                     <md-card>
                         <md-card-content>
 
-                                    <md-table>
-                                        <md-table-row>
-                                            <md-table-head v-for="(item, index) in headers" :key="index">{{item}}
-                                            </md-table-head>
-                                        </md-table-row>
-                                        <md-table-row v-for="token in transactions.tokens" :key="token.id">
-                                            <md-table-cell v-text="token.transaction.id"></md-table-cell>
-                                            <md-table-cell
-                                                v-text="token.transaction.original_transaction_type == 'vodacom_transaction' ? 'Vodacom' :'Airtel'"
-                                            ></md-table-cell>
-                                            <md-table-cell v-text="token.transaction.amount"></md-table-cell>
-                                            <md-table-cell
-                                                v-if="token.paid_for_type === 'token'"
-                                            >Token {{token.paid_for.token}}
-                                            </md-table-cell>
-                                            <md-table-cell v-else>Access Rate</md-table-cell>
-                                            <md-table-cell
-                                                v-if="token.paid_for_type === 'token'"
-                                                v-text="token.paid_for.energy + 'kWh'"
-                                            ></md-table-cell>
-                                            <md-table-cell v-else>-</md-table-cell>
-                                            <md-table-cell v-text="token.created_at"></md-table-cell>
-                                        </md-table-row>
-                                    </md-table>
+                            <md-table>
+                                <md-table-row>
+                                    <md-table-head v-for="(item, index) in headers" :key="index">{{item}}
+                                    </md-table-head>
+                                </md-table-row>
+                                <md-table-row v-for="token in transactions.tokens" :key="token.id">
+                                    <md-table-cell v-text="token.transaction.id"></md-table-cell>
+                                    <md-table-cell
+
+                                            v-text="token.transaction.original_transaction_type"
+                                    ></md-table-cell>
+                                    <md-table-cell v-text="token.transaction.amount"></md-table-cell>
+                                    <md-table-cell
+                                            v-if="token.paid_for_type === 'token'"
+                                    >Token {{token.paid_for.token}}
+                                    </md-table-cell>
+                                    <md-table-cell v-else>Access Rate</md-table-cell>
+                                    <md-table-cell
+                                            v-if="token.paid_for_type === 'token'"
+                                            v-text="token.paid_for.energy + 'kWh'"
+                                    ></md-table-cell>
+                                    <md-table-cell v-else>-</md-table-cell>
+                                    <md-table-cell v-text="token.created_at"></md-table-cell>
+                                </md-table-row>
+                            </md-table>
 
                         </md-card-content>
                     </md-card>
@@ -188,13 +196,14 @@
 
         <div style="margin-top: 1rem;"></div>
 
-        <widget v-if="meter.meterType.online !== 0" :title="$tc('phrases.meterReadings')" class="col-sm-12" :id="'meter-readings'">
+        <widget :title="$tc('phrases.meterReadings')" class="col-sm-12"
+                :id="'meter-readings'">
             <div role="menu" slot="tabbar">
                 <button
-                    class="md-button dropdown-toggle btn-xs"
-                    aria-expanded="false"
-                    id="datepicker-button-trigger"
-                    style="color:white"
+                        class="md-button dropdown-toggle btn-xs"
+                        aria-expanded="false"
+                        id="datepicker-button-trigger"
+                        style="color:white"
                 >
                     Period
                     <md-icon>calendar_today</md-icon>
@@ -216,18 +225,18 @@
         </widget>
 
         <airbnb-style-datepicker
-            :trigger-element-id="'datepicker-button-trigger'"
-            :mode="'range'"
-            :date-one="dates.dateOne"
-            :date-two="dates.dateTwo"
-            :min-date="'2018-01-01'"
-            :endDate="dates.today"
-            :fullscreen-mobile="true"
-            :months-to-show="2"
-            :offset-y="500"
-            v-on:date-one-selected="function(val) { dates.dateOne = val }"
-            v-on:date-two-selected="function(val) { dates.dateTwo = val }"
-            @apply="getConsumptions"
+                :trigger-element-id="'datepicker-button-trigger'"
+                :mode="'range'"
+                :date-one="dates.dateOne"
+                :date-two="dates.dateTwo"
+                :min-date="'2018-01-01'"
+                :endDate="dates.today"
+                :fullscreen-mobile="true"
+                :months-to-show="2"
+                :offset-y="500"
+                v-on:date-one-selected="function(val) { dates.dateOne = val }"
+                v-on:date-two-selected="function(val) { dates.dateTwo = val }"
+                @apply="getConsumptions"
         ></airbnb-style-datepicker>
 
 
@@ -258,16 +267,16 @@ export default {
         this.dates.today = baseDate.format('YYYY-MM-DD')
         this.dates.dateTwo = baseDate.add(-1, 'days').format('YYYY-MM-DD')
         this.dates.dateOne = baseDate.add(-1, 'weeks').format('YYYY-MM-DD')
+        this.meter = new Meter(this.$route.params.id)
     },
     mounted () {
         EventBus.$emit('bread', this.bcd)
         this.transactions = new Transactions(this.$route.params.id)
         this.consumptions = new Consumptions(this.$route.params.id)
-        this.meter = new Meter(this.$route.params.id)
+
         this.meter.detail().then(() => {
             this.meter.revenue()
         })
-
         this.getConsumptions()
         this.getTariffs()
         this.connectionTypes.getSubConnectionTypes()
@@ -291,23 +300,12 @@ export default {
             editTariff: false,
             newTariff: null,
             newConnectionType: null,
-            showOwnerEdit:false,
+            showOwnerEdit: false,
             //meter connection controlller
             connectionTypes: new ConnectionTypes(),
             //re-assing connection flag
             editConnection: false,
 
-            bcd: {
-                Home: {
-                    href: '/'
-                },
-                Meters: {
-                    href: '/meters'
-                },
-                Detail: {
-                    href: null
-                }
-            },
             chartOptions: {
                 chart: {
                     title: 'Company Performance',
@@ -328,16 +326,6 @@ export default {
             tableName: 'Meter Transactions'
         }
     },
-    watch: {
-        //   searchTerm: debounce(function(e) {
-        //     if (this.searchTerm.length < 3) {
-        //       this.hideSearch = true;
-        //       return;
-        //     }
-        //     this.searchFor(this.searchTerm);
-        //   }, 250)
-    },
-
     methods: {
         navigateOwner (ownerId) {
             this.$router.push('/people/' + ownerId)
@@ -346,17 +334,17 @@ export default {
         async getTariffs () {
             try {
                 await this.tariffService.getTariffs()
-            }catch (e) {
+            } catch (e) {
                 this.alertNotify('error', e.message)
             }
 
         },
         reloadList (subscriber, data) {
-            if (subscriber !== this.subscriber){
+            if (subscriber !== this.subscriber) {
                 return
             }
             this.transactions.updateList(data)
-            EventBus.$emit('widgetContentLoaded',this.subscriber,this.transactions.tokens.length)
+            EventBus.$emit('widgetContentLoaded', this.subscriber, this.transactions.tokens.length)
         },
         getConsumptions () {
             this.loading = true
@@ -380,7 +368,7 @@ export default {
         },
         searchFor (term) {
             if (term != undefined && term.length > 2) {
-                this.personService.searchPerson({ params: { term: term, paginate: 0 } } ).then(response => {
+                this.personService.searchPerson({ params: { term: term, paginate: 0 } }).then(response => {
                     this.searchNames = []
                     for (let i in response.data.data) {
                         let person = response.data.data[i]
@@ -425,7 +413,7 @@ export default {
         },
 
         updateParameter (meterId, params) {
-            this.meterParameterService.update(meterId,params)
+            this.meterParameterService.update(meterId, params)
                 .then(response => {
                     if (response.status === 200) {
                         if ('tariff' in response.data.data) {
@@ -437,8 +425,8 @@ export default {
 
                         this.$swal({
                             type: 'error',
-                            title: this.$tc('phrases.meterDetailNotify',0),
-                            text: this.$tc('phrases.meterDetailNotify',2)
+                            title: this.$tc('phrases.meterDetailNotify', 0),
+                            text: this.$tc('phrases.meterDetailNotify', 2)
                         })
                     }
                     this.editTariff = false
@@ -449,23 +437,23 @@ export default {
             if (this.newOwner === null) {
                 this.$swal({
                     type: 'error',
-                    title: this.$tc('phrases.meterDetailNotify',3),
-                    text: this.$tc('phrases.meterDetailNotify2',0)
+                    title: this.$tc('phrases.meterDetailNotify', 3),
+                    text: this.$tc('phrases.meterDetailNotify2', 0)
                 })
                 return
             }
             this.$swal({
                 type: 'success',
-                title: this.$tc('phrases.meterDetailNotify2',1),
-                text: this.$tc('phrases.meterDetailNotify2',3,
-                    {newName:this.newOwner.name , name:this.meter.owner.name + ' ' + this.meter.owner.surname}),
+                title: this.$tc('phrases.meterDetailNotify2', 1),
+                text: this.$tc('phrases.meterDetailNotify2', 3,
+                    { newName: this.newOwner.name, name: this.meter.owner.name + ' ' + this.meter.owner.surname }),
                 showCancelButton: true,
                 confirmButtonText: this.$tc('words.confirm'),
                 cancelButtonText: this.$tc('words.cancel'),
             }).then(result => {
                 console.log(result)
                 if (result.value) {
-                    this.meterParameterService.update(this.meter.id, {personId: this.newOwner.id})
+                    this.meterParameterService.update(this.meter.id, { personId: this.newOwner.id })
                         .then(response => {
                             if (response.status === 200) {
                                 this.meter.owner = response.data.data.owner
@@ -475,12 +463,18 @@ export default {
                                 this.$swal({
                                     type: 'error',
                                     title: this.$tc('phrases.meterDetailNotify'),
-                                    text: this.$tc('phrases.meterDetailNotify',2)
+                                    text: this.$tc('phrases.meterDetailNotify', 2)
                                 })
                             }
                         })
                 }
             })
+        }
+    },
+    computed: {
+        transactionType: () =>
+        {
+            return this.token.transaction.original_transaction_type
         }
     }
 }

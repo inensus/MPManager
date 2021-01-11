@@ -82,7 +82,9 @@ class ClusterController
         }
         $clusters = $this->clusterService->getClusterList();
 
-        return new ApiResource($this->fetchClusterData($clusters, $dateRange));
+        $clusters = $this->clusterService->fetchClusterGeoJson($clusters);
+
+        return new ApiResource($this->clusterService->fetchClusterData($clusters, $dateRange));
     }
 
     public function show($id)
@@ -92,6 +94,7 @@ class ClusterController
             ->find($id);
         return new ApiResource($cluster);
     }
+
     public function showGeo(Cluster $cluster)
     {
         try {
@@ -102,33 +105,6 @@ class ClusterController
 
         $cluster['geo'] = json_decode($clusterData);
         return new ApiResource($cluster);
-    }
-    /**
-     * Gives the json files back which contains the polygon of the given cluster
-     */
-    public function geo()
-    {
-        $clusters = $this->clusterService->getClusterList();
-        foreach ($clusters as $index => $cluster) {
-            try {
-                $clusterData = Storage::disk('local')->get($cluster->name . '.json');
-            } catch (FileNotFoundException $e) {
-                continue;
-            }
-
-            $clusters[$index]['geo'] = [json_decode($clusterData)];
-        }
-        return new ApiResource($clusters);
-    }
-
-    private function fetchClusterData($clusters, $range = [])
-    {
-        foreach ($clusters as $index => $cluster) {
-            $clusters[$index]->meterCount = $this->meterService->getMeterCountInCluster($cluster->id);
-            $clusters[$index]->revenue = $this->transactionService->totalClusterTransactions($cluster->id, $range);
-            $clusters[$index]->population = $this->cityService->getClusteropulation($cluster->id);
-        }
-        return $clusters;
     }
 
 

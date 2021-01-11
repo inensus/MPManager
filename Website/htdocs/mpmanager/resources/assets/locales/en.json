@@ -10,6 +10,8 @@
         "Meters": "Meters",
         "Reports": "Reports",
         "Sms": "Sms",
+        "Spark Meter":"Spark Meter",
+        "Steama Meter":"Spark Meter",
         "subMenu": {
             "Add Cluster": "Add Cluster",
             "Add MiniGrid": "Add MiniGrid",
@@ -27,7 +29,10 @@
             "Sms List": "Sms List",
             "Tariffs": "Tariffs",
             "Types": "Types",
-            "Users": "Users"
+            "Users": "Users",
+            "Sites": "Sites",
+            "Meters": "Meters",
+            "Agents": "Agents"
         },
         "Targets": "Targets",
         "Tariffs": "Tariffs",
@@ -251,6 +256,7 @@
         "tariffNotify": "Tariff deleted successfully. | Tariff changed on using meters successfully. | This tariff has using by {usageCount} of meters. Are you sure update this tariff?",
         "tariffNotify2": "Are you sure delete this tariff? | This tariff has using by {usageCount} of meters.You have to decide change meters tariffs. Are you sure delete this tariff?",
         "thisPeriod": "This Period",
+        "thirdPartyTransaction": "Third Party Transaction",
         "ticketCategories": "Ticket Categories",
         "ticketDetails": "Ticket Details",
         "ticketingSystemTag": "Ticketing System Tag",

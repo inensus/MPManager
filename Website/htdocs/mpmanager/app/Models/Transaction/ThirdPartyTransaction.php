@@ -1,23 +1,17 @@
 <?php
 
+
 namespace App\Models\Transaction;
 
+
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-
-/**
- * @property mixed conversation_id
- * @property mixed originator_conversation_id
- * @property mixed id
- * @property mixed transaction_id
- * @property string mpesa_receipt
- * @property string transaction_date
- * @property int status
- */
-class VodacomTransaction extends BaseModel implements IRawTransaction
+class ThirdPartyTransaction extends BaseModel implements IRawTransaction
 {
-    public function transaction()
+
+    public function transaction(): MorphOne
     {
         return $this->morphOne(Transaction::class, 'original_transaction');
     }
@@ -31,6 +25,7 @@ class VodacomTransaction extends BaseModel implements IRawTransaction
     {
         return $this->morphMany(TransactionConflicts::class, 'transaction');
     }
+
 
 
 }

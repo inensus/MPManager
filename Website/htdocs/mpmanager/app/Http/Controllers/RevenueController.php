@@ -711,41 +711,49 @@ class RevenueController extends Controller
      */
     public function getPeriodicClustersRevenue(Request $request): ApiResource
     {
-        $startDate = $request->get('startDate') ?? date('Y-01-01');
-        $endDate = $request->get('endDate') ?? date('Y-m-t');
-        $period = $request->get('period') ?? 'monthly';
+         $startDate = $request->get('startDate') ;
+         if(!$startDate) {
+             $start = new DateTime;
+             $start->setDate($start->format('Y'), $start->format('n'), 1); // Normalize the day to 1
+             $start->setTime(0, 0, 0); // Normalize time to midnight
+             $start->sub(new DateInterval('P12M'));
+             $startDate = $start->format('Y-m-d');
 
-        //get meters in clusters
-        $clusters = $this->clusterService->getClusterList(true);
+         }
+         $endDate = $request->get('endDate') ?? date('Y-m-t');
+         $period = $request->get('period') ?? 'monthly';
+         //get meters in clusters
+         $clusters = $this->clusterService->getClusterList(true);
+         //generate initial dataset for revenue
+         $periods = $this->periodService->generatePeriodicList($startDate, $endDate, $period, ['revenue' => 0]);
+         //generate initial dataset for revenue
+         foreach ($clusters as $clusterIndex => $cluster) {
+                 $totalRevenue = 0;
+             $p = $periods;
+             $revenues = $this->revenueService->getClustersRevenueByPeriod($cluster->id,
+                         [$startDate, $endDate],
+                 $period);
 
-        //generate initial dataset for revenue
-        $periods = $this->periodService->generatePeriodicList($startDate, $endDate, $period, ['revenue' => 0]);
 
-        foreach ($clusters as $clusterIndex => $cluster) {
-            $totalRevenue = 0;
-            $p = $periods;
-            $revenues = $this->revenueService->getClustersRevenueByPeriod($cluster->id,
-                [$startDate, $endDate],
-                $period);
+             foreach ($revenues as $rIndex => $revenue) {
+                         if ($period === 'weekMonth') {
+                                 $p[$revenue->period][$revenue->week]['revenue'] = $revenue->revenue;
+                 } elseif ($period = "monthly") {
+                                 $p[$revenue->period]['revenue'] += $revenue->revenue;
+                 }
+                 $totalRevenue += $revenue->revenue;
+
+             }
+
+             $clusters[$clusterIndex]['period'] = $p;
+             $clusters[$clusterIndex]['totalRevenue'] = $totalRevenue;
+
+         }
+         return new ApiResource($clusters);
+         //get revenues by cities and summarise it
+     }
 
 
-            foreach ($revenues as $rIndex => $revenue) {
-                if ($period === 'weekMonth') {
-                    $p[$revenue->period][$revenue->week]['revenue'] = $revenue->revenue;
-                } elseif ($period = "monthly") {
-                    $p[$revenue->period]['revenue'] += $revenue->revenue;
-                }
-                $totalRevenue += $revenue->revenue;
-
-            }
-
-            $clusters[$clusterIndex]['period'] = $p;
-            $clusters[$clusterIndex]['totalRevenue'] = $totalRevenue;
-
-        }
-        return new ApiResource($clusters);
-        //get revenues by cities and summarise it
-    }
 
     public function getClusterRevenue($id, Request $request): ApiResource
     {

@@ -4,7 +4,6 @@ namespace App\Jobs;
 
 use App\Misc\TransactionDataContainer;
 use App\Models\Meter\MeterToken;
-use App\Sms\SmsTypes;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -79,17 +78,7 @@ class TokenProcessor implements ShouldQueue
         //no token generated before
         if ($token === null) {
             try {
-                Log::critical('ENERGY TO BE CHARGED float ' . (float)$this->transactionContainer->chargedEnergy);
-
-                if (config('app.debug')) {
-                    $tokenData = [
-                        'token' => 'debug-token',
-                        'energy' => (float)$this->transactionContainer->chargedEnergy,
-                    ];
-                } else {
-                    $tokenData = $api->chargeMeter($this->transactionContainer);
-                }
-
+                $tokenData = $api->chargeMeter($this->transactionContainer);
             } catch (Exception $e) {
                 if (self::maxTries > $this->counter) {
                     $this->counter++;
@@ -107,7 +96,7 @@ class TokenProcessor implements ShouldQueue
                 return;
             }
 
-            $token = MeterToken::make([
+            $token = MeterToken::query()->make([
                 'token' => $tokenData['token'],
                 'energy' => $tokenData['energy'],
 

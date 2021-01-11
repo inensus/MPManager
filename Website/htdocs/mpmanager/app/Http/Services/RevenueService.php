@@ -11,7 +11,9 @@ namespace App\Http\Services;
 
 use App\Models\Meter\Meter;
 use App\Models\Meter\MeterToken;
+use App\Models\Transaction\AgentTransaction;
 use App\Models\Transaction\AirtelTransaction;
+use App\Models\Transaction\ThirdPartyTransaction;
 use App\Models\Transaction\Transaction;
 use App\Models\Transaction\VodacomTransaction;
 use Illuminate\Support\Facades\DB;
@@ -91,6 +93,18 @@ class RevenueService
                     $q->where('status', 1);
                 });
             })
+            ->orWhere(function ($q) {
+                $q->where('original_transaction_type', 'agent_transaction');
+                $q->whereHas('originalAgent', function ($q) {
+                    $q->where('status', 1);
+                });
+            })
+            ->orWhere(function ($q) {
+                $q->where('original_transaction_type', 'third_party_transaction');
+                $q->whereHas('originalThirdParty', function ($q) {
+                    $q->where('status', 1);
+                });
+            })
             ->whereIn('message', $meters->pluck('serial_number'))
             ->whereBetween('created_at', $period)
             ->groupBy(DB::raw('DATE_FORMAT(created_at,\'%Y-%m\'),WEEKOFYEAR(created_at)'))->get();
@@ -125,6 +139,18 @@ class RevenueService
                     $q->where('status', 1);
                 });
             })
+            ->orWhere(function ($q) {
+                $q->where('original_transaction_type', 'agent_transaction');
+                $q->whereHas('originalAgent', function ($q) {
+                    $q->where('status', 1);
+                });
+            })
+            ->orWhere(function ($q) {
+                $q->where('original_transaction_type', 'third_party_transaction');
+                $q->whereHas('originalThirdParty', function ($q) {
+                    $q->where('status', 1);
+                });
+            })
             ->whereIn('message', $meters->pluck('serial_number'))
             ->whereBetween('created_at', $period)->get();
         return $revenue;
@@ -145,7 +171,7 @@ class RevenueService
                         });
                     });
                 });
-            })->whereHasMorph('originalTransaction', [VodacomTransaction::class, AirtelTransaction::class],
+            })->whereHasMorph('originalTransaction', [VodacomTransaction::class, AirtelTransaction::class,AgentTransaction::class,ThirdPartyTransaction::class],
                 static function ($q) {
                     $q->where('status', 1);
                 })
@@ -165,7 +191,7 @@ class RevenueService
                         });
                     });
                 });
-            })->whereHasMorph('originalTransaction', [VodacomTransaction::class, AirtelTransaction::class],
+            })->whereHasMorph('originalTransaction', [VodacomTransaction::class, AirtelTransaction::class,AgentTransaction::class,ThirdPartyTransaction::class],
                 static function ($q) {
                     $q->where('status', 1);
                 })
