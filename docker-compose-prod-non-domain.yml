@@ -12,6 +12,7 @@ services:
       - maria
       - composer
       - node
+      - cron
     links:
       - maria:db
       - redis:redis
