@@ -11,7 +11,7 @@
         "Reports": "Reports",
         "Sms": "Sms",
         "Spark Meter":"Spark Meter",
-        "Steama Meter":"Spark Meter",
+        "Steama Meter":"Steama Meter",
         "subMenu": {
             "Add Cluster": "Add Cluster",
             "Add MiniGrid": "Add MiniGrid",
