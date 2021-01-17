@@ -11,6 +11,8 @@ namespace App\Http\Services;
 
 use App\Models\City;
 use App\Models\Meter\Meter;
+use Exception;
+use Illuminate\Support\Facades\Log;
 use function count;
 
 class MeterService
@@ -30,10 +32,6 @@ class MeterService
         $this->meter = $meter;
     }
 
-    public function getClusterRevenue($clusterId)
-    {
-
-    }
 
     public function getMeterCountInCluster($clusterId)
     {
@@ -134,5 +132,32 @@ class MeterService
         $city['meters'] = $meters;
         $city['metersCount'] = count($meters);
         return $city;
+    }
+
+
+    public function updateMeterGeoLocations($meters)
+    {
+        try {
+            foreach ($meters as $key=> $meter) {
+                $points = [
+                    $meter['lat'],
+                    $meter['lng']
+                ];
+
+
+                if ($points) {
+                    $meter = $this->meter->find($meter['id']);
+                    $geo = $meter->meterParameter()->first()->address()->first()->geo()->first();
+                    $geo->points = $points[0] . ',' . $points[1];
+                    $geo->save();
+                }
+            }
+            return ['data'=>true];
+        }catch (Exception $exception){
+
+             throw  new Exception($exception->getMessage());
+        }
+
+
     }
 }

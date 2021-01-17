@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\ApiResource;
+use App\Http\Services\MeterService;
 use App\Models\City;
 use App\Models\Meter\Meter;
 use App\Models\Meter\MeterConsumption;
@@ -31,16 +32,23 @@ class MeterController extends Controller
      */
     private $city;
 
+    private $meterService;
+
     /**
      * MeterController constructor.
      *
      * @param Meter $meter
      * @param City $city
+     * @param MeterService $meterService
      */
-    public function __construct(Meter $meter, City $city)
+    public function __construct(
+        Meter $meter,
+        City $city,
+        MeterService $meterService)
     {
         $this->meter = $meter;
         $this->city = $city;
+        $this->meterService=$meterService;
     }
 
     /**
@@ -164,20 +172,11 @@ class MeterController extends Controller
      * @param Request $request
      * @param Meter $meter
      */
-    public function update(Request $request, $meter)
+    public function update(Request $request):ApiResource
     {
+         $meters = $request->all();
 
-        $points =  $request->only([
-            'lat','lng'
-        ]);
-
-        if ($points) {
-            $meter = $this->meter->find($meter);
-            $geo = $meter->meterParameter()->first()->address()->first()->geo()->first();
-
-            $geo->points = $points['lat'] . ',' . $points['lng'];
-            $geo->save();
-        }
+         return new ApiResource($this->meterService->updateMeterGeoLocations($meters));
 
     }
 
@@ -293,12 +292,11 @@ class MeterController extends Controller
      * @return  ApiResource
      * @responseFile responses/meters/meters.geo.list.json
      */
-    public function meterGeoList(): ApiResource
+    public function meterGeoList($miniGridId): ApiResource
     {
-        $miniGridId = request('mini_grid_id');
+
 
         $cities = $this->city->select('id')->where('mini_grid_id', $miniGridId)->get()->pluck('id')->toArray();
-
 
         //city id yi anca addresten yakalariz
         if ($miniGridId === null) {
