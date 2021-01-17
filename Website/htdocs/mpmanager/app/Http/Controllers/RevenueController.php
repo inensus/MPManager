@@ -317,6 +317,10 @@ class RevenueController extends Controller
         $cities = $this->city::where('mini_grid_id', $id)->get();
         $cityIds = implode(',', $cities->pluck('id')->toArray());
 
+        if (!count($cities)){
+            $response = ['data'=>null,'message'=>'There is no city for this MiniGrid'];
+            return new ApiResource($response);
+        }
 
         //get list of tariffs
         $connections = ConnectionType::get();
