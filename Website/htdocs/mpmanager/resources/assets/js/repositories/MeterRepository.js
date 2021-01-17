@@ -5,12 +5,12 @@ const resource = '/api/meters'
 export default {
 
     geoList(miniGridId){
-        return Client.get(`${resource}/geoList?mini_grid_id=${miniGridId}`)
+        return Client.get(`${resource}/${miniGridId}/geoList`)
     },
     get(meterId){
         return Client.get(`${resource}/${meterId}/all`)
     },
-    update(meterId,points){
-        return Client.put(`${resource}/${meterId}`,points)
+    update(meters){
+        return Client.put(`${resource}`,meters)
     }
 }

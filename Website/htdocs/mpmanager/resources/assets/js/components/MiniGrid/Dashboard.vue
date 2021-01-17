@@ -121,14 +121,14 @@
                 </div>
                 <div class="md-layout-item md-medium-size-50 md-xsmall-size-100 md-size-25">
                     <box
-                        :center-text="true"
-                        :color="[ '#ffa726','#fb8c00']"
-                        :header-text="$tc('phrases.soldEnergy')"
-                        :header-text-color="'#dddddd'"
-                        :sub-text="soldEnergy.toString() +'kWh'"
-                        :sub-text-color="'#e3e3e3'"
-                        box-icon="wb_iridescent"
-                        :box-icon-color="'#578839'"
+                            :center-text="true"
+                            :color="[ '#ffa726','#fb8c00']"
+                            :header-text="$tc('phrases.soldEnergy')"
+                            :header-text-color="'#dddddd'"
+                            :sub-text="soldEnergy.toString() +'kWh'"
+                            :sub-text-color="'#e3e3e3'"
+                            box-icon="wb_iridescent"
+                            :box-icon-color="'#578839'"
                     />
                 </div>
                 <div class="md-layout-item md-medium-size-50 md-xsmall-size-100 md-size-25">
@@ -159,9 +159,9 @@
                 </div>
                 <div class="md-layout-item md-medium-size-50 md-xsmall-size-100 md-size-25">
                     <solar-data-and-weather
-                        v-if="this.miniGridData.location!==undefined"
-                        :mini_grid_id="this.miniGridId"
-                        :mini_grid_coordinates="this.miniGridData.location.points"
+                            v-if="this.miniGridData.location!==undefined"
+                            :mini_grid_id="this.miniGridId"
+                            :mini_grid_coordinates="this.miniGridData.location.points"
                     />
                 </div>
 
@@ -176,10 +176,10 @@
 
                 <div class="md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-33">
                     <widget
-                        :id="'revenue-pie'"
-                        :headless="true"
-                        :title="$tc('phrases.revenuePerCustomerType')"
-                        color="red">
+                            :id="'revenue-pie'"
+                            :headless="true"
+                            :title="$tc('phrases.revenuePerCustomerType')"
+                            color="red">
 
                         <GChart v-if="donutData.length>0"
                                 type="PieChart"
@@ -196,10 +196,10 @@
                 </div>
                 <div class="md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-33">
                     <widget
-                        :id="'revenue-targets'"
-                        :headless="true"
-                        :title="$tc('phrases.revenueTargetsPerCustomerType')"
-                        color="green">
+                            :id="'revenue-targets'"
+                            :headless="true"
+                            :title="$tc('phrases.revenueTargetsPerCustomerType')"
+                            color="green">
 
                         <div class="row" v-if="batchRevenues.revenueList !== null && donutData.length>0"
                              style="margin: 2vh;">
@@ -247,36 +247,35 @@
                 </div>
                 <div class="md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-100">
                     <target-list
-                        :target-id="miniGridId"
-                        target-type="mini-grid"
-                        :base="highlighted.base"
-                        :compared="highlighted.compared"
-                        @baseDataAvailable=baseDataAvailable
+                            :target-id="miniGridId"
+                            target-type="mini-grid"
+                            :base="highlighted.base"
+                            :compared="highlighted.compared"
+                            @baseDataAvailable=baseDataAvailable
                     />
                 </div>
                 <div class="md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-100">
-                    <widget :id="'revenue-trends'" :title="$tc('phrases.revenueTrends')" :subscriber="subscriber.revenue_trends"
+                    <widget :id="'revenue-trends'" :title="$tc('phrases.revenueTrends')"
+                            :subscriber="subscriber.revenue_trends"
                     >
                         <div class="md-layout md-gutter">
                             <div class="md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-100">
                                 <GChart
-                                    type="ColumnChart"
-                                    :data="trendChartData.base"
-                                    :options="chartOptions"
-                                    :resizeDebounce="500"
+                                        type="ColumnChart"
+                                        :data="trendChartData.base"
+                                        :options="chartOptions"
+                                        :resizeDebounce="500"
                                 />
                             </div>
                             <div class="md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-100">
                                 <GChart
-                                    type="LineChart"
-                                    :data="trendChartData.overview"
-                                    :options="chartOptions"
-                                    :resizeDebounce="500"
+                                        type="LineChart"
+                                        :data="trendChartData.overview"
+                                        :options="chartOptions"
+                                        :resizeDebounce="500"
                                 />
                             </div>
                         </div>
-
-
 
 
                     </widget>
@@ -287,10 +286,10 @@
                         <div class="col-sm-12" style="margin: 2vh;">
                             <h5>{{ $tc('phrases.ticketsOverview',2) }}</h5>
                             <GChart
-                                type="ColumnChart"
-                                :data="openedTicketChartData"
-                                :options="chartOptions"
-                                :resizeDebounce="500"
+                                    type="ColumnChart"
+                                    :data="openedTicketChartData"
+                                    :options="chartOptions"
+                                    :resizeDebounce="500"
                             />
 
 
@@ -514,14 +513,14 @@ export default {
             startDate: null,
             endDate: null,
             chartEvents:
-                    {
-                        select: () => {
-                            const table = this.$refs.gChart.chartObject
-                            const selection = table.getSelection()
-                            const onSelectionMessage = selection.length !== 0 ? 'row was selected' : 'row was diselected'
-                            console.log(onSelectionMessage)
-                        }
-                    },
+          {
+              select: () => {
+                  const table = this.$refs.gChart.chartObject
+                  const selection = table.getSelection()
+                  const onSelectionMessage = selection.length !== 0 ? 'row was selected' : 'row was diselected'
+                  console.log(onSelectionMessage)
+              }
+          },
             chartOptions: {
                 isStacked: true,
                 chart: {
@@ -533,7 +532,7 @@ export default {
                 hAxis: {
                     textPosition: 'out',
                     slantedText:
-                            true
+              true
                 },
                 vAxis: {
                     //scaleType: 'mirrorLog',
@@ -585,14 +584,14 @@ export default {
             disabled: {
                 days: [0, 2, 3, 4, 5, 6], // Disable all days except monday
                 customPredictor:
-                        function (date) {
-                            let today = new Date()
-                            let minDate = new Date('2018-01-01')
-                            // disables the date if it is a multiple of 5
-                            if (date > today || date < minDate) {
-                                return true
-                            }
-                        }
+            function (date) {
+                let today = new Date()
+                let minDate = new Date('2018-01-01')
+                // disables the date if it is a multiple of 5
+                if (date > today || date < minDate) {
+                    return true
+                }
+            }
             },
             highlighted: {
                 base: {},
@@ -608,11 +607,11 @@ export default {
             init: true,
             dateFormat: 'DD MMM YYYY',
             trendChartData:
-                    {
-                        base: [],
-                        compare: [],
-                        overview: []
-                    },
+          {
+              base: [],
+              compare: [],
+              overview: []
+          },
             labels: ['Base', 'Comparision'],
             chartData: [],
             chartTmpData: [],
@@ -690,8 +689,8 @@ export default {
                     for (let tD in ticketCategoryData) {
 
                         let ticketData = ticketCategoryData[tD]
-                        ticketChartDataOpened.push(ticketData.opened, oT + '\n' + [tD] + ' : ' + ticketData.opened + this.$tc('words.open',2))
-                        ticketChartDataClosed.push(ticketData.closed, oT + '\n' + [tD] + ' : ' + ticketData.closed + this.$tc('words.close',2))
+                        ticketChartDataOpened.push(ticketData.opened, oT + '\n' + [tD] + ' : ' + ticketData.opened + this.$tc('words.open', 2))
+                        ticketChartDataClosed.push(ticketData.closed, oT + '\n' + [tD] + ' : ' + ticketData.closed + this.$tc('words.close', 2))
 
                     }
 
@@ -715,8 +714,11 @@ export default {
             this.trendChartData.compare = [[this.$tc('words.date')]]
 
             try {
-                this.revenueTrends = await this.revenueService.getMiniGridRevenueTrends(this.miniGridId, this.startDate, this.endDate)
 
+                this.revenueTrends = await this.revenueService.getMiniGridRevenueTrends(this.miniGridId, this.startDate, this.endDate)
+                if (!this.revenueTrends) {
+                    this.redirectDialogActive = true
+                }
                 for (let dt in this.revenueTrends) {
                     for (let tariffNames in this.revenueTrends[dt]) {
                         this.trendChartData.base[0].push(tariffNames)

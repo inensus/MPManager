@@ -28,12 +28,13 @@
                 <md-card>
                     <md-card-content>
                         <Map
-                            :geoData="geoData"
-                            :constantLocations="constantLocations"
-                            :constantMarkerUrl="miniGridIcon"
-                            :center="center"
-                            :markingInfos="markingInfos"
-                            :parentName="'Top'"
+                                :geoData="geoData"
+                                :markerLocations="constantLocations"
+                                :markerUrl="miniGridIcon"
+                                :center="center"
+                                :markingInfos="markingInfos"
+                                :parentName="'Top-MiniGrid'"
+                                :zoom="7"
                         />
                     </md-card-content>
 
@@ -44,11 +45,11 @@
             <div v-if="clusterData && 1===-1" class="md-layout-item
        md-size-100">
                 <target-list
-                    :target-id="clusterId"
-                    target-type="cluster"
-                    :base="base"
-                    :compared="compared"
-                    @complete="addConnections"
+                        :target-id="clusterId"
+                        target-type="cluster"
+                        :base="base"
+                        :compared="compared"
+                        @complete="addConnections"
                 />
             </div>
             <div v-if="clusterData" class="md-layout-item
@@ -121,7 +122,7 @@ export default {
     },
 
     methods: {
-        initDates() {
+        initDates () {
             this.base = {
                 from: moment().startOf('month').format('YYYY-MM-DD hh:mm'),
                 to: moment().endOf('month').format('YYYY-MM-DD hh:mm')
@@ -140,12 +141,11 @@ export default {
             this.boxData['mini_grids'] = this.clusterData.mini_grids.length
             for (let i in this.clusterData.mini_grids) {
                 let miniGrids = this.clusterData.mini_grids
-
                 let points = miniGrids[i].location.points.split(',')
                 let lat = points[0]
                 let lon = points[1]
 
-                let markingInfo = this.mappingService.createMarkinginformation(miniGrids[i].id, miniGrids[i].name, null,lat, lon)
+                let markingInfo = this.mappingService.createMarkingInformation(miniGrids[i].id, miniGrids[i].name, null, lat, lon,miniGrids[i].data_stream)
 
                 this.markingInfos.push(markingInfo)
                 this.constantLocations.push([lat, lon])
@@ -153,13 +153,13 @@ export default {
             }
         },
 
-        addRevenue(data) {
+        addRevenue (data) {
             this.boxData['revenue'] = {
                 'total': data['sum'],
                 'period': data['period']
             }
         },
-        addConnections(data) {
+        addConnections (data) {
             this.boxData['people'] = data
             this.boxData['meters'] = data
         },

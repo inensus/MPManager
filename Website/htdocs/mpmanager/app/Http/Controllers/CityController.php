@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cluster;
 use App\Models\MiniGrid;
 use App\Models\City;
 use App\Models\Country;
@@ -26,10 +27,12 @@ class CityController extends Controller
      */
     private $miniGrid;
 
-    public function __construct(City $city, MiniGrid $miniGrid)
+    private $cluster;
+    public function __construct(City $city, MiniGrid $miniGrid,Cluster $cluster)
     {
         $this->city = $city;
         $this->miniGrid = $miniGrid;
+        $this->cluster=$cluster;
     }
 
     /**
@@ -91,15 +94,12 @@ class CityController extends Controller
     {
 
         $miniGrid = $this->miniGrid->find($request->input('mini_grid_id'));
-
+        $cluster =  $this->cluster->find($request->input('cluster_id'));
         $this->city->name = request('name');
         $this->city->miniGrid()->associate($miniGrid);
+        $this->city->cluster()->associate($cluster);
         $this->city->save();
-        //$this->city->country()->associate($country);
-        //$country->cities()->save($this->city);
 
-        //save and return object
-        return
-            new ApiResource($this->city);
+        return new ApiResource($this->city);
     }
 }
