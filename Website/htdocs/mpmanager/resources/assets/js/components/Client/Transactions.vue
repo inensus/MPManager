@@ -23,7 +23,7 @@
                                 >{{ item.payment_type }}
                                 </md-table-cell>
                                 <md-table-cell :md-label="$tc('words.sender')" md-sort-by="sender">{{ item.sender }}</md-table-cell>
-                                <md-table-cell :md-label="$tc('words.amount')" md-sort-by="amount">{{ item.amount + ' ' + appConfig.currency}}
+                                <md-table-cell :md-label="$tc('words.amount')" md-sort-by="amount">{{ item.amount + ' ' + $store.state.mSettings.currency}}
                                 </md-table-cell>
                                 <md-table-cell :md-label="$tc('phrases.paidFor')" md-sort-by="paid_for_type">{{ item.paid_for_type }}
                                 </md-table-cell>
@@ -56,7 +56,7 @@
                                     id="datatable_col_reorder_previous">
                                     <a href="javascript:void(0);" aria-controls="datatable_col_reorder"
                                        data-dt-idx="0"
-                                       tabindex="0" @click="getTransactions(--currentPage)">$tc('words.previous')</a>
+                                       tabindex="0" @click="getTransactions(--currentPage)">{{ $tc('words.previous') }}</a>
                                 </li>
 
                                 <li v-for="(page,index) in totalPages" :class="page === currentPage ? 'active' : ''" :key="index"><a

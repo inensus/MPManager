@@ -36,7 +36,7 @@
                     {{revenue.newConnections}}/{{baseTargetData(revenue.tariff,'connections')}}
                 </td>
 
-                <td>{{readable(revenue.revenue)}} TZS
+                <td>{{readable(revenue.revenue)}} {{ $store.state.mSettings.currency }}
                     <span v-if="compareAnalysisAvailable && calculateRevenuePercent(revenue.revenue,
                                 revenue.compareRevenue) !==-1 " :class="calculateRevenuePercent(revenue.revenue,
                                 revenue.compareRevenue)<100? 'red' :'green'">
@@ -50,7 +50,7 @@
 
 
                 <td class="hidden-xs" v-if="compareAnalysisAvailable">{{readable(revenue.compareRevenue)}}
-                    TZS
+                    {{ $store.state.mSettings.currency }}
                 </td>
                 <td class="hidden-xs">
                     {{baseTargetData(revenue.tariff,'revenue')}}
@@ -62,8 +62,8 @@
                         %)
                     </small>
                 </td>
-                <td>{{readable(revenue.revenuePerConnection)}} TZS</td>
-                <td v-if="compareAnalysisAvailable">{{readable(revenue.compareRevenuePerConnection)}} TZS
+                <td>{{readable(revenue.revenuePerConnection)}} {{ $store.state.mSettings.currency }}</td>
+                <td v-if="compareAnalysisAvailable">{{readable(revenue.compareRevenuePerConnection)}} {{ $store.state.mSettings.currency }}
                 </td>
             </tr>
             <tr>
@@ -76,12 +76,12 @@
                     {{totalRevenues.connections}} /
                     {{totalConnectionsByTarget()}}
                 </td>
-                <td>{{readable(totalRevenues.revenue)}} TZS</td>
+                <td>{{readable(totalRevenues.revenue)}} {{ $store.state.mSettings.currency }}</td>
                 <td v-if="compareAnalysisAvailable">&nbsp;</td>
-                <td v-if="compareAnalysisAvailable">{{readable(totalRevenues.compareRevenue)}} TZS</td>
-                <td>{{readable(totalRevenues.revenuePerConnection)}} TZS</td>
+                <td v-if="compareAnalysisAvailable">{{readable(totalRevenues.compareRevenue)}} {{ $store.state.mSettings.currency }}</td>
+                <td>{{readable(totalRevenues.revenuePerConnection)}} {{ $store.state.mSettings.currency }}</td>
                 <td v-if="compareAnalysisAvailable">{{readable(totalRevenues.compareRevenuePerConnection)}}
-                    TZS
+                    {{ $store.state.mSettings.currency }}
                 </td>
 
             </tr>

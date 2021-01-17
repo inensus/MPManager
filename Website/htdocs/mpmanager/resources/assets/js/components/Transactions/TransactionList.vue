@@ -65,7 +65,7 @@
                     :color="[ '#ffa726','#fb8c00']"
                     :header-text="$tc('words.revenue')"
                     :header-text-color="'#dddddd'"
-                    :sub-text="readable(analyticsData.current.amount) +                                    appConfig.currency"
+                    :sub-text="readable(analyticsData.current.amount) + $store.state.mSettings.currency"
                     :sub-text-color="'#e3e3e3'"
                     box-icon="attach_money"
                     :box-icon-color="'#578839'"
@@ -156,7 +156,7 @@
 
                                 </md-table-cell>
                                 <md-table-cell>{{transaction.sender}}</md-table-cell>
-                                <md-table-cell>{{readable(transaction.amount) + appConfig.currency}}
+                                <md-table-cell>{{readable(transaction.amount)}} {{$store.state.mSettings.currency}}
                                 </md-table-cell>
                                 <md-table-cell>{{transaction.type}}</md-table-cell>
                                 <md-table-cell>{{transaction.message}}</md-table-cell>

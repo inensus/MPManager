@@ -257,6 +257,11 @@ export const exportedRoutes = [
         component: require('./components/Assets/AssetTypeList').default,
         meta: { layout: 'default' },
     },
+    {
+        path: '/settings',
+        component: require('./components/Settings/Settings').default,
+        meta: { layout: 'default' },
+    },
 
     {
         path: '/profile',
