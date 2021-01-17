@@ -94,14 +94,15 @@ export class MappingService {
 
     }
 
-    createMarkinginformation (id, name,serialNumber, lat, lon) {
+    createMarkingInformation (id, name,serialNumber, lat, lon,data_stream) {
         this.markingInfo = {
 
             id: id,
             serialNumber:serialNumber,
             name: name,
             lat: lat,
-            lon: lon
+            lon: lon,
+            dataStream:data_stream
         }
 
         return this.markingInfo
