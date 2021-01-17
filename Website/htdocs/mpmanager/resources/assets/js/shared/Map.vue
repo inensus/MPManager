@@ -66,7 +66,7 @@ export default {
         },
         center: {
             type: Array,
-            default: function () {return this.appConfig.mapStartingPoint}
+            default: function () {return this.$store.state.mapSettings.center}
 
         },
         filtered_types: {
@@ -92,7 +92,7 @@ export default {
         },
         zoom: {
             type: Number,
-            default: 6
+            default: function () {return this.$store.state.mapSettings.zoom}
         },
         maxZoom: {
             type: Number,
@@ -105,6 +105,11 @@ export default {
         parentName: {
             type: String,
             default: ''
+        },
+        position:{
+            type: String,
+            default:'topright',
+            required:false
         }
     },
     data () {
@@ -121,9 +126,8 @@ export default {
 
     },
     mounted () {
-        this.center = this.appConfig.mapStartingPoint
         this.drawingOptions = {
-            position: 'topright',
+            position: this.position,
             draw: {
                 polygon: this.polygon,
                 polyline: this.polyline,
@@ -282,7 +286,6 @@ export default {
     destroyed () {
         this.map = null
     },
-    computed: {},
     methods: {
         generateMap (options, center) {
 
@@ -500,8 +503,19 @@ export default {
             }
 
         },
+
+        reGenerateMap(){
+            this.map.flyTo(this.center,this.zoom,this.drawingOptions)
+        }
     },
+
     watch: {
+        center(){
+            this.reGenerateMap()
+        },
+        zoom(){
+            this.reGenerateMap()
+        },
         geoData: debounce(function () {
             this.setLocation(this.geoData)
         }, 10),

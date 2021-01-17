@@ -95,7 +95,7 @@ export default {
             geoData: null,
             constantLocations: [],
             markingInfos: [],
-            center: this.appConfig.mapStartingPoint,
+            center: this.$store.state.mapSettings.center,
             base: {},
             compared: {},
             boxData: {

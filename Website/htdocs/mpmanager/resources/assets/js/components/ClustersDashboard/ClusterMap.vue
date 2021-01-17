@@ -36,7 +36,7 @@ export default {
             loading: false,
             show: true,
             geoData: null,
-            center: this.appConfig.mapStartingPoint,
+            center: this.$store.state.mapSettings.center,
             miniGrids: null,
             clusterLayer: null,
             clusterGeo: {}

@@ -32,7 +32,7 @@ export default {
             show: true,
             enableTooltip: true,
             zoom: 20,
-            center: this.appConfig.mapStartingPoint,
+            center: this.$store.state.mapSettings.center,
             geojson: null,
             fillColor: '#e4ce7f',
             url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
