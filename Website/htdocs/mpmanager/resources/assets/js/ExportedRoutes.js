@@ -72,7 +72,7 @@ export const exportedRoutes = [
   },
   {
     //transaction list
-    path: '/transactions/page/:page',
+    path: '/transactions/page/:page_number',
     component: require('./components/Transactions/TransactionList').default,
     meta: { layout: 'default' },
   },
@@ -84,6 +84,11 @@ export const exportedRoutes = [
   },
   {
     path: '/tickets',
+    component: require('./components/Ticket/TicketList').default,
+    meta: { layout: 'default' },
+  },
+  {
+    path: '/tickets/page/:page_number',
     component: require('./components/Ticket/TicketList').default,
     meta: { layout: 'default' },
   },
@@ -284,5 +289,5 @@ export const exportedRoutes = [
     component: require('./components/Agent/Commission/AgentCommissionList').default,
     meta: { layout: 'default' },
   },
-    
+
 ]
