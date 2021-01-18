@@ -501,8 +501,12 @@ export default {
                                 newMarker.on('click', function () {
                                     parent.routeToDetail(markingInfo.serialNumber, markingInfo.name)
                                 })
-
+                                if (k === markerLocations.length - 1) {
+                                    let editableMarker = L.marker(e, { icon: markerIcon }).setOpacity(0)
+                                    editableMarker.addTo(this.editableLayer)
+                                }
                             } else {
+
                                 newMarker.bindTooltip('Mini Grid: ' + markingInfo.name)
                                 let parent = this
                                 newMarker.on('click', function () {
@@ -542,10 +546,7 @@ export default {
                         let lon = newMarker._latlng.lng
                         this.map.setView({ lat, lon }, this.zoom)
                     }
-                    if (k === markerLocations.length - 1) {
-                        let editableMarker = L.marker(e, { icon: markerIcon }).setOpacity(0)
-                        editableMarker.addTo(this.editableLayer)
-                    }
+
                 })
 
                 this.map.addLayer(this.markersLayer)
