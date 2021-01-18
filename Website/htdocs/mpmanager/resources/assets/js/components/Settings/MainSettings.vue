@@ -29,7 +29,7 @@
         <div class="md-layout md-gutter">
             <div class="md-layout-item md-size-30">
                 <md-field>
-                    <label for="currency">Currency</label>
+                    <label for="currency">{{ $tc('words.currency') }}</label>
                     <md-select name="currency" id="currency"  v-model="mainSettings.currency">
                         <md-option disabled>Select Currency</md-option>
                         <md-option v-for="cur in currencyList" :key="cur.code" :value="cur.symbol">{{ cur.name }} - {{ cur.symbol }}</md-option>
@@ -138,6 +138,7 @@ export default {
         async getLanguagesList(){
             try {
                 this.languagesList = await this.languagesService.list()
+                console.log(this.languagesList)
             }catch (e) {
                 this.alertNotify('error', e.message)
             }

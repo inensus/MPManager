@@ -6,7 +6,8 @@ use App\Http\Resources\ApiResource;
 use File;
 use Storage;
 
-class LanguagesController extends Controller
+
+class LanguageController extends Controller
 {
     private $languagesList;
 
@@ -17,15 +18,19 @@ class LanguagesController extends Controller
 
     public function index(): ApiResource
     {
-        $fileNames = [];
+
         $path = resource_path('assets/locales');
         $files = \File::allFiles($path);
+        $collection = collect($files);
 
-        foreach($files as $file) {
-            array_push($fileNames, pathinfo($file)['filename']);
-        }
+        $filteredFiles = $collection->map(function ($value){
+            if($value->getExtension() === 'json'){
+                return $value->getFilename();
+            }
 
-        return new ApiResource($fileNames);
+        });
+
+        return new ApiResource($filteredFiles);
     }
 
 }

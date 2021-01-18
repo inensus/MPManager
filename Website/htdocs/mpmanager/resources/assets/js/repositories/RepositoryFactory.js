@@ -45,7 +45,6 @@ import MainSettingsRepository from './MainSettingsRepository'
 import MapSettingsRepository from './MapSettingsRepository'
 import CurrencyRepository from './CurrencyRepository'
 import LanguagesRepository from './LanguagesRepository'
-import SmsBodyTemplateRepository from './SmsBodyTemplateRepository'
 import TicketSettingsRepository from './TicketSettingsRepository'
 import CountriesRepository from './CountriesRepository'
 
@@ -97,7 +96,6 @@ const repositories = {
     'currencyList': CurrencyRepository,
     'countryList': CountriesRepository,
     'languagesList': LanguagesRepository,
-    'smsTemplates': SmsBodyTemplateRepository,
     'ticketSettings': TicketSettingsRepository
 }
 

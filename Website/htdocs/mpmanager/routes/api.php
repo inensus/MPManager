@@ -185,7 +185,7 @@ Route::group(['prefix' => 'settings', 'middleware' => 'jwt.verify'], static func
    Route::put('/{id}/map','MapSettingsController@update');
    Route::get('/currencyList','CurrencyController@index');
    Route::get('/countryList','CountryListController@index');
-   Route::get('/languagesList','LanguagesController@index');
+   Route::get('/languagesList','LanguageController@index');
    Route::get('/sms/templates','SmsBodyTemplateController@index');
    Route::put('/sms/templates','SmsBodyTemplateController@update');
    Route::get('/ticket','TicketSettingsController@index');
