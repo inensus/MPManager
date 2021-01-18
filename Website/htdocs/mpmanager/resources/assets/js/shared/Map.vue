@@ -345,9 +345,9 @@ export default {
 
             this.drawControl = new L.Control.Draw(options)
             if (this.parentName === 'Top-MiniGrid') {
-                this.dataLoggerActives =  L.featureGroup.subGroup(this.markersLayer)
-                this.dataLoggerInactives =  L.featureGroup.subGroup(this.markersLayer)
-                let  control = L.control.layers(null, null, { collapsed: false })
+                this.dataLoggerActives = L.featureGroup.subGroup(this.markersLayer)
+                this.dataLoggerInactives = L.featureGroup.subGroup(this.markersLayer)
+                let control = L.control.layers(null, null, { collapsed: false })
                 control.addOverlay(this.dataLoggerActives, 'Data Stream Active')
                 control.addOverlay(this.dataLoggerInactives, 'Data Stream Inactive')
                 control.addTo(this.map)
@@ -411,7 +411,7 @@ export default {
                             if (parent === 'MiniGrid') {
                                 nonEditableLayers.addLayer(layer)
                                 map.addLayer(nonEditableLayers)
-                            } else if (parent === 'Top'||parent === 'Top-MiniGrid') {
+                            } else if (parent === 'Top' || parent === 'Top-MiniGrid') {
                                 layer.bindTooltip('Cluster :' + layer.feature.properties.popupContent)
                                 editableLayer.addLayer(layer)
 
@@ -550,8 +550,11 @@ export default {
                 })
 
                 this.map.addLayer(this.markersLayer)
-                this.map.addLayer(this.dataLoggerActives)
-                this.map.addLayer(this.dataLoggerInactives)
+                if (this.map.hasLayer(this.dataLoggerActives))
+                {
+                    this.map.addLayer(this.dataLoggerActives)
+                    this.map.addLayer(this.dataLoggerInactives)
+                }
 
             }
 

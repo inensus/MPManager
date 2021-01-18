@@ -772,7 +772,7 @@ export default {
                 this.switching = true
                 let data_stream = this.enableDataStream === true ? 1 : 0
                 await this.miniGridService.setMiniGridDataStream(this.miniGridId, data_stream)
-                let message = value === true ? this.$tc('phrases.dataLogger',1) : this.$tc('phrases.dataLogger',2)
+                let message = value === true ? this.$tc('phrases.dataLogger', 1) : this.$tc('phrases.dataLogger', 2)
                 this.alertNotify('success', message)
                 this.isLoggerActive = value
                 this.enableDataStream = value
@@ -792,7 +792,7 @@ export default {
         },
         //get all data from the beginning of the time
         async fillRevenueTrendsOverview () {
-            this.trendChartData.overview = [this.$tc('words.date')]
+            this.trendChartData.overview = [[this.$tc('words.date')]]
             try {
                 this.revenueTrends = await this.revenueService.getMiniGridRevenueTrends(this.miniGridId, '2018-08-01', this.highlighted.base.to)
                 for (let dt in this.revenueTrends) {
@@ -881,8 +881,8 @@ export default {
             if (revenue === 0 || targetRevenue === 0) return 0
             return Math.round(
                 parseInt(revenue) * 100
-                    / parseInt(targetRevenue)
-                    * 100
+          / parseInt(targetRevenue)
+          * 100
             ) / 100
         },
         baseTargetData (connectionType, type) {
