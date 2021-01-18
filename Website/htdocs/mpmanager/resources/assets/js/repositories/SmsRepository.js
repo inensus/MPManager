@@ -14,7 +14,7 @@ const resource = {
 export default {
 
     list(param, personId) {
-        if(personId !== null){
+        if(personId){
             return Client.get(`${resource.list}/${personId}`)
         }else{
             switch (param) {
