@@ -70,13 +70,10 @@ export class MeterService {
         }
     }
 
-    async updateMeter (meterId, lat, lng) {
+    async updateMeter (meters) {
         try {
-            let points_PM = {
-                lat: lat,
-                lng: lng
-            }
-            let response = await this.repository.update(meterId,points_PM)
+
+            let response = await this.repository.update(meters)
             if (response.status === 200) {
 
                 return response

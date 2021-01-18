@@ -7,8 +7,13 @@
 
 import 'leaflet/dist/leaflet.css'
 import 'leaflet-draw/dist/leaflet.draw.css'
+import 'leaflet.markercluster/dist/MarkerCluster.css'
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import L from 'leaflet'
+import 'leaflet.markercluster'
+import 'leaflet.featuregroup.subgroup'
 import 'leaflet-draw'
+
 import { MappingService } from '../services/MappingService'
 import { EventBus } from './eventbus'
 
@@ -119,11 +124,18 @@ export default {
             osmAttrib: '<span style="cursor:pointer">&copy; MpManager</span>',
             osm: null,
             map: null,
-            editableLayers: new L.FeatureGroup(),
-            geoDataItems: []
-
+            test: null,
+            editableLayer: null,
+            markersLayer: null,
+            dataLoggerActives: null,
+            dataLoggerInactives: null,
+            geoDataItems: [],
+            parentGroup: null
         }
 
+    },
+    destroyed () {
+        this.map = null
     },
     mounted () {
         this.drawingOptions = {
@@ -143,6 +155,13 @@ export default {
             }
         }
         this.generateMap(this.drawingOptions, this.center)
+
+        let drawLayer = this.editableLayer
+        let service = this.mappingService
+        let markerCount = this.markerCount
+        let markersLayer = this.markersLayer
+        let map = this.map
+
         this.map.on('draw:edited', function (e) {
 
             let editedItems = []
@@ -189,6 +208,25 @@ export default {
                 }
             })
             EventBus.$emit('getEditedGeoDataItems', editedItems)
+
+        })
+        this.map.on('draw:toolbaropened', function () {
+
+            map.removeLayer(markersLayer)
+            let markers = markersLayer.getLayers()
+            drawLayer.eachLayer((layer) => {
+                let type = layer._latlngs === undefined ? 'Marker' : 'Polygon'
+                if (type === 'Marker') {
+                    drawLayer.removeLayer(layer)
+                }
+            })
+
+            for (let i = 0; i < markers.length; i++) {
+                markers[i].setOpacity(1)
+                markers[i].addTo(drawLayer)
+            }
+            map.addLayer(drawLayer)
+
         })
         this.map.on('draw:deleted', function (e) {
             let deletedItems = []
@@ -198,9 +236,6 @@ export default {
             })
             EventBus.$emit('getDeletedGeoDataItems', deletedItems)
         })
-        let drawLayer = this.editableLayers
-        let service = this.mappingService
-        let markerCount = this.markerCount
         this.map.on('draw:created', function (e) {
 
             let type = e.layerType
@@ -281,10 +316,6 @@ export default {
             }
 
         })
-
-    },
-    destroyed () {
-        this.map = null
     },
     methods: {
         generateMap (options, center) {
@@ -292,10 +323,17 @@ export default {
             this.mapInitialized = true
             this.map = L.map('map').setView(center, this.zoom)
             L.tileLayer(this.osmUrl, { maxZoom: this.maxZoom, attribution: this.osmAttrib }).addTo(this.map)
-            this.editableLayers = new L.FeatureGroup()
-            this.map.addLayer(this.editableLayers)
-            options.edit.featureGroup = this.editableLayers
-            if (options.draw.marker !== false) {
+            this.editableLayer = new L.FeatureGroup()
+            this.markersLayer = new L.markerClusterGroup({
+                chunkedLoading: true,
+                spiderfyOnMaxZoom: false
+            })
+
+
+            this.map.addLayer(this.editableLayer)
+            options.edit.featureGroup = this.editableLayer
+
+            if (options.draw.marker) {
                 let marker = L.Icon.extend({
                     options: {
                         iconSize: [40.4, 44],
@@ -306,16 +344,23 @@ export default {
                 })
                 options.draw.marker = {}
                 options.draw.marker.icon = new marker()
-
             }
-            this.drawControl = new L.Control.Draw(options)
-            this.map.addControl(this.drawControl)
 
+            this.drawControl = new L.Control.Draw(options)
+            if (this.parentName === 'Top-MiniGrid') {
+                this.dataLoggerActives =  L.featureGroup.subGroup(this.markersLayer)
+                this.dataLoggerInactives =  L.featureGroup.subGroup(this.markersLayer)
+                let  control = L.control.layers(null, null, { collapsed: false })
+                control.addOverlay(this.dataLoggerActives, 'Data Stream Active')
+                control.addOverlay(this.dataLoggerInactives, 'Data Stream Inactive')
+                control.addTo(this.map)
+            }
+            this.map.addControl(this.drawControl)
         },
         setLocation (geoData) {
             this.geoDataItems = []
-            this.editableLayers.clearLayers()
-            let editableLayer = this.editableLayers
+            this.editableLayer.clearLayers()
+            let editableLayer = this.editableLayer
             let nonEditableLayers = new L.FeatureGroup()
             for (let i = 0; i < geoData.length; i++) {
                 let geoType = geoData[i].geojson.type
@@ -369,14 +414,12 @@ export default {
                             if (parent === 'MiniGrid') {
                                 nonEditableLayers.addLayer(layer)
                                 map.addLayer(nonEditableLayers)
-                            } else if (parent === 'Top') {
+                            } else if (parent === 'Top'||parent === 'Top-MiniGrid') {
                                 layer.bindTooltip('Cluster :' + layer.feature.properties.popupContent)
-                                console.log(layer.feature.properties.popupContent)
                                 editableLayer.addLayer(layer)
 
                             } else {
                                 editableLayer.addLayer(layer)
-
                             }
                             let geoDataItem = {
                                 leaflet_id: layer._leaflet_id,
@@ -401,6 +444,7 @@ export default {
             EventBus.$emit('getSearchedGeoDataItems', this.geoDataItems)
         },
         setMarker (markerLocations, isConstant) {
+
             if (isConstant) {
                 markerLocations.forEach((e) => {
                     let markerIcon = L.icon({
@@ -409,34 +453,36 @@ export default {
                         popupAnchor: [0, -51],
                         iconUrl: this.constantMarkerUrl
                     })
-                    let markerLayer = L.marker(e, { icon: markerIcon })
+                    let constantMarker = L.marker(e, { icon: markerIcon })
 
                     if (this.markingInfos !== null) {
                         let markingInfo = this.markingInfos.filter(x => x.lat === e[0] && x.lon === e[1])[0]
                         if (markingInfo !== undefined) {
-                            markerLayer.bindTooltip('Mini Grid: ' + markingInfo.name)
+                            constantMarker.bindTooltip('Mini Grid: ' + markingInfo.name)
                             let parent = this
-                            markerLayer.on('click', function () {
+                            constantMarker.on('click', function () {
                                 parent.routeToDetail(markingInfo.id, markingInfo.name)
                             })
                         }
 
                     }
-                    markerLayer.addTo(this.map)
+
+                    constantMarker.addTo(this.map)
                 })
             } else {
-                let editableLayer = this.editableLayers
-                let drawedLayers = editableLayer.getLayers()
-                markerLocations.forEach((e) => {
-
+                this.markersLayer.clearLayers()
+                let drawedLayers = this.editableLayer.getLayers()
+                markerLocations.forEach((e, k) => {
                     let polygon = drawedLayers[0]
                     if (this.markerCount !== 0) {
                         if (drawedLayers.length > this.markerCount) {
                             for (let i = 0; i <= drawedLayers.length - this.markerCount; i++) {
                                 let marker = drawedLayers[i]
-                                if (marker._icon !== undefined && !marker._icon.currentSrc.includes('miniGrid')) {
+                                if (marker._icon) {
+                                    if (!marker._icon.currentSrc.includes('miniGrid')) {
+                                        this.editableLayer.removeLayer(marker)
+                                    }
 
-                                    editableLayer.removeLayer(marker)
                                 }
 
                             }
@@ -448,50 +494,68 @@ export default {
                         popupAnchor: [0, -51],
                         iconUrl: this.markerUrl
                     })
-                    let markerLayer = L.marker(e, { icon: markerIcon })
+                    let newMarker = L.marker(e, { icon: markerIcon })
                     if (this.markingInfos !== null) {
                         let markingInfo = this.markingInfos.filter(x => x.lat === e[0] && x.lon === e[1])[0]
                         if (markingInfo !== undefined) {
                             if (this.isMeter) {
-                                markerLayer.bindTooltip(markingInfo.serialNumber + '/' + markingInfo.id)
+                                newMarker.bindTooltip(markingInfo.serialNumber + '/' + markingInfo.id)
                                 let parent = this
-                                markerLayer.on('click', function () {
+                                newMarker.on('click', function () {
                                     parent.routeToDetail(markingInfo.serialNumber, markingInfo.name)
                                 })
+                                if (k === markerLocations.length - 1) {
+                                    let editableMarker = L.marker(e, { icon: markerIcon }).setOpacity(0)
+                                    editableMarker.addTo(this.editableLayer)
+                                }
                             } else {
-                                markerLayer.bindTooltip('Mini Grid: ' + markingInfo.name)
+
+                                newMarker.bindTooltip('Mini Grid: ' + markingInfo.name)
                                 let parent = this
-                                markerLayer.on('click', function () {
+                                newMarker.on('click', function () {
                                     parent.routeToDetail(markingInfo.id, markingInfo.name)
                                 })
+
+                                if (markingInfo.dataStream > 0) {
+                                    newMarker.addTo(this.dataLoggerActives)
+                                } else {
+                                    newMarker.addTo(this.dataLoggerInactives)
+                                }
+
                             }
 
                         }
 
                     }
+                    newMarker.addTo(this.markersLayer)
 
-                    markerLayer.addTo(editableLayer)
                     if (polygon !== undefined) {
                         let bounds = polygon.getBounds()
-                        if (bounds.contains(markerLayer._latlng)) {
-                            markerLayer.addTo(editableLayer)
+                        if (bounds.contains(newMarker._latlng)) {
+                            newMarker.addTo(this.editableLayer)
                         } else {
                             if (this.isMeter) {
-                                markerLayer.addTo(editableLayer)
-                                let lat = markerLayer._latlng.lat
-                                let lon = markerLayer._latlng.lng
+                                newMarker.addTo(this.editableLayer)
+                                let lat = newMarker._latlng.lat
+                                let lon = newMarker._latlng.lng
                                 this.map.setView({ lat, lon }, this.zoom)
                             } else {
-                                editableLayer.removeLayer(markerLayer)
+                                this.editableLayer.removeLayer(newMarker)
                             }
                             EventBus.$emit('markerError', 'Please position your mini-grid within the selected cluster boundaries.')
                         }
                     } else {
-                        let lat = markerLayer._latlng.lat
-                        let lon = markerLayer._latlng.lng
+                        let lat = newMarker._latlng.lat
+                        let lon = newMarker._latlng.lng
                         this.map.setView({ lat, lon }, this.zoom)
                     }
+
                 })
+
+                this.map.addLayer(this.markersLayer)
+                this.map.addLayer(this.dataLoggerActives)
+                this.map.addLayer(this.dataLoggerInactives)
+
             }
 
         },

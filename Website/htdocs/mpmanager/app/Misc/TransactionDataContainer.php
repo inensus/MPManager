@@ -71,6 +71,10 @@ class TransactionDataContainer
      */
     public $chargedEnergy;
 
+    public $amount;
+
+    public $totalAmount;
+
     /**
      * @param Transaction $transaction
      *
@@ -85,6 +89,8 @@ class TransactionDataContainer
         $container->chargedEnergy = 0;
 
         $container->transaction = $transaction;
+        $container->totalAmount= $transaction->amount;
+        $container->amount= $transaction->amount;
         //get meter
         try {
             $container->meter = $container->getMeter($transaction->message);

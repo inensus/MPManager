@@ -11,7 +11,7 @@ Route::group(['prefix' => 'meters', ], function () {
     Route::get('/', 'MeterController@index');
     Route::get('/{id}', 'MeterController@show');
     Route::post('/', 'MeterController@store');
-    Route::put('/{id}', 'MeterController@update')->where('id', '[0-9]+');
+    Route::put('/', 'MeterController@update');
     Route::get('/search', 'MeterController@Search');
     Route::delete('/{ownerId}', 'MeterController@destroy');
     Route::get('{serialNumber}/revenue', 'RevenueController@meterRevenue');
@@ -35,7 +35,7 @@ Route::group(['prefix' => 'meters', ], function () {
     Route::get('/{serialNumber}/transactions', 'MeterController@transactionList');
     Route::get('{serialNumber}/consumptions/{start}/{end}', 'MeterController@consumptionList');
 
-    Route::get('/geoList', 'MeterController@meterGeoList');
+    Route::get('/{migiGrid}/geoList', 'MeterController@meterGeoList');
 });
 /* Meter types */
 Route::group(['prefix' => 'meter-types'], function () {

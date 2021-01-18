@@ -7,6 +7,7 @@ use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * @property int agent_id
@@ -14,11 +15,16 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
  * @property int status
  * @property string sender
  */
-class AgentTransaction extends BaseModel implements RawTransaction
+class AgentTransaction extends BaseModel implements IRawTransaction
 {
     public function transaction(): MorphOne
     {
         return $this->morphOne(Transaction::class, 'original_transaction');
+    }
+
+    public function manufacturerTransaction(): MorphTo
+    {
+        return $this->morphTo();
     }
 
     public function agent(): BelongsTo

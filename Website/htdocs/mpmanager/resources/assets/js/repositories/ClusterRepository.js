@@ -6,7 +6,7 @@ export default {
         return Client.post(`${resource}`,cluster)
     },
     list () {
-        return Client.get(`${resource}/geo`)
+        return Client.get(`${resource}`)
     },
     getGeoLocation (clusterId) {
         return Client.get(`${resource}/${clusterId}/geo`)

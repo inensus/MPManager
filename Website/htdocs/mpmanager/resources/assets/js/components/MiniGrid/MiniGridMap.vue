@@ -1,21 +1,21 @@
 <template>
 
     <widget
-        :title="$tc('phrases.miniGridMap')"
-        id="miniGrid-map">
+            :title="$tc('phrases.miniGridMap')"
+            id="miniGrid-map">
 
         <Map
-            :geoData="geoData"
-            :center="center"
-            :markerLocations="markerLocations"
-            :constantLocations="constantLocations"
-            :zoom="9"
-            :constantMarkerUrl="miniGridIcon"
-            :markerUrl="meterIcon"
-            :edit="true"
-            :markingInfos="markingInfos"
-            :isMeter="true"
-            :parentName="'MiniGrid'"
+                :geoData="geoData"
+                :center="center"
+                :markerLocations="markerLocations"
+                :constantLocations="constantLocations"
+                :constantMarkerUrl="miniGridIcon"
+                :markerUrl="meterIcon"
+                :edit="true"
+                :markingInfos="markingInfos"
+                :isMeter="true"
+                :parentName="'MiniGrid'"
+
         />
 
     </widget>
@@ -64,7 +64,8 @@ export default {
             clusterLayer: null,
             clusterId: null,
             clusterGeo: {},
-            meters: []
+            meters: [],
+
         }
     },
     computed: {},
@@ -76,10 +77,11 @@ export default {
     },
     mounted () {
         this.getMiniGrid(this.miniGridId)
+
         EventBus.$on('getEditedGeoDataItems', (editedItems) => {
             this.$swal({
-                title: this.$tc('phrases.relocateMeter',1),
-                text: this.$tc('phrases.relocateMeter',2),
+                title: this.$tc('phrases.relocateMeter', 1),
+                text: this.$tc('phrases.relocateMeter', 2),
                 type: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -89,20 +91,32 @@ export default {
             }).then((result) => {
 
                 if (result) {
-                    editedItems.forEach(async (e) => {
-                        try {
-                            await this.meterService.updateMeter(e.id,e.lat,e.lng)
-                            this.alertNotify('success',  this.$tc('phrases.relocateMeter',3))
-                        } catch (e) {
-                            this.alertNotify('error', e.message)
+                    let meters = []
+                    editedItems.forEach((e) => {
+                        let meter = {
+                            id: e.id,
+                            lat: e.lat.toFixed(5),
+                            lng: e.lng.toFixed(5),
                         }
+                        meters.push(meter)
                     })
+                    this.updateEditedMeters(meters)
                 }
+
             })
 
         })
     },
     methods: {
+        async updateEditedMeters (meters) {
+            try {
+
+                await this.meterService.updateMeter(meters)
+                this.alertNotify('success', this.$tc('phrases.relocateMeter', 3))
+            } catch (e) {
+                this.alertNotify('error', e.message)
+            }
+        },
         async getGeoData (clusterId) {
             try {
                 this.clusterId = clusterId
@@ -130,7 +144,6 @@ export default {
                 this.alertNotify('error', e.message)
             }
         },
-
         async getMiniGridMeters (miniGridId) {
             try {
 
@@ -141,7 +154,7 @@ export default {
                     let points = this.meters[i].meter_parameter.address.geo.points.split(',')
                     this.meterLatLng.lat = points[0]
                     this.meterLatLng.lon = points[1]
-                    let markingInfo = this.mappingService.createMarkinginformation(this.meters[i].id, null, this.meters[i].serial_number, points[0], points[1])
+                    let markingInfo = this.mappingService.createMarkingInformation(this.meters[i].id, null, this.meters[i].serial_number, points[0], points[1],-1)
                     this.markingInfos.push(markingInfo)
                     this.markerLocations.push([this.meterLatLng.lat, this.meterLatLng.lon])
                 }
@@ -151,6 +164,7 @@ export default {
             }
 
         },
+
         alertNotify (type, message) {
             this.$notify({
                 group: 'notify',

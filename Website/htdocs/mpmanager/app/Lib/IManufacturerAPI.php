@@ -21,4 +21,6 @@ interface IManufacturerAPI
     public function  chargeMeter(TransactionDataContainer $transactionContainer): array;
 
     public function clearMeter(Meter $meter);
+
+    public function associateManufacturerTransaction(TransactionDataContainer $transactionContainer);
 }

@@ -7,8 +7,10 @@ use App\Jobs\ProcessPayment;
 use App\Lib\ITransactionProvider;
 use App\Misc\TransactionDataContainer;
 use App\Models\Transaction\AirtelTransaction;
+use App\Models\Transaction\ThirdPartyTransaction;
 use App\Models\Transaction\Transaction;
 use App\Models\Transaction\VodacomTransaction;
+use App\Models\Transaction\AgentTransaction;
 use DateInterval;
 use DateTime;
 use Exception;
@@ -208,7 +210,7 @@ class TransactionController extends Controller
     {
 
         $transactions = Transaction::with('originalAirtel', 'originalVodacom')
-            ->whereHasMorph('originalTransaction', [VodacomTransaction::class, AirtelTransaction::class],
+            ->whereHasMorph('originalTransaction', [VodacomTransaction::class, AirtelTransaction::class,AgentTransaction::class,ThirdPartyTransaction::class],
                 static function ($q) {
                     $q->where('status', 1);
                 })->latest()->paginate();
@@ -225,7 +227,7 @@ class TransactionController extends Controller
     public function cancelled(): ApiResource
     {
         $transactions = Transaction::with('originalAirtel', 'originalVodacom')
-            ->whereHasMorph('originalTransaction', [VodacomTransaction::class, AirtelTransaction::class],
+            ->whereHasMorph('originalTransaction', [VodacomTransaction::class, AirtelTransaction::class,AgentTransaction::class,ThirdPartyTransaction::class],
                 static function ($q) {
                     $q->where('status', -1);
                 })->latest()->paginate();
@@ -310,6 +312,7 @@ class TransactionController extends Controller
     {
 
         $comparisionPeriod = $this->_determinePeriod($period);
+
         //get transactions for both current and previous periods
         $transactions = $this->_getTransactions($comparisionPeriod);
 
@@ -318,7 +321,6 @@ class TransactionController extends Controller
         $currentTransactions = $this->_getTransactionAnalysis($transactions['current']) ?? $this->emptyCompareResult();
         // get data for the previous period
         $pastTransactions = $this->_getTransactionAnalysis($transactions['past']) ?? $this->emptyCompareResult();
-
 
         //compare current period with the previous period
         return [
@@ -351,6 +353,7 @@ class TransactionController extends Controller
      */
     private function _getTransactions(array $comparisionPeriod): array
     {
+
         $currentTransactions = Transaction::whereBetween('created_at', [
             $comparisionPeriod['currentPeriod']['begins'],
             $comparisionPeriod['currentPeriod']['ends'],
@@ -387,7 +390,18 @@ class TransactionController extends Controller
                     $q->where('status', -1);
                 });
             });
-
+            $q->orWhere(static function ($q) {
+                $q->where('original_transaction_type', 'agent_transaction');
+                $q->whereHas('originalAgent', static function ($q) {
+                    $q->where('status', -1);
+                });
+            });
+            $q->orWhere(static function ($q) {
+                $q->where('original_transaction_type', 'third_party_transaction');
+                $q->whereHas('originalThirdParty', static function ($q) {
+                    $q->where('status', -1);
+                });
+            });
 
         })
             ->whereIn('id', $transactionIds)
@@ -411,6 +425,18 @@ class TransactionController extends Controller
             $q->orWhere(static function ($q) {
                 $q->where('original_transaction_type', 'vodacom_transaction');
                 $q->whereHas('originalVodacom', static function ($q) {
+                    $q->where('status', 1);
+                });
+            });
+            $q->orWhere(static function ($q) {
+                $q->where('original_transaction_type', 'agent_transaction');
+                $q->whereHas('originalAgent', static function ($q) {
+                    $q->where('status', 1);
+                });
+            });
+            $q->orWhere(static function ($q) {
+                $q->where('original_transaction_type', 'third_party_transaction');
+                $q->whereHas('originalThirdParty', static function ($q) {
                     $q->where('status', 1);
                 });
             });
@@ -441,8 +467,18 @@ class TransactionController extends Controller
                     $q->where('status', 1);
                 });
             });
-
-
+            $q->orWhere(static function ($q) {
+                $q->where('original_transaction_type', 'agent_transaction');
+                $q->whereHas('originalAgent', static function ($q) {
+                    $q->where('status', 1);
+                });
+            });
+            $q->orWhere(static function ($q) {
+                $q->where('original_transaction_type', 'third_party_transaction');
+                $q->whereHas('originalThirdParty', static function ($q) {
+                    $q->where('status', 1);
+                });
+            });
         })
             ->whereIn('id', $transactionIds)
             ->sum('amount');
@@ -457,13 +493,16 @@ class TransactionController extends Controller
      */
     private function _getTransactionAnalysis($transactions): ?array
     {
+
         if (count($transactions) === 0) {
             return null;
         }
 
         $total = count($transactions);
+
         // the total amount of confirmed transactions
         $amount = $this->_getAmountOfConfirmedTransaction($transactions);
+
         // the number of confirmed transactions
         $confirmation = $this->_getConfirmedTransactions($transactions);
         // The number of cancelled transactions

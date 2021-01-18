@@ -3,27 +3,26 @@
         <div class="row">
             <div class="md-layout md-gutter">
                 <div
-                    class="md-layout-item  md-xlarge-size-50  md-large-size-50 md-medium-size-50  md-small-size-100 md-xsmall-size-100">
+                        class="md-layout-item  md-xlarge-size-50  md-large-size-50 md-medium-size-50  md-small-size-100 md-xsmall-size-100">
                     <div class="transaction-detail-card">
                         <widget :title="$tc('phrases.providerSpecificInformation')" :show-spinner="false">
                             <md-card>
                                 <md-card-content>
-
-
                                     <vodacom-transaction-detail
-                                        :ot="ot"
-                                        v-if="transaction.original_transaction_type === 'vodacom_transaction'"
+                                            :ot="ot"
+                                            v-if="transaction.original_transaction_type === 'vodacom_transaction'"
                                     />
-
                                     <airtel-transaction-detail
-                                        :ot="ot"
-                                        v-if="transaction.original_transaction_type === 'airtel_transaction'"
+                                            :ot="ot"
+                                            v-if="transaction.original_transaction_type === 'airtel_transaction'"
                                     />
                                     <agent-transaction-detail
-                                        :ot="ot"
-                                        v-if="transaction.original_transaction_type === 'agent_transaction'"
+                                            :ot="ot"
+                                            v-if="transaction.original_transaction_type === 'agent_transaction'"
                                     />
-
+                                    <third-party-transaction :ot="ot"
+                                                             v-if="transaction.original_transaction_type === 'third_party_transaction'"
+                                    />
                                 </md-card-content>
                             </md-card>
                         </widget>
@@ -32,12 +31,12 @@
                 </div>
 
                 <div
-                    class="md-layout-item  md-xlarge-size-50  md-large-size-50 md-medium-size-50  md-small-size-100 md-xsmall-size-100">
+                        class="md-layout-item  md-xlarge-size-50  md-large-size-50 md-medium-size-50  md-small-size-100 md-xsmall-size-100">
                     <div class="transaction-detail-card">
                         <widget
-                            color="red"
-                            title="Details"
-                            :show-spinner="false">
+                                color="red"
+                                title="Details"
+                                :show-spinner="false">
                             <md-card>
                                 <md-card-content>
                                     <div class="md-layout">
@@ -53,9 +52,9 @@
                                     </div>
                                     <hr class="hr-d">
                                     <div class="md-layout">
-                                        <div class="md-layout-item md-subheader">{{ $tc('words.paymentType') }}</div>
+                                        <div class="md-layout-item md-subheader">{{ $tc('phrases.paymentType') }}</div>
                                         <div class="md-layout-item md-subheader n-font"><span
-                                            v-text="transaction.type === 'energy' ? $tc('words.energy') : $tc('phrases.deferredPayment')"></span>
+                                                v-text="transaction.type === 'energy' ? $tc('words.energy') : $tc('phrases.deferredPayment')"></span>
                                         </div>
                                     </div>
                                     <hr class="hr-d">
@@ -63,8 +62,8 @@
                                         <div class="md-layout-item md-subheader">{{ $tc('words.meter') }}</div>
                                         <div class="md-layout-item md-subheader n-font">
                                             <router-link
-                                                :to="{path: '/meters/' + transaction.message}"
-                                                class="nav-link"
+                                                    :to="{path: '/meters/' + transaction.message}"
+                                                    class="nav-link"
                                             >{{transaction.message}}
                                             </router-link>
                                         </div>
@@ -74,8 +73,8 @@
                                         <div class="md-layout-item md-subheader">{{ $tc('words.customer') }}</div>
                                         <div class="md-layout-item md-subheader n-font">
                                             <router-link
-                                                :to="{path: '/people/' + personId}"
-                                                class="nav-link"
+                                                    :to="{path: '/people/' + personId}"
+                                                    class="nav-link"
                                             >{{personName}}
                                             </router-link>
                                         </div>
@@ -97,42 +96,58 @@
                 <div class="md-layout-item md-size-50">
                     <div class="transaction-detail-card">
                         <widget
-                            color="green"
-                            title="Transaction Processing"
-                            :show-spinner="false">
+                                color="green"
+                                title="Transaction Processing"
+                                :show-spinner="false">
                             <md-card>
-                                <md-card-content v-if="ot.status===1">
-                                    <div class="md-layout md-gutter md-size-100" >
-                                        <div class="md-layout-item md-size-55" style="margin: auto;" >
-                                            <payment-history-chart :paymentdata="transaction.payment_histories"/>
-                                        </div>
-                                        <div class="md-layout-item md-size-45">
-                                            <md-table v-if="transaction.payment_histories.length>0" >
-                                                <md-table-row>
-                                                    <md-table-head>{{ $tc('phrases.paidFor') }}</md-table-head>
-                                                    <md-table-head>{{ $tc('words.amount') }}</md-table-head>
-                                                </md-table-row>
-                                                <md-table-row v-for="(p,i) in transaction.payment_histories" :key="i">
-                                                    <md-table-cell><p> {{p.payment_type}}</p>
-                                                    </md-table-cell>
-                                                    <md-table-cell> {{readable(p.amount)}}
-                                                    </md-table-cell>
-                                                </md-table-row>
-                                            </md-table>
-                                        </div>
+                                <div v-if="transaction.original_transaction_type === 'third_party_transaction'">
+                                    <md-card-content>
+                                        <div class="md-layout md-gutter md-size-100">
+                                           <ul  style="margin: auto">
+                                               <li>Untraceable transaction</li>
+                                           </ul>
 
-                                    </div>
-                                </md-card-content>
-                                <md-card-content v-if="ot.status===-1">
-                                    <h2>Transaction cancelled</h2>
-                                    <md-list class="md-double-line">
-                                        <md-subheader style="color:#a81e10">Transaction cancelled</md-subheader>
 
-                                        <md-list-item :key="conflict.id" v-for="conflict in ot.conflicts">
-                                            <span class="margin-top-5">{{conflict.state}}</span>
-                                        </md-list-item>
-                                    </md-list>
-                                </md-card-content>
+                                        </div>
+                                    </md-card-content>
+                                </div>
+                                <div v-else>
+
+                                    <md-card-content v-if="ot.status===1">
+                                        <div class="md-layout md-gutter md-size-100">
+                                            <div class="md-layout-item md-size-55" style="margin: auto;">
+                                                <payment-history-chart :paymentdata="transaction.payment_histories"/>
+                                            </div>
+                                            <div class="md-layout-item md-size-45">
+                                                <md-table v-if="transaction.payment_histories.length>0">
+                                                    <md-table-row>
+                                                        <md-table-head>{{ $tc('phrases.paidFor') }}</md-table-head>
+                                                        <md-table-head>{{ $tc('words.amount') }}</md-table-head>
+                                                    </md-table-row>
+                                                    <md-table-row v-for="(p,i) in transaction.payment_histories"
+                                                                  :key="i">
+                                                        <md-table-cell><p> {{p.payment_type}}</p>
+                                                        </md-table-cell>
+                                                        <md-table-cell> {{readable(p.amount)}}
+                                                        </md-table-cell>
+                                                    </md-table-row>
+                                                </md-table>
+                                            </div>
+
+                                        </div>
+                                    </md-card-content>
+                                    <md-card-content v-if="ot.status===-1">
+                                        <h2>Transaction cancelled</h2>
+                                        <md-list class="md-double-line">
+                                            <md-subheader style="color:#a81e10">Transaction cancelled</md-subheader>
+
+                                            <md-list-item :key="conflict.id" v-for="conflict in ot.conflicts">
+                                                <span class="margin-top-5">{{conflict.state}}</span>
+                                            </md-list-item>
+                                        </md-list>
+                                    </md-card-content>
+                                </div>
+
                             </md-card>
                         </widget>
                     </div>
@@ -140,10 +155,10 @@
                 <div class="md-layout-item md-size-50">
                     <div class="transaction-detail-card">
                         <widget
-                            color="red"
-                            title="Outgoing sms"
-                            :show-spinner="false"
-                            v-show="transaction.original_transaction_type !== 'agent_transaction'"
+                                color="red"
+                                title="Outgoing sms"
+                                :show-spinner="false"
+                                v-show="(transaction.original_transaction_type !== 'agent_transaction' && transaction.original_transaction_type !== 'third_party_transaction')"
                         >
                             <md-card>
                                 <md-card-content v-if="transaction.sms">
@@ -155,7 +170,8 @@
                                         </div>
                                     </div>
                                     <div class="md-layout md-gutter md-size-100">
-                                        <div class="md-layout-item md-subheader md-size-20">{{ $tc('words.body') }}</div>
+                                        <div class="md-layout-item md-subheader md-size-20">{{ $tc('words.body') }}
+                                        </div>
                                         <div class="md-layout-item md-subheader md-size-75 message-box">
 
                                             {{transaction.sms.body}}
@@ -186,10 +202,12 @@ import AgentTransactionDetail from '../Agent/AgentTransactionDetail'
 import Widget from '../../shared/widget'
 import { TransactionService } from '../../services/TransactionService'
 import { PersonService } from '../../services/PersonService'
+import ThirdPartyTransaction from './ThirdPartyTransaction'
 
 export default {
     name: 'TransactionDetail',
     components: {
+        ThirdPartyTransaction,
         AirtelTransactionDetail,
         Widget,
         VodacomTransactionDetail,
@@ -223,7 +241,7 @@ export default {
 
             try {
                 this.transaction = await this.transactionService.getTransaction(id)
-                if (this.transaction.payment_histories !== null) {
+                if (this.transaction.payment_histories.length > 0) {
                     await this.getRelatedPerson(this.transaction.payment_histories[0].payer_id)
                 }
             } catch (e) {
@@ -235,7 +253,7 @@ export default {
             try {
                 let person = await this.personService.getPerson(personId)
                 this.personName =
-                        person.name + ' ' + person.surname
+            person.name + ' ' + person.surname
                 this.personId = person.id
             } catch (e) {
                 this.alertNotify('error', e.message)
@@ -286,7 +304,8 @@ export default {
 
 
     }
+
     p:first-letter {
-        text-transform:capitalize;
+        text-transform: capitalize;
     }
 </style>

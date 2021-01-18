@@ -3,6 +3,7 @@
 namespace App\Models\Transaction;
 
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * Class AirtelTransaction
@@ -14,11 +15,16 @@ use App\Models\BaseModel;
  * @property int $status
  * @property string $tr_id
  */
-class AirtelTransaction extends BaseModel implements RawTransaction
+class AirtelTransaction extends BaseModel implements IRawTransaction
 {
     public function transaction()
     {
         return $this->morphOne(Transaction::class, 'original_transaction');
+    }
+
+    public function manufacturerTransaction(): MorphTo
+    {
+        return $this->morphTo();
     }
 
     public function conflicts()

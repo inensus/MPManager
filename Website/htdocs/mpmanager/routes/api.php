@@ -79,7 +79,6 @@ Route::group(['prefix' => 'batteries'], static function () {
 Route::group(['prefix' => '/clusters', 'middleware' => 'jwt.verify'], static function () {
     Route::post('/{id}/revenue/analysis', 'RevenueController@getRevenueAnalysisForCluster');
     Route::get('/', 'ClusterController@index');
-    Route::get('/geo', 'ClusterController@geo');
     Route::get('/revenue', 'RevenueController@getPeriodicClustersRevenue');
     Route::get('/{id}/revenue', 'RevenueController@getClusterRevenue');
     Route::post('/', 'ClusterController@store');

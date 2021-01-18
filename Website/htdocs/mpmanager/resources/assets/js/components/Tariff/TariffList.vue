@@ -10,13 +10,14 @@
                 :subscriber="subscriber"
                 :buttonText="$tc('phrases.newTariff')"
                 @widgetAction="showNewTariff"
-                color="green">
+                color="green"
+                :paginator="tariffService.paginator">
 
             <md-table
-                v-model="tariffService.list"
-                md-sort="id"
-                md-sort-order="asc"
-                md-card>
+                    v-model="tariffService.list"
+                    md-sort="id"
+                    md-sort-order="asc"
+                    md-card>
 
                 <md-table-row slot="md-table-row" slot-scope="{ item }">
                     <md-table-cell :md-label="$tc('words.id')" md-sort-by="id" md-numeric>{{ item.id }}</md-table-cell>
@@ -62,29 +63,44 @@ import { currency } from '../../mixins/currency'
 import Add from './Add'
 import { EventBus } from '../../shared/eventbus'
 import { TariffService } from '../../services/TariffService'
+
 export default {
     name: 'TariffList',
     components: { Widget, Add },
     mixins: [currency],
     data () {
         return {
-            subscriber:'tariff-list',
+            subscriber: 'tariff-list',
             tariffService: new TariffService(),
             tariffList: [],
-            loading:false
+            loading: false
         }
     },
     mounted () {
-        this.getTariffs()
-        EventBus.$on('tariffAdded', ()=>{
+
+        EventBus.$on('pageLoaded', this.reloadList)
+        EventBus.$on('tariffAdded', () => {
             this.getTariffs()
         })
+
+    },
+    beforeDestroy () {
+        EventBus.$off('pageLoaded', this.reloadList)
     },
     methods: {
+    
+        reloadList (subscriber, data) {
+
+            if (subscriber !== this.subscriber) {
+                return
+            }
+            this.tariffService.updateList(data)
+            EventBus.$emit('widgetContentLoaded', this.subscriber, this.tariffService.list.length)
+        },
         async getTariffs () {
             try {
                 await this.tariffService.getTariffs()
-                EventBus.$emit('widgetContentLoaded',this.subscriber,this.tariffService.list.length)
+                EventBus.$emit('widgetContentLoaded', this.subscriber, this.tariffService.list.length)
             } catch (e) {
                 this.alertNotify('error', e.message)
             }
@@ -95,27 +111,27 @@ export default {
         addToList (tariff) {
             this.tariffService.addToList(tariff)
         },
-        editTariff(id){
+        editTariff (id) {
             this.$router.push({ path: '/tariffs/' + id })
         },
-        async  deleteTariff(id){
+        async deleteTariff (id) {
             try {
                 this.loading = true
                 await this.tariffService.deleteTariff(id)
                 this.loading = false
-                this.alertNotify('success', this.$tc('phrases.tariffNotify',1))
-                await  this.getTariffs()
+                this.alertNotify('success', this.$tc('phrases.tariffNotify', 1))
+                await this.getTariffs()
             } catch (e) {
                 this.loading = false
                 this.alertNotify('error', e.message)
             }
         },
-        async changeUsingMeterTariff(currentId,changeId){
+        async changeUsingMeterTariff (currentId, changeId) {
             try {
                 this.loading = true
-                await this.tariffService.changeMetersTariff(currentId,changeId)
+                await this.tariffService.changeMetersTariff(currentId, changeId)
                 this.loading = false
-                this.alertNotify('success', this.$tc('phrases.tariffNotify',2))
+                this.alertNotify('success', this.$tc('phrases.tariffNotify', 2))
             } catch (e) {
                 this.loading = false
                 this.alertNotify('error', e.message)
@@ -123,35 +139,35 @@ export default {
         },
         async showConfirmation (id) {
             let countObject = await this.tariffService.tariffUsageCount(id)
-            let usageCount =countObject[0].count
-            let tariffs=this.tariffService.list
-            let tariffObj=  tariffs.reduce((acc,value)=>{
-                if (value.id !== id){
+            let usageCount = countObject[0].count
+            let tariffs = this.tariffService.list
+            let tariffObj = tariffs.reduce((acc, value) => {
+                if (value.id !== id) {
                     acc[value.id] = value.name
                 }
                 return acc
-            },{})
-            let swalOptions={
+            }, {})
+            let swalOptions = {
                 type: 'question',
                 title: this.$tc('words.delete'),
                 showCancelButton: true,
                 confirmButtonText: this.$tc('words.yes'),
                 cancelButtonText: this.$tc('words.no'),
             }
-            if(usageCount>0){
-                swalOptions.input= 'select'
-                swalOptions.inputOptions= tariffObj
-                swalOptions.text= this.$tc('phrases.tariffNotify2',2,{usageCount: usageCount})
-            }else{
-                swalOptions.text= this.$tc('phrases.tariffNotify2',1)
+            if (usageCount > 0) {
+                swalOptions.input = 'select'
+                swalOptions.inputOptions = tariffObj
+                swalOptions.text = this.$tc('phrases.tariffNotify2', 2, { usageCount: usageCount })
+            } else {
+                swalOptions.text = this.$tc('phrases.tariffNotify2', 1)
             }
             this.$swal(
                 swalOptions
             ).then((result) => {
                 if (result.value) {
                     // eslint-disable-next-line no-constant-condition
-                    if (typeof result.value == 'string'){
-                        this.changeUsingMeterTariff(id,Number(result.value))
+                    if (typeof result.value == 'string') {
+                        this.changeUsingMeterTariff(id, Number(result.value))
                     }
                     this.deleteTariff(id)
                 }

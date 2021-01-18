@@ -12,6 +12,7 @@ services:
       - maria
       - composer
       - node
+      - cron
     links:
       - maria:db
       - redis:redis
@@ -19,6 +20,20 @@ services:
       - ./Website/config/php/php.ini:/usr/local/etc/php/php.ini
       - ./Website/htdocs:/var/www/html
 
+  'cron':
+    container_name: cron_job
+    build:
+      context: Docker/
+      dockerfile: DockerfileCron
+    image: laravel/cron
+    depends_on:
+      - maria
+    links:
+      - maria:db
+      - redis:redis
+    volumes:
+      - ./Website/config/php/php.ini:/usr/local/etc/php/php.ini
+      - ./Website/htdocs:/var/www/html
   queue:
     image: ipunktbs/laravel-queue-worker
     container_name: queue

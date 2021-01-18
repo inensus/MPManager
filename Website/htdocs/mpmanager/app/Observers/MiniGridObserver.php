@@ -29,7 +29,11 @@ class MiniGridObserver
     {
         $this->geographicalInformation->owner_type = 'mini-grid';
         $this->geographicalInformation->owner_id = $miniGrid->id;
-        $this->geographicalInformation->points = implode(request()->input('geo_data'), ',');
+        if (request()->input('geo_data')){
+            $this->geographicalInformation->points = implode(request()->input('geo_data'), ',');
+        }else{
+            $this->geographicalInformation->points = "";
+        }
         $this->geographicalInformation->save();
     }
 

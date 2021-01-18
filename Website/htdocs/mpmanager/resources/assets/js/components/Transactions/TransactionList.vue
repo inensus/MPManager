@@ -2,7 +2,7 @@
     <div>
         <div class="md-layout md-gutter">
             <div
-                class="md-layout-item  md-xlarge-size-100  md-large-size-100 md-medium-size-100  md-small-size-100 md-xsmall-size-100">
+                    class="md-layout-item  md-xlarge-size-100  md-large-size-100 md-medium-size-100  md-small-size-100 md-xsmall-size-100">
                 <div style="float:right;padding-bottom: 1rem;">
                     <md-field>
                         <label for="period">{{ $tc('words.period') }}</label>
@@ -19,113 +19,115 @@
             <div v-if="analyticsData"
                  class="md-layout-item md-xlarge-size-25 md-large-size-25 md-medium-size-50 md-small-size-100 md-xsmall-size-100 ">
                 <box
-                    :center-text="true"
-                    :color="[ '#26c6da','#00acc1']"
-                    :header-text="$tc('phrases.incomingTransactions')"
-                    :header-text-color="'#dddddd'"
-                    :sub-text="analyticsData.current.total + '/' + analyticsData.past.total"
-                    :sub-text-color="'#e3e3e3'"
-                    box-icon="add"
-                    :box-icon-color="'#578839'"
-                    :additional-text="analyticsData.analytics.totalPercentage.percentage + '%' + analyticsPeriods[analyticsPeriod]"
+                        :center-text="true"
+                        :color="[ '#26c6da','#00acc1']"
+                        :header-text="$tc('phrases.incomingTransactions')"
+                        :header-text-color="'#dddddd'"
+                        :sub-text="analyticsData.current.total + '/' + analyticsData.past.total"
+                        :sub-text-color="'#e3e3e3'"
+                        box-icon="add"
+                        :box-icon-color="'#578839'"
+                        :additional-text="analyticsData.analytics.totalPercentage.percentage + '%' + analyticsPeriods[analyticsPeriod]"
                 />
             </div>
             <div v-if="analyticsData"
                  class="md-layout-item md-xlarge-size-25 md-large-size-25 md-medium-size-50 md-small-size-100 md-xsmall-size-100 ">
                 <box
-                    :center-text="true"
-                    :color="[ '#6eaa44','#578839']"
-                    :header-text="$tc('words.confirm',2)"
-                    :header-text-color="'#dddddd'"
-                    :sub-text="analyticsData.current.confirmed + '/' +  analyticsData.past.confirmed"
-                    :sub-text-color="'#e3e3e3'"
-                    box-icon="check"
-                    :box-icon-color="'#578839'"
-                    :additional-text="analyticsData.analytics.confirmationPercentage.percentage + '%' + analyticsPeriods[analyticsPeriod]"
+                        :center-text="true"
+                        :color="[ '#6eaa44','#578839']"
+                        :header-text="$tc('words.confirm',2)"
+                        :header-text-color="'#dddddd'"
+                        :sub-text="analyticsData.current.confirmed + '/' +  analyticsData.past.confirmed"
+                        :sub-text-color="'#e3e3e3'"
+                        box-icon="check"
+                        :box-icon-color="'#578839'"
+                        :additional-text="analyticsData.analytics.confirmationPercentage.percentage + '%' + analyticsPeriods[analyticsPeriod]"
                 />
             </div>
             <div v-if="analyticsData"
                  class="md-layout-item md-xlarge-size-25 md-large-size-25 md-medium-size-50 md-small-size-100 md-xsmall-size-100 ">
                 <box
-                    :center-text="true"
-                    :color="[ '#ef5350','#e53935']"
-                    :header-text="$tc('words.cancel',2)"
-                    :header-text-color="'#dddddd'"
-                    :sub-text="analyticsData.current.cancelled + '/' +  analyticsData.past.cancelled"
-                    :sub-text-color="'#e3e3e3'"
-                    box-icon="cancel"
-                    :box-icon-color="'#578839'"
-                    :additional-text="analyticsData.analytics.cancelationPercentage.percentage + '%' + analyticsPeriods[analyticsPeriod]"
+                        :center-text="true"
+                        :color="[ '#ef5350','#e53935']"
+                        :header-text="$tc('words.cancel',2)"
+                        :header-text-color="'#dddddd'"
+                        :sub-text="analyticsData.current.cancelled + '/' +  analyticsData.past.cancelled"
+                        :sub-text-color="'#e3e3e3'"
+                        box-icon="cancel"
+                        :box-icon-color="'#578839'"
+                        :additional-text="analyticsData.analytics.cancelationPercentage.percentage + '%' + analyticsPeriods[analyticsPeriod]"
                 />
             </div>
             <div v-if="analyticsData"
                  class="md-layout-item md-xlarge-size-25 md-large-size-25 md-medium-size-50 md-small-size-100 md-xsmall-size-100 ">
                 <box
-                    :center-text="true"
-                    :color="[ '#ffa726','#fb8c00']"
-                    :header-text="$tc('words.revenue')"
-                    :header-text-color="'#dddddd'"
-                    :sub-text="readable(analyticsData.current.amount) + $store.state.mSettings.currency"
-                    :sub-text-color="'#e3e3e3'"
-                    box-icon="attach_money"
-                    :box-icon-color="'#578839'"
-                    :additional-text="analyticsData.analytics.amountPercentage.percentage + '%' + analyticsPeriods[analyticsPeriod]"
+
+                        :center-text="true"
+                        :color="[ '#ffa726','#fb8c00']"
+                        :header-text="$tc('words.revenue')"
+                        :header-text-color="'#dddddd'"
+                        :sub-text="readable(analyticsData.current.amount) + $store.state.mSettings.currency"
+                        :sub-text-color="'#e3e3e3'"
+                        box-icon="attach_money"
+                        :box-icon-color="'#578839'"
+                        :additional-text="analyticsData.analytics.amountPercentage.percentage + '%' + analyticsPeriods[analyticsPeriod]"
+
                 />
             </div>
 
             <div
-                class="md-layout-item  md-xlarge-size-100  md-large-size-100 md-medium-size-100 md-small-size-100  md-xsmall-size-100"
-                v-if="analyticsData === null && loading ===false">
+                    class="md-layout-item  md-xlarge-size-100  md-large-size-100 md-medium-size-100 md-small-size-100  md-xsmall-size-100"
+                    v-if="analyticsData === null && loading ===false">
                 <h5>{{$tc('phrases.transactionNotify')}}</h5>
             </div>
         </div>
 
 
         <widget
-            :id="'transaction-list'"
-            :title="$tc('words.transaction',2)"
-            :paginator="transactionService.paginator"
-            :search="false"
-            :subscriber="subscriber"
-            :route_name="'/transactions'"
-            :show_per_page="true"
+                :id="'transaction-list'"
+                :title="$tc('words.transaction',2)"
+                :paginator="transactionService.paginator"
+                :search="false"
+                :subscriber="subscriber"
+                :route_name="'/transactions'"
+                :show_per_page="true"
         >
             <div class="md-layout md-gutter">
                 <div
-                    class="md-layout-item  md-xlarge-size-20  md-large-size-20 md-medium-size-20  md-small-size-100 md-xsmall-size-100">
+                        class="md-layout-item  md-xlarge-size-20  md-large-size-20 md-medium-size-20  md-small-size-100 md-xsmall-size-100">
                     <filter-transaction @searchSubmit="filterTransaction"></filter-transaction>
                 </div>
-                    <div class="md-layout-item  md-xlarge-size-80  md-large-size-80 md-medium-size-80  md-small-size-100 md-xsmall-size-100">
-                        <md-table style="width:100%;" md-card>
-                            <md-table-row>
-                                <md-table-head>
-                                    {{ $tc('words.status') }}
-                                </md-table-head>
-                                <md-table-head>
-                                    <md-icon>person</md-icon>
-                                    {{ $tc('words.service') }}
-                                </md-table-head>
-                                <md-table-head>
-                                    <md-icon>phone</md-icon>
-                                    {{ $tc('words.sender') }}
-                                </md-table-head>
-                                <md-table-head>
-                                    <md-icon>money</md-icon>
-                                    {{ $tc('words.amount') }}
-                                </md-table-head>
-                                <md-table-head> {{ $tc('words.type') }}</md-table-head>
-                                <md-table-head> {{ $tc('words.message') }}</md-table-head>
-                                <md-table-head>
-                                    <md-icon>calendar_today</md-icon>
-                                    {{ $tc('phrases.sentDate') }}
-                                </md-table-head>
-                                <md-table-head>
-                                    <md-icon>calendar_view_day</md-icon>
-                                    {{ $tc('phrases.processTime') }}
-                                </md-table-head>
-                            </md-table-row>
+                <div class="md-layout-item  md-xlarge-size-80  md-large-size-80 md-medium-size-80  md-small-size-100 md-xsmall-size-100">
+                    <md-table style="width:100%;" md-card>
+                        <md-table-row>
+                            <md-table-head>
+                                {{ $tc('words.status') }}
+                            </md-table-head>
+                            <md-table-head>
+                                <md-icon>person</md-icon>
+                                {{ $tc('words.service') }}
+                            </md-table-head>
+                            <md-table-head>
+                                <md-icon>phone</md-icon>
+                                {{ $tc('words.sender') }}
+                            </md-table-head>
+                            <md-table-head>
+                                <md-icon>money</md-icon>
+                                {{ $tc('words.amount') }}
+                            </md-table-head>
+                            <md-table-head> {{ $tc('words.type') }}</md-table-head>
+                            <md-table-head> {{ $tc('words.message') }}</md-table-head>
+                            <md-table-head>
+                                <md-icon>calendar_today</md-icon>
+                                {{ $tc('phrases.sentDate') }}
+                            </md-table-head>
+                            <md-table-head>
+                                <md-icon>calendar_view_day</md-icon>
+                                {{ $tc('phrases.processTime') }}
+                            </md-table-head>
+                        </md-table-row>
 
-                            <md-table-row
+                        <md-table-row
                                 :class="transaction.status===1 ? 'active':'danger'"
                                 v-for="transaction in transactionService.list"
                                 :key="transaction.id"
@@ -175,7 +177,6 @@
                             </md-table-row>
                         </md-table>
                     </div>
-
             </div>
         </widget>
     </div>
@@ -195,6 +196,8 @@ import Box from '../Box'
 import { TransactionService } from '../../services/TransactionService'
 import airtelLogo from '../../../../../storage/app/public/icons/airtel.png'
 import vodacomLogo from '../../../../../storage/app/public/icons/vodacom.png'
+import thirdPartyLogo from '../../../../../storage/app/public/icons/third_party_transaction_icon.png'
+
 export default {
     name: 'transactionList',
     mixins: [timing, currency],
@@ -217,7 +220,8 @@ export default {
                 'Past 30 days'
             ],
             airtelLogo: airtelLogo,
-            vodacomLogo: vodacomLogo
+            vodacomLogo: vodacomLogo,
+            thirdPartyLogo: thirdPartyLogo
         }
     },
 
@@ -251,7 +255,7 @@ export default {
             if (sub !== this.subscriber) return
             this.transactionService.updateList(data)
             EventBus.$emit('dataLoaded')
-            EventBus.$emit('widgetContentLoaded',this.subscriber,this.transactionService.list.length)
+            EventBus.$emit('widgetContentLoaded', this.subscriber, this.transactionService.list.length)
         },
         transactionDetail (id) {
             this.$router.push({ path: '/transactions/' + id })
@@ -268,7 +272,7 @@ export default {
         async loadAnalytics () {
             this.loading = true
             this.analyticsPeriod =
-                    this.analyticsPeriod === null ? 0 : this.analyticsPeriod
+          this.analyticsPeriod === null ? 0 : this.analyticsPeriod
             try {
                 this.analyticsData = await this.transactionService.getAnalytics(this.analyticsPeriod)
 

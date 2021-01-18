@@ -65,7 +65,7 @@ class PeriodService
             } elseif ($period === 'weekly') {
                 $result[$p->format('o-W')] = $initialData;
             } elseif ($interval === 'monthly') {
-                $result[$p->format('o-m')] = $initialData;
+                $result[$p->format('Y-m')] = $initialData;
             } else {
                 $result[$p->format('o-W')] = $initialData;
             }

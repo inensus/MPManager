@@ -7,8 +7,12 @@ export class ConnectionsType {
     }
 
     fromJson (jsonData) {
-        this.id = jsonData.id
-        this.name = jsonData.name
+
+        if (jsonData){
+            this.id = jsonData.id
+            this.name = jsonData.name
+        }
+
         return this
     }
 
