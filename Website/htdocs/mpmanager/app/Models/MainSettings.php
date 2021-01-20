@@ -17,7 +17,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property float $vat_energy
  * @property float $vat_appliance
  * */
-class MainSettings extends Model
+class MainSettings extends BaseModel
 {
-    protected $fillable = [ 'site_title', 'company_name', 'currency', 'country', 'language', 'vat_energy', 'vat_appliance'];
 }

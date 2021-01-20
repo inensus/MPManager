@@ -17,26 +17,18 @@ class TicketSettingsController extends Controller
     public function __construct(TicketSettings $ticketSettings)
     {
         $this->ticketSettings = $ticketSettings;
-
     }
 
     public function index(): ApiResource
     {
-        $ticketSettings = TicketSettings::all();
-        return new ApiResource($ticketSettings);
+        return new ApiResource(TicketSettings::all());
     }
 
     public function update(TicketSettings $ticketSettings): ApiResource
     {
-        $ticketSettings = $this->ticketSettings->find(request('id'));
-        $ticketSettings->name = request('name');
-        $ticketSettings->api_token = request('api_token');
-        $ticketSettings->api_url = request('api_url');
-        $ticketSettings->api_key = request('api_key');
-
-        $ticketSettings->save();
-        $ticketSettings->update([
-            'updated_at' => date('Y-m-d h:i:s')]);
-        return new ApiResource($ticketSettings);
+        $ticketSettings->update(request()->only([
+            'name', 'api_token', 'api_url', 'api_key'
+        ]));
+        return new ApiResource($ticketSettings->fresh());
     }
 }

@@ -5,7 +5,7 @@ export default {
     list(){
         return Client.get(`${resource}/ticket`)
     },
-    update(ticketSettings){
-        return Client.put(`${resource}/1/ticket`, ticketSettings)
+    update(id, ticketSettings){
+        return Client.put(`${resource}/${id}/ticket`, ticketSettings)
     }
 }

@@ -18,18 +18,13 @@ class LanguageController extends Controller
 
     public function index(): ApiResource
     {
-
         $path = resource_path('assets/locales');
-        $files = \File::allFiles($path);
-        $collection = collect($files);
-
-        $filteredFiles = $collection->map(function ($value){
-            if($value->getExtension() === 'json'){
-                return $value->getFilename();
+        $files = collect(\File::allFiles($path));
+        $filteredFiles = $files->map(function ($file){
+            if($file->getExtension() === 'json'){
+                return $file->getFilename();
             }
-
         });
-
         return new ApiResource($filteredFiles);
     }
 

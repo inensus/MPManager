@@ -16,26 +16,18 @@ class MainSettingsController extends Controller
     public function __construct(MainSettings $mainSettings)
     {
         $this->mainSettings = $mainSettings;
-
     }
 
     public function index(): ApiResource
     {
-        $mainSettings = MainSettings::all();
-        return new ApiResource($mainSettings);
+        return new ApiResource(MainSettings::all());
     }
 
     public function update(MainSettings $mainSettings): ApiResource
     {
-        $mainSettings = $this->mainSettings->find(request('id'));
-        $mainSettings->site_title = request('site_title');
-        $mainSettings->company_name = request('company_name');
-        $mainSettings->currency = request('currency');
-        $mainSettings->country = request('country');
-        $mainSettings->language = request('language');
-        $mainSettings->vat_energy = request('vat_energy');
-        $mainSettings->vat_appliance = request('vat_appliance');
-        $mainSettings->update();
-        return new ApiResource($mainSettings);
+        $mainSettings->update(request()->only([
+            'site_title', 'company_name', 'currency', 'country', 'language', 'vat_energy', 'vat_appliance'
+        ]));
+        return new ApiResource($mainSettings->fresh());
     }
 }

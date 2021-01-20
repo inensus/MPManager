@@ -19,6 +19,7 @@ export  class MainSettingsService{
 
     fromJson(mainSettings){
         this.mainSettings={
+            id:mainSettings.id,
             site_title: mainSettings.site_title,
             company_name:mainSettings.company_name,
             currency: mainSettings.currency,
@@ -48,7 +49,7 @@ export  class MainSettingsService{
 
     async update(mainSettings){
         try {
-            let response = await this.repository.update(mainSettings)
+            let response = await this.repository.update(mainSettings.id, mainSettings)
             if(response.status === 200 ){
                 return response.data.data
             }

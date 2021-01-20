@@ -16,7 +16,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $api_key
  * */
 
-class TicketSettings extends Model
+class TicketSettings extends BaseModel
 {
-    protected $fillable = [ 'name', 'api_token', 'api_url', 'api_key'];
 }

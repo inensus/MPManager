@@ -16,6 +16,7 @@ export  class TicketSettingsService{
 
     fromJson(ticketSettings){
         this.ticketSettings={
+            id: ticketSettings.id,
             name: ticketSettings.name,
             api_token:ticketSettings.api_token,
             api_url: ticketSettings.api_url,
@@ -42,7 +43,7 @@ export  class TicketSettingsService{
 
     async update(ticketSettings){
         try {
-            let response = await this.repository.update(ticketSettings)
+            let response = await this.repository.update(ticketSettings.id, ticketSettings)
             if(response.status === 200 ){
                 return response.data.data
             }
