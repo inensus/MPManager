@@ -21,19 +21,14 @@ class MapSettingsController extends Controller
 
     public function index(): ApiResource
     {
-        $mapSettings = MapSettings::all();
-        return new ApiResource($mapSettings);
+        return new ApiResource(MapSettings::all());
     }
 
     public function update(MapSettings $mapSettings): ApiResource
     {
-        $mapSettings = $this->mapSettings->find(request('id'));
-        $mapSettings->zoom = request('zoom');
-        $mapSettings->latitude = request('latitude');
-        $mapSettings->longitude = request('longitude');
-        $mapSettings->save();
-        $mapSettings->update([
-            'updated_at' => date('Y-m-d h:i:s')]);
-        return new ApiResource($mapSettings);
+        $mapSettings->update(request()->only([
+            'zoom', 'latitude', 'longitude'
+        ]));
+        return new ApiResource($mapSettings->fresh());
     }
 }

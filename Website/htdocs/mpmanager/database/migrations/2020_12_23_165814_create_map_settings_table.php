@@ -16,8 +16,8 @@ class CreateMapSettingsTable extends Migration
         Schema::create('map_settings', function (Blueprint $table) {
             $table->increments('id');
             $table->integer('zoom');
-            $table->float('latitude',10);
-            $table->float('longitude',10);
+            $table->double('latitude',10);
+            $table->double('longitude',10);
             $table->timestamps();
         });
     }

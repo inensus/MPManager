@@ -14,6 +14,7 @@ export  class MapSettingsService{
 
     fromJson(mapSettings){
         this.mapSettings={
+            id: mapSettings.id,
             zoom: mapSettings.zoom,
             latitude:mapSettings.latitude,
             longitude: mapSettings.longitude,
@@ -39,7 +40,7 @@ export  class MapSettingsService{
 
     async update(mapSettings){
         try {
-            let response = await this.repository.update(mapSettings)
+            let response = await this.repository.update(mapSettings.id, mapSettings)
             if(response.status === 200 ){
                 return response.data.data
             }

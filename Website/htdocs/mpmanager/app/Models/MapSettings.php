@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\Model;
 
  */
 
-class MapSettings extends Model
+class MapSettings extends BaseModel
 {
-    protected $fillable = [ 'zoom', 'latitude', 'longitude'];
 }
