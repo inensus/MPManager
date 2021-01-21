@@ -139,7 +139,7 @@ export default {
             miniGridService: new MiniGridService(),
             mappingService: new MappingService(),
             geoData: null,
-            center: this.appConfig.mapStartingPoint,
+            center: this.$store.state.mapSettings.center,
             villageSaved: false,
             loading: false,
             lastVillage: null,

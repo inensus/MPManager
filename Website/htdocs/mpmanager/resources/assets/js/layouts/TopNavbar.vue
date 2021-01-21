@@ -28,6 +28,12 @@
                                     {{$tc('phrases.userManagement')}}
                                 </router-link>
                             </md-menu-item>
+                            <md-menu-item>
+                                <router-link :to="{path: '/settings'}" class="link">
+                                    <md-icon>settings</md-icon>
+                                    Settings
+                                </router-link>
+                            </md-menu-item>
                         </md-menu-content>
                     </md-menu>
                     <button class="btn-close md-raised " @click="logout()">

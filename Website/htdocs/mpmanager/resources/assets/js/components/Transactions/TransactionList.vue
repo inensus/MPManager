@@ -61,15 +61,17 @@
             <div v-if="analyticsData"
                  class="md-layout-item md-xlarge-size-25 md-large-size-25 md-medium-size-50 md-small-size-100 md-xsmall-size-100 ">
                 <box
+
                         :center-text="true"
                         :color="[ '#ffa726','#fb8c00']"
                         :header-text="$tc('words.revenue')"
                         :header-text-color="'#dddddd'"
-                        :sub-text="readable(analyticsData.current.amount) +                                    appConfig.currency"
+                        :sub-text="readable(analyticsData.current.amount) + $store.state.mSettings.currency"
                         :sub-text-color="'#e3e3e3'"
                         box-icon="attach_money"
                         :box-icon-color="'#578839'"
                         :additional-text="analyticsData.analytics.amountPercentage.percentage + '%' + analyticsPeriods[analyticsPeriod]"
+
                 />
             </div>
 
@@ -182,6 +184,7 @@
 
 
                 </widget>
+
             </div>
         </div>
     </div>

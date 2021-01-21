@@ -151,7 +151,7 @@
                          :color="[ '#6eaa44','#578839']"
                          :header-text="$tc('words.revenue')"
                          :header-text-color="'#dddddd'"
-                         :sub-text="readable(currentTransaction[0].revenue).toString() +this.appConfig.currency"
+                         :sub-text="readable(currentTransaction[0].revenue).toString() + $store.state.mSettings.currency"
                          :sub-text-color="'#e3e3e3'"
                          box-icon="attach_money"
                          :box-icon-color="'#578839'"
@@ -1008,6 +1008,7 @@ export default {
             let donutData = [initValue]
             //donut chart for given period
             let data = this.batchRevenues.revenueList.revenue
+            console.log(data)
             for (let con in data) {
                 let connectionRev = data[con]
                 donutData.push([

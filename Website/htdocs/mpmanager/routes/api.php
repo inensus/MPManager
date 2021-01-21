@@ -175,6 +175,29 @@ Route::group(['prefix' => 'pv'], static function () {
     Route::get('/{miniGridId}', ['middleware' => 'jwt.verify', 'uses' => 'PVController@show']);
 
 });
+
+// Map Settings
+
+Route::group(['prefix' => 'map-settings', 'middleware' => 'jwt.verify'], static function(){
+   Route::get('/','MapSettingsController@index');
+   Route::put('/{mapSettings}','MapSettingsController@update');
+});
+
+// Ticket Settings
+Route::group(['prefix' => 'ticket-settings', 'middleware' => 'jwt.verify'], static function(){
+    Route::get('/','TicketSettingsController@index');
+    Route::put('/{ticketSettings}','TicketSettingsController@update');
+});
+
+//Settings
+Route::group(['prefix' => 'settings', 'middleware' => 'jwt.verify'], static function(){
+   Route::get('/main','MainSettingsController@index');
+   Route::put('/main/{mainSettings}','MainSettingsController@update');
+   Route::get('/currencyList','CurrencyController@index');
+   Route::get('/countryList','CountryListController@index');
+   Route::get('/languagesList','LanguageController@index');
+});
+
 // Reports
 Route::group(['prefix' => 'reports'], function () {
     Route::get('/', [ 'uses' => 'ReportController@index', 'middleware' => 'jwt.verify']);

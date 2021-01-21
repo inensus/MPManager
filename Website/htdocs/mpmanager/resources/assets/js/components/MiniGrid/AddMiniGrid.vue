@@ -129,7 +129,7 @@ export default {
             miniGridService: new MiniGridService(),
             clusterId: null,
             geoData: null,
-            center: this.appConfig.mapStartingPoint,
+            center: this.$store.state.mapSettings.center,
             marker: true,
             markerUrl: marker,
             miniGridName: '',

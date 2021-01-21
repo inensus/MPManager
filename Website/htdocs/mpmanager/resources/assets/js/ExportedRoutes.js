@@ -224,12 +224,17 @@ export const exportedRoutes = [
     component: require('./components/MiniGrid/AddMiniGrid').default,
     name: 'add-mini-grid',
     meta: { layout: 'default' }
-
   },
   {
     path: '/assets/types',
     component: require('./components/Assets/AssetTypeList').default,
     name: 'asset-types',
+    meta: { layout: 'default' },
+  },
+
+  {
+    path: '/settings',
+    component: require('./components/Settings/Settings').default,
     meta: { layout: 'default' },
   },
   {

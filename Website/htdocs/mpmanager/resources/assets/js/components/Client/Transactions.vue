@@ -44,6 +44,7 @@
                 </md-table>
 
             </md-card-content>
+
         </md-card>
     </widget>
 </template>
