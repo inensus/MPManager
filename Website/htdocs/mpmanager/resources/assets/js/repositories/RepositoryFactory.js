@@ -41,6 +41,7 @@ import GenerationAssetsRepository from './GenerationAssetsRepository'
 import AddressRepository from './AddressRepository'
 import UserTransactionsRepository from './UserTransactionsRepository'
 import MeterParameterRepository from './MeterParameterRepository'
+import TransactionProvidersRepository from './TransactionProvidersRepository'
 
 const repositories = {
     'address': AddressRepository,
@@ -85,6 +86,7 @@ const repositories = {
     'bookKeeping': BookKeepingRepository,
     'timeOfUsage': TimeOfUsageRepository,
     'generationAssets': GenerationAssetsRepository,
+    'transactionProviders':TransactionProvidersRepository
 }
 
 export default {
