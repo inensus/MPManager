@@ -43,19 +43,9 @@ export const exportedRoutes = [
     component: require('./components/ExportedReports/ReportsList').default,
     meta: { layout: 'default' },
   },
-  {
-    path: '/reports/page/:page_number',
-    component: require('./components/ExportedReports/ReportsList').default,
-    meta: { layout: 'default' },
-  },
 
   {
     path: '/people',
-    component: require('./components/Client/ClientList').default,
-    meta: { layout: 'default' },
-  },
-  {
-    path: '/people/page/:page_number',
     component: require('./components/Client/ClientList').default,
     meta: { layout: 'default' },
   },
@@ -72,7 +62,7 @@ export const exportedRoutes = [
   },
   {
     //transaction list
-    path: '/transactions/page/:page_number',
+    path: '/transactions/search',
     component: require('./components/Transactions/TransactionList').default,
     meta: { layout: 'default' },
   },
@@ -84,11 +74,6 @@ export const exportedRoutes = [
   },
   {
     path: '/tickets',
-    component: require('./components/Ticket/TicketList').default,
-    meta: { layout: 'default' },
-  },
-  {
-    path: '/tickets/page/:page_number',
     component: require('./components/Ticket/TicketList').default,
     meta: { layout: 'default' },
   },
@@ -113,7 +98,7 @@ export const exportedRoutes = [
     meta: { layout: 'default' },
   },
   {
-    path: '/meters/list',
+    path: '/meters',
     component: require('./components/Meter/MeterList').default,
     meta: { layout: 'default' },
 
@@ -124,12 +109,7 @@ export const exportedRoutes = [
     meta: { layout: 'default' },
 
   },
-  {
-    path: '/meters/page/:page_number',
-    component: require('./components/Meter/MeterList').default,
-    meta: { layout: 'default' },
 
-  },
   {
     path: '/meters/:id',
     component: require('./components/Meter/MeterDetail').default,
@@ -216,12 +196,6 @@ export const exportedRoutes = [
     meta: { layout: 'default' },
   },
   {
-    path: '/sms/list/page/:page_number',
-    component: require('./components/Sms/List').default,
-    name: 'sms-list',
-    meta: { layout: 'default' },
-  },
-  {
     path: '/sms/newsms',
     component: require('./components/Sms/NewSms').default,
     name: 'new-sms',
@@ -259,12 +233,6 @@ export const exportedRoutes = [
     meta: { layout: 'default' },
   },
   {
-    path: '/assets/types/page/:page_number',
-    component: require('./components/Assets/AssetTypeList').default,
-    meta: { layout: 'default' },
-  },
-
-  {
     path: '/profile',
     component: require('./components/Profile/User').default,
     meta: { layout: 'default' },
@@ -275,7 +243,7 @@ export const exportedRoutes = [
     meta: { layout: 'default' },
   },
   {
-    path: '/agents/page/:page_number',
+    path: '/agents',
     component: require('./components/Agent/AgentList').default,
     meta: { layout: 'default' },
   },
