@@ -93,7 +93,7 @@ const repositories = {
     'bookKeeping': BookKeepingRepository,
     'timeOfUsage': TimeOfUsageRepository,
     'generationAssets': GenerationAssetsRepository,
-    'transactionProviders':TransactionProvidersRepository
+    'transactionProviders':TransactionProvidersRepository,
     'mainSettings': MainSettingsRepository,
     'mapSettings': MapSettingsRepository,
     'currencyList': CurrencyRepository,
