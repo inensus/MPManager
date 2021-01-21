@@ -150,11 +150,14 @@ class PaymentHistoryController
         $ad = 0;
         $accessDebt = Person::with('meters.meter.accessRatePayment')->find($personId);
         foreach ($accessDebt->meters as $m) {
-            $ad += $m->meter->accessRatePayment->debt;
+            if ($ad += $m->meter->accessRatePayment){
+                $ad += $m->meter->accessRatePayment->debt;
+            }
         }
 
 
         $deferredDebt = 0;
+
         return new ApiResource(['access_rate' => $ad, 'deferred' => $deferredDebt]);
 
     }
