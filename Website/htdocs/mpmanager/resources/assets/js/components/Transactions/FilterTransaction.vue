@@ -3,18 +3,18 @@
         <h2 class="filter-header">{{ $tc('words.filter') }}</h2>
         <div class="md-layout">
             <div
-                class="md-layout-item  md-xlarge-size-100  md-large-size-100 md-medium-size-100  md-small-size-100 md-xsmall-size-100">
+                    class="md-layout-item  md-xlarge-size-100  md-large-size-100 md-medium-size-100  md-small-size-100 md-xsmall-size-100">
                 <md-field>
                     <md-input
-                        type="text"
-                        placeholder="Meter Serial Number"
-                        v-model="filter.serial_number"
-                        v-on:keyup.enter="submitFilter"
+                            type="text"
+                            placeholder="Meter Serial Number"
+                            v-model="filter.serial_number"
+                            v-on:keyup.enter="submitFilter"
                     ></md-input>
                 </md-field>
             </div>
             <div
-                class="md-layout-item  md-xlarge-size-100  md-large-size-100 md-medium-size-100  md-small-size-100 md-xsmall-size-100">
+                    class="md-layout-item  md-xlarge-size-100  md-large-size-100 md-medium-size-100  md-small-size-100 md-xsmall-size-100">
                 <md-field>
                     <md-select v-model="tarrif_" name="tariff" id="tariff" @md-selected="setTariff">
 
@@ -24,23 +24,27 @@
                 </md-field>
             </div>
             <div
-                class="md-layout-item  md-xlarge-size-100  md-large-size-100 md-medium-size-100  md-small-size-100 md-xsmall-size-100">
+                    class="md-layout-item  md-xlarge-size-100  md-large-size-100 md-medium-size-100  md-small-size-100 md-xsmall-size-100">
                 <md-field>
-                    <md-select v-model="provider_" name="provider" id="provider" @md-selected="setProvider">
-                        <md-option value="All Network Providers">{{ $tc('phrases.allNetworkProviders') }}</md-option>
-                        <md-option value="Airtel">Airtel</md-option>
-                        <md-option value="Vodacom">Vodacom</md-option>
+                    <md-select name="provider" id="provider"
+                               v-model="selectedProvider"
+                    >
+                        <md-option v-for="(p,i) in transactionProviderService.list" :key="i" :value="p.value">{{p.name}}
+                        </md-option>
+
                     </md-select>
+
+
                 </md-field>
             </div>
             <div
-                class="md-layout-item  md-xlarge-size-100  md-large-size-100 md-medium-size-100  md-small-size-100 md-xsmall-size-100">
+                    class="md-layout-item  md-xlarge-size-100  md-large-size-100 md-medium-size-100  md-small-size-100 md-xsmall-size-100">
                 <md-field>
                     <md-select
-                        v-model="transaction_"
-                        name="transaction"
-                        id="transaction"
-                        @md-selected="seTransaction"
+                            v-model="transaction_"
+                            name="transaction"
+                            id="transaction"
+                            @md-selected="seTransaction"
                     >
                         <md-option value="All Transactions">{{ $tc('phrases.allTransactions') }}</md-option>
                         <md-option value="Only Approved">{{ $tc('phrases.onlyApproved') }}</md-option>
@@ -50,29 +54,30 @@
             </div>
 
             <div
-                class="md-layout-item  md-xlarge-size-100  md-large-size-100 md-medium-size-100  md-small-size-100 md-xsmall-size-100">
+                    class="md-layout-item  md-xlarge-size-100  md-large-size-100 md-medium-size-100  md-small-size-100 md-xsmall-size-100">
                 <md-datepicker
-                    v-model="filter.from"
-                    md-immediately
-                    :md-model-type="String"
+                        v-model="filterFrom"
+                        md-immediately
+                        :md-model-type="String"
                 >
                     <label>{{ $tc('phrases.fromDate') }}</label>
                 </md-datepicker>
             </div>
 
             <div
-                class="md-layout-item  md-xlarge-size-100  md-large-size-100 md-medium-size-100  md-small-size-100 md-xsmall-size-100">
+                    class="md-layout-item  md-xlarge-size-100  md-large-size-100 md-medium-size-100  md-small-size-100 md-xsmall-size-100">
                 <md-datepicker
-                    v-model="filter.to"
-                    md-immediately
-                    :md-model-type="String">
+                        v-model="filterTo"
+                        md-immediately
+                        :md-model-type="String">
                     <label>{{ $tc('phrases.toDate') }}</label>
                 </md-datepicker>
             </div>
         </div>
 
         <div class="md-layout-item">
-            <md-button class="md-raised md-primary " v-if="!loading" @click="submitFilter">{{ $tc('words.search') }}</md-button>
+            <md-button class="md-raised md-primary " v-if="!loading" @click="submitFilter">{{ $tc('words.search') }}
+            </md-button>
             <md-progress-bar md-mode="indeterminate" v-if="loading"/>
         </div>
     </div>
@@ -82,37 +87,43 @@
 import { TransactionService } from '../../services/TransactionService'
 import { TariffService } from '../../services/TariffService'
 import { EventBus } from '../../shared/eventbus'
+import { TransactionProviderService } from '../../services/TransactionProviderService'
 
 export default {
     name: 'FilterTransaction',
     mounted () {
         this.getTariffs()
         this.getSearch()
+        this.getTransactionProviders()
         EventBus.$on('dataLoaded', this.dataLoaded)
     },
 
     data () {
         return {
             transactionService: new TransactionService(),
+            transactionProviderService: new TransactionProviderService(),
             tariffService: new TariffService(),
+            selectedProvider: '',
             tariffs: [],
             tarrif_: '',
             loading: false,
             provider_: 'All Network Providers',
             transaction_: 'All Transactions',
+            filterFrom: null,
+            filterTo: null,
             filter: {
                 status: null,
                 serial_number: null,
                 tariff: null,
                 provider: null,
                 from: null,
-                to: null
+                to: null,
             }
         }
     },
 
     methods: {
-        dataLoaded(){
+        dataLoaded () {
             this.loading = false
         },
         async getTariffs () {
@@ -128,24 +139,17 @@ export default {
             this.tarrif_ = this.tariffs[0].id
 
         },
+        async getTransactionProviders () {
+            await this.transactionProviderService.getTransactionProviders()
+            this.selectedProvider = this.transactionProviderService.list
+                .filter(x => x.value === '-1')
+                .map(x => x.value)[0]
+
+        },
         setTariff (tariff) {
             this.filter.tariff = tariff
         },
-        setProvider (provider) {
-            switch (provider) {
-            case 'All Network Providers':
-                this.filter.provider = '-1'
-                break
-            case 'Airtel':
-                this.filter.provider = 'airtel_transaction'
-                break
-            case 'Vodacom':
-                this.filter.provider = 'vodacom_transaction'
-                break
-            default:
-                break
-            }
-        },
+
         seTransaction (transaction) {
             switch (transaction) {
             case 'All Transactions':
@@ -163,7 +167,9 @@ export default {
             }
         },
         submitFilter () {
+            this.filter.provider = this.selectedProvider
             this.loading = true
+
             if (this.filter.serial_number === '') {
                 this.filter.serial_number = null
             }
@@ -176,11 +182,12 @@ export default {
             if (this.filter.status === 'all') {
                 this.filter.status = null
             }
-            if (this.filter.from !== null) {
-                this.filter.from += ' 00:00:00'
+            if (this.filterFrom !== null) {
+                this.filter.from = this.filterFrom.toString() + ' 00:00:00'
             }
-            if (this.filter.to !== null) {
-                this.filter.to += ' 23:59:59'
+            if (this.filterTo !== null) {
+                this.filter.to = this.filterTo.toString() + ' 23:59:59'
+
             }
             this.$emit('searchSubmit', this.filter)
         },

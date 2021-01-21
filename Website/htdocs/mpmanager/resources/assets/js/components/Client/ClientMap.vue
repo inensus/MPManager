@@ -1,20 +1,11 @@
 <template>
 
     <widget
-        :title="$tc('words.detail',2) + (currentMap === 0 ? ' [Open Street]': ' [Google]')"
+        :title="$tc('words.detail',2)"
         id="client-map"
     >
-        <div slot="tabbar">
-            <md-field>
-                <label for="map">{{ $tc('phrases.mapProvider') }}</label>
-                <md-select @md-selected="mapSelected">
-                    <md-option value="0">Open Street</md-option>
-                    <md-option value="1">Google</md-option>
-                </md-select>
-            </md-field>
-        </div>
         <Map
-            :zoom="18"
+            :zoom="14"
             :center="center"
             :markerLocations="markerLocations"
             :markingInfos="markingInfos"
@@ -64,7 +55,6 @@ export default {
             meters: [],
             markingInfos: [],
             loading: false,
-            currentMap: 0,
             show: true,
             geoData: null,
             center: this.$store.state.mapSettings.center,
@@ -138,9 +128,6 @@ export default {
                 }
             })
 
-        },
-        mapSelected (val) {
-            this.currentMap = val
         },
         alertNotify (type, message) {
             this.$notify({

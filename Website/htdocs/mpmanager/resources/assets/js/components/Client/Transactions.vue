@@ -1,80 +1,49 @@
 <template>
     <widget
 
-        :title="$tc('phrases.lastTransactions')"
-        :paginator="transactions.paginator"
-        color="green"
-        :subscriber="subscriber"
+            :title="$tc('phrases.lastTransactions')"
+            :paginator="userTransactionsService.paginator"
+            color="green"
+            :subscriber="subscriber"
     >
 
         <md-card>
             <md-card-content>
 
-                        <md-table style="width:100%" v-model="transactions" md-card md-fixed-header>
-                            <md-table-row
-                                @click="loadTransaction(item.transaction_id)"
-                                slot="md-table-row"
-                                slot-scope="{ item }"
-                            >
-                                <md-table-cell
-                                    :md-label="$tc('phrases.paymentType')"
-                                    md-sort-by="payment_type"
-                                    md-numeric
-                                >{{ item.payment_type }}
-                                </md-table-cell>
-                                <md-table-cell :md-label="$tc('words.sender')" md-sort-by="sender">{{ item.sender }}</md-table-cell>
-                                <md-table-cell :md-label="$tc('words.amount')" md-sort-by="amount">{{ item.amount + ' ' + $store.state.mSettings.currency}}
-                                </md-table-cell>
-                                <md-table-cell :md-label="$tc('phrases.paidFor')" md-sort-by="paid_for_type">{{ item.paid_for_type }}
-                                </md-table-cell>
-                                <md-table-cell
-                                    :md-label="$tc('phrases.paymentService')"
-                                    md-sort-by="payment_service"
-                                >{{ item.payment_service }}
-                                </md-table-cell>
-                                <md-table-cell
-                                    :md-label="$tc('phrases.createdAt')"
-                                    md-sort-by="paid_for_type"
-                                >{{timeForHuman(item.created_at)}}
-                                </md-table-cell>
-                            </md-table-row>
-                        </md-table>
+                <md-table style="width:100%" v-model="userTransactionsService.list" md-card md-fixed-header>
+                    <md-table-row
+                            @click="loadTransaction(item.id)"
+                            slot="md-table-row"
+                            slot-scope="{ item }"
+                    >
+                        <md-table-cell
+                                :md-label="$tc('phrases.paymentType')"
+                                md-sort-by="paymentType"
+                                md-numeric
+                        >{{ item.paymentType }}
+                        </md-table-cell>
+                        <md-table-cell :md-label="$tc('words.sender')" md-sort-by="sender">{{ item.sender }}
+                        </md-table-cell>
+                        <md-table-cell :md-label="$tc('words.amount')" md-sort-by="amount">{{ item.amount + ' ' +
+                            appConfig.currency}}
+                        </md-table-cell>
+                        <md-table-cell :md-label="$tc('phrases.paidFor')" md-sort-by="type">{{
+                            item.type }}
+                        </md-table-cell>
+                        <md-table-cell
+                                :md-label="$tc('phrases.paymentService')"
+                                md-sort-by="paymentService"
+                        >{{ item.paymentService }}
+                        </md-table-cell>
+                        <md-table-cell
+                                :md-label="$tc('phrases.createdAt')"
+                                md-sort-by="createdAt"
+                        >{{timeForHuman(item.createdAt)}}
+                        </md-table-cell>
+                    </md-table-row>
+                </md-table>
 
             </md-card-content>
-            <md-card-actions>
-                <div>
-                    <div>
-                        <div style="position: absolute; bottom: 10px ; right: 10px; font-size: 12px" role="status"
-                             aria-live="polite">Showing {{from}} to {{to}} of {{total}} entries
-                        </div>
-                    </div>
-                    <div>
-                        <div class="paging_simple_numbers"
-                             style="margin-bottom: 1.5rem;">
-                            <ul class="pagination pagination-sm">
-                                <li :class="currentPage>1 ? 'paginate_button previous' :' paginate_button previous disabled'"
-                                    id="datatable_col_reorder_previous">
-                                    <a href="javascript:void(0);" aria-controls="datatable_col_reorder"
-                                       data-dt-idx="0"
-                                       tabindex="0" @click="getTransactions(--currentPage)">{{ $tc('words.previous') }}</a>
-                                </li>
-
-                                <li v-for="(page,index) in totalPages" :class="page === currentPage ? 'active' : ''" :key="index"><a
-                                    href="javascript:void(0);"
-                                    @click="getTransactions(page)">{{page}}</a>
-                                </li>
-                                <li :class="currentPage< totalPages? 'paginate_button next':'paginate_button next disabled'"
-                                    id="datatable_col_reorder_next">
-                                    <a href="javascript:void(0);" aria-controls="datatable_col_reorder"
-                                       data-dt-idx="8"
-                                       tabindex="0" @click="getTransactions(++currentPage)">{{ $tc('words.next') }}</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </md-card-actions>
-
 
         </md-card>
     </widget>
@@ -91,12 +60,15 @@ export default {
     name: 'Transactions',
     components: { Widget },
     mixins: [currency, timing],
+    props: {
+        personId: null
+    },
     data () {
         return {
-            userTransactionsService: new UserTransactionsService(),
-            subscriber:'client-transactions',
+            userTransactionsService: new UserTransactionsService(this.personId),
+            subscriber: 'client-transactions',
             articleClass: 'col-sm-12',
-            personId: null,
+
             transactions: [],
             currentPage: 1,
             from: 0,
@@ -106,14 +78,25 @@ export default {
 
         }
     },
+
     mounted () {
-        this.personId = this.$store.getters.person.id
-        this.getTransactions(0)
+        EventBus.$on('pageLoaded', this.reloadList)
+        // this.getTransactions(0)
         //pageSetUp()
         window.addEventListener('resize', this.handleResize)
     },
+    beforeDestroy () {
+        EventBus.$off('pageLoaded', this.reloadList)
 
+    },
     methods: {
+        reloadList (sub, data) {
+
+            if (sub !== this.subscriber) return
+            this.userTransactionsService.updateList(data)
+            EventBus.$emit('dataLoaded')
+            EventBus.$emit('widgetContentLoaded', this.subscriber, this.userTransactionsService.list.length)
+        },
         handleResize () {
             console.log('resize')
         },
@@ -124,19 +107,7 @@ export default {
                 this.articleClass = 'col-sm-6'
             }
         },
-        getTransactions (page = 1) {
-            if (page > this.totalPages) return
-            this.userTransactionsService.getTransactions(this.personId, page).then(response => {
-                let responseData = response.data
-                this.transactions = responseData.data
-                this.currentPage = responseData.current_page
-                this.from = responseData.from
-                this.to = responseData.to
-                this.total = responseData.total
-                this.totalPages = responseData.last_page
-                EventBus.$emit('widgetContentLoaded',this.subscriber,this.transactions.length)
-            })
-        },
+
         loadTransaction (transactionId) {
             this.$router.push({ path: '/transactions/' + transactionId })
         }

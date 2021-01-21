@@ -1,109 +1,110 @@
 <template>
-        <div v-if="paginator" class="md-layout md-gutter md-size-100 paginate-area" justify="around">
-            <div class="md-layout-item md-size-33" width="4of12">
-                <div
+    <div v-if="paginator" class="md-layout md-gutter md-size-100 paginate-area" justify="around">
+        <div class="md-layout-item md-size-33" width="4of12">
+            <div
                     class="col-xs-12 hidden-xs"
                     :class="show_per_page === true ? 'col-sm-4 col-lg-5':'col-sm-6 col-lg-6'"
-                >
-                    <div
+            >
+                <div
                         class="dataTables_info"
                         id="datatable_col_reorder_info2"
                         role="status"
                         aria-live="polite"
-                    >
-                        {{$tc('phrases.paginateLabels',1,{from: paginator.from, to: paginator.to, total: paginator.totalEntries})}}
+                >
+                    {{$tc('phrases.paginateLabels',1,{from: paginator.from, to: paginator.to, total:
+                    paginator.totalEntries})}}
 
-                    </div>
                 </div>
             </div>
+        </div>
 
-            <div class="md-layout-item md-size-33" width="4of12">
-                <div class="col-sm-2 col-lg-1 col-xs-6" v-if="show_per_page===true">
-                    <div
+        <div class="md-layout-item md-size-33" width="4of12">
+            <div class="col-sm-2 col-lg-1 col-xs-6" v-if="show_per_page===true">
+                <div
                         style="float:right"
                         class="dataTables_info"
                         id="datatable_col_reorder_info"
                         role="status"
                         aria-live="polite"
-                    >
-                        {{ $tc('phrases.perPage') }}
-                        <select name="per_page" id="per_page" @change="defaultItemsPerPage">
-                            <option value="15">15</option>
-                            <option value="25">25</option>
-                            <option value="30">30</option>
-                            <option value="50">50</option>
-                            <option value="100">100</option>
-                            <option value="200">200</option>
-                            <option value="300">300</option>
-                        </select>
-                    </div>
+                >
+                    {{ $tc('phrases.perPage') }}
+                    <select name="per_page" id="per_page" @change="defaultItemsPerPage">
+                        <option value="15">15</option>
+                        <option value="25">25</option>
+                        <option value="30">30</option>
+                        <option value="50">50</option>
+                        <option value="100">100</option>
+                        <option value="200">200</option>
+                        <option value="300">300</option>
+                    </select>
                 </div>
             </div>
+        </div>
 
-            <div class="md-layout-item md-size-33" width="4of12">
-                <div class="col-sm-6 col-xs-12">
-                    <div
+        <div class="md-layout-item md-size-33" width="4of12">
+            <div class="col-sm-6 col-xs-12">
+                <div
                         class="dataTables_paginate paging_simple_numbers"
                         id="datatable_col_reorder_paginate"
-                    >
-                        <ul class="pagination pagination-sm">
-                            <li
-                                :class="paginator.currentPage>1 ? 'paginate_button previous' :' paginate_button previous disabled'"
+                >
+                    <ul class="pagination pagination-sm">
+                        <li
+                                :class="paginator.currentPage>1 ? 'paginate_button previous' :' paginate_button previous-disabled'"
                                 id="datatable_col_reorder_previous"
-                            >
-                                <a
+                        >
+                            <a
                                     v-if="!loading"
                                     href="javascript:void(0);"
                                     aria-controls="datatable_col_reorder"
                                     data-dt-idx="0"
                                     tabindex="0"
                                     @click="loadPage(--paginator.currentPage)"
-                                >{{ $tc('words.previous') }}</a>
-                                <a href="javascript:void(0);" disabled="disabled" v-else>{{ $tc('words.previous') }}</a>
-                            </li>
-                            <template v-for="(page, index) in paginator.totalPage">
-                                <li
+                            >{{ $tc('words.previous') }}</a>
+                            <a href="javascript:void(0);" disabled="disabled" v-else>{{ $tc('words.previous') }}</a>
+                        </li>
+                        <template v-for="(page, index) in paginator.totalPage">
+                            <li
                                     :key="index"
                                     :class="page===paginator.currentPage?' active':''"
                                     v-if="paginator.currentPage - index <4 && paginator.currentPage - index  > 0 "
-                                >
+                            >
 
-                                    <a
+                                <a
                                         v-if="(index < paginator.currentPage+2) && index > paginator.currentPage-4"
                                         href="javascript:void(0);"
                                         @click="loadPage(page)"
-                                    >{{page}}</a>
+                                >{{page}}</a>
 
-                                    <a v-else-if="index === (2+ paginator.currentPage)">...</a>
-                                    <a
+                                <a v-else-if="index === (2+ paginator.currentPage)">...</a>
+                                <a
                                         v-else-if="(index > Math.abs(paginator.totalPage -3)) "
                                         href="javascript:void(0);"
                                         @click="loadPage(page)"
-                                    >{{page}}</a>
+                                >{{page}}</a>
 
-                                </li>
-                            </template>
+                            </li>
+                        </template>
 
-                            <li
-                                :class="(paginator.currentPage < paginator.totalPage ? 'paginate_button next':'paginate_button next disabled')"
+                        <li
+                                :class="(paginator.currentPage < paginator.totalPage ? 'paginate_button next':'paginate_button next-disabled')"
                                 id="datatable_col_reorder_next"
-                            >
-                                <a
+                        >
+                            <a
                                     v-if="!loading"
                                     href="javascript:void(0);"
                                     aria-controls="datatable_col_reorder"
                                     data-dt-idx="8"
                                     tabindex="0"
                                     @click="loadPage(++paginator.currentPage)"
-                                >{{ $tc('words.next') }}</a>
-                                <a href="javascript:void(0);" v-else>{{ $tc('words.next') }}</a>
-                            </li>
-                        </ul>
-                        <!-- <span v-if="loading">Loading new page</span> -->
-                    </div>
+                            >{{ $tc('words.next') }}</a>
+                            <a href="javascript:void(0);" v-else>{{ $tc('words.next') }}</a>
+                        </li>
+                    </ul>
+                    <!-- <span v-if="loading">Loading new page</span> -->
                 </div>
             </div>
         </div>
+    </div>
 </template>
 
 <script>
@@ -138,12 +139,8 @@ export default {
     },
     mounted () {
         //load the first page
-
-        if (this.$route.params.page_number !== undefined) {
-            this.loadPage(this.$route.params.page_number)
-        } else {
-            this.loadPage(1)
-        }
+        let pageNumber = this.$route.query.page
+        this.loadPage(pageNumber)
         EventBus.$on('loadPage', this.eventLoadPage)
     },
     destroyed () {
@@ -153,9 +150,7 @@ export default {
     methods: {
         eventLoadPage (paginator, term = {}) {
             this.term = term
-            let totalPage = this.paginator.totalPage
             this.paginator = paginator
-            this.paginator.totalPage = totalPage
             this.loadPage(1)
         },
         defaultItemsPerPage (data) {
@@ -167,21 +162,27 @@ export default {
         defaultCallback (data = null) {
             console.log('default callback with', data)
         },
-        loadPage (pageNumber = 1) {
+        loadPage (pageNumber) {
             if (this.loading) {
                 return
             }
-
             this.loading = true
-            this.paginator.loadPage(pageNumber, this.term).then(response => {
-                if (this.route_name !== undefined && !this.route_name.includes('/page/1')) {
-                    //TODO: düzelt
 
-                    this.$router.push(this.route_name + '/page/' + pageNumber).catch(err => {
-                        console.log(err)
+            this.paginator.loadPage(pageNumber, this.term).then(response => {
+                if (pageNumber) {
+                    this.$router.push({
+                        query: Object.assign({}, this.$route.query, {
+                            page: pageNumber,
+                            per_page: this.paginator.perPage
+                        })
+
+                    }).catch(error => {
+                        if (error.name !== 'NavigationDuplicated') {
+                            throw error
+                        }
                     })
-                    //this.loading = false;
                 }
+
                 this.loading = false
                 EventBus.$emit('pageLoaded', this.subscriber, response.data)
             })
@@ -198,8 +199,9 @@ export default {
 
 <style scoped lang="scss">
     .paginate-area {
-        width: 100%!important;
+        width: 100% !important;
     }
+
     .pagination {
         color: #ac2925;
         list-style: none;
@@ -368,5 +370,13 @@ export default {
         box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.05);
         -moz-box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.05);
         -webkit-box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    .previous-disabled {
+        pointer-events: none;
+    }
+
+    .next-disabled {
+        pointer-events: none;
     }
 </style>

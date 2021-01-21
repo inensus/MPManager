@@ -5,15 +5,16 @@
         :subscriber="subscriber"
     >
         <div>
-            <md-content class="md-scrollbar">
+            <md-content class="md-scrollbar chat-body chat-body-scroll" ref="chat" id="chat-body">
                 <md-list class="md-triple-line">
                     <md-list-item
-                        v-for="sms in smses"
-                        :key="sms.id"
-                        class="md-scrollbar"
-                        :class="sms.direction === 0 ? 'incomming' : ''">
+                            v-for="sms in smses"
+                            :key="sms.id"
+                            class="md-scrollbar"
+                            :class="sms.direction === 0 ? 'incomming' : ''">
                         <md-icon v-if="sms.direction !== 0">textsms</md-icon>
                         <md-icon v-else>mark_email_unread</md-icon>
+                       
                         <div class="md-list-item-text md-size-100">
                             <div class="md-layout">
                                 <div class="md-layout-item md-gutter md-size-100">
@@ -25,7 +26,8 @@
                                     <div class="md-layout-item md-size-95 sms-body">
                                         <a v-if="sms.direction === 0 " href="javascript:void(0);"
                                            class="username">{{ sms.personName}}</a>
-                                        <a v-else href="javascript:void(0);" class="username">{{ $tc('words.system') }}</a>
+                                        <a v-else href="javascript:void(0);" class="username">{{ $tc('words.system')
+                                            }}</a>
                                     </div>
                                 </div>
                                 <div class="md-layout-item md-size-100">
@@ -47,7 +49,8 @@
                         </md-field>
                     </div>
                     <div class="md-layout-item md-size-15">
-                        <md-button type="submit" class="md-primary md-raised" @click="sendSms">{{$tc('words.send')}}</md-button>
+                        <md-button type="submit" class="md-primary md-raised" @click="sendSms">{{$tc('words.send')}}
+                        </md-button>
                     </div>
                 </div>
 
@@ -103,7 +106,10 @@ export default {
             this.smsService.getList(this.personId).then(response => {
                 this.smses = response
                 EventBus.$emit('widgetContentLoaded', this.subscriber, this.smses.length)
-                this.scrollDown()
+                if (this.smses.length){
+                    this.scrollDown()
+                }
+
             })
         },
         sendSms () {
@@ -131,33 +137,39 @@ export default {
                 chat.scrollTop = chat.scrollHeight
             }, 1000)
         }
+
     }
 }
 </script>
 
 <style scoped>
 
-.md-content {
-    max-height: 400px;
-    overflow: auto;
-}
-.sms-body {
-    float: right;
-    font-weight: bolder;
-    margin-top: 5px;
-}
+    .md-content {
+        max-height: 400px;
+        overflow: auto;
+    }
 
-.md-list {
-    max-width: 100%;
-    display: inline-block;
-    vertical-align: top;
-    border: 1px solid rgba(#000, .12);
-}
+    .sms-body {
+        float: right;
+        font-weight: bolder;
+        margin-top: 5px;
+    }
 
-.incomming {
-    margin-left: 5px !important;
-    padding: 10px;
-    background-color: rgba(7, 249, 127, 0.23);
-}
+    .chat-body-scroll {
+        overflow-y: scroll !important;
+    }
+
+    .md-list {
+        max-width: 100%;
+        display: inline-block;
+        vertical-align: top;
+        border: 1px solid rgba(#000, .12);
+    }
+
+    .incomming {
+        margin-left: 5px !important;
+        padding: 10px;
+        background-color: rgba(7, 249, 127, 0.23);
+    }
 
 </style>

@@ -41,7 +41,8 @@
             <md-list class="no-bg p-15" md-expand-single>
                 <component :is="menu.url_slug !== '' ? 'router-link' : 'div'" v-for="(menu,index) in menus" :key="index"
                            :md-expand="menu.sub_menu_items.length !== 0"
-                           :to="menu.url_slug">
+                           :to="route(menu.url_slug)"
+                >
                     <md-list-item :md-expand="menu.sub_menu_items.length !== 0">
                         <!-- add icon if icon is defined -->
                         <md-icon v-if="menu.md_icon !== ''" class="c-white icon-box">{{menu.md_icon}}</md-icon>
@@ -51,7 +52,9 @@
                                           :key="index"
 
                             >
-                                <router-link :to="sub.url_slug" class="sub-menu">
+                                <router-link
+                                        :to="route(sub.url_slug)"
+                                        class="sub-menu">
                                     <md-list-item class="md-inset c-white">
                                         <span class="md-list-item-text c-white"> {{$tc('menu.subMenu.'+sub.name)}}</span>
                                     </md-list-item>
@@ -69,9 +72,9 @@
 import menu from './menu.json'
 
 export default {
-    name:'SideBar',
-    data() {
-        return{
+    name: 'SideBar',
+    data () {
+        return {
             show_extender: false,
             admin: null,
             menus: menu
@@ -107,14 +110,31 @@ export default {
             autoClose: this.autoClose
         }
     },
-    methods:{
-        translateMenuItem (name){
-            if(this.$tc('menu.'+name).search('menu') !== -1){
+
+    mounted () {
+
+    },
+    methods: {
+        translateMenuItem (name) {
+            if (this.$tc('menu.' + name) !== name) {
+
                 return name
-            }else{
-                return this.$tc('menu.'+name)
+            } else {
+                return this.$tc('menu.' + name)
             }
+        },
+        route (routeUrl) {
+            if (routeUrl !== '') {
+                if (routeUrl.includes('/page/1')) {
+                    routeUrl = routeUrl.split('/page/1')[0]
+                    return { path: routeUrl, query: { page: 1, per_page: 15 } }
+                } else {
+                    return { path: routeUrl }
+                }
+            }
+
         }
+
     },
     computed: {
         adminName () {
@@ -131,6 +151,7 @@ export default {
                 background: '#2b2b2b !important'
             }
         }
+
     }
 }
 </script>

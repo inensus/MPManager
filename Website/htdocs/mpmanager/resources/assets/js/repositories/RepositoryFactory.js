@@ -41,12 +41,14 @@ import GenerationAssetsRepository from './GenerationAssetsRepository'
 import AddressRepository from './AddressRepository'
 import UserTransactionsRepository from './UserTransactionsRepository'
 import MeterParameterRepository from './MeterParameterRepository'
+import TransactionProvidersRepository from './TransactionProvidersRepository'
 import MainSettingsRepository from './MainSettingsRepository'
 import MapSettingsRepository from './MapSettingsRepository'
 import CurrencyRepository from './CurrencyRepository'
 import LanguagesRepository from './LanguagesRepository'
 import TicketSettingsRepository from './TicketSettingsRepository'
 import CountriesRepository from './CountriesRepository'
+
 
 const repositories = {
     'address': AddressRepository,
@@ -91,6 +93,7 @@ const repositories = {
     'bookKeeping': BookKeepingRepository,
     'timeOfUsage': TimeOfUsageRepository,
     'generationAssets': GenerationAssetsRepository,
+    'transactionProviders':TransactionProvidersRepository,
     'mainSettings': MainSettingsRepository,
     'mapSettings': MapSettingsRepository,
     'currencyList': CurrencyRepository,

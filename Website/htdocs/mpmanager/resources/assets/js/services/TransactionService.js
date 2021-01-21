@@ -39,6 +39,7 @@ export class TransactionService {
         }
     }
 
+
     async getAnalytics (period) {
         try {
             this.analyticsData = null
@@ -90,10 +91,8 @@ export class TransactionService {
     }
 
     searchAdvanced (data) {
-        this.paginator.url = resources.transactions.searchAdvanced
-        this.paginator.method = 'POST'
-        this.paginator.setPostData({ terms: data })
-        EventBus.$emit('loadPage', this.paginator, { 'term': data })
+        this.paginator = new Paginator(resources.transactions.searchAdvanced)
+        EventBus.$emit('loadPage', this.paginator, data)
     }
 
     updateList (transactionList) {
@@ -121,6 +120,7 @@ export class TransactionService {
     }
 
     getOriginalData (transactionData) {
+
         if (transactionData.original_transaction !== undefined) {
             return transactionData.original_transaction
         } else if (transactionData.original_transaction_type === 'airtel_transaction') {
@@ -128,7 +128,7 @@ export class TransactionService {
         } else if (transactionData.original_transaction_type === 'vodacom_transaction') {
             return transactionData.original_vodacom
         } else if (transactionData.original_transaction_type === 'third_party_transaction') {
-            return transactionData.third_party
+            return transactionData.original_third_party
         }
     }
 }

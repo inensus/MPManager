@@ -82,22 +82,22 @@
             </div>
         </div>
 
+        <div class="md-layout md-gutter">
+            <div
+                    class="md-layout-item  md-xlarge-size-20  md-large-size-20 md-medium-size-20  md-small-size-100 md-xsmall-size-100">
+                <filter-transaction @searchSubmit="filterTransaction"></filter-transaction>
+            </div>
+            <div class="md-layout-item  md-xlarge-size-80  md-large-size-80 md-medium-size-80  md-small-size-100 md-xsmall-size-100">
+                <widget
+                        :id="'transaction-list'"
+                        :title="$tc('words.transaction',2)"
+                        :paginator="transactionService.paginator"
+                        :search="false"
+                        :subscriber="subscriber"
+                        :route_name="'/transactions'"
+                        :show_per_page="true"
+                >
 
-        <widget
-                :id="'transaction-list'"
-                :title="$tc('words.transaction',2)"
-                :paginator="transactionService.paginator"
-                :search="false"
-                :subscriber="subscriber"
-                :route_name="'/transactions'"
-                :show_per_page="true"
-        >
-            <div class="md-layout md-gutter">
-                <div
-                        class="md-layout-item  md-xlarge-size-20  md-large-size-20 md-medium-size-20  md-small-size-100 md-xsmall-size-100">
-                    <filter-transaction @searchSubmit="filterTransaction"></filter-transaction>
-                </div>
-                <div class="md-layout-item  md-xlarge-size-80  md-large-size-80 md-medium-size-80  md-small-size-100 md-xsmall-size-100">
                     <md-table style="width:100%;" md-card>
                         <md-table-row>
                             <md-table-head>
@@ -133,52 +133,60 @@
                                 :key="transaction.id"
                                 style="cursor:pointer"
                                 @click="transactionDetail(transaction.id)"
-                            >
-                                <md-table-cell>
-                                    <md-icon v-if="transaction.status===1" style="color:green" md-toolt>check_circle_outline
-                                        <md-tooltip md-direction="right">{{ $tc('words.confirm',2) }}</md-tooltip>
-                                    </md-icon>
-                                    <md-icon v-if="transaction.status===0" style="color:goldenrod">contact_support
-                                        <md-tooltip md-direction="right">{{ $tc('words.process',3) }}</md-tooltip>
-                                    </md-icon>
-                                    <md-icon v-if="transaction.status===-1" style="color:red">cancel
-                                        <md-tooltip md-direction="right">{{ $tc('words.reject',2) }}</md-tooltip>
-                                    </md-icon>
-                                </md-table-cell>
+                        >
+                            <md-table-cell>
+                                <md-icon v-if="transaction.status===1" style="color:green" md-toolt>check_circle_outline
+                                    <md-tooltip md-direction="right">{{ $tc('words.confirm',2) }}</md-tooltip>
+                                </md-icon>
+                                <md-icon v-if="transaction.status===0" style="color:goldenrod">contact_support
+                                    <md-tooltip md-direction="right">{{ $tc('words.process',3) }}</md-tooltip>
+                                </md-icon>
+                                <md-icon v-if="transaction.status===-1" style="color:red">cancel
+                                    <md-tooltip md-direction="right">{{ $tc('words.reject',2) }}</md-tooltip>
+                                </md-icon>
+                            </md-table-cell>
 
-                                <md-table-cell style="text-align: center !important;">
+                            <md-table-cell style="text-align: center !important;">
 
-                                    <img v-if="transaction.service==='vodacom_transaction'" class="logo" alt="logo" :src="vodacomLogo" style="max-height: 18px;"/>
-                                    <img v-if="transaction.service==='airtel_transaction'" class="logo" alt="logo" :src="airtelLogo" style="max-height: 18px;"/>
-                                    <img v-if="transaction.service==='agent_transaction'"
-                                         src="https://image.flaticon.com/icons/svg/99/99395.svg"
-                                         style="max-height:18px;"
-                                    />
+                                <img v-if="transaction.service==='vodacom_transaction'" class="logo" alt="logo"
+                                     :src="vodacomLogo" style="max-height: 18px;"/>
+                                <img v-if="transaction.service==='airtel_transaction'" class="logo" alt="logo"
+                                     :src="airtelLogo" style="max-height: 18px;"/>
+                                <img v-if="transaction.service==='third_party_transaction'" class="logo" alt="logo"
+                                     :src="thirdPartyLogo" style="max-height: 18px;"/>
+                                <img v-if="transaction.service==='agent_transaction'"
+                                     src="https://image.flaticon.com/icons/svg/99/99395.svg"
+                                     style="max-height:18px;"
+                                />
 
 
-                                </md-table-cell>
-                                <md-table-cell>{{transaction.sender}}</md-table-cell>
-                                <md-table-cell>{{readable(transaction.amount)}} {{$store.state.mSettings.currency}}
-                                </md-table-cell>
-                                <md-table-cell>{{transaction.type}}</md-table-cell>
-                                <md-table-cell>{{transaction.message}}</md-table-cell>
-                                <md-table-cell>
-                                    <div v-if="transaction!=undefined">
-                                        {{timeForHuman(transaction.sentDate)}}
-                                        <small>{{transaction.sentDate}}</small>
-                                    </div>
-                                </md-table-cell>
-                                <md-table-cell>
-                                    <div v-if="transaction!=undefined">
-                                        {{$tc('phrases.inXSeconds',1,{x: timeDiffForHuman(transaction.sentDate, transaction.lastUpdate) })}}
+                            </md-table-cell>
+                            <md-table-cell>{{transaction.sender}}</md-table-cell>
+                            <md-table-cell>{{readable(transaction.amount) + appConfig.currency}}
+                            </md-table-cell>
+                            <md-table-cell>{{transaction.type}}</md-table-cell>
+                            <md-table-cell>{{transaction.message}}</md-table-cell>
+                            <md-table-cell>
+                                <div v-if="transaction!=undefined">
+                                    {{timeForHuman(transaction.sentDate)}}
+                                    <small>{{transaction.sentDate}}</small>
+                                </div>
+                            </md-table-cell>
+                            <md-table-cell>
+                                <div v-if="transaction!=undefined">
+                                    {{$tc('phrases.inXSeconds',1,{x: timeDiffForHuman(transaction.sentDate,
+                                    transaction.lastUpdate) })}}
 
-                                    </div>
-                                </md-table-cell>
-                            </md-table-row>
-                        </md-table>
-                    </div>
+                                </div>
+                            </md-table-cell>
+                        </md-table-row>
+                    </md-table>
+
+
+                </widget>
+
             </div>
-        </widget>
+        </div>
     </div>
 
 </template>
@@ -226,10 +234,10 @@ export default {
     },
 
     mounted () {
-        this.getTransactions()
         this.loadAnalytics()
         this.getPeriod()
         EventBus.$on('pageLoaded', this.reloadList)
+
     },
     beforeDestroy () {
         EventBus.$off('pageLoaded', this.reloadList)
@@ -245,10 +253,20 @@ export default {
                 }
                 data[i] = filterData[i]
             }
-
             this.filter = data
+            const { ...params } = this.$route.query
+            for (let k of Object.keys(params)) {
+                if (k !== 'page' && k !== 'per_page') {
+                    delete params[k]
+                }
+            }
+            for (let [k, v] of Object.entries(data)) {
+                params[k] = v
+            }
+            this.$router.push({ query: Object.assign(params) })
+        },
+        getFilterTransactions (data) {
             this.transactionService.searchAdvanced(data)
-
         },
         reloadList (sub, data) {
 
@@ -260,7 +278,6 @@ export default {
         transactionDetail (id) {
             this.$router.push({ path: '/transactions/' + id })
         },
-
         async getTransactions () {
             try {
                 await this.transactionService.getTransactions()
@@ -316,7 +333,29 @@ export default {
             })
         },
     }
+    ,
+
+    watch: {
+        //for query param filtering
+        $route (to) {
+            let isFiltering = false
+            let queryParams = {}
+            if (Object.keys(to.query).length > 0) {
+                queryParams = this.$route.query
+                for (let k of Object.keys(queryParams)) {
+                    if (k !== 'page' && k !== 'per_page') {
+                        isFiltering = true
+                    }
+                }
+            }
+            if (isFiltering) {
+                this.getFilterTransactions(queryParams)
+            }
+
+        }
+    }
 }
+
 </script>
 
 <style scoped>
