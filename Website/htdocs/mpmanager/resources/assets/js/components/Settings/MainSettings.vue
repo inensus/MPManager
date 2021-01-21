@@ -138,7 +138,6 @@ export default {
         async getLanguagesList(){
             try {
                 this.languagesList = await this.languagesService.list()
-                console.log(this.languagesList)
             }catch (e) {
                 this.alertNotify('error', e.message)
             }

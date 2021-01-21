@@ -192,7 +192,7 @@ Route::group(['prefix' => 'ticket-settings', 'middleware' => 'jwt.verify'], stat
 //Settings
 Route::group(['prefix' => 'settings', 'middleware' => 'jwt.verify'], static function(){
    Route::get('/main','MainSettingsController@index');
-   Route::put('/{id}/main','MainSettingsController@update');
+   Route::put('/main/{mainSettings}','MainSettingsController@update');
    Route::get('/currencyList','CurrencyController@index');
    Route::get('/countryList','CountryListController@index');
    Route::get('/languagesList','LanguageController@index');
