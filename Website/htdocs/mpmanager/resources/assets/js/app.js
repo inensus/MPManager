@@ -55,6 +55,19 @@ const app = new Vue({
 
     mounted () {
         this.$el.addEventListener('click', this.onHtmlClick)
+
+
+    },
+    beforeCreate () {
+        this.$store.getters.mainSettings.list().then(res =>{
+            this.$store.state.mSettings = res
+            document.title = res.site_title
+            this.$i18n.locale = res.language
+        })
+        this.$store.getters.mapSettingsService.list().then(res =>{
+            this.$store.state.mapSettings.zoom = res.zoom
+            this.$store.state.mapSettings.center = [res.latitude,res.longitude]
+        })
     },
     methods: {},
 

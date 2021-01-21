@@ -61,15 +61,17 @@
             <div v-if="analyticsData"
                  class="md-layout-item md-xlarge-size-25 md-large-size-25 md-medium-size-50 md-small-size-100 md-xsmall-size-100 ">
                 <box
+
                         :center-text="true"
                         :color="[ '#ffa726','#fb8c00']"
                         :header-text="$tc('words.revenue')"
                         :header-text-color="'#dddddd'"
-                        :sub-text="readable(analyticsData.current.amount) +                                    appConfig.currency"
+                        :sub-text="readable(analyticsData.current.amount) + $store.state.mSettings.currency"
                         :sub-text-color="'#e3e3e3'"
                         box-icon="attach_money"
                         :box-icon-color="'#578839'"
                         :additional-text="analyticsData.analytics.amountPercentage.percentage + '%' + analyticsPeriods[analyticsPeriod]"
+
                 />
             </div>
 
@@ -131,56 +133,50 @@
                                 :key="transaction.id"
                                 style="cursor:pointer"
                                 @click="transactionDetail(transaction.id)"
-                        >
-                            <md-table-cell>
-                                <md-icon v-if="transaction.status===1" style="color:green" md-toolt>check_circle_outline
-                                    <md-tooltip md-direction="right">{{ $tc('words.confirm',2) }}</md-tooltip>
-                                </md-icon>
-                                <md-icon v-if="transaction.status===0" style="color:goldenrod">contact_support
-                                    <md-tooltip md-direction="right">{{ $tc('words.process',3) }}</md-tooltip>
-                                </md-icon>
-                                <md-icon v-if="transaction.status===-1" style="color:red">cancel
-                                    <md-tooltip md-direction="right">{{ $tc('words.reject',2) }}</md-tooltip>
-                                </md-icon>
-                            </md-table-cell>
+                            >
+                                <md-table-cell>
+                                    <md-icon v-if="transaction.status===1" style="color:green" md-toolt>check_circle_outline
+                                        <md-tooltip md-direction="right">{{ $tc('words.confirm',2) }}</md-tooltip>
+                                    </md-icon>
+                                    <md-icon v-if="transaction.status===0" style="color:goldenrod">contact_support
+                                        <md-tooltip md-direction="right">{{ $tc('words.process',3) }}</md-tooltip>
+                                    </md-icon>
+                                    <md-icon v-if="transaction.status===-1" style="color:red">cancel
+                                        <md-tooltip md-direction="right">{{ $tc('words.reject',2) }}</md-tooltip>
+                                    </md-icon>
+                                </md-table-cell>
 
-                            <md-table-cell style="text-align: center !important;">
+                                <md-table-cell style="text-align: center !important;">
 
-                                <img v-if="transaction.service==='vodacom_transaction'" class="logo" alt="logo"
-                                     :src="vodacomLogo" style="max-height: 18px;"/>
-                                <img v-if="transaction.service==='airtel_transaction'" class="logo" alt="logo"
-                                     :src="airtelLogo" style="max-height: 18px;"/>
-                                <img v-if="transaction.service==='third_party_transaction'" class="logo" alt="logo"
-                                     :src="thirdPartyLogo" style="max-height: 18px;"/>
-                                <img v-if="transaction.service==='agent_transaction'"
-                                     src="https://image.flaticon.com/icons/svg/99/99395.svg"
-                                     style="max-height:18px;"
-                                />
+                                    <img v-if="transaction.service==='vodacom_transaction'" class="logo" alt="logo" :src="vodacomLogo" style="max-height: 18px;"/>
+                                    <img v-if="transaction.service==='airtel_transaction'" class="logo" alt="logo" :src="airtelLogo" style="max-height: 18px;"/>
+                                    <img v-if="transaction.service==='agent_transaction'"
+                                         src="https://image.flaticon.com/icons/svg/99/99395.svg"
+                                         style="max-height:18px;"
+                                    />
 
 
-                            </md-table-cell>
-                            <md-table-cell>{{transaction.sender}}</md-table-cell>
-                            <md-table-cell>{{readable(transaction.amount) + appConfig.currency}}
-                            </md-table-cell>
-                            <md-table-cell>{{transaction.type}}</md-table-cell>
-                            <md-table-cell>{{transaction.message}}</md-table-cell>
-                            <md-table-cell>
-                                <div v-if="transaction!=undefined">
-                                    {{timeForHuman(transaction.sentDate)}}
-                                    <small>{{transaction.sentDate}}</small>
-                                </div>
-                            </md-table-cell>
-                            <md-table-cell>
-                                <div v-if="transaction!=undefined">
-                                    {{$tc('phrases.inXSeconds',1,{x: timeDiffForHuman(transaction.sentDate,
-                                    transaction.lastUpdate) })}}
+                                </md-table-cell>
+                                <md-table-cell>{{transaction.sender}}</md-table-cell>
+                                <md-table-cell>{{readable(transaction.amount)}} {{$store.state.mSettings.currency}}
+                                </md-table-cell>
+                                <md-table-cell>{{transaction.type}}</md-table-cell>
+                                <md-table-cell>{{transaction.message}}</md-table-cell>
+                                <md-table-cell>
+                                    <div v-if="transaction!=undefined">
+                                        {{timeForHuman(transaction.sentDate)}}
+                                        <small>{{transaction.sentDate}}</small>
+                                    </div>
+                                </md-table-cell>
+                                <md-table-cell>
+                                    <div v-if="transaction!=undefined">
+                                        {{$tc('phrases.inXSeconds',1,{x: timeDiffForHuman(transaction.sentDate, transaction.lastUpdate) })}}
 
-                                </div>
-                            </md-table-cell>
-                        </md-table-row>
-                    </md-table>
-                </div>
-
+                                    </div>
+                                </md-table-cell>
+                            </md-table-row>
+                        </md-table>
+                    </div>
             </div>
         </widget>
     </div>

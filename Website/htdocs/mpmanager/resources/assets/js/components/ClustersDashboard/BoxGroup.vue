@@ -44,7 +44,7 @@
                 <box
                     :centerText="true"
                     :color="[ '#6eaa44','#578839']"
-                    :sub-text="readable(revenue).toString() + appConfig.currency "
+                    :sub-text="readable(revenue).toString() + this.$store.getters.mSettings.currency "
                     :headerTextColor="'#dddddd'"
                     :header-text="$tc('words.revenue') +' ('+ $tc('phrases.lastXDays',1,{x: 30})+ ')' "
                     :subTextColor="'#e3e3e3'"
@@ -71,6 +71,7 @@ export default {
             required: true,
         },
     },
+
     computed: {
         population () {
             let population = 0

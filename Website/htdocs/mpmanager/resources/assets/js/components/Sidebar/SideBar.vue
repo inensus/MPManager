@@ -9,7 +9,7 @@
 
                 <img class="logo" alt="logo" :src="imgLogo"/>
 
-                <div class="company-header">MicroPowerManager<br>Open Source</div>
+                <div class="company-header">{{ $store.state.mSettings.company_name }}<br><small>Powered by MPM</small></div>
             </div>
 
 
@@ -53,7 +53,7 @@
                             >
                                 <router-link :to="sub.url_slug" class="sub-menu">
                                     <md-list-item class="md-inset c-white">
-                                        <span class="md-list-item-text c-white"> {{$t('menu.subMenu.'+sub.name)}}</span>
+                                        <span class="md-list-item-text c-white"> {{$tc('menu.subMenu.'+sub.name)}}</span>
                                     </md-list-item>
                                 </router-link>
                             </md-list-item>
@@ -109,7 +109,7 @@ export default {
     },
     methods:{
         translateMenuItem (name){
-            if(this.$tc('menu.'+name) !== name){
+            if(this.$tc('menu.'+name).search('menu') !== -1){
                 return name
             }else{
                 return this.$tc('menu.'+name)
