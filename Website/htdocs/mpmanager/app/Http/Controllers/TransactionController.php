@@ -116,23 +116,18 @@ class TransactionController extends Controller
     public function searchAdvanced()
     {
 
-        $terms = request('terms');
         $whereApplied = false;
         $per_page = (int)(request('per_page') ?? '15');
 
-        if (!is_array($terms)) {
-            return null;
-        }
-
         $search = Transaction::with('originalTransaction');
 
-        if (array_key_exists('serial_number', $terms)) {
+        if (request('serial_number')) {
 
-            $search->where('message', 'LIKE', '%' . $terms['serial_number'] . '%');
+            $search->where('message', 'LIKE', '%' . request('serial_number') . '%');
             $whereApplied = true;
         }
-        if (array_key_exists('tariff', $terms)) {
-            $tariff = $terms['tariff'];
+        if (request('tariff')) {
+            $tariff = request('tariff');
             if ($whereApplied) {
                 $search->orWhereHas('token', function ($q) use ($tariff) {
                     $q->whereHas('meter', function ($q) use ($tariff) {
@@ -156,44 +151,35 @@ class TransactionController extends Controller
                 });
             }
         }
-        if (array_key_exists('provider', $terms)) {
-            $search->where('original_transaction_type', $terms['provider']);
+        if (request('provider')) {
+            $search->with(request('provider'))->where(function ($q)  {
+                $q->whereHas(request('provider'), function ($q) {
+                    $q->whereNotNull('id');
+                });
+            });
         }
-        if (array_key_exists('status', $terms)) {
-            $status = $terms['status'];
-            if (array_key_exists('provider', $terms)) {
-                if ($terms['provider'] === 'vodacom_transaction') {
-                    $search->where(function ($q) use ($status) {
-                        $q->where('original_transaction_type', 'vodacom_transaction');
-                        $q->whereHas('originalAirtel', function ($q) use ($status) {
-                            $q->where('status', $status);
-                        });
-                    });
-                } else {
-                    $search->where(function ($q) use ($status) {
-                        $q->where('original_transaction_type', 'airtel_transaction');
-                        $q->whereHas('originalAirtel', function ($q) use ($status) {
-                            $q->where('status', $status);
-                        });
-                    });
-                }
-            } else {
-                $search->whereHasMorph('originalTransaction',
-                    [VodacomTransaction::class, AirtelTransaction::class],
-                    static function ($q) use ($status) {
+        if (request('status')) {
+            $status = request('status');
+            if (request('provider') && request('provider') !=='-1' ) {
+                $search->where(function ($q) use ($status) {
+                    $q->whereHas(request('provider'), function ($q) use ($status) {
                         $q->where('status', $status);
                     });
-
+                });
+            } else {
+                $search->whereHasMorph('originalTransaction', '*' ,  function ($q) use ($status)
+                { $q->where('status',$status); })->get();
             }
 
         }
-        if (array_key_exists('from', $terms)) {
-            $search->where('created_at', '>=', $terms['from']);
+        if (request('from')) {
+            $search->where('created_at', '>=', request('from'));
         }
-        if (array_key_exists('to', $terms)) {
-            $search->where('created_at', '<=', $terms['to']);
+        if (request('to')) {
+            $search->where('created_at', '<=', request('to'));
         }
         $transactions = $search->latest()->paginate($per_page);
+
         return new ApiResource($transactions);
     }
 

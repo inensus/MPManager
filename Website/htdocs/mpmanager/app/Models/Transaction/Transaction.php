@@ -10,6 +10,7 @@ namespace App\Models\Transaction;
  * @property int id
  */
 
+use App\Helpers\RelationsManager;
 use App\Models\Agent;
 use App\Models\BaseModel;
 use App\Models\Meter\Meter;
@@ -18,6 +19,7 @@ use App\Models\PaymentHistory;
 use App\Models\Sms;
 use App\Relations\BelongsToMorph;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\DB;
 use PDO;
 
@@ -33,7 +35,9 @@ use PDO;
  */
 class Transaction extends BaseModel
 {
-    public function originalTransaction()
+    use RelationsManager;
+
+    public function originalTransaction():morphTo
     {
         return $this->morphTo();
     }
@@ -43,7 +47,7 @@ class Transaction extends BaseModel
      *
      * @return BelongsTo
      */
-    public function originalVodacom()
+    public function originalVodacom():BelongsToMorph
     {
         return BelongsToMorph::build($this, VodacomTransaction::class, 'originalTransaction');
     }
@@ -54,17 +58,17 @@ class Transaction extends BaseModel
      *
      * @return BelongsTo
      */
-    public function originalAirtel()
+    public function originalAirtel():BelongsToMorph
     {
 
         return BelongsToMorph::build($this, AirtelTransaction::class, 'originalTransaction');
     }
-    public function originalAgent()
+    public function originalAgent():BelongsToMorph
     {
         return BelongsToMorph::build($this, AgentTransaction::class, 'originalTransaction');
     }
 
-    public function originalThirdParty()
+    public function originalThirdParty():BelongsToMorph
     {
         return BelongsToMorph::build($this, ThirdPartyTransaction::class, 'originalTransaction');
     }
