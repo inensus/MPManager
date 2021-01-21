@@ -14,7 +14,7 @@
             </div>
 
             <div class="md-layout-item md-size-100">
-                <transactions/>
+                <transactions :personId="personId"/>
             </div>
 
 
