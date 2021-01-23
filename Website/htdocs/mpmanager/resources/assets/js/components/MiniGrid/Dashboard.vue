@@ -151,7 +151,7 @@
                          :color="[ '#6eaa44','#578839']"
                          :header-text="$tc('words.revenue')"
                          :header-text-color="'#dddddd'"
-                         :sub-text="readable(currentTransaction[0].revenue).toString() + $store.state.mSettings.currency"
+                         :sub-text="readable(currentTransaction[0].revenue).toString() + $store.getters['settings/getMainSettings'].currency"
                          :sub-text-color="'#e3e3e3'"
                          box-icon="attach_money"
                          :box-icon-color="'#578839'"

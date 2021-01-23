@@ -9,7 +9,7 @@
 
                 <img class="logo" alt="logo" :src="imgLogo"/>
 
-                <div class="company-header">{{ $store.state.mSettings.company_name }}<br><small>Powered by MPM</small></div>
+                <div class="company-header">{{ $store.getters['settings/getMainSettings'].companyName }}<br><small>Powered by MPM</small></div>
             </div>
 
 
