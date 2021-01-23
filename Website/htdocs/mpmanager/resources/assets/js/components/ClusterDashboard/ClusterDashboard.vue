@@ -96,7 +96,7 @@ export default {
             geoData: null,
             constantLocations: [],
             markingInfos: [],
-            center: this.$store.state.mapSettings.center,
+            center: [this.$store.getters['settings/getMapSettings'].latitude,this.$store.getters['settings/getMapSettings'].longitude],
             base: {},
             compared: {},
             boxData: {

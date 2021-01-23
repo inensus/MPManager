@@ -59,7 +59,7 @@ export default {
             loading: false,
             show: true,
             geoData: null,
-            center: this.$store.state.mapSettings.center,
+            center: [this.$store.getters['settings/getMapSettings'].latitude,this.$store.getters['settings/getMapSettings'].longitude],
             miniGrids: null,
             clusterLayer: null,
             clusterId: null,
