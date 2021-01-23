@@ -18,7 +18,7 @@
                 <div v-else>
                     <div align="center">
                         <h3>{{ $tc('phrases.loadingChartData') }}</h3>
-                        <img width="200px" align="center" src="/storage/spinner/spinner.gif" alt="">
+                        <img width="200px" align="center" src="../../spinner/spinner.gif" alt="">
                     </div>
                 </div>
             </md-card-content>

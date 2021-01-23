@@ -6,7 +6,7 @@
                 <md-field :class="{'md-invalid': errors.has($tc('words.title'))}">
                     <label>{{ $tc('words.title') }}</label>
                     <md-input :name="$tc('words.title')"
-                              v-model="mainSettings.site_title"
+                              v-model="mainSettingsService.mainSettings.siteTitle"
                               :id="$tc('words.title')"
                               v-validate="'required|min:5'">
 
@@ -19,9 +19,9 @@
                     <label>Company Name</label>
                     <md-input name="Company Name"
                               id="Company Name"
-                              v-model="mainSettings.company_name"
+                              v-model="mainSettingsService.mainSettings.companyName"
                               v-validate="'required|min:5'"
-                        ></md-input>
+                    ></md-input>
                     <span class="md-error">{{ errors.first('Company Name') }}</span>
                 </md-field>
             </div>
@@ -30,27 +30,36 @@
             <div class="md-layout-item md-size-30">
                 <md-field>
                     <label for="currency">{{ $tc('words.currency') }}</label>
-                    <md-select name="currency" id="currency"  v-model="mainSettings.currency">
+                    <md-select name="currency" id="currency" v-model="mainSettingsService.mainSettings.currency">
                         <md-option disabled>Select Currency</md-option>
-                        <md-option v-for="cur in currencyList" :key="cur.code" :value="cur.symbol">{{ cur.name }} - {{ cur.symbol }}</md-option>
+                        <md-option v-for="(cur,index) in currencyListService.currencyList" :key="index"
+                                   :value="cur.symbol">
+                            {{
+                            cur.name }} - {{ cur.symbol }}
+                        </md-option>
                     </md-select>
                 </md-field>
             </div>
             <div class="md-layout-item md-size-40">
                 <md-field>
                     <label for="country">Country</label>
-                    <md-select name="country" id="country" v-model="mainSettings.country" md-dense >
+                    <md-select name="country" id="country" v-model="mainSettingsService.mainSettings.country" md-dense>
                         <md-option disabled>Select Country</md-option>
-                        <md-option v-for="country in countryList" :key="country" :value="country">{{ country }}</md-option>
+                        <md-option v-for="(country,index) in countryListService.countryList" :key="index"
+                                   :value="country">{{country }}
+                        </md-option>
                     </md-select>
                 </md-field>
             </div>
             <div class="md-layout-item md-size-30">
                 <md-field>
                     <label for="language">Language</label>
-                    <md-select name="language" id="language" v-model="mainSettings.language" md-dense >
+                    <md-select name="language" id="language" v-model="mainSettingsService.mainSettings.language"
+                               md-dense>
                         <md-option disabled>Select Language</md-option>
-                        <md-option v-for="(language,index) in languagesList" :key="index" :value="language">{{ language }}</md-option>
+                        <md-option v-for="(language,index) in  languagesService.languagesList" :key="index"
+                                   :value="language">{{ language }}
+                        </md-option>
                     </md-select>
                 </md-field>
             </div>
@@ -60,12 +69,12 @@
                 <md-field :class="{'md-invalid': errors.has('vat_energy')}">
                     <label for="vat_energy">VAT Energy</label>
                     <md-input
-                    name="vat_energy"
-                    id="vat_energy"
-                    v-model="mainSettings.vat_energy"
-                    type="number"
-                    maxlength="9"
-                    v-validate="'required|decimal:2|max:4'"
+                            name="vat_energy"
+                            id="vat_energy"
+                            v-model="mainSettingsService.mainSettings.vatEnergy"
+                            type="number"
+                            maxlength="9"
+                            v-validate="'required|decimal:2|max:4'"
                     ></md-input>
                 </md-field>
                 <span class="md-error">{{ errors.first('vat_energy') }}</span>
@@ -74,12 +83,12 @@
                 <md-field :class="{'md-invalid': errors.has('vat_appliance')}">
                     <label for="vat_appliance">VAT Appliance</label>
                     <md-input
-                        name="vat_appliance"
-                        id="vat_appliance"
-                        v-model="mainSettings.vat_appliance"
-                        type="number"
-                        maxlength="9"
-                        v-validate="'required|decimal:2|max:4'"
+                            name="vat_appliance"
+                            id="vat_appliance"
+                            v-model="mainSettingsService.mainSettings.vatAppliance"
+                            type="number"
+                            maxlength="9"
+                            v-validate="'required|decimal:2|max:4'"
                     ></md-input>
                 </md-field>
                 <span class="md-error">{{ errors.first('vat_appliance') }}</span>
@@ -92,84 +101,90 @@
 </template>
 
 <script>
-import { MainSettingsService } from '../../services/MainSettingsService'
+
 import { CurrencyListService } from '../../services/CurrencyListService'
 import { LanguagesService } from '../../services/LanguagesService'
 import { CountryListService } from '../../services/CountryListService'
+import { MainSettingsService } from '../../services/MainSettingsService'
 
 export default {
     name: 'MainSettings',
-
-    data(){
-        return{
+    props: {
+        mainSettings: {
+            type: Object
+        }
+    },
+    data () {
+        return {
             mainSettingsService: new MainSettingsService(),
             currencyListService: new CurrencyListService(),
             languagesService: new LanguagesService(),
             countryListService: new CountryListService(),
-            mainSettings: [],
-            currencyList:{},
-            languagesList:[],
-            countryList:{},
-            progress:false,
+
+            currencyList: [],
+            languagesList: [],
+            countryList: [],
+            progress: false,
         }
 
     },
     mounted () {
-        this.getMainSettings()
+        this.fetchMainSettings()
         this.getCurrencyList()
         this.getLanguagesList()
         this.getCountryList()
     },
-    methods:{
-        async getCurrencyList(){
-            try {
-                this.currencyList = await this.currencyListService.list()
-            }catch (e) {
-                this.alertNotify('error', e.message)
-            }
+    methods: {
+        fetchMainSettings () {
+            this.mainSettingsService.mainSettings = this.mainSettings
         },
-        async getCountryList(){
+        async getCurrencyList () {
             try {
-                this.countryList = await this.countryListService.list()
-            }catch (e) {
-                this.alertNotify('error', e.message)
-            }
-        },
-        async getLanguagesList(){
-            try {
-                this.languagesList = await this.languagesService.list()
-            }catch (e) {
-                this.alertNotify('error', e.message)
-            }
-        },
-        async getMainSettings(){
-            try {
-                this.mainSettings = await this.mainSettingsService.list()
-            }catch (e) {
-                this.alertNotify('error', e.message)
-            }
+                await this.currencyListService.list()
 
+            } catch (e) {
+                this.alertNotify('error', e.message)
+            }
         },
-        async updateMainSettings(){
+        async getCountryList () {
+            try {
+                await this.countryListService.list()
+            } catch (e) {
+                this.alertNotify('error', e.message)
+            }
+        },
+        async getLanguagesList () {
+            try {
+                await this.languagesService.list()
+            } catch (e) {
+                this.alertNotify('error', e.message)
+            }
+        },
+
+        async updateMainSettings () {
             this.progress = true
             let validator = await this.$validator.validateAll()
             if (!validator) {
                 return
             }
             try {
-                await this.mainSettingsService.update(this.mainSettings)
-                this.updateStoreStates(this.mainSettings)
+                await this.mainSettingsService.update()
+                this.$store.dispatch('settings/setMainSettings', this.mainSettingsService.mainSettings).then(() => {
 
-            }catch (e) {
+                }).catch((err) => {
+                    console.log(err)
+                })
+                
+            } catch (e) {
                 this.alertNotify('error', e.message)
             }
             this.progress = false
         },
 
-        updateStoreStates(mainSettings){
-            document.title = mainSettings.site_title
+        updateStoreStates (mainSettings) {
+            document.title = mainSettings.siteTitle
             this.$i18n.locale = mainSettings.language
-            this.$store.state.mSettings = mainSettings
+
         },
         alertNotify (type, message) {
             this.$notify({

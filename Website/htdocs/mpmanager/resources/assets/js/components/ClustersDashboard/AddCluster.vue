@@ -142,7 +142,7 @@ export default {
         return {
             clusterService: new ClusterService(),
             mappingService: new MappingService(),
-            center: this.$store.state.mapSettings.center,
+            center: [this.$store.getters['settings/getMapSettings'].latitude,this.$store.getters['settings/getMapSettings'].longitude],
             geoData: null,
             clusterName: '',
             user: null,

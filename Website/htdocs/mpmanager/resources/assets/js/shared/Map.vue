@@ -69,17 +69,7 @@ export default {
         geoData: {
             default: null
         },
-        center: {
-            type: Array,
-            default: function () {return this.$store.state.mapSettings.center}
 
-        },
-        filtered_types: {
-            type: Object,
-            default: function () {
-                return {}
-            }
-        },
         edit: {
             type: Boolean,
             default: false
@@ -95,9 +85,20 @@ export default {
         markingInfos: {
             default: null
         },
+        center: {
+            type: Array,
+            default: function () {
+                return [this.$store.getters['settings/getMapSettings'].latitude, this.$store.getters['settings/getMapSettings'].longitude]
+            }
+        },
+        mutatingCenter: {
+            type: Array,
+        },
         zoom: {
             type: Number,
-            default: function () {return this.$store.state.mapSettings.zoom}
+            default: function () {
+                return this.$store.getters['settings/getMapSettings'].zoom
+            }
         },
         maxZoom: {
             type: Number,
@@ -111,10 +112,10 @@ export default {
             type: String,
             default: ''
         },
-        position:{
+        position: {
             type: String,
-            default:'topright',
-            required:false
+            default: 'topright',
+            required: false
         }
     },
     data () {
@@ -318,6 +319,7 @@ export default {
         })
     },
     methods: {
+
         generateMap (options, center) {
 
             this.mapInitialized = true
@@ -328,7 +330,6 @@ export default {
                 chunkedLoading: true,
                 spiderfyOnMaxZoom: false
             })
-
 
             this.map.addLayer(this.editableLayer)
             options.edit.featureGroup = this.editableLayer
@@ -553,8 +554,7 @@ export default {
                 })
 
                 this.map.addLayer(this.markersLayer)
-                if (this.map.hasLayer(this.dataLoggerActives))
-                {
+                if (this.map.hasLayer(this.dataLoggerActives)) {
                     this.map.addLayer(this.dataLoggerActives)
                     this.map.addLayer(this.dataLoggerInactives)
                 }
@@ -570,18 +570,17 @@ export default {
             }
 
         },
-
-        reGenerateMap(){
-            this.map.flyTo(this.center,this.zoom,this.drawingOptions)
+        reGenerateMap (mutatingCenter) {
+            this.map.flyTo(mutatingCenter, this.zoom, this.drawingOptions)
         }
     },
 
     watch: {
-        center(){
-            this.reGenerateMap()
+        mutatingCenter () {
+            this.reGenerateMap(this.mutatingCenter)
         },
-        zoom(){
-            this.reGenerateMap()
+        zoom () {
+            this.reGenerateMap(this.center)
         },
         geoData: debounce(function () {
             this.setLocation(this.geoData)

@@ -48,7 +48,7 @@
                 v-if=" 'revenue' in clusterData"
                 :center-text="true"
                 :color="[ '#6eaa44','#578839']"
-                :sub-text="readable(clusterData['revenue']) + $store.state.mSettings.currency"
+                :sub-text="readable(clusterData['revenue']) + $store.getters['settings/getMainSettings'].currency"
                 :header-text-color="'#dddddd'"
                 :header-text="$tc('words.revenue') +' ('+ $tc('phrases.lastXDays',1,{x: 30})+ ')' "
                 :sub-text-color="'#e3e3e3'"

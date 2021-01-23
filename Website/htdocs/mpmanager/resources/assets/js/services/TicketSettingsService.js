@@ -1,7 +1,7 @@
 import RepositoryFactory from '../repositories/RepositoryFactory'
-import {ErrorHandler} from '../Helpers/ErrorHander'
+import { ErrorHandler } from '../Helpers/ErrorHander'
 
-export  class TicketSettingsService{
+export class TicketSettingsService {
     constructor () {
         this.repository = RepositoryFactory.get('ticketSettings')
         this.ticketSettings = {
@@ -9,50 +9,58 @@ export  class TicketSettingsService{
             api_token: null,
             api_url: null,
             api_key: null,
-
         }
-
     }
 
-    fromJson(ticketSettings){
-        this.ticketSettings={
+    fromJson (ticketSettings) {
+        this.ticketSettings = {
             id: ticketSettings.id,
             name: ticketSettings.name,
-            api_token:ticketSettings.api_token,
-            api_url: ticketSettings.api_url,
-            api_key: ticketSettings.api_key
+            apiToken: ticketSettings.api_token,
+            apiUrl: ticketSettings.api_url,
+            apiKey: ticketSettings.api_key
         }
 
         return this.ticketSettings
     }
 
-    async list(){
+    async list () {
         try {
             let response = await this.repository.list()
-            if(response.status === 200 ){
-                return this.fromJson(response.data.data[0])
-            }else{
+            if (response.status === 200) {
+                this.fromJson(response.data.data[0])
+                return this.ticketSettings
+            } else {
                 return new ErrorHandler(response.error, 'http', response.status)
             }
 
-        }catch (e) {
+        } catch (e) {
             let erorMessage = e.response.data.message
             return new ErrorHandler(erorMessage, 'http')
         }
     }
 
-    async update(ticketSettings){
+    async update () {
         try {
-            let response = await this.repository.update(ticketSettings.id, ticketSettings)
-            if(response.status === 200 ){
-                return response.data.data
+            let ticketSettingPm = {
+                id: this.ticketSettings.id,
+                name: this.ticketSettings.name,
+                api_token: this.ticketSettings.apiToken,
+                api_url: this.ticketSettings.apiUrl,
+                api_key: this.ticketSettings.apiKey
             }
-            else{
+            let response = await this.repository.update(ticketSettingPm.id, ticketSettingPm)
+            if (response.status === 200) {
+                this.fromJson(response.data.data)
+
+                return this.ticketSettings
+            } else {
                 return new ErrorHandler(response.error, 'http', response.status)
             }
-        }catch (e) {
+        } catch (e) {
             let erorMessage = e.response.data.message
             return new ErrorHandler(erorMessage, 'http')
         }
     }
+
 }

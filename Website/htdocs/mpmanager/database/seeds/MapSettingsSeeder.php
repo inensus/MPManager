@@ -4,7 +4,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class MapSettings extends Seeder
+class MapSettingsSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -15,7 +15,7 @@ class MapSettings extends Seeder
     {
         DB::table('map_settings')->insert([
             'zoom' => 7,
-            'latitude' => -2.500381,
+            'latitude' => -2.500380,
             'longitude' => 32.889060,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),

@@ -139,7 +139,7 @@ export default {
             miniGridService: new MiniGridService(),
             mappingService: new MappingService(),
             geoData: null,
-            center: this.$store.state.mapSettings.center,
+            center: [this.$store.getters['settings/getMapSettings'].latitude,this.$store.getters['settings/getMapSettings'].longitude],
             villageSaved: false,
             loading: false,
             lastVillage: null,

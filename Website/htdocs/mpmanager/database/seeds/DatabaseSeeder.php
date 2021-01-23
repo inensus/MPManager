@@ -18,5 +18,8 @@ class DatabaseSeeder extends Seeder
         $this->call(MenuItemsSeeder::class);
         $this->call(SubMenuItemsSeeder::class);
         $this->call(ConnectionGroupSeeder::class);
+        $this->call(MainSettingsSeeder::class);
+        $this->call(MapSettingsSeeder::class);
+        $this->call(TicketSettingsSeeder::class);
     }
 }

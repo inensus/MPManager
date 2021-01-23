@@ -178,21 +178,21 @@ Route::group(['prefix' => 'pv'], static function () {
 
 // Map Settings
 
-Route::group(['prefix' => 'map-settings', 'middleware' => 'jwt.verify'], static function(){
+Route::group(['prefix' => 'map-settings'], static function(){
    Route::get('/','MapSettingsController@index');
-   Route::put('/{mapSettings}','MapSettingsController@update');
+   Route::put('/{mapSettings}', ['uses' => 'MapSettingsController@update', 'middleware' => 'jwt.verify']);
 });
 
 // Ticket Settings
-Route::group(['prefix' => 'ticket-settings', 'middleware' => 'jwt.verify'], static function(){
+Route::group(['prefix' => 'ticket-settings'], static function(){
     Route::get('/','TicketSettingsController@index');
-    Route::put('/{ticketSettings}','TicketSettingsController@update');
+    Route::put('/{ticketSettings}',['uses' => 'TicketSettingsController@update', 'middleware' => 'jwt.verify']);
 });
 
 //Settings
-Route::group(['prefix' => 'settings', 'middleware' => 'jwt.verify'], static function(){
+Route::group(['prefix' => 'settings'], static function(){
    Route::get('/main','MainSettingsController@index');
-   Route::put('/main/{mainSettings}','MainSettingsController@update');
+   Route::put('/main/{mainSettings}',['uses' => 'MainSettingsController@update', 'middleware' => 'jwt.verify']);
    Route::get('/currencyList','CurrencyController@index');
    Route::get('/countryList','CountryListController@index');
    Route::get('/languagesList','LanguageController@index');
