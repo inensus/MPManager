@@ -20,7 +20,7 @@
         </div>
         <div v-else>
             <div style="margin-left: 40vw; margin-top: 20vh;">
-                <img width="48px" src="/storage/spinner.svg" alt="">
+                <img width="48px" src="../../../spinner/spinner.gif" alt="">
             </div>
         </div>
 
