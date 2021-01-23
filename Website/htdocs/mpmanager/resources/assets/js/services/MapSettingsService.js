@@ -1,7 +1,8 @@
 import RepositoryFactory from '../repositories/RepositoryFactory'
-import {ErrorHandler} from '../Helpers/ErrorHander'
+import { ErrorHandler } from '../Helpers/ErrorHander'
 
-export  class MapSettingsService{
+
+export class MapSettingsService {
     constructor () {
         this.repository = RepositoryFactory.get('mapSettings')
         this.mapSettings = {
@@ -11,45 +12,54 @@ export  class MapSettingsService{
         }
     }
 
-
-    fromJson(mapSettings){
-        this.mapSettings={
+    fromJson (mapSettings) {
+        this.mapSettings = {
             id: mapSettings.id,
             zoom: mapSettings.zoom,
-            latitude:mapSettings.latitude,
+            latitude: mapSettings.latitude,
             longitude: mapSettings.longitude,
         }
 
         return this.mapSettings
     }
 
-    async list(){
+    async list () {
         try {
             let response = await this.repository.list()
-            if(response.status === 200 ){
-                return this.fromJson(response.data.data[0])
-            }else{
+            if (response.status === 200) {
+                this.fromJson(response.data.data[0])
+                return this.mapSettings
+            } else {
                 return new ErrorHandler(response.error, 'http', response.status)
             }
 
-        }catch (e) {
+        } catch (e) {
             let erorMessage = e.response.data.message
             return new ErrorHandler(erorMessage, 'http')
         }
     }
 
-    async update(mapSettings){
+    async update () {
         try {
-            let response = await this.repository.update(mapSettings.id, mapSettings)
-            if(response.status === 200 ){
-                return response.data.data
+
+            let mapSettingsPm = {
+                id: this.mapSettings.id,
+                zoom: this.mapSettings.zoom,
+                latitude: this.mapSettings.latitude,
+                longitude: this.mapSettings.longitude,
             }
-            else{
+            let response = await this.repository.update(mapSettingsPm.id, mapSettingsPm)
+            if (response.status === 200) {
+                this.fromJson(response.data.data)
+                return this.mapSettings
+
+            } else {
                 return new ErrorHandler(response.error, 'http', response.status)
             }
-        }catch (e) {
+        } catch (e) {
             let erorMessage = e.response.data.message
             return new ErrorHandler(erorMessage, 'http')
         }
     }
+
 }

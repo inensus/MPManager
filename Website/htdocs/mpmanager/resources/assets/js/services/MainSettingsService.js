@@ -1,64 +1,81 @@
 import RepositoryFactory from '../repositories/RepositoryFactory'
-import {ErrorHandler} from '../Helpers/ErrorHander'
+import { ErrorHandler } from '../Helpers/ErrorHander'
 
-export  class MainSettingsService{
+
+export class MainSettingsService {
+
     constructor () {
         this.repository = RepositoryFactory.get('mainSettings')
+
         this.mainSettings = {
-            site_title: null,
-            company_name: null,
+            siteTitle: null,
+            companyName: null,
             currency: null,
             country: null,
             language: null,
-            vat_energy:null,
-            vat_appliance:null
+            vatEnergy: null,
+            vatAppliance: null
 
         }
 
     }
 
-    fromJson(mainSettings){
-        this.mainSettings={
-            id:mainSettings.id,
-            site_title: mainSettings.site_title,
-            company_name:mainSettings.company_name,
+    fromJson (mainSettings) {
+        this.mainSettings = {
+            id: mainSettings.id,
+            siteTitle: mainSettings.site_title,
+            companyName: mainSettings.company_name,
             currency: mainSettings.currency,
             country: mainSettings.country,
             language: mainSettings.language,
-            vat_energy: mainSettings.vat_energy,
-            vat_appliance: mainSettings.vat_appliance
+            vatEnergy: mainSettings.vat_energy,
+            vatAppliance: mainSettings.vat_appliance
         }
 
         return this.mainSettings
     }
 
-    async list(){
+    async list () {
         try {
             let response = await this.repository.list()
-            if(response.status === 200 ){
-                return this.fromJson(response.data.data[0])
-            }else{
+            if (response.status === 200) {
+                this.fromJson(response.data.data[0])
+                return this.mainSettings
+            } else {
                 return new ErrorHandler(response.error, 'http', response.status)
             }
 
-        }catch (e) {
+        } catch (e) {
             let erorMessage = e.response.data.message
             return new ErrorHandler(erorMessage, 'http')
         }
     }
 
-    async update(mainSettings){
+    async update () {
         try {
-            let response = await this.repository.update(mainSettings.id, mainSettings)
-            if(response.status === 200 ){
-                return response.data.data
+            let mainSettingsPm = {
+                id: this.mainSettings.id,
+                site_title: this.mainSettings.siteTitle,
+                company_name: this.mainSettings.companyName,
+                currency: this.mainSettings.currency,
+                country: this.mainSettings.country,
+                language: this.mainSettings.language,
+                vat_energy: this.mainSettings.vatEnergy,
+                vat_appliance: this.mainSettings.vatAppliance
             }
-            else{
+            let response = await this.repository.update(mainSettingsPm.id, mainSettingsPm)
+            if (response.status === 200) {
+                this.fromJson(response.data.data)
+
+                return this.mainSettings
+            } else {
                 return new ErrorHandler(response.error, 'http', response.status)
             }
-        }catch (e) {
+        } catch (e) {
             let erorMessage = e.response.data.message
             return new ErrorHandler(erorMessage, 'http')
         }
     }
+
+
 }
