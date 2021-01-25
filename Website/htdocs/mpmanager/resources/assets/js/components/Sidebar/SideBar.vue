@@ -119,13 +119,12 @@ export default {
     },
     methods: {
         translateMenuItem (name) {
-            if (this.$tc('menu.' + name) !== name) {
-                if (this.$tc('menu.' + name).search('menu') !== -1) {
-                    return name
-                } else {
-                    return this.$tc('menu.' + name)
-                }
+            if (this.$tc('menu.' + name).search('menu') !== -1) {
+                return name
+            } else {
+                return this.$tc('menu.' + name)
             }
+
         },
         route (routeUrl) {
             if (routeUrl !== '') {

@@ -33,7 +33,7 @@
                     </md-table-cell>
 
                     <md-table-cell>
-                        {{ asset_type.price }} {{ $store.state.mSettings.currency }}
+                        {{ asset_type.price }} {{ $store.getters['settings/getMainSettings'].currency }}
                     </md-table-cell>
 
                     <md-table-cell class="hidden-xs">{{ asset_type.updated_at }}</md-table-cell>

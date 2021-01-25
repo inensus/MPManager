@@ -22,7 +22,7 @@
                         </md-table-row>
                         <md-table-row v-for="(item, index) in assetPersonService.list" :key="index">
                             <md-table-cell md-label="Name" md-sort-by="name">{{item.asset_type.name}}</md-table-cell>
-                            <md-table-cell md-label="Cost" md-sort-by="total_cost">{{item.total_cost}} {{ $store.state.mSettings.currency }}</md-table-cell>
+                            <md-table-cell md-label="Cost" md-sort-by="total_cost">{{item.total_cost}} {{ $store.getters['settings/getMainSettings'].currency }}</md-table-cell>
                             <md-table-cell md-label="Rates" md-sort-by="rate_count">
                                 {{ item.rate_count}}
                                 <div
@@ -87,7 +87,7 @@
                                  class="col-md-3 col-sm-4">
                                 <span v-if="x<10" style="opacity: 0;">0</span>
                                 {{x}}&nbsp;-&nbsp;{{ readable(getRate(x,
-                                newAsset.rate,newAsset.cost ))}} {{ $store.state.mSettings.currency }}
+                                newAsset.rate,newAsset.cost ))}} {{ $store.getters['settings/getMainSettings'].currency }}
                             </div>
                         </div>
 
@@ -135,7 +135,7 @@
                             </md-table-head>
                         </md-table-row>
                         <md-table-row v-for="rate in selectedAsset.rates" :key="rate.id">
-                            <md-table-cell>{{readable( rate.rate_cost)}} {{ $store.state.mSettings.currency }}</md-table-cell>
+                            <md-table-cell>{{readable( rate.rate_cost)}} {{ $store.getters['settings/getMainSettings'].currency }}</md-table-cell>
                             <md-table-cell v-if="editRow === 'rate'+'_'+rate.id">
                                 <div style="display: inline-flex;">
                                     <input class="form-control" v-model="rate.remaining" type="text"/>
@@ -144,7 +144,7 @@
                                     </div>
                                 </div>
                             </md-table-cell>
-                            <md-table-cell v-else>{{readable(rate.remaining)}} {{ $store.state.mSettings.currency }}</md-table-cell>
+                            <md-table-cell v-else>{{readable(rate.remaining)}} {{ $store.getters['settings/getMainSettings'].currency }}</md-table-cell>
 
                             <md-table-cell>{{rate.due_date}}</md-table-cell>
 

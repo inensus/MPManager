@@ -92,7 +92,7 @@ export default {
     },
     computed: {
         paymentSum: function () {
-            let cur = this.$store.state.mSettings.currency
+            let cur = this.$store.getters['settings/getMainSettings'].currency
             let currentMonth = new Date().getMonth()
             let pass = true
             let total = 0

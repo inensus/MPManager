@@ -267,7 +267,7 @@
                                         class="social-input"
                                     />
                                     <span class="md-error">{{ errors.first('Social-Form.' + $tc('words.price')) }}</span>
-                                    <span class="md-suffix">{{$store.state.mSettings.currency}}</span>
+                                    <span class="md-suffix">{{ $store.getters['settings/getMainSettings'].currency }}</span>
                                 </md-field>
                             </div>
                             <div
@@ -417,7 +417,7 @@ export default {
             if (validatorTariff && validatorAccessRate && validatorComponent && validatorSocial && validatorTous) {
                 try {
                     this.loading = true
-                    this.tariffService.setCurrency(this.$store.state.mSettings.currency)
+                    this.tariffService.setCurrency(this.$store.getters['settings/getMainSettings'].currency)
                     await this.tariffService.saveTariff('update')
                     this.loading = false
                     this.alertNotify('success', this.$tc('phrases.newTariff',2))
