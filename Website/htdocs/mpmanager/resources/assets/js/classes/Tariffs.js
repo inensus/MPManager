@@ -3,7 +3,7 @@ import { AccessRate } from './AccessRate'
 import { EventBus } from '../shared/eventbus'
 
 export class Tariff {
-    constructor (id = 0, name = '', price = 0, currency = this.$store.state.mSettings.currency, factor = 1, accessRate = null) {
+    constructor (id = 0, name = '', price = 0, currency = this.$store.getters['settings/getMainSettings'].currency, factor = 1, accessRate = null) {
         this.id = id
         this.name = name
         this.price = price

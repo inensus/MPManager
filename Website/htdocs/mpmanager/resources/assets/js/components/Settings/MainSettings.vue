@@ -170,11 +170,11 @@ export default {
             try {
                 await this.mainSettingsService.update()
                 this.$store.dispatch('settings/setMainSettings', this.mainSettingsService.mainSettings).then(() => {
-
+                    this.updateStoreStates(this.mainSettingsService.mainSettings)
                 }).catch((err) => {
                     console.log(err)
                 })
-                
+
             } catch (e) {
                 this.alertNotify('error', e.message)
             }
