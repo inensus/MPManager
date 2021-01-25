@@ -52,7 +52,7 @@
                             <div class="md-layout">
                                 <div class="md-layout-item">{{$tc('phrases.totalRevenue')}}</div>
                                 <div class="md-layout-item">
-                                    <div v-if="meter.totalRevenue">{{ readable(meter.totalRevenue)}} {{ $store.state.mSettings.currency }}</div>
+                                    <div v-if="meter.totalRevenue">{{ readable(meter.totalRevenue)}} {{ $store.getters['settings/getMainSettings'].currency }}</div>
                                     <div v-else>{{$tc('phrases.noData')}}</div>
                                 </div>
                             </div>
