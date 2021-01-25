@@ -1,15 +1,16 @@
 <template>
     <div
-        class="sidebar"
-        :data-color="sidebarItemColor"
-        :style="sidebarStyle"
+            class="sidebar"
+            :data-color="sidebarItemColor"
+            :style="sidebarStyle"
     >
         <div class="logo">
             <div class="brand-column">
 
                 <img class="logo" alt="logo" :src="imgLogo"/>
 
-                <div class="company-header">{{ $store.getters['settings/getMainSettings'].companyName }}<br><small>Powered by MPM</small></div>
+                <div class="company-header">{{ $store.getters['settings/getMainSettings'].companyName }}<br><small>Powered
+                    by MPM</small></div>
             </div>
 
 
@@ -17,7 +18,7 @@
 
         <div class="ramaining-content" style="display: inline-flex">
             <div class="md-layout md-gutter md-alignment-center-left p-15">
-                <div class="md-layout-item md-size-40" >
+                <div class="md-layout-item md-size-40">
                     <md-icon class="md-size-2x c-white">account_box</md-icon>
                 </div>
 
@@ -27,7 +28,9 @@
                     </div>
 
                     <div class="md-layout-item md-size-100 c-gray">
-                        <small><md-icon>access_alarm</md-icon></small>
+                        <small>
+                            <md-icon>access_alarm</md-icon>
+                        </small>
                         <small>{{remaining}}</small>
                     </div>
                 </div>
@@ -117,10 +120,11 @@ export default {
     methods: {
         translateMenuItem (name) {
             if (this.$tc('menu.' + name) !== name) {
-
-                return name
-            } else {
-                return this.$tc('menu.' + name)
+                if (this.$tc('menu.' + name).search('menu') !== -1) {
+                    return name
+                } else {
+                    return this.$tc('menu.' + name)
+                }
             }
         },
         route (routeUrl) {
