@@ -3,7 +3,7 @@
 
       <component :is="layout">
       <router-view/>
-      <notifications group="notify" position="top right" ></notifications>
+      <notifications group="notify" position="bottom right" ></notifications>
 
     </component>
   </div>

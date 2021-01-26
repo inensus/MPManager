@@ -4,42 +4,90 @@
         <div class="md-toolbar-row">
 
             <div class="md-toolbar-section-end">
-                <div class="nav-buttons">
+                <div>
                     <md-menu
-                        class="settings-menu"
-                        md-size="medium"
-                        :md-offset-x="120"
-                        :md-offset-y="-30"
-                        :md-active.sync="toggleCard"
-                    >
-                        <md-button class="btn-menu md-raised" md-menu-trigger>
-                            <md-icon style="color:white">settings</md-icon>
+                        md-direction="bottom-end"
+                        md-size="big"
+                        class="menu-item">
+                        <md-button  class=" md-dense nav-button md-raised" md-menu-trigger>
+                            <md-tooltip md-direction="bottom">{{$tc('words.location',2)}}</md-tooltip>
+                             <md-icon style="color:white">add_location_alt</md-icon>
+                            <small>Locations</small>
                         </md-button>
-                        <md-menu-content class="menu-content m-pad">
-                            <md-menu-item class="menu-item">
-                                <router-link :to="{path: '/profile'}" class="link">
-                                    <md-icon>person</md-icon>
-                                    {{$tc('words.profile')}}
-                                </router-link>
+                        <md-menu-content>
+                            <md-menu-item disabled>
+                                <span>{{$tc('words.location',2)}}</span>
+                                <md-icon>add_location_alt</md-icon>
+                                </md-menu-item>
+                            <md-menu-item @click="replaceRoute('/locations/add-cluster')">
+                                          {{$tc('menu.subMenu.Add Cluster')}}
                             </md-menu-item>
-                            <md-menu-item>
-                                <router-link :to="{path: '/profile/management'}" class="link">
-                                    <md-icon>people</md-icon>
-                                    {{$tc('phrases.userManagement')}}
-                                </router-link>
+                            <md-menu-item @click="replaceRoute('/locations/add-mini-grid')">
+                                {{$tc('menu.subMenu.Add MiniGrid')}}
                             </md-menu-item>
-                            <md-menu-item>
-                                <router-link :to="{path: '/settings'}" class="link">
-                                    <md-icon>settings</md-icon>
-                                    Settings
-                                </router-link>
+                            <md-menu-item @click="replaceRoute('/locations/add-village')">
+                                {{$tc('menu.subMenu.Add Village')}}
                             </md-menu-item>
                         </md-menu-content>
                     </md-menu>
-                    <button class="btn-close md-raised " @click="logout()">
-                        <md-icon style="color:white">exit_to_app</md-icon>
-                    </button>
+                    <md-menu
+                        class="menu-item"
+                        md-direction="bottom-end"
+                        md-size="big">
+                        <md-button class="nav-button md-raised md-dense " md-menu-trigger>
+                            <md-tooltip md-direction="bottom">{{$tc('words.profile')}}</md-tooltip>
+                            <md-icon style="color:white">person</md-icon>
+                            <small>Profile</small>
+                        </md-button>
+                        <md-menu-content>
+                            <md-menu-item disabled="">
+                                <span>{{$tc('words.profile')}}</span>
+                                <md-icon>person</md-icon>
+                                </md-menu-item>
+                            <md-menu-item  @click="replaceRoute('/profile')">
+                                    {{$tc('words.profile')}}
+                            </md-menu-item>
+                            <md-menu-item @click="replaceRoute('/profile/management')">
+                                    {{$tc('phrases.userManagement')}}
+                            </md-menu-item>
+                        </md-menu-content>
+                    </md-menu>
+                    <md-menu
+                        class="menu-item"
+                        md-direction="bottom-end"
+                        md-size="big">
+                        <md-button class=" md-dense nav-button md-raised" md-menu-trigger>
+                            <md-tooltip md-direction="bottom">Settings</md-tooltip>
+                            <md-icon style="color:white">settings</md-icon>
+                            <small>Settings</small>
+                        </md-button>
+                        <md-menu-content>
+                            <md-menu-item @click="replaceRoute('/settings')">
+                                <span>Settings</span>
+                                <md-icon>settings</md-icon>
+                            </md-menu-item>
+                            <md-divider></md-divider>
+                            <md-menu-item disabled="">
+                                <span>{{$tc('words.connection')}}</span>
+                                <md-icon>cast</md-icon>
+                            </md-menu-item>
+                            <md-menu-item @click="replaceRoute('/connection-groups')">
+                                {{$tc('words.group',2)}}</md-menu-item>
+                            <md-menu-item @click="replaceRoute('/connection-types')">
+                                {{$tc('words.type',2)}}
+                            </md-menu-item>
+                        </md-menu-content>
+                    </md-menu>
+                    <md-menu class="menu-item">
+                        <md-button class="md-dense md-raised md-accent md-icon-button" @click="logout()">
+                            <md-tooltip md-direction="bottom">Log Out</md-tooltip>
+                            <md-icon style="color:white">exit_to_app</md-icon>
+
+                        </md-button>
+                    </md-menu>
+
                     <md-button
+
                         class="md-just-icon md-simple md-toolbar-toggle"
                         :class="{ toggled: $sidebar.showSidebar }"
                         @click="toggleSidebar"
@@ -59,6 +107,7 @@
 export default {
     data () {
         return {
+            route:null,
             open: false,
             toggleCard: false
 
@@ -76,57 +125,24 @@ export default {
         },
         toggleSidebar () {
             this.$sidebar.displaySidebar(!this.$sidebar.showSidebar)
+        },
+        replaceRoute(route){
+            this.$router.replace(route)
         }
+
     }
 
 }
 </script>
 
 <style lang="css">
-    .btn-close {
-        background-color: #fb3c4a;
-        border: 1.5px solid #fb3c4a;
-        height: 100% !important;
-        cursor: pointer;
-        vertical-align: bottom !important;
-    }
 
-    .btn-menu {
-        min-width: 0px !important;
-        height: 100% !important;
-        background-color: #fb3c4a !important;
-        vertical-align: bottom !important;
-    }
+.nav-button{
+    background-color: #3d3d3d!important;
+    color: white!important;
+}
+.menu-item{
+    padding-right: 1vh
+}
 
-    .navbar-settings-list > li {
-        padding-right: 1rem;
-        min-height: 30px;
-    }
-
-    .settings-menu {
-        height: 30px;
-        vertical-align: bottom !important;
-    }
-
-    .menu-content .link {
-        padding: 5px;
-        text-decoration: none;
-        color: #3d3b3f;
-    }
-
-    .menu-content .link:hover {
-        color: #3d3b3f;
-    }
-
-    .menu-content .menu-item:nth-child(1) {
-        border-bottom: 0.5px solid #75727ae0;
-    }
-
-    .menu-content .link .active {
-        color: #3d3b3f;
-    }
-
-    .nav-buttons {
-
-    }
 </style>
