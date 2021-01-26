@@ -68,35 +68,24 @@ class MenuItemsSeeder extends Seeder
                     'menu_order' => '9',
                 ],
                 [
-                    'name' => 'Connection',
-                    'url_slug' => '',
-                    'md_icon' => 'cast',
-                    'menu_order' => '10',
-                ],
-                [
                     'name' => 'Sms',
                     'url_slug' => '',
                     'md_icon' => 'sms',
-                    'menu_order' => '11',
+                    'menu_order' => '10',
                 ],
                 [
                     'name' => 'Asset Types',
                     'url_slug' => '/assets/types/page/1',
                     'md_icon' => 'devices_other',
-                    'menu_order' => '12',
+                    'menu_order' => '11',
                 ],
                 [
                     'name' => 'Maintenance',
                     'url_slug' => '/maintenance',
                     'md_icon' => 'home_repair_service',
-                    'menu_order' => '13',
+                    'menu_order' => '12',
                 ],
-                [
-                    'name' => 'Locations',
-                    'url_slug' => '',
-                    'md_icon' => 'add_location_alt',
-                    'menu_order' => '14',
-                ],
+
 
             )
         );

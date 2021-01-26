@@ -67,18 +67,6 @@ class SubMenuItemsSeeder extends Seeder
 
                 ],
                 [
-                    'name' => 'Groups',
-                    'url_slug' => '/connection-groups',
-                    'parent_id' => '10',
-
-                ],
-                [
-                    'name' => 'Types',
-                    'url_slug' => '/connection-types',
-                    'parent_id' => '10',
-
-                ],
-                [
                     'name' => 'Sms List',
                     'url_slug' => '/sms/list',
                     'parent_id' => '11',
@@ -90,24 +78,7 @@ class SubMenuItemsSeeder extends Seeder
                     'parent_id' => '11',
 
                 ],
-                [
-                    'name' => 'Add Cluster',
-                    'url_slug' => '/locations/add-cluster',
-                    'parent_id' => '14',
 
-                ],
-                [
-                    'name' => 'Add MiniGrid',
-                    'url_slug' => '/locations/add-mini-grid',
-                    'parent_id' => '14',
-
-                ],
-                [
-                    'name' => 'Add Village',
-                    'url_slug' => '/locations/add-village',
-                    'parent_id' => '14',
-
-                ],
 
 
             )
