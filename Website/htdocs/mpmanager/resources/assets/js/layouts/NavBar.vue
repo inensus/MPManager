@@ -10,7 +10,6 @@
         <!-- MainNav -->
         <nav class="navbar-collapse collapse" id="mainnav" style="margin-top: 0.5rem;">
           <ul class="navbar-settings-list">
-
             <li>
               <md-menu
                 class="settings-menu"

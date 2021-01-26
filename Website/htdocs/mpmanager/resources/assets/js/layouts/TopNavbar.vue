@@ -87,7 +87,6 @@
                     </md-menu>
 
                     <md-button
-
                         class="md-just-icon md-simple md-toolbar-toggle"
                         :class="{ toggled: $sidebar.showSidebar }"
                         @click="toggleSidebar"
@@ -107,7 +106,6 @@
 export default {
     data () {
         return {
-            route:null,
             open: false,
             toggleCard: false
 
