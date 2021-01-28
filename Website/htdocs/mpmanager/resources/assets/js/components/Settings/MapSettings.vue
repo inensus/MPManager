@@ -35,8 +35,8 @@
                                     :name="$tc('words.latitude')"
                                     v-model="mapSettingsService.mapSettings.latitude"
                                     step="any"
-                                    maxlength="9"
                                     @change="setCenterPoints"
+                                    maxlength="9"
                                     v-validate="'required|decimal:5|max:8'"/>
                             <span class="md-error">{{ errors.first($tc('words.latitude')) }}</span>
 
@@ -63,12 +63,12 @@
 
 
         </div>
-        <div class="md-layout md-size-100">
+        <div class="md-layout md-size-100" @click="getLatLng">
             <Map
                     :center="center"
                     ref="map"
+                    :mutating-center="mutatingCenter"
                     :zoom="Number(mapSettingsService.mapSettings.zoom)"
-                    :mutatingCenter="mutatingCenter"
             />
         </div>
         <md-progress-bar v-if="progress" md-mode="indeterminate"></md-progress-bar>
@@ -80,6 +80,7 @@
 <script>
 import Map from '../../shared/Map'
 import { MapSettingsService } from '../../services/MapSettingsService'
+import { EventBus } from '../../shared/eventbus'
 
 export default {
     name: 'MapSettings',
@@ -94,7 +95,6 @@ export default {
     },
     data () {
         return {
-
             progress: false,
             mapSettingsService: new MapSettingsService(),
             mutatingCenter: []
@@ -102,19 +102,27 @@ export default {
     },
     mounted () {
         this.fetchMapSettings()
-
+        this.$refs.map.map._onResize()
+    },
+    created () {
+        EventBus.$on('mapEvent',this.setMapLatLng)
+        EventBus.$on('mapZoom',this.setMapZoom)
     },
     methods: {
-
+        setMapLatLng(latlng){
+            this.mapSettingsService.mapSettings.latitude = latlng.lat
+            this.mapSettingsService.mapSettings.longitude = latlng.lng
+        },
+        setMapZoom(zoom){
+            this.mapSettingsService.mapSettings.zoom = zoom
+        },
         async setCenterPoints () {
             let validator = await this.$validator.validateAll()
             if (!validator) {
-
                 return
+            }else{
+                this.mutatingCenter = [this.mapSettingsService.mapSettings.latitude, this.mapSettingsService.mapSettings.longitude]
             }
-
-            this.mutatingCenter = [this.mapSettingsService.mapSettings.latitude, this.mapSettingsService.mapSettings.longitude]
-
         },
         async updateMapSettings () {
             this.progress = true
@@ -135,11 +143,11 @@ export default {
             }
             this.progress = false
         },
-
+        getLatLng(){
+            this.$refs.map.getLatLng()
+        },
         fetchMapSettings () {
-
             this.mapSettingsService.mapSettings = this.mapSettings
-
         },
         alertNotify (type, message) {
             this.$notify({

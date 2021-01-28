@@ -139,6 +139,7 @@ export default {
         this.map = null
     },
     mounted () {
+
         this.drawingOptions = {
             position: this.position,
             draw: {
@@ -357,6 +358,7 @@ export default {
                 control.addTo(this.map)
             }
             this.map.addControl(this.drawControl)
+
         },
         setLocation (geoData) {
             this.geoDataItems = []
@@ -572,15 +574,29 @@ export default {
         },
         reGenerateMap (mutatingCenter) {
             this.map.flyTo(mutatingCenter, this.zoom, this.drawingOptions)
+        },
+        getLatLng(){
+            let latlng
+            let zoom
+            this.map.on('move',function (e){
+                zoom = Math.round(e.target._zoom)
+                EventBus.$emit('mapZoom',zoom)
+
+            })
+            latlng = {
+                lat: this.map.getCenter().lat.toFixed(4),
+                lng: this.map.getCenter().lng.toFixed(4)
+            }
+            EventBus.$emit('mapEvent', latlng)
         }
     },
 
     watch: {
-        mutatingCenter () {
-            this.reGenerateMap(this.mutatingCenter)
+        zoom(){
+            this.map.setZoom(this.zoom)
         },
-        zoom () {
-            this.reGenerateMap(this.center)
+        mutatingCenter(){
+            this.reGenerateMap(this.mutatingCenter)
         },
         geoData: debounce(function () {
             this.setLocation(this.geoData)
@@ -598,7 +614,8 @@ export default {
 </script>
 <style scoped>
     #map {
-        height: 500px;
+        height: 100%;
+        min-height: 500px;
         width: 100%;
     }
 
