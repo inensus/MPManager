@@ -139,7 +139,6 @@ export default {
         this.map = null
     },
     mounted () {
-
         this.drawingOptions = {
             position: this.position,
             draw: {
@@ -320,9 +319,7 @@ export default {
         })
     },
     methods: {
-
         generateMap (options, center) {
-
             this.mapInitialized = true
             this.map = L.map('map').setView(center, this.zoom)
             L.tileLayer(this.osmUrl, { maxZoom: this.maxZoom, attribution: this.osmAttrib }).addTo(this.map)
@@ -358,7 +355,6 @@ export default {
                 control.addTo(this.map)
             }
             this.map.addControl(this.drawControl)
-
         },
         setLocation (geoData) {
             this.geoDataItems = []
