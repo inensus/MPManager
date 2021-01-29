@@ -319,9 +319,7 @@ export default {
         })
     },
     methods: {
-
         generateMap (options, center) {
-
             this.mapInitialized = true
             this.map = L.map('map').setView(center, this.zoom)
             L.tileLayer(this.osmUrl, { maxZoom: this.maxZoom, attribution: this.osmAttrib }).addTo(this.map)
@@ -572,15 +570,29 @@ export default {
         },
         reGenerateMap (mutatingCenter) {
             this.map.flyTo(mutatingCenter, this.zoom, this.drawingOptions)
+        },
+        getLatLng(){
+            let latlng
+            let zoom
+            this.map.on('move',function (e){
+                zoom = Math.round(e.target._zoom)
+                EventBus.$emit('mapZoom',zoom)
+
+            })
+            latlng = {
+                lat: this.map.getCenter().lat.toFixed(4),
+                lng: this.map.getCenter().lng.toFixed(4)
+            }
+            EventBus.$emit('mapEvent', latlng)
         }
     },
 
     watch: {
-        mutatingCenter () {
-            this.reGenerateMap(this.mutatingCenter)
+        zoom(){
+            this.map.setZoom(this.zoom)
         },
-        zoom () {
-            this.reGenerateMap(this.center)
+        mutatingCenter(){
+            this.reGenerateMap(this.mutatingCenter)
         },
         geoData: debounce(function () {
             this.setLocation(this.geoData)
@@ -598,7 +610,8 @@ export default {
 </script>
 <style scoped>
     #map {
-        height: 500px;
+        height: 100%;
+        min-height: 500px;
         width: 100%;
     }
 
