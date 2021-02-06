@@ -12,16 +12,13 @@ const vuexLocalStorage = new VuexPersist({
     reducer: (state) => ({
         auth: {
             authenticateUser: state.auth.authenticateUser,
-
         },
         settings:{
             mainSettings: state.settings.mainSettings,
             ticketSettings: state.settings.ticketSettings,
             mapSettings:state.settings.mapSettings,
         }
-
     }),
-
     key: 'vuex',
     storage: window.localStorage,
 })
@@ -32,19 +29,15 @@ export default new Vuex.Store({
     },
     plugins: [vuexLocalStorage.plugin],
     state: {
-
         person: new Person(),
         meters: new Meters(),
         admin: new Admin(),
         search: {},
     },
-
     getters: {
         person: state => state.person,
         meters: state => state.meters,
         admin: state => state.admin,
         search: state => state.search,
-
     }
-
 })

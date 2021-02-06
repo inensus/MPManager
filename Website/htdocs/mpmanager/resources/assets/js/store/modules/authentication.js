@@ -27,43 +27,34 @@ export const mutations = {
     },
 }
 export const actions = {
-    authenticate ({ commit, state }, { email, password }) {
-
+    authenticate ({ dispatch, commit, state }, { email, password }) {
         commit('AUTH_REQUEST')
         return new Promise((resolve, reject) => {
-
-            state.service.authenticate(email, password)
-                .then(user => {
-
-                    commit('AUTH_SUCCESS', user)
-                    resolve(user)
-                }).catch((e) => {
-                    commit('AUTH_ERROR')
-                    reject(e)
-                })
+            state.service.authenticate(email, password).then(user => {
+                commit('AUTH_SUCCESS', user)
+                resolve(user)
+                dispatch('settings/getSettings', null, { root: true })
+            }).catch((e) => {
+                commit('AUTH_ERROR')
+                reject(e)
+            })
         })
-
     },
-    refreshToken ({ commit, state }, token) {
-
+    refreshToken ({ dispatch, commit, state }, token) {
         commit('AUTH_REQUEST')
         return new Promise((resolve, reject) => {
-            state.service.refreshToken(token)
-                .then(user => {
-
-                    commit('AUTH_SUCCESS', user)
-                    resolve(user)
-                }).catch((e) => {
-                    commit('AUTH_ERROR')
-                    reject(e)
-                })
+            state.service.refreshToken(token).then(user => {
+                commit('AUTH_SUCCESS', user)
+                resolve(user)
+                dispatch('settings/getSettings', null, { root: true })
+            }).catch((e) => {
+                commit('AUTH_ERROR')
+                reject(e)
+            })
         })
-
     },
     logOut ({ commit }) {
-
         return new Promise((resolve) => {
-
             commit('SET_LOGOUT')
             localStorage.removeItem('token')
             resolve()
