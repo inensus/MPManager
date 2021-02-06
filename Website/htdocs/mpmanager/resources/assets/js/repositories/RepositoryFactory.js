@@ -49,17 +49,16 @@ import LanguagesRepository from './LanguagesRepository'
 import TicketSettingsRepository from './TicketSettingsRepository'
 import CountriesRepository from './CountriesRepository'
 
-
 const repositories = {
     'address': AddressRepository,
     'asset': AssetRepository,
-    'assetPerson':AssetPersonRepository,
-    'assetRate':AssetRateRepository,
+    'assetPerson': AssetPersonRepository,
+    'assetRate': AssetRateRepository,
     'authentication': AuthenticationRepository,
     'agent': AgentRepository,
     'assignedAppliance': AgentAssignedApplianceRepository,
     'agentTransactions': AgentTransactionRepository,
-    'agentReceipt':AgentReceiptRepository,
+    'agentReceipt': AgentReceiptRepository,
     'balanceHistory': AgentBalanceHistoryRepository,
     'balanceCharge': AgentChargeRepository,
     'cluster': ClusterRepository,
@@ -93,15 +92,15 @@ const repositories = {
     'bookKeeping': BookKeepingRepository,
     'timeOfUsage': TimeOfUsageRepository,
     'generationAssets': GenerationAssetsRepository,
-    'transactionProviders':TransactionProvidersRepository,
+    'transactionProviders': TransactionProvidersRepository,
     'mainSettings': MainSettingsRepository,
     'mapSettings': MapSettingsRepository,
     'currencyList': CurrencyRepository,
     'countryList': CountriesRepository,
     'languagesList': LanguagesRepository,
-    'ticketSettings': TicketSettingsRepository
+    'ticketSettings': TicketSettingsRepository,
 }
 
 export default {
-    get: name => repositories[name]
+    get: name => repositories[name],
 }
