@@ -27,7 +27,9 @@ class AccessRateListener
 
     public function subscribe(Dispatcher $events): void
     {
-        $events->listen('accessRatePayment.initialize',
-            '\App\Listeners\AccessRateListener@initializeAccessRatePayment');
+        $events->listen(
+            'accessRatePayment.initialize',
+            '\App\Listeners\AccessRateListener@initializeAccessRatePayment'
+        );
     }
 }

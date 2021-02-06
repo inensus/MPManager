@@ -34,7 +34,7 @@ class AddMeterAddress extends Command
      * Create a new command instance.
      *
      * @param MeterParameter $meterParameter
-     * @param Address $address
+     * @param Address        $address
      */
     public function __construct(MeterParameter $meterParameter, Address $address)
     {
@@ -57,9 +57,11 @@ class AddMeterAddress extends Command
             if (($owner = $meter->owner()->first()) !== null) {
                 $city = $owner->addresses()->first()->city_id;
             }
-            $address = $this->address->create([
+            $address = $this->address->create(
+                [
                 'city_id' => $city,
-            ]);
+                ]
+            );
             $address->owner()->associate($meter);
             $address->geo()->associate($meter->geo()->first());
             $address->save();

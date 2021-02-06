@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-
 /**
  * Class TariffPricingComponent
+ *
  * @package App\Models
  *
  * @property int $id
@@ -23,5 +23,4 @@ class TariffPricingComponent extends Model
     {
         return $this->morphTo();
     }
-
 }

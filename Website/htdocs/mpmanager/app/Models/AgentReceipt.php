@@ -11,7 +11,7 @@ class AgentReceipt extends BaseModel
 {
     public function history()
     {
-        return $this->belongsTo(AgentBalanceHistory::class,'last_controlled_balance_history_id','id');
+        return $this->belongsTo(AgentBalanceHistory::class, 'last_controlled_balance_history_id', 'id');
     }
 
     public function agent()

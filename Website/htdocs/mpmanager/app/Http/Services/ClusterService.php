@@ -8,7 +8,6 @@
 
 namespace App\Http\Services;
 
-
 use App\Models\City;
 use App\Models\Cluster;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
@@ -36,19 +35,19 @@ class ClusterService
     /**
      * ClusterService constructor.
      *
-     * @param Cluster $cluster
-     * @param City $city
-     * @param MeterService $meterService
+     * @param Cluster            $cluster
+     * @param City               $city
+     * @param MeterService       $meterService
      * @param TransactionService $transactionService
-     * @param CityService $cityService
+     * @param CityService        $cityService
      */
     public function __construct(
         Cluster $cluster,
         City $city,
         MeterService $meterService,
         TransactionService $transactionService,
-        CityService $cityService)
-    {
+        CityService $cityService
+    ) {
         $this->meterService = $meterService;
         $this->cluster = $cluster;
         $this->city = $city;
@@ -64,7 +63,6 @@ class ClusterService
     public function getClusterMiniGrids($clusterId)
     {
         return Cluster::query()->with('miniGrids')->find($clusterId);
-
     }
 
     public function fetchClusterGeoJson($clusters)

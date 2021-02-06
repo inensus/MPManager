@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class AccessRatePayment
- * @package App
+ *
+ * @package  App
  * @property int meter_id
  * @property int access_rate_id
  * @property DateTime due_date

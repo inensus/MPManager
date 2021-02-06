@@ -40,8 +40,6 @@ class Target extends Model
             ->where('target_date', '>=', $endDate)
             ->orderBy('target_date')
             ->limit(1);
-
-
     }
 
     public function targetForCluster($miniGridIds, $endDate)
@@ -61,13 +59,13 @@ class Target extends Model
 
     public function periodTargetAlternative($cityId, $startDate)
     {
-        return $this::select(DB::raw("*, YEARWEEK(target_date,3) as period"))->with('subTargets.connectionType',
-            'city')
+        return $this::select(DB::raw("*, YEARWEEK(target_date,3) as period"))->with(
+            'subTargets.connectionType',
+            'city'
+        )
             ->where('owner_id', $cityId)
             ->where('owner_type', 'mini-grid')
             ->where('target_date', '<', $startDate)
             ->orderBy('target_date', 'desc')->limit(1);
-
-
     }
 }

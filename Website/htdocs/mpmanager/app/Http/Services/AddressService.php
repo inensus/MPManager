@@ -8,7 +8,6 @@
 
 namespace App\Http\Services;
 
-
 use App\Models\Address\Address;
 use App\Models\Address\HasAddressesInterface;
 use Illuminate\Database\Eloquent\Model;

@@ -8,7 +8,6 @@
 
 namespace App\Models\Role;
 
-
 use App\Models\BaseModel;
 
 class RoleDefinition extends BaseModel
@@ -19,5 +18,4 @@ class RoleDefinition extends BaseModel
     {
         $this->hasMany(Roles::class);
     }
-
 }

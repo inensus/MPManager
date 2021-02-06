@@ -8,7 +8,6 @@
 
 namespace App\Transaction;
 
-
 use App\Exceptions\VodacomHeartBeatException;
 use App\Jobs\SmsProcessor;
 use App\Lib\ITransactionProvider;
@@ -63,7 +62,6 @@ class VodacomTransaction implements ITransactionProvider
         $this->assignData($this->valid_data);
         //save transaction
         $this->saveData($this->vodacomTransaction);
-
     }
 
     /**
@@ -82,7 +80,8 @@ class VodacomTransaction implements ITransactionProvider
         $request = new Client();
 
         try {
-            $response = $request->post(\config('services.vodacom.request_url'),
+            $response = $request->post(
+                \config('services.vodacom.request_url'),
                 [
                     'headers' => [
                         'Content-Type: tex/xml',
@@ -91,54 +90,63 @@ class VodacomTransaction implements ITransactionProvider
                     'body' => $requestContent,
                     'cert' => \config('services.vodacom.certs.ssl_cert'),
                     'ssl_key' => \config('services.vodacom.certs.ssl_key'),
-                ]);
+                ]
+            );
             // request was  successful
             if ($response->getStatusCode() === 200) {
                 if (!$requestType) {
-                    Log::critical('Vodacom transaction cancelled',
+                    Log::critical(
+                        'Vodacom transaction cancelled',
                         [
                             'id' => '64324632786d78638762387',
                             'response' => $response->getBody(),
                             'body' => $requestContent,
 
-                        ]);
+                        ]
+                    );
                 } else {
-                    SmsProcessor::dispatch($transaction,
-                        SmsTypes::ENERGY_CONFIRMATION)->allOnConnection('redis')->onQueue('sms');
-
+                    SmsProcessor::dispatch(
+                        $transaction,
+                        SmsTypes::ENERGY_CONFIRMATION
+                    )->allOnConnection('redis')->onQueue('sms');
                 }
 
                 //make response xml object
                 try {
                     $xmlResponse = new SimpleXMLElement($response->getBody());
                     //vodacom returns 0 for confirmation and 999 for cancellation request
-                    // cast bool to int gives (0,1) as number. Multiply its inverse by 999 gives 0 for true and 999 for false
+                    // cast bool to int gives (0,1) as number. Multiply its inverse by
+                    // 999 gives 0 for true and 999 for false
                     $expectedResponseCode = (int)!$requestType * 999;
                     if ((int)$xmlResponse->response->responseCode === $expectedResponseCode) {
                         //mark transaction as done
                         $this->vodacomTransaction->status = $requestType === true ? 1 : -1;
                         $this->vodacomTransaction->save();
                     } else {
-                        $this->addConflict('Transaction got ' . $response->getStatusCode() . ' as HTTP Status code ' . $response->getBody());
+                        $this->addConflict('Transaction got ' . $response->getStatusCode() . ' as HTTP Status code '
+                            . $response->getBody());
                     }
                 } catch (Exception $e) {
-                    Log::critical('Vodacom transaction Finalize',
+                    Log::critical(
+                        'Vodacom transaction Finalize',
                         [
                             'id' => '5435h4u393489',
                             'response' => $response->getBody(),
                             'error' => $e->getMessage(),
                             'sent' => $requestContent,
-                        ]);
+                        ]
+                    );
                 }
-
             } else {
                 $this->addConflict('Transaction got ' . $response->getStatusCode() . ' as HTTP Status code');
             }
             return;
         } catch (Exception $e) {
             $this->addConflict($e->getMessage());
-            Log::critical('Failed to send final transaction request',
-                ['id' => '48285968fu3048', 'message' => $e->getMessage()]);
+            Log::critical(
+                'Failed to send final transaction request',
+                ['id' => '48285968fu3048', 'message' => $e->getMessage()]
+            );
         }
     }
 
@@ -159,20 +167,24 @@ class VodacomTransaction implements ITransactionProvider
         $transaction_data = json_encode($transaction_xml);
         $transaction_data = json_decode($transaction_data, true);
 
-        $validator = Validator::make($transaction_data, [
-            'request.serviceProvider.spId' => 'required|in:' . Config::get('services.vodacom.sp_id'),
-            'request.serviceProvider.spPassword' => 'required',
-            'request.transaction.amount' => 'required',
-            'request.transaction.commandID' => 'required',
-            'request.transaction.initiator' => 'required',
-            'request.transaction.conversationID' => 'required|unique:vodacom_transactions,conversation_id',
-            'request.transaction.originatorConversationID' => 'required|unique:vodacom_transactions,originator_conversation_id',
-            'request.transaction.recipient' => 'required',
-            'request.transaction.mpesaReceipt' => 'required',
-            'request.transaction.transactionDate' => 'required',
-            'request.transaction.accountReference' => 'required|min:3',
-            'request.transaction.transactionID' => 'required',
-        ]);
+        $validator = Validator::make(
+            $transaction_data,
+            [
+                'request.serviceProvider.spId' => 'required|in:' . Config::get('services.vodacom.sp_id'),
+                'request.serviceProvider.spPassword' => 'required',
+                'request.transaction.amount' => 'required',
+                'request.transaction.commandID' => 'required',
+                'request.transaction.initiator' => 'required',
+                'request.transaction.conversationID' => 'required|unique:vodacom_transactions,conversation_id',
+                'request.transaction.originatorConversationID'
+                => 'required|unique:vodacom_transactions,originator_conversation_id',
+                'request.transaction.recipient' => 'required',
+                'request.transaction.mpesaReceipt' => 'required',
+                'request.transaction.transactionDate' => 'required',
+                'request.transaction.accountReference' => 'required|min:3',
+                'request.transaction.transactionID' => 'required',
+            ]
+        );
         if ($validator->fails()) {
             throw new Exception($validator->errors());
         }
@@ -190,7 +202,8 @@ class VodacomTransaction implements ITransactionProvider
             '<mpesaBroker xmlns="http://infowise.co.tz/broker/" version="2.0">' .
             '<response>' .
             '<conversationID>' . $this->vodacomTransaction->conversation_id . '</conversationID>' .
-            '<originatorConversationID>' . $this->vodacomTransaction->originator_conversation_id . '</originatorConversationID>' .
+            '<originatorConversationID>' . $this->vodacomTransaction->originator_conversation_id .
+            '</originatorConversationID>' .
             '<transactionID>' . $this->vodacomTransaction->transaction_id . '</transactionID>' .
             '<responseCode>0</responseCode>' .
             '<responseDesc>Received</responseDesc>' .
@@ -275,9 +288,21 @@ class VodacomTransaction implements ITransactionProvider
         $phonePassword = $this->encryptPhonePassword();
 
         if (!$requestType) {
-            $requestContent = $this->serveResult($providerPassword, $phonePassword, $time, 'Failure', 999);
+            $requestContent = $this->serveResult(
+                $providerPassword,
+                $phonePassword,
+                $time,
+                'Failure',
+                999
+            );
         } else {
-            $requestContent = $this->serveResult($providerPassword, $phonePassword, $time, 'Success', 0);
+            $requestContent = $this->serveResult(
+                $providerPassword,
+                $phonePassword,
+                $time,
+                'Success',
+                0
+            );
         }
         return $requestContent;
     }
@@ -316,7 +341,8 @@ class VodacomTransaction implements ITransactionProvider
             <serviceReceipt>' . $this->transaction->id . '</serviceReceipt>
             <serviceDate>' . date('Y-m-d H:i:s') . '</serviceDate>
             <serviceID>' . $this->transaction->id . '</serviceID>
-            <originatorConversationID>' . $this->vodacomTransaction->originator_conversation_id . '</originatorConversationID>
+            <originatorConversationID>' . $this->vodacomTransaction->originator_conversation_id .
+            '</originatorConversationID>
             <conversationID>' . $this->vodacomTransaction->conversation_id . '</conversationID>
             <transactionID>' . $this->vodacomTransaction->transaction_id . '</transactionID>
             <initiator>' . $this->transaction->sender . '</initiator>
@@ -330,11 +356,15 @@ class VodacomTransaction implements ITransactionProvider
     private function encryptProviderPassword($time)
     {
         $password = strtoupper(
-            hash('sha256',
-                sprintf('%s%s%s', \config()->get('services.vodacom.sp_id'),
+            hash(
+                'sha256',
+                sprintf(
+                    '%s%s%s',
+                    \config()->get('services.vodacom.sp_id'),
                     \config()->get('services.vodacom.sp_password'),
-                    $time)
-                , true
+                    $time
+                ),
+                true
             )
         );
         return base64_encode($password);

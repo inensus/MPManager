@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Http\Requests\MeterParameterRequest;
 use App\Http\Resources\ApiResource;
 use App\Models\ConnectionType;
@@ -14,7 +13,7 @@ use App\Models\SubConnectionType;
 use Illuminate\Http\Request;
 
 /**
- * @group MeterParameter
+ * @group   MeterParameter
  * Class MeterParameterController
  * @package App\Http\Controllers
  */
@@ -43,8 +42,9 @@ class MeterParameterController extends Controller
 
     /**
      * List
+     *
      * @responseFile responses/meterparameters/meterparameters.list.json
-     * @return void
+     * @return       void
      */
     public function index()
     {
@@ -87,9 +87,10 @@ class MeterParameterController extends Controller
      * - Owner
      * - Meter
      * - Tariff
-     * @urlParam meterParameter int required
+     *
+     * @urlParam     meterParameter int required
      * @responseFile responses/meterparameters/meterparameter.detail.json
-     * @param MeterParameter $meterParameter
+     * @param        MeterParameter $meterParameter
      *
      * @return ApiResource
      */
@@ -102,7 +103,8 @@ class MeterParameterController extends Controller
 
     /**
      * Update
-     * @urlParam meterId int required
+     *
+     * @urlParam  meterId int required
      * @bodyParam tariffId int
      * @bodyParam personId int
      *
@@ -127,7 +129,7 @@ class MeterParameterController extends Controller
             $parameter->tariff()->associate($tariff);
             $accessRate = $tariff->accessRate()->first();
             $acP = $parameter->meter()->first()->accessRatePayment()->first();
-            if ($acP){
+            if ($acP) {
                 $acP->access_rate_id = $accessRate->id;
                 $acP->update();
             }
@@ -136,8 +138,10 @@ class MeterParameterController extends Controller
         }
         $person=Person::find($parameter->owner_id);
         if ($person) {
-            $person->update([
-                'updated_at' => date('Y-m-d h:i:s')]);
+            $person->update(
+                [
+                'updated_at' => date('Y-m-d h:i:s')]
+            );
         }
         $parameter->save();
         return new ApiResource($parameter);
@@ -146,13 +150,13 @@ class MeterParameterController extends Controller
     /**
      * List of connection types
      * A list of connection types and the meters which belong to the connection type
+     *
      * @responseFile /responses/meterparameters/meterparameter.connectiontype.list.json
-     * @param Request $request
-     * @return ApiResource
+     * @param        Request $request
+     * @return       ApiResource
      */
     public function connectionTypes(Request $request)
     {
         return new ApiResource($this->connectionType->numberOfConnections());
     }
-
 }

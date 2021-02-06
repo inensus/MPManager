@@ -8,12 +8,12 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Models\Transaction\Transaction;
 use Illuminate\Http\Request;
 
 /**
  * Class DailyTransactions
+ *
  * @package App\Http\Controllers\Export
  *
  * @group Export
@@ -23,6 +23,7 @@ class DailyTransactions extends Controller
 
     /**
      * The used transaction model
+     *
      * @var Transaction
      */
     private $transaction;
@@ -40,7 +41,6 @@ class DailyTransactions extends Controller
         $transactions = $this->transaction::with('originalTransaction')->whereDate('created_at', $date)->get();
         $transactionOutput = [];
         foreach ($transactions as $t) {
-
             if ($t->originalTransaction->status !== 1) { //the transaction is either not confirmed or cancelled
                 continue;
             }

@@ -8,7 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 /**
- * @group Battery
+ * @group   Battery
  * Class BatteryController
  * @package App\Http\Controllers
  */
@@ -32,12 +32,16 @@ class BatteryController extends Controller
             ->where('mini_grid_id', $miniGridId);
 
         if ($startDate = $request->input('start_date')) {
-            $batteryReadings->where('read_out', '>=',
-                Carbon::createFromTimestamp($startDate)->format('Y-m-d H:i:s'));
+            $batteryReadings->where(
+                'read_out',
+                '>=',
+                Carbon::createFromTimestamp($startDate)->format('Y-m-d H:i:s')
+            );
         }
         if ($endDate = $request->input('end_date')) {
-
-            $batteryReadings->where('read_out', '<=',
+            $batteryReadings->where(
+                'read_out',
+                '<=',
                 Carbon::createFromTimestamp($endDate)->format('Y-m-d H:i:s')
             );
         }
@@ -47,11 +51,12 @@ class BatteryController extends Controller
 
     /**
      * Battery details for Mini-Grid
+     *
      * @urlParam miniGridId int required
      * @urlParam limit int Default 50
      *
-     * @param Request $request
-     * @param $id
+     * @param  Request $request
+     * @param  $id
      * @return ApiResource
      */
     public function showByMiniGrid(Request $request, $miniGridId): ApiResource
@@ -62,16 +67,20 @@ class BatteryController extends Controller
             ->where('mini_grid_id', $miniGridId);
 
         if ($startDate = $request->input('start_date')) {
-            $batteryReadings->where('read_out', '>=',
-                Carbon::createFromTimestamp($startDate)->format('Y-m-d H:i:s'));
+            $batteryReadings->where(
+                'read_out',
+                '>=',
+                Carbon::createFromTimestamp($startDate)->format('Y-m-d H:i:s')
+            );
         }
         if ($endDate = $request->input('end_date')) {
-
-            $batteryReadings->where('read_out', '<=',
+            $batteryReadings->where(
+                'read_out',
+                '<=',
                 Carbon::createFromTimestamp($endDate)->format('Y-m-d H:i:s')
             );
         }
-        if($limit){
+        if ($limit) {
             $batteryReadings->take($limit);
         }
         $batteryReadings->orderBy('read_out');
@@ -81,9 +90,10 @@ class BatteryController extends Controller
 
     /**
      * Store battery status
+     *
      * @urlParam miniGridId integer required
-     * @param StoreBatteryStateRequest $request
-     * @return ApiResource
+     * @param    StoreBatteryStateRequest $request
+     * @return   ApiResource
      */
     public function store(StoreBatteryStateRequest $request): ApiResource
     {
@@ -101,7 +111,8 @@ class BatteryController extends Controller
 
         $battery = $this->battery
             ->newQuery()
-            ->create([
+            ->create(
+                [
                 'mini_grid_id' => $request->input('mini_grid_id'),
                 'node_id' => $request->input('node_id'),
                 'device_id' => $request->input('device_id'),
@@ -130,7 +141,8 @@ class BatteryController extends Controller
                 'temperature_average' => $temperature['average'],
                 'temperature_unit' => $temperature['unit'],
                 'read_out' => date('Y-m-d H:i:s', strtotime($batteryData['time_stamp'])),
-            ]);
+                ]
+            );
 
 
         return new ApiResource($battery);

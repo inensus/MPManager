@@ -13,7 +13,6 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use function config;
 
-
 class TokenProcessor implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -33,7 +32,7 @@ class TokenProcessor implements ShouldQueue
      */
     private $counter;
 
-    private const maxTries = 3;
+    private const MAX_TRIES = 3;
 
 
     /**
@@ -46,7 +45,7 @@ class TokenProcessor implements ShouldQueue
     public function __construct(
         TransactionDataContainer $container,
         bool $reCreate = false,
-        int $counter = self::maxTries
+        int $counter = self::MAX_TRIES
     ) {
         $this->transactionContainer = $container;
         $this->reCreate = $reCreate;
@@ -65,8 +64,10 @@ class TokenProcessor implements ShouldQueue
             $api = resolve($this->transactionContainer->manufacturer->api_name);
         } catch (\Exception $e) {
             //no api found
-            Log::critical('No Api is registered for ' . $this->transactionContainer->manufacturer->name,
-                ['id' => '34758734658734567885458923', 'message' => $e->getMessage()]);
+            Log::critical(
+                'No Api is registered for ' . $this->transactionContainer->manufacturer->name,
+                ['id' => '34758734658734567885458923', 'message' => $e->getMessage()]
+            );
             event('transaction.failed', [$this->transactionContainer->transaction, $e->getMessage()]);
             return;
         }
@@ -80,27 +81,37 @@ class TokenProcessor implements ShouldQueue
             try {
                 $tokenData = $api->chargeMeter($this->transactionContainer);
             } catch (Exception $e) {
-                if (self::maxTries > $this->counter) {
+                if (self::MAX_TRIES > $this->counter) {
                     $this->counter++;
                     //re-queue the job in five seconds
-                    self::dispatch($this->transactionContainer, false,
-                        $this->counter)->allOnConnection('redis')->onQueue(config('services.queues.token'))->delay(5);
+                    self::dispatch(
+                        $this->transactionContainer,
+                        false,
+                        $this->counter
+                    )->allOnConnection('redis')->onQueue(config('services.queues.token'))->delay(5);
                     return;
                 }
-                Log::critical($this->transactionContainer->manufacturer->name . ' Token listener failed after  ' . $this->counter . 'times ',
-                    ['id' => '4627573927', 'message' => $e->getMessage()]);
-                event('transaction.failed', [
-                    $this->transactionContainer->transaction,
-                    'Manufacturer Api did not succeeded after 3 times with following error : ' . $e->getMessage()
-                ]);
+                Log::critical(
+                    $this->transactionContainer->manufacturer->name . ' Token listener failed after  ' .
+                    $this->counter . 'times ',
+                    ['id' => '4627573927', 'message' => $e->getMessage()]
+                );
+                event(
+                    'transaction.failed',
+                    [
+                        $this->transactionContainer->transaction,
+                        'Manufacturer Api did not succeeded after 3 times with following error : ' . $e->getMessage()
+                    ]
+                );
                 return;
             }
 
-            $token = MeterToken::query()->make([
-                'token' => $tokenData['token'],
-                'energy' => $tokenData['energy'],
-
-            ]);
+            $token = MeterToken::query()->make(
+                [
+                    'token' => $tokenData['token'],
+                    'energy' => $tokenData['energy'],
+                ]
+            );
 
             $token->transaction()->associate($this->transactionContainer->transaction);
             $token->meter()->associate($this->transactionContainer->meter);
@@ -111,18 +122,18 @@ class TokenProcessor implements ShouldQueue
         $this->transactionContainer->token = $token;
 
         // payment event
-        event('payment.successful', [
-            'amount' => $this->transactionContainer->transaction->amount,
-            'paymentService' => $this->transactionContainer->transaction->original_transaction_type,
-            'paymentType' => 'energy',
-            'sender' => $this->transactionContainer->transaction->sender,
-            'paidFor' => $token,
-            'payer' => $this->transactionContainer->meterParameter->owner,
-            'transaction' => $this->transactionContainer->transaction,
-        ]);
-
+        event(
+            'payment.successful',
+            [
+                'amount' => $this->transactionContainer->transaction->amount,
+                'paymentService' => $this->transactionContainer->transaction->original_transaction_type,
+                'paymentType' => 'energy',
+                'sender' => $this->transactionContainer->transaction->sender,
+                'paidFor' => $token,
+                'payer' => $this->transactionContainer->meterParameter->owner,
+                'transaction' => $this->transactionContainer->transaction,
+            ]
+        );
         event('transaction.successful', [$this->transactionContainer->transaction]);
-
     }
-
 }

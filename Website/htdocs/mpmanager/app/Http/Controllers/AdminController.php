@@ -17,11 +17,9 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 /**
- * @group UserManagement
+ * @group   UserManagement
  * Class AdminController
  * @package App\Http\Controllers
- *
- *
  */
 class AdminController extends Controller
 {
@@ -43,7 +41,8 @@ class AdminController extends Controller
     /**
      * List
      * lists all registered users
-     * @param Request $request
+     *
+     * @param  Request $request
      * @return ApiResource
      */
     public function index(Request $request): ApiResource
@@ -59,9 +58,8 @@ class AdminController extends Controller
      * @bodyParam name string required
      * @bodyParam password string required
      *
-     * @param CreateAdminRequest $request
+     * @param  CreateAdminRequest $request
      * @return ApiResource
-     *
      */
     public function store(CreateAdminRequest $request): ApiResource
     {
@@ -72,10 +70,11 @@ class AdminController extends Controller
 
     /**
      * Update
-     * @param User $user
-     * @param Request $request
-     * @return ApiResource
-     * @urlParam user required The ID of the User to be updated
+     *
+     * @param     User    $user
+     * @param     Request $request
+     * @return    ApiResource
+     * @urlParam  user required The ID of the User to be updated
      * @bodyParam email string
      * @bodyParam name string
      * @bodyParam password string
@@ -89,27 +88,32 @@ class AdminController extends Controller
 
     /**
      * Forgot password
+     *
      * @bodyParam email string
-     * @param AdminResetPasswordRequest $request
-     * @param Response $response
-     * @return Response
+     * @param     AdminResetPasswordRequest $request
+     * @param     Response                  $response
+     * @return    Response
      */
     public function forgotPassword(AdminResetPasswordRequest $request, Response $response): Response
     {
         if (!$this->userService->resetPassword($request->input('email'))) {
-            return $response->setStatusCode(422)->setContent([
+            return $response->setStatusCode(422)->setContent(
+                [
                 'data' => [
                     'message' => 'Failed to send password email. Please try it again later.',
                     'status_code' => 409
                 ]
-            ]);
+                ]
+            );
         }
 
-        return $response->setStatusCode(200)->setContent([
+        return $response->setStatusCode(200)->setContent(
+            [
             'data' => [
                 'message' => 'New password sent to your email address',
                 'status_code' => 200
             ]
-        ]);
+            ]
+        );
     }
 }

@@ -30,7 +30,7 @@ class SubConnectionTypeController extends Controller
     public function index($connectionTypeId = null)
     {
         $connectionTypes = $this->subConnectionType::with('tariff')->newQuery();
-        if($connectionTypeId !== null){
+        if ($connectionTypeId !== null) {
             $connectionTypes->where('connection_type_id', $connectionTypeId);
         }
         if (request()->input('paginate') !== null) {
@@ -43,7 +43,8 @@ class SubConnectionTypeController extends Controller
 
     /**
      * Show the form for creating a new resource.
-     * @param SubConnectionTypeCreateRequest $request
+     *
+     * @param  SubConnectionTypeCreateRequest $request
      * @return ApiResource
      */
 
@@ -59,7 +60,7 @@ class SubConnectionTypeController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param SubConnectionType $subConnectionType
+     * @param  SubConnectionType $subConnectionType
      * @return Response
      */
     public function show(SubConnectionType $subConnectionType)
@@ -70,7 +71,7 @@ class SubConnectionTypeController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param SubConnectionType $subConnectionType
+     * @param  SubConnectionType $subConnectionType
      * @return Response
      */
     public function edit(SubConnectionType $subConnectionType)
@@ -81,7 +82,7 @@ class SubConnectionTypeController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param SubConnectionType $subConnectionType
+     * @param  SubConnectionType $subConnectionType
      * @return Response
      */
     public function update(SubConnectionType $subConnectionType): ApiResource
@@ -95,7 +96,7 @@ class SubConnectionTypeController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param SubConnectionType $subConnectionType
+     * @param  SubConnectionType $subConnectionType
      * @return Response
      */
     public function destroy(SubConnectionType $subConnectionType)

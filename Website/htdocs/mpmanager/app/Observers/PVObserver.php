@@ -8,13 +8,13 @@ use App\Models\PV;
 
 /**
  * Class PVCreated
- * @package App\Observers
  *
+ * @package App\Observers
  */
 class PVObserver
 {
     /**
-     * @var  PV
+     * @var PV
      */
     private $pv;
 
@@ -37,6 +37,5 @@ class PVObserver
 
         $p[0]->new_generated_energy = $lastDailyPower - $prevDailyPower;
         $p[0]->save();
-
     }
 }

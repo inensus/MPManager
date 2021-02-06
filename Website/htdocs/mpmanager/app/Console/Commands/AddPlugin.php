@@ -47,7 +47,6 @@ class AddPlugin extends Command
         $composer_name = $this->argument('composer_name');
         $description = $this->argument('description');
 
-        $this->pluginService->addPlugin($name,$composer_name,$description);
-
+        $this->pluginService->addPlugin($name, $composer_name, $description);
     }
 }

@@ -54,7 +54,5 @@ class SocialTariffPiggyBankManager implements ShouldQueue
         where('social_tariff_id', $socialTariff->id)
             ->where('savings', '>', $socialTariff->maximum_stacked_energy)
             ->update(['savings' => $socialTariff->initial_energy_budget]);
-
-
     }
 }

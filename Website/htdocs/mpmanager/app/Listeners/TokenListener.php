@@ -2,7 +2,6 @@
 
 namespace App\Listeners;
 
-
 use App\Misc\TransactionDataContainer;
 use App\Models\Meter\MeterToken;
 use App\Sms\SmsTypes;
@@ -36,8 +35,10 @@ class TokenListener
             $api = resolve($transactionContainer->manufacturer->api_name);
         } catch (Exception $e) {
             //no api found
-            Log::critical('No Api is registered for ' . $transactionContainer->manufacturer->name,
-                ['id' => '34758734658734567885458923', 'message' => $e->getMessage()]);
+            Log::critical(
+                'No Api is registered for ' . $transactionContainer->manufacturer->name,
+                ['id' => '34758734658734567885458923', 'message' => $e->getMessage()]
+            );
             event('transaction.failed', $transactionContainer->transaction);
             return;
         }
@@ -58,23 +59,29 @@ class TokenListener
             //add token to tokenData
             $transactionContainer->token = $this->token;
         } catch (Exception $e) {
-            Log::critical($transactionContainer->manufacturer->name . ' Token listener fails ',
-                ['id' => '4627573927', 'message' => $e->getMessage()]);
+            Log::critical(
+                $transactionContainer->manufacturer->name . ' Token listener fails ',
+                ['id' => '4627573927', 'message' => $e->getMessage()]
+            );
             event('transaction.failed', $transactionContainer->transaction);
             return;
         }
 
         //send token via sms
-        $messageSent = event('sms.send.token',
+        $messageSent = event(
+            'sms.send.token',
             [
                 'sender' => $transactionContainer->transaction->sender,
                 'data' => $transactionContainer->transaction,
                 'trigger' => $transactionContainer->transaction,
-            ]);
+            ]
+        );
 
         if ($messageSent) {
             //payment successful
-            event('payment.successful', [
+            event(
+                'payment.successful',
+                [
                 'amount' => $transactionContainer->transaction->amount,
                 'paymentService' => 'vodacom', //$tokenData->transaction->owner_type,
                 'paymentType' => 'energy',
@@ -82,9 +89,8 @@ class TokenListener
                 'paidFor' => $this->token,
                 'payer' => $transactionContainer->meterParameter->owner,
                 'transaction' => $transactionContainer->transaction,
-            ]);
-
-
+                ]
+            );
         }
     }
 

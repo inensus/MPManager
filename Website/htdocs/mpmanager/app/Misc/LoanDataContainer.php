@@ -33,10 +33,11 @@ class LoanDataContainer
         $loans = $this->getCustomerDueRates($this->meterOwner);
 
         foreach ($loans as $loan) {
-
             if ($loan->remaining > $this->transaction->amount) {// money is not enough to cover the whole rate
                 //add payment history for the loan
-                event('payment.successful', [
+                event(
+                    'payment.successful',
+                    [
                     'amount' => $this->transaction->amount,
                     'paymentService' => $this->transaction->original_transaction_type,
                     'paymentType' => 'loan rate',
@@ -44,7 +45,8 @@ class LoanDataContainer
                     'paidFor' => $loan,
                     'payer' => $this->meterOwner,
                     'transaction' => $this->transaction,
-                ]);
+                    ]
+                );
                 $loan->remaining -= $this->transaction->amount;
                 $loan->update();
 
@@ -57,7 +59,9 @@ class LoanDataContainer
                 break;
             } else {
                 //add payment history for the loan
-                event('payment.successful', [
+                event(
+                    'payment.successful',
+                    [
                     'amount' => $loan->remaining,
                     'paymentService' => $this->transaction->original_transaction_type,
                     'paymentType' => 'loan rate',
@@ -65,7 +69,8 @@ class LoanDataContainer
                     'paidFor' => $loan,
                     'payer' => $this->meterOwner,
                     'transaction' => $this->transaction,
-                ]);
+                    ]
+                );
                 $this->paid_rates[] = [
                     'asset_type_name' => $loan->assetPerson->assetType->name,
                     'paid' => $loan->remaining,
@@ -116,6 +121,4 @@ class LoanDataContainer
         }
         return $meter->meterParameter->owner;
     }
-
-
 }

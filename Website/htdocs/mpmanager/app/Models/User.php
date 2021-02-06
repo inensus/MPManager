@@ -10,10 +10,10 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 
 /**
  * Class User
+ *
  * @package App\Models
  *
  * @property int $id
- *
  */
 class User extends Authenticatable implements JWTSubject
 {
@@ -80,7 +80,8 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->hasMany(AgentBalanceHistory::class);
     }
-    public function assignedAppliance(){
+    public function assignedAppliance()
+    {
         return $this->hasMany(AgentAssignedAppliances::class);
     }
 }

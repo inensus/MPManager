@@ -24,7 +24,7 @@ use Inensus\Ticket\Models\Ticket;
 /**
  * Class Person
  *
- * @package App
+ * @package  App
  * @property int $id
  * @property string $title
  * @property string $education
@@ -34,7 +34,6 @@ use Inensus\Ticket\Models\Ticket;
  * @property string $sex TODO: replace with gender
  * @property int $nationality
  * @property int $is_customer
- *
  */
 class Person extends BaseModel implements HasAddressesInterface, RoleInterface
 {
@@ -86,17 +85,16 @@ class Person extends BaseModel implements HasAddressesInterface, RoleInterface
     {
         return $this->belongsTo(CustomerGroup::class);
     }
-   public function agent(){
+    public function agent()
+    {
         return $this->hasOne(Agent::Class);
-   }
-    public function agentSoldAppliance(){
+    }
+    public function agentSoldAppliance()
+    {
         return $this->hasOne(AgentSoldAppliance::Class);
     }
     public function __toString()
     {
         return sprintf('%s %s', $this->name, $this->surname);
-
     }
-
-
 }

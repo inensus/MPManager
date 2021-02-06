@@ -3,7 +3,6 @@
 
 namespace App\Models;
 
-
 use App\Models\Meter\MeterTariff;
 use App\Models\Person\Person;
 use Illuminate\Database\Eloquent\Model;

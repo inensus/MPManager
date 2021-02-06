@@ -3,7 +3,6 @@
 
 namespace App\Listeners;
 
-
 use App\Models\Log;
 use Illuminate\Events\Dispatcher;
 
@@ -33,5 +32,4 @@ class LogListener
     {
         $event->listen('new.log', '\App\Listeners\LogListener@storeLog');
     }
-
 }

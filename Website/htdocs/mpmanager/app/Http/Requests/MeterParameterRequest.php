@@ -6,6 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * Class MeterParameterRequest
+ *
  * @package App\Http\Requests
  *
  * @bodyParam meter_id int required

@@ -4,6 +4,7 @@ namespace App\Models;
 
 /**
  * Class Energy
+ *
  * @package App\Models
  *
  * @property int $meter_id

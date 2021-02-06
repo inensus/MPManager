@@ -34,16 +34,20 @@ class AgentBalanceHistoryController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Agent $agent
-     * @param CreateAgentBalanceHistoryRequest $request
+     * @param  Agent                            $agent
+     * @param  CreateAgentBalanceHistoryRequest $request
      * @return ApiResource
      */
     public function store(Agent $agent, CreateAgentBalanceHistoryRequest $request): ApiResource
     {
-        $agentBalanceHistory = $this->agentBalanceHistoryService->create($agent,
-            $request->only([
+        $agentBalanceHistory = $this->agentBalanceHistoryService->create(
+            $agent,
+            $request->only(
+                [
                 'amount'
-            ]));
+                ]
+            )
+        );
 
         return new ApiResource($agentBalanceHistory);
     }
@@ -52,7 +56,7 @@ class AgentBalanceHistoryController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param AgentBalanceHistory $agent_balance_history
+     * @param  AgentBalanceHistory $agent_balance_history
      * @return void
      */
     public function show(agentBalanceHistory $agent_balance_history)
@@ -64,8 +68,8 @@ class AgentBalanceHistoryController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param AgentBalanceHistory $agent_balance_history
+     * @param  \Illuminate\Http\Request $request
+     * @param  AgentBalanceHistory      $agent_balance_history
      * @return void
      */
     public function update(Request $request, agentBalanceHistory $agent_balance_history)
@@ -76,7 +80,7 @@ class AgentBalanceHistoryController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param AgentBalanceHistory $agent_balance_history
+     * @param  AgentBalanceHistory $agent_balance_history
      * @return void
      */
     public function destroy(agentBalanceHistory $agent_balance_history)
@@ -88,8 +92,8 @@ class AgentBalanceHistoryController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param Agent $agent
-     * @param Request $request
+     * @param  Agent   $agent
+     * @param  Request $request
      * @return ApiResource
      */
     public function indexWeb(Agent $agent, Request $request)
@@ -98,5 +102,4 @@ class AgentBalanceHistoryController extends Controller
         $balanceHistories = $this->agentBalanceHistoryService->agentBalanceHistories($agent->id);
         return new ApiResource($balanceHistories);
     }
-
 }

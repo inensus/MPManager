@@ -3,7 +3,6 @@
 
 namespace App\Services;
 
-
 use App\Models\Agent;
 use App\Models\Person\Person;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -28,8 +27,9 @@ class AgentTicketService implements IAgentRelatedService
 
     /**
      * AgentTicketService constructor.
+     *
      * @param BoardService $boardService
-     * @param CardService $cardService
+     * @param CardService  $cardService
      */
     public function __construct(
         BoardService $boardService,
@@ -46,25 +46,30 @@ class AgentTicketService implements IAgentRelatedService
     public function list($agentId)
     {
         $tickets = Ticket::with('category', 'owner')
-            ->whereHasMorph('creator', [Agent::class],
+            ->whereHasMorph(
+                'creator',
+                [Agent::class],
                 static function ($q) use ($agentId) {
                     $q->where('id', $agentId);
-                })
+                }
+            )
             ->latest()
             ->paginate(5);
 
 
         return $this->getTicketDetailsFromSource($tickets);
-
     }
 
     public function listByCustomer($agentId, $customerId)
     {
         return Ticket::with(['category','owner'])
-            ->whereHasMorph('creator', [Agent::class],
+            ->whereHasMorph(
+                'creator',
+                [Agent::class],
                 static function ($q) use ($agentId) {
                     $q->where('id', $agentId);
-                })
+                }
+            )
             ->where('owner_id', $customerId)
             ->latest()
             ->paginate();
@@ -81,11 +86,10 @@ class AgentTicketService implements IAgentRelatedService
         }
 
         return $ticketList;
-
     }
 
     /**
-     * @param $ticketData
+     * @param  $ticketData
      * @return mixed
      * @throws TicketOwnerNotFoundException
      */
@@ -117,17 +121,18 @@ class AgentTicketService implements IAgentRelatedService
 
         $ticketId = $this->tickets->createTicket($trelloParams)->id;
 
-        $ticket = Ticket::make([
+        $ticket = Ticket::make(
+            [
             'ticket_id' => $ticketId,
             'category_id' => $categoryId,
             'creator_type' => 'agent',
             'creator_id' => $creator->id
-        ]);
+            ]
+        );
 
         $ticket->owner()->associate($owner);
         $ticket->save();
         return $ticket;
-
     }
 
     public function getBatch($tickets)
@@ -135,16 +140,12 @@ class AgentTicketService implements IAgentRelatedService
         $ticketData = [];
 
         foreach ($tickets as $index => $ticket) {
-
             $tickets[$index]['ticket'] = $this->getTicket($ticket->ticket_id);
             $tickets[$index]['actions'] = $this->getActions($ticket->ticket_id);
             //$t['self'] = $ticket;
-
-
         }
 
         return $tickets;
-
     }
 
     public function getTicket($ticketId)

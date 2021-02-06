@@ -14,15 +14,14 @@ use Tymon\JWTAuth\Exceptions\UserNotDefinedException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Http\Middleware\BaseMiddleware;
 
-
 class JwtMiddleware extends BaseMiddleware
 {
     /**
      * Handle an incoming request.
      *
-     * @param Request $request
-     * @param Closure $next
-     * @param string $type
+     * @param  Request $request
+     * @param  Closure $next
+     * @param  string  $type
      * @return mixed
      */
     public function handle($request, Closure $next, $type = 'user')
@@ -38,7 +37,6 @@ class JwtMiddleware extends BaseMiddleware
                 throw new UserNotDefinedException('Authentication failed');
             }
         } catch (Exception $e) {
-
             if ($e instanceof ModelNotFoundException) {
                 return $this->generateResponse('No user found for authentication');
             }

@@ -5,7 +5,6 @@ namespace App\Models\Transaction;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-
 /**
  * @property mixed conversation_id
  * @property mixed originator_conversation_id
@@ -31,6 +30,4 @@ class VodacomTransaction extends BaseModel implements IRawTransaction
     {
         return $this->morphMany(TransactionConflicts::class, 'transaction');
     }
-
-
 }

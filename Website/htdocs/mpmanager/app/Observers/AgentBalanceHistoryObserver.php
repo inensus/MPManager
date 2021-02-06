@@ -3,7 +3,6 @@
 
 namespace App\Observers;
 
-
 use App\Models\Agent;
 use App\Models\AgentAssignedAppliances;
 use App\Models\AgentBalanceHistory;
@@ -12,7 +11,6 @@ use App\Models\AgentCommission;
 use App\Models\AgentReceipt;
 use App\Models\AgentSoldAppliance;
 use App\Models\Transaction\AgentTransaction;
-
 
 class AgentBalanceHistoryObserver
 {
@@ -26,7 +24,7 @@ class AgentBalanceHistoryObserver
     /**
      * Handle the asset person "updated" event.
      *
-     * @param AgentBalanceHistory $agentBalanceHistory
+     * @param  AgentBalanceHistory $agentBalanceHistory
      * @return void
      */
     public function created(AgentBalanceHistory $agentBalanceHistory)
@@ -61,6 +59,5 @@ class AgentBalanceHistoryObserver
             $agent->commission_revenue = 0;
             $agent->update();
         }
-
     }
 }

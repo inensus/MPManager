@@ -8,7 +8,6 @@
 
 namespace App\Models\Role;
 
-
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 
 interface RoleInterface

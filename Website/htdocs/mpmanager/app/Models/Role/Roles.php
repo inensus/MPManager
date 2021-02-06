@@ -8,10 +8,8 @@
 
 namespace App\Models\Role;
 
-
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
 
 class Roles extends BaseModel
 {

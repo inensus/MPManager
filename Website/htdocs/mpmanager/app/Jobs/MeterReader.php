@@ -26,7 +26,7 @@ class MeterReader implements ShouldQueue
      * Create a new job instance.
      *
      * @param CalinReadMeter $meterReader
-     * @param Meter $meters
+     * @param Meter          $meters
      */
     public function __construct(CalinReadMeter $meterReader, Meter $meters)
     {

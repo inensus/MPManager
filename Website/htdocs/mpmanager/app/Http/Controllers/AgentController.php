@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Services\AgentService;
 use App\Http\Requests\CreateAgentRequest;
 use App\Http\Resources\ApiResource;
@@ -70,20 +69,24 @@ class AgentController extends Controller
         $responseMessage = $this->agentService->resetPassword($request->input('email'));
 
         if ($responseMessage == 'Invalid email.') {
-            return $response->setStatusCode(422)->setContent([
+            return $response->setStatusCode(422)->setContent(
+                [
                 'data' => [
                     'message' => $responseMessage,
                     'status_code' => 400
                 ]
-            ]);
+                ]
+            );
         }
 
-        return $response->setStatusCode(200)->setContent([
+        return $response->setStatusCode(200)->setContent(
+            [
             'data' => [
                 'message' => $responseMessage,
                 'status_code' => 200
             ]
-        ]);
+            ]
+        );
     }
 
     public function setFirebaseToken(Request $request): ApiResource
@@ -100,7 +103,8 @@ class AgentController extends Controller
         $agent = Agent::find(auth('agent_api')->user()->id);
         $average = $this->agentService->getTransactionAverage($agent);
         $since = $this->agentService->getLastReceiptDate($agent);
-        return $response->setStatusCode(200)->setContent([
+        return $response->setStatusCode(200)->setContent(
+            [
             'data' => [
                 'balance' => $agent->balance,
                 'profit' => $agent->commission_revenue,
@@ -109,7 +113,8 @@ class AgentController extends Controller
                 'since' => $since,
                 'status_code' => 200
             ]
-        ]);
+            ]
+        );
     }
 
     public function showBalanceHistories(Request $request, Response $response)
@@ -117,13 +122,11 @@ class AgentController extends Controller
         $agent = Agent::find(auth('agent_api')->user()->id);
         $graphValues = $this->agentService->getGraphValues($agent);
         return $graphValues;
-
     }
 
     public function showRevenuesWeekly(Request $request, Response $response)
     {
         $agent = Agent::find(auth('agent_api')->user()->id);
         return $this->agentService->getAgentRevenuesWeekly($agent);
-
     }
 }

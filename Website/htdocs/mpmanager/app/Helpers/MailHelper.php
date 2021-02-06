@@ -3,7 +3,6 @@
 
 namespace App\Helpers;
 
-
 use App\Exceptions\MailNotSentException;
 use PHPMailer\PHPMailer\Exception as PHPMailerException;
 use PHPMailer\PHPMailer\PHPMailer;
@@ -36,15 +35,13 @@ class MailHelper
         $this->mailer->Password = $this->mailSettings['password'];
         $this->mailer->From = $this->mailSettings['default_sender'];
         $this->mailer->isSMTP();                       // telling the class to use SMTP
-
-
     }
 
     /**
-     * @param $to
-     * @param $title
-     * @param $body
-     * @param null $attachment
+     * @param  $to
+     * @param  $title
+     * @param  $body
+     * @param  null $attachment
      * @throws MailNotSentException
      * @throws PHPMailerException
      */

@@ -2,25 +2,15 @@
 
 namespace App\Jobs;
 
-use App\Exceptions\AccessRates\NoAccessRateFound;
-use App\Exceptions\Meters\MeterIsNotAssignedToCustomer;
-use App\Exceptions\Meters\MeterIsNotInUse;
-use App\Exceptions\Tariffs\TariffNotFound;
-
-
-use App\Misc\LoanDataContainer;
 use App\Misc\TransactionDataContainer;
 use App\Models\Transaction\Transaction;
 use App\PaymentHandler\AccessRate;
 use Exception;
 use Illuminate\Bus\Queueable;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
-
-use Illuminate\Support\Facades\Log;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use function config;
 
 class ProcessPayment implements ShouldQueue
@@ -34,6 +24,7 @@ class ProcessPayment implements ShouldQueue
 
     /**
      * Create a new job instance.
+     *
      * @param int $transaction_id
      */
     public function __construct(int $transaction_id)
@@ -43,27 +34,30 @@ class ProcessPayment implements ShouldQueue
 
     /**
      * Execute the job.
+     *
      * @return void
      */
     public function handle(): void
     {
         $transaction = Transaction::find($this->transactionID);
-        EnergyTransactionProcessor::dispatch($transaction)->allOnConnection('redis')->onQueue(config('services.queues.energy'));
-
+        EnergyTransactionProcessor::dispatch($transaction)
+            ->allOnConnection('redis')
+            ->onQueue(config('services.queues.energy'));
     }
 
 
     /**
      * Entry point for Loan Payments
+     *
      * @param Transaction $transaction
      */
     private function handleLoanPayment(Transaction $transaction): void
     {
-
     }
 
     /**
      * Entry point for Energy Payments
+     *
      * @param Transaction $transaction
      */
     private function handleEnergyPayment(Transaction $transaction): void
@@ -83,7 +77,5 @@ class ProcessPayment implements ShouldQueue
         // if token success send sms
 
         //fire transaction successful event.
-
-
     }
 }

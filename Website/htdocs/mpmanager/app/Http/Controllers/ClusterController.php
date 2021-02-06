@@ -8,7 +8,6 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Events\ClusterEvent;
 use App\Http\Requests\ClusterRequest;
 use App\Http\Resources\ApiResource;
@@ -47,11 +46,11 @@ class ClusterController
     /**
      * ClusterController constructor.
      *
-     * @param ClusterService $clusterService
-     * @param CityService $cityService
-     * @param MeterService $meterService
+     * @param ClusterService     $clusterService
+     * @param CityService        $cityService
+     * @param MeterService       $meterService
      * @param TransactionService $transactionService
-     * @param Cluster $cluster
+     * @param Cluster            $cluster
      */
     public function __construct(
         ClusterService $clusterService,
@@ -78,7 +77,6 @@ class ClusterController
         } else {
             $dateRange[0] = date('Y-m-d', strtotime('today - 31 days'));
             $dateRange[1] = date('Y-m-d', strtotime('today - 1 days'));
-
         }
         $clusters = $this->clusterService->getClusterList();
 
@@ -129,6 +127,5 @@ class ClusterController
         event(new ClusterEvent($this->cluster, $geoType, $geoData));
 
         return new ApiResource($this->cluster);
-
     }
 }

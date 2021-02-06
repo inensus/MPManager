@@ -47,9 +47,9 @@ class AssetRateChecker extends Command
     /**
      * Create a new command instance.
      *
-     * @param AssetRate $assetRate
-     * @param BoardService $boardService
-     * @param CardService $cardService
+     * @param AssetRate     $assetRate
+     * @param BoardService  $boardService
+     * @param CardService   $cardService
      * @param TicketService $ticketService
      */
     public function __construct(
@@ -108,6 +108,7 @@ class AssetRateChecker extends Command
     /**
      * Finds rates which are almost due and reminds the customer
      * and creates also a ticket for the customer support
+     *
      * @param int $difference
      */
     private function remindUpComingRates(int $difference): void
@@ -117,9 +118,12 @@ class AssetRateChecker extends Command
         $due_asset_rates = $this->assetRate::with(['assetPerson.assetType', 'assetPerson.person.addresses'])
             ->whereDate('due_date', '<=', $rate_date)
             ->where('remaining', '>', 0)
-            ->whereHas('assetPerson.person.addresses', static function ($q) {
-                $q->where('is_primary', 1);
-            })
+            ->whereHas(
+                'assetPerson.person.addresses',
+                static function ($q) {
+                    $q->where('is_primary', 1);
+                }
+            )
             ->get();
 
 
@@ -131,18 +135,19 @@ class AssetRateChecker extends Command
 
 
             $this->createReminderTicket($asset_rate);
-
         }
     }
 
     private function sendReminderSms(AssetRate $assetRate, int $smsType): void
     {
-        event('sms.send',
+        event(
+            'sms.send',
             [
                 'sender' => $assetRate->assetPerson->person->addresses[0]->phone,
                 'data' => $assetRate,
                 'trigger' => $assetRate,
-            ]);
+            ]
+        );
     }
 
 
@@ -183,6 +188,5 @@ class AssetRateChecker extends Command
         } catch (Exception $exception) {
             echo 'Ticket Creation failed with following reason :' . $exception->getMessage();
         }
-
     }
 }

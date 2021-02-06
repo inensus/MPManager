@@ -37,16 +37,15 @@ class CreatePiggyBankEntry implements ShouldQueue
     {
         echo "create piggy bank " . $this->meterParameter->tariff->id . "\n";
         if ($socialTariff = $this->meterParameter->tariff()->first()->socialTariff) {
-            $this->meterParameter->socialTariffPiggyBank()->create([
+            $this->meterParameter->socialTariffPiggyBank()->create(
+                [
                 'savings' => $socialTariff->initial_energy_budget,
                 'social_tariff_id' => $socialTariff->id,
-            ]);
+                ]
+            );
 
 
             echo "piggy bank account created \n";
         }
-
-
     }
-
 }

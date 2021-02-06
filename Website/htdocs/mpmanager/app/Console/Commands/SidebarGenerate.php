@@ -25,6 +25,6 @@ class SidebarGenerate extends Command
     {
         $path = 'resources/assets/js/components/Sidebar/menu.json';
         $data = $this->menuItemsService->getMenuItems();
-        file_put_contents($path,$data);
+        file_put_contents($path, $data);
     }
 }

@@ -3,7 +3,6 @@
 
 namespace App\Services;
 
-
 use App\Models\Solar;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -32,7 +31,6 @@ class SolarService implements ISolarService
         ];
 
         return Solar::create($solarRecord);
-
     }
 
     public function list()
@@ -63,11 +61,16 @@ class SolarService implements ISolarService
     private function filter(Builder $query): Builder
     {
         if ($startDate = request()->input('start_date')) {
-            $query->where('time_stamp', '>=',
-                Carbon::createFromTimestamp($startDate)->format('Y-m-d H:i:s'));
+            $query->where(
+                'time_stamp',
+                '>=',
+                Carbon::createFromTimestamp($startDate)->format('Y-m-d H:i:s')
+            );
         }
         if ($endDate = request()->input('end_date')) {
-            $query->where('time_stamp', '<=',
+            $query->where(
+                'time_stamp',
+                '<=',
                 Carbon::createFromTimestamp($endDate)->format('Y-m-d H:i:s')
             );
         }

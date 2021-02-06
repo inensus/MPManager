@@ -8,7 +8,6 @@
 
 namespace App\Http\Services;
 
-
 use DateInterval;
 use DatePeriod;
 use Exception;
@@ -53,7 +52,6 @@ class PeriodService
 
         foreach ($period as $p) {
             if ($interval === 'weekMonth') {
-
                 $mPeriod = new DatePeriod(
                     date_create($p->format('o-m-1')),
                     new DateInterval('P1W'),
@@ -69,8 +67,6 @@ class PeriodService
             } else {
                 $result[$p->format('o-W')] = $initialData;
             }
-
-
         }
 
         return $result;

@@ -42,6 +42,4 @@ class GeographicalInformation extends BaseModel
     {
         return $this->hasMany(City::class);
     }
-
-
 }

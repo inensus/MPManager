@@ -13,7 +13,6 @@ class ManufacturerController extends Controller
 {
     /**
      * Display a listing of the resource.
-     *
      */
     public function index()
     {
@@ -25,8 +24,9 @@ class ManufacturerController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     * @param ManufacturerRequest $request
-     *@return ApiResource
+     *
+     * @param  ManufacturerRequest $request
+     * @return ApiResource
      */
     public function store(ManufacturerRequest $request)
     {
@@ -53,6 +53,7 @@ class ManufacturerController extends Controller
 
     /**
      * Display the specified resource.
+     *
      * @param  Manufacturer $manufacturer
      * @return ApiResource
      */
@@ -67,7 +68,7 @@ class ManufacturerController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
+     * @param  Request      $request
      * @param  Manufacturer $manufacturer
      * @return Response
      */

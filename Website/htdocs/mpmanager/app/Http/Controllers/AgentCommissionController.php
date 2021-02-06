@@ -33,7 +33,7 @@ class AgentCommissionController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param CreateAgentCommissionRequest $request
+     * @param  CreateAgentCommissionRequest $request
      * @return ApiResource
      */
     public function store(CreateAgentCommissionRequest $request)
@@ -46,8 +46,8 @@ class AgentCommissionController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
-     * @param AgentCommission $commission
+     * @param  Request         $request
+     * @param  AgentCommission $commission
      * @return void
      */
     public function update(CreateAgentCommissionRequest $request, AgentCommission $commission): ApiResource
@@ -59,14 +59,11 @@ class AgentCommissionController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param AgentCommission $commission
+     * @param  AgentCommission $commission
      * @return void
      */
     public function destroy(AgentCommission $commission): ApiResource
     {
         return new ApiResource($this->agentCommissionService->delete($commission));
     }
-
-
 }
-

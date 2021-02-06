@@ -16,14 +16,14 @@
         "laravel/helpers": "^1.2",
         "laravel/horizon": "^4.0",
         "laravel/tinker": "^2.0",
+        "laravel/ui": "^2.0.3",
         "mpociot/laravel-apidoc-generator": "^4.4",
         "phpmailer/phpmailer": "^6.1.5",
         "phpoffice/phpspreadsheet": "1.11.0",
         "predis/predis": "1.1.1",
         "pusher/pusher-php-server": "4.1.1",
         "tymon/jwt-auth": "1.0.0",
-        "webpatser/laravel-uuid": "^3.0",
-        "laravel/ui": "^2.0.3"
+        "webpatser/laravel-uuid": "^3.0"
     },
     "require-dev": {
         "facade/ignition": "^2.0",
@@ -32,7 +32,8 @@
         "nunomaduro/collision": "^4.1",
         "phpunit/phpunit": "^8.5",
         "beyondcode/laravel-dump-server": "^1.0",
-        "filp/whoops": "^2.0"
+        "filp/whoops": "^2.0",
+        "squizlabs/php_codesniffer": "*"
     },
     "config": {
         "optimize-autoloader": true,

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class SocialTariff
+ *
  * @package App\Models
  *
  * @property int $id
@@ -18,5 +19,4 @@ use Illuminate\Database\Eloquent\Model;
 class SocialTariff extends Model
 {
     protected $guarded = [];
-
 }

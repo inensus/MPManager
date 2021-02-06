@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-
 use App\Helpers\MailHelper;
 use App\ManufacturerApi\CalinApi;
 use App\ManufacturerApi\CalinSmartApi;
@@ -84,45 +83,71 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
 
-        $this->app->singleton('CalinApi', static function ($app) {
-            return new CalinApi(new Client());
-        });
-        $this->app->singleton('CalinSmartApi', static function ($app) {
-            return new CalinSmartApi(new Client());
-        });
+        $this->app->singleton(
+            'CalinApi',
+            static function ($app) {
+                return new CalinApi(new Client());
+            }
+        );
+        $this->app->singleton(
+            'CalinSmartApi',
+            static function ($app) {
+                return new CalinSmartApi(new Client());
+            }
+        );
 
 
-        $this->app->singleton('MailProvider', static function ($app) {
-            return new MailHelper(new PHPMailer());
-        });
+        $this->app->singleton(
+            'MailProvider',
+            static function ($app) {
+                return new MailHelper(new PHPMailer());
+            }
+        );
 
-        /** Use the current sms provider */
+        /**
+ * Use the current sms provider
+*/
         //$this->app->singleton('SmsProvider', function ($app) {
         //   return new \App\Sms\Bongo();
         //});
         /*Use android device as sms gateway*/
-        $this->app->singleton('SmsProvider', static function ($app) {
-            return new AndroidGateway();
-        });
-        $this->app->singleton('LoanDataContainerProvider', static function ($app) {
-            return new LoanDataContainer();
-        });
-        $this->app->singleton('VodacomPaymentProvider', static function () {
-            return new \App\Transaction\VodacomTransaction();
-        });
+        $this->app->singleton(
+            'SmsProvider',
+            static function ($app) {
+                return new AndroidGateway();
+            }
+        );
+        $this->app->singleton(
+            'LoanDataContainerProvider',
+            static function ($app) {
+                return new LoanDataContainer();
+            }
+        );
+        $this->app->singleton(
+            'VodacomPaymentProvider',
+            static function () {
+                return new \App\Transaction\VodacomTransaction();
+            }
+        );
 
-        $this->app->singleton('AirtelPaymentProvider', static function () {
-            return new AirtelTransaction(
-                new \App\Models\Transaction\AirtelTransaction(),
-                new Transaction()
-            );
-        });
-        $this->app->singleton('AgentPaymentProvider', static function () {
-            return new AgentTransaction(
-                new \App\Models\Transaction\AgentTransaction(),
-                new Transaction(), new FirebaseService()
-            );
-        });
-
+        $this->app->singleton(
+            'AirtelPaymentProvider',
+            static function () {
+                return new AirtelTransaction(
+                    new \App\Models\Transaction\AirtelTransaction(),
+                    new Transaction()
+                );
+            }
+        );
+        $this->app->singleton(
+            'AgentPaymentProvider',
+            static function () {
+                return new AgentTransaction(
+                    new \App\Models\Transaction\AgentTransaction(),
+                    new Transaction(),
+                    new FirebaseService()
+                );
+            }
+        );
     }
 }

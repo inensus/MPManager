@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Exceptions\WeatherParametersMissing;
 use GuzzleHttp\Client;
-use Illuminate\Support\Facades\Log;
 use Psr\Http\Message\ResponseInterface;
 use function config;
 
@@ -32,7 +31,8 @@ class OpenWeatherMap implements IWeatherDataProvider
         if (count($geoLocation) !== 2) {
             throw new WeatherParametersMissing('Lat and Lon should provided to get weather data');
         }
-        return $this->httpClient->get('https://api.openweathermap.org/data/2.5/weather?APPID=' . $this->apiKey . '&units=metric&lat=' . $geoLocation[0] . '&lon=' . $geoLocation[1]);
+        return $this->httpClient->get('https://api.openweathermap.org/data/2.5/weather?APPID=' . $this->apiKey .
+            '&units=metric&lat=' . $geoLocation[0] . '&lon=' . $geoLocation[1]);
     }
 
     /**
@@ -45,6 +45,7 @@ class OpenWeatherMap implements IWeatherDataProvider
         if (count($geoLocation) !== 2) {
             throw new WeatherParametersMissing('Lat and Lon should provided to get weather data');
         }
-        return $this->httpClient->get('https://api.openweathermap.org/data/2.5/forecast?APPID=' . $this->apiKey . '&units=metric&lat=' . $geoLocation[0] . '&lon=' . $geoLocation[1]);
+        return $this->httpClient->get('https://api.openweathermap.org/data/2.5/forecast?APPID=' . $this->apiKey .
+            '&units=metric&lat=' . $geoLocation[0] . '&lon=' . $geoLocation[1]);
     }
 }

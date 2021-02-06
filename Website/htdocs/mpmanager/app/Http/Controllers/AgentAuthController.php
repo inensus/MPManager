@@ -7,7 +7,7 @@ use App\Services\AgentService;
 use Illuminate\Http\JsonResponse;
 
 /**
- * @group Agent-Authenticator
+ * @group   Agent-Authenticator
  * Class AgentAuthController
  * Responsible for AgentAPP-API-Call authentications.
  * @package App\Http\Controllers
@@ -26,14 +26,14 @@ class AgentAuthController extends Controller
     {
         $this->agentService = $agentService;
         $this->middleware('auth:agent_api', ['except' => ['login']]);
-
     }
 
     /**
      * Get JWT via given credentials.
+     *
      * @bodyParam email string required
      * @bodyParam password string required
-     * @return JsonResponse
+     * @return    JsonResponse
      */
     public function login()
     {
@@ -74,6 +74,7 @@ class AgentAuthController extends Controller
     /**
      * Refresh a token.
      * A valid JWT token has to be sent to refresh the token.
+     *
      * @return JsonResponse
      */
     public function refresh()
@@ -90,11 +91,13 @@ class AgentAuthController extends Controller
      */
     protected function respondWithToken($token)
     {
-        return response()->json([
+        return response()->json(
+            [
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth('agent_api')->factory()->getTTL() * 60,
             'agent' => auth('agent_api')->user(),
-        ]);
+            ]
+        );
     }
 }

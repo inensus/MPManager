@@ -36,7 +36,7 @@ class Handler extends ExceptionHandler
     /**
      * Report or log an exception.
      *
-     * @param Throwable $exception
+     * @param  Throwable $exception
      * @return void
      */
     public function report(Throwable $exception)
@@ -47,8 +47,8 @@ class Handler extends ExceptionHandler
     /**
      * Render an exception into an HTTP response.
      *
-     * @param Request $request
-     * @param Throwable $exception
+     * @param  Request   $request
+     * @param  Throwable $exception
      * @return Response
      */
     public function render($request, Throwable $exception)
@@ -59,6 +59,5 @@ class Handler extends ExceptionHandler
         }
 
         return parent::render($request, $exception);
-
     }
 }

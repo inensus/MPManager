@@ -37,13 +37,10 @@ trait RelationsManager
             self::initAllRelations();
         }
         if ($type) {
-
             return  self::$relationsList[strtolower($type)];
-
         } else {
             return self::$relationsList;
         }
-
     }
 
     protected static function initAllRelations()
@@ -53,17 +50,16 @@ trait RelationsManager
         $reflect = new ReflectionClass(static::class);
 
         foreach ($reflect->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-            /** @var ReflectionMethod $method */
+            /**
+ * @var ReflectionMethod $method
+*/
 
             if ($method->hasReturnType()) {
-
                 foreach (self::$relationClasses as $key => $relationClass) {
                     if ((string)$method->getReturnType() === $relationClass) {
                         self::$relationsList[$key][] = $method->getName();
                     }
                 }
-
-
             }
         }
     }

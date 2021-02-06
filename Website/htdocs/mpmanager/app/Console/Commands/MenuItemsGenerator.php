@@ -3,7 +3,6 @@
 
 namespace App\Console\Commands;
 
-
 use App\Services\MenuItemsService;
 use Illuminate\Console\Command;
 
@@ -27,10 +26,10 @@ class MenuItemsGenerator extends Command
     private $menuItemService;
 
     public function __construct(MenuItemsService $menuItemService)
-     {
+    {
          parent::__construct();
          $this->menuItemService=$menuItemService;
-     }
+    }
 
     /**
      * Execute the console command.
@@ -41,7 +40,7 @@ class MenuItemsGenerator extends Command
     {
         $menuItem = $this->argument('menuItem');
         $subMenuItems = $this->argument('subMenuItems');
-        $this->menuItemService->createMenuItems($menuItem,$subMenuItems);
+        $this->menuItemService->createMenuItems($menuItem, $subMenuItems);
         $this->info('Menu item records has been created.');
     }
 }

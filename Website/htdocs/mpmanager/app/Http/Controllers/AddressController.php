@@ -16,6 +16,7 @@ class AddressController extends Controller
 {
     /**
      * The address model.
+     *
      * @var Address
      */
     private $address;
@@ -27,6 +28,7 @@ class AddressController extends Controller
 
     /**
      * A list of all registered addresses
+     *
      * @return ApiResource
      */
     public function index(): ApiResource
@@ -38,7 +40,8 @@ class AddressController extends Controller
 
     /**
      * The detail of a given address id
-     * @param integer $id
+     *
+     * @param  integer $id
      * @return ApiResource
      */
     public function show($id): ApiResource
@@ -50,7 +53,7 @@ class AddressController extends Controller
 
 
     /**
-     * @group People
+     * @group    People
      * Create a new address
      * It adds a new address to the given person.
      * @urlParam person required The ID of person
@@ -60,9 +63,9 @@ class AddressController extends Controller
      * @bodyParam street string.
      * @bodyParam city_id string required.
      * @bodyParam primary string required. The flag if the new address is the primary address of that person
-     * @param Person $person
-     * @param CreateAddressRequest $request
-     * @return ApiResource
+     * @param     Person               $person
+     * @param     CreateAddressRequest $request
+     * @return    ApiResource
      */
     public function store(Person $person, CreateAddressRequest $request): ApiResource
     {
@@ -71,26 +74,28 @@ class AddressController extends Controller
         $this->address->street = $request->get('street') ?? '';
         $this->address->city_id = $request->get('city_id');
         $this->address->is_primary = $request->get('primary') ?? 0;
-        if ($this->address->is_primary ) { // set old primary address to not primary
+        if ($this->address->is_primary) { // set old primary address to not primary
             $person->addresses()->where('is_primary', 1)->update(['is_primary' => 0]);
         }
         $this->address->owner()->associate($person);
 
         $this->address->save();
-        $person->update([
-            'updated_at' => date('Y-m-d h:i:s')]);
+        $person->update(
+            [
+            'updated_at' => date('Y-m-d h:i:s')]
+        );
         return new ApiResource($this->address->with('city')->where('id', $this->address->id)->first());
     }
 
     /**
-     * @group UserManagement
+     * @group     UserManagement
      * Create a new address
      * @bodyParam email string. Example: johndoe@mail.com
      * @bodyParam phone string.
      * @bodyParam street string.
      * @bodyParam city_id string required
-     * @param User $user
-     * @return ApiResource
+     * @param     User $user
+     * @return    ApiResource
      *
      * @urlParam user required The ID of Admin
      */
@@ -111,12 +116,12 @@ class AddressController extends Controller
     }
 
     /**
-     * @group UserManagement
+     * @group    UserManagement
      * Get Address
      * @urlParam user required The ID of Admin
-     * @param User $user
-     * @param Request $request
-     * @return ApiResource
+     * @param    User    $user
+     * @param    Request $request
+     * @return   ApiResource
      */
     public function adminAddress(User $user, Request $request)
     {
@@ -126,14 +131,15 @@ class AddressController extends Controller
 
     /**
      * Update Address
-     * @group UserManagement
+     *
+     * @group     UserManagement
      * @bodyParam email string. Example: johndoe@mail.com
      * @bodyParam phone string.
      * @bodyParam street string.
      * @bodyParam city_id string required
-     * @param User $user
-     * @param CreateAddressRequest $request
-     * @return ApiResource
+     * @param     User                 $user
+     * @param     CreateAddressRequest $request
+     * @return    ApiResource
      */
     public function updateAdmin(User $user, CreateAddressRequest $request)
     {
@@ -152,7 +158,7 @@ class AddressController extends Controller
     }
 
     /**
-     * @group People
+     * @group    People
      * Update Address
      * @urlParam person required The ID of person
      *
@@ -162,9 +168,9 @@ class AddressController extends Controller
      * @bodyParam street string.
      * @bodyParam city_id string required.
      * @bodyParam primary string required. The flag if the new address is the primary address of that person
-     * @param Person $person
-     * @return ApiResource
-     * @throws ValidationException
+     * @param     Person $person
+     * @return    ApiResource
+     * @throws    ValidationException
      */
     public function update(Person $person): ApiResource
     {
@@ -182,8 +188,10 @@ class AddressController extends Controller
             $person->addresses()->where('is_primary', 1)->update(['is_primary' => 0]);
         }
         $address->save();
-        $person->update([
-            'updated_at' => date('Y-m-d h:i:s')]);
+        $person->update(
+            [
+            'updated_at' => date('Y-m-d h:i:s')]
+        );
         return new ApiResource($address->with('city')->where('id', $address->id)->first());
     }
 }

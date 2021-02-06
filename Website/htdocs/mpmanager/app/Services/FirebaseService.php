@@ -3,7 +3,6 @@
 
 namespace App\Services;
 
-
 use App\Exceptions\NotificationSendFailedException;
 use Illuminate\Support\Facades\Log;
 use GuzzleHttp\Client;
@@ -13,11 +12,12 @@ class FirebaseService
 {
 
 
-    public function sendNotify($firebaseToken,$body)
+    public function sendNotify($firebaseToken, $body)
     {
         try {
             $httpClient = new Client();
-            $request = $httpClient->post(config()->get('services.sms.android.url'),
+            $request = $httpClient->post(
+                config()->get('services.sms.android.url'),
                 [
                     'headers' => [
                         'Content-Type' => 'application/json',
@@ -31,10 +31,9 @@ class FirebaseService
                 ]
             );
             return (string)$request->getBody();
-        }catch (NotificationSendFailedException $exception){
+        } catch (NotificationSendFailedException $exception) {
             Log::critical("Notification could not send  ". $exception);
             throw  $exception;
         }
-
-     }
+    }
 }

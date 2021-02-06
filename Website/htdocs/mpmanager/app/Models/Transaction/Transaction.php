@@ -2,16 +2,14 @@
 
 namespace App\Models\Transaction;
 
-
 /**
  * Class Transaction
  *
- * @package App
+ * @package  App
  * @property int id
  */
 
 use App\Helpers\RelationsManager;
-use App\Models\Agent;
 use App\Models\BaseModel;
 use App\Models\Meter\Meter;
 use App\Models\Meter\MeterToken;
@@ -26,7 +24,7 @@ use PDO;
 /**
  * Class Transaction
  *
- * @package App
+ * @package  App
  * @property integer id
  * @property integer amount
  * @property string $type
@@ -104,8 +102,10 @@ class Transaction extends BaseModel
             " WHERE transactions.id in (" .
             " SELECT DISTINCT(transactions.id) " .
             " from transactions" .
-            " LEFT join airtel_transactions on transactions.original_transaction_id = airtel_transactions.id and transactions.original_transaction_type = 'airtel_transaction'" .
-            " LEFT join vodacom_transactions on transactions.original_transaction_id = vodacom_transactions.id and transactions.original_transaction_type = 'vodacom_transaction'" .
+            " LEFT join airtel_transactions on transactions.original_transaction_id = airtel_transactions.id and" .
+            " transactions.original_transaction_type = 'airtel_transaction'" .
+            " LEFT join vodacom_transactions on transactions.original_transaction_id = vodacom_transactions.id and" .
+            " transactions.original_transaction_type = 'vodacom_transaction'" .
             " LEFT join meters on transactions.message = meters.serial_number" .
             " LEFT JOIN meter_parameters on meter_parameters.meter_id = meters.id" .
             " LEFT JOIN people on people.id = meter_parameters.owner_id and owner_type = 'person'" .
@@ -125,6 +125,5 @@ class Transaction extends BaseModel
 
         $sth->execute();
         return $sth->fetchAll(PDO::FETCH_ASSOC);
-
     }
 }

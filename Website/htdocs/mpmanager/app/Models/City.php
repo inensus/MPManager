@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 /**
  * Class City
  *
- * @package App
+ * @package  App
  * @property integer id
  * @property string name
  */

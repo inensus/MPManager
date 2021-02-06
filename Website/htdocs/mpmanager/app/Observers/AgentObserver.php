@@ -16,7 +16,6 @@ class AgentObserver
 {
     public function created(Agent $agent)
     {
-
     }
 
     public function updated(Agent $agent): void
@@ -33,6 +32,5 @@ class AgentObserver
         foreach ($agent->addresses()->get() as $address) {
             $address->delete();
         }
-
     }
 }

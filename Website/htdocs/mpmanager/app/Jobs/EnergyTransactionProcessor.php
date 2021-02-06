@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
 
 class EnergyTransactionProcessor implements ShouldQueue
 {
@@ -48,11 +47,8 @@ class EnergyTransactionProcessor implements ShouldQueue
             return;
         }
 
-
         $loanContainer = resolve('LoanDataContainerProvider');
-
         $loanContainer->initialize($transactionData->transaction);
-
         $transactionData->transaction->amount = $loanContainer->loanCost();
         $transactionData->totalAmount = $transactionData->transaction->amount;
         if (empty($loanContainer->paid_rates)) {
@@ -63,12 +59,10 @@ class EnergyTransactionProcessor implements ShouldQueue
             $transactionData->accessRateDebt = AccessRate::payAccessRate($transactionData);
             $transactionData->transaction->amount -= $transactionData->accessRateDebt;
         }
-
         if ($transactionData->transaction->amount > 0) {
             //give transaction to token processor
             $meterParameter = $transactionData->meterParameter;
             $transactionData->amount  = $transactionData->transaction->amount;
-
             $kWhToBeCharged = 0.0;
             // get piggy-bank energy
             try {
@@ -82,24 +76,24 @@ class EnergyTransactionProcessor implements ShouldQueue
                 } else {
                     $transactionData->amount = 0;
                     $kWhToBeCharged += $bankAccount->savings / 1000;
-                    $bankAccount->savings -= $transactionData->amount / (($bankAccount->socialTariff->price / 1000) / 100);
+                    $bankAccount->savings -= $transactionData->amount
+                        / (($bankAccount->socialTariff->price / 1000) / 100);
                 }
-
                 $bankAccount->update();
-
             } catch (ModelNotFoundException $exception) {
                 // meter has no piggy bank account
             }
 
             $transactionData->chargedEnergy = round($kWhToBeCharged, 1);
-            TokenProcessor::dispatch($transactionData)->allOnConnection('redis')->onQueue(\config('services.queues.token'));
-
+            TokenProcessor::dispatch($transactionData)
+                ->allOnConnection('redis')
+                ->onQueue(\config('services.queues.token'));
         } else {
             event('transaction.successful', [$transactionData->transaction]);
-            SmsProcessor::dispatch($transactionData->transaction,
-                SmsTypes::ACCESS_RATE_PAYMENT)->allOnConnection('redis')->onQueue(\config('services.queues.sms'));
+            SmsProcessor::dispatch(
+                $transactionData->transaction,
+                SmsTypes::ACCESS_RATE_PAYMENT
+            )->allOnConnection('redis')->onQueue(\config('services.queues.sms'));
         }
-
     }
 }
-

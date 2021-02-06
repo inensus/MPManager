@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * Class AirtelTransaction
- * @package App
+ *
+ * @package  App
  * @property int $id
  * @property string $interface_id
  * @property string $business_number

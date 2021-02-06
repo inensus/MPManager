@@ -8,12 +8,10 @@
 
 namespace App\ManufacturerApi;
 
-
 use App\Exceptions\Manufacturer\ApiCallDoesNotSupportedException;
 use App\Lib\IManufacturerAPI;
 use App\Misc\TransactionDataContainer;
 use App\Models\Meter\Meter;
-use App\Models\Meter\MeterToken;
 use App\Models\Transaction\Transaction;
 use Exception;
 use GuzzleHttp\Client;
@@ -29,47 +27,30 @@ class CalinApi implements IManufacturerAPI
      */
     protected $api;
     private $transaction;
-    public function __construct(Client $httpClient,
-        Transaction $transaction)
-    {
+
+    public function __construct(
+        Client $httpClient,
+        Transaction $transaction
+    ) {
         $this->api = $httpClient;
-        $this->transaction=$transaction;
-    }
-
-
-    function http_post_json($url, $jsonStr)
-    {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonStr);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                'Content-Type:application/json;charset=utf-8',
-                'Content-Length:' . strlen($jsonStr),
-            ]
-        );
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-
-        return [$httpCode, $response];
+        $this->transaction = $transaction;
     }
 
     public function chargeMeter($transactionContainer): array
     {
 
         $meterParameter = $transactionContainer->meterParameter;
-        $transactionContainer->chargedEnergy += $transactionContainer->amount / ($meterParameter->tariff()->first()->total_price / 100);
-        Log::critical('ENERGY TO BE CHARGED float ' . (float)$transactionContainer->chargedEnergy.' Manufacturer => Calin');
+        $transactionContainer->chargedEnergy += $transactionContainer->amount /
+            ($meterParameter->tariff()->first()->total_price / 100);
+        Log::critical('ENERGY TO BE CHARGED float '
+            . (float)$transactionContainer->chargedEnergy . ' Manufacturer => Calin');
 
         if (config('app.debug')) {
             return [
                 'token' => 'debug-token',
                 'energy' => (float)$transactionContainer->chargedEnergy,
             ];
-        }else{
-
+        } else {
             $meter = $transactionContainer->meter;
             $energy = (float)$transactionContainer->chargedEnergy;
             $timestamp = time();
@@ -79,7 +60,8 @@ class CalinApi implements IManufacturerAPI
                 $meter->serial_number,
                 'CreditToken',
                 $energy,
-                $timestamp);
+                $timestamp
+            );
             $tokenParams = [
                 'serial_id' => $meter->id,
                 'user_id' => config('services.calin.user_id'),
@@ -91,19 +73,19 @@ class CalinApi implements IManufacturerAPI
             ];
 
 
-          $token =$this->tokenRequest($tokenParams);
-          $this->associateManufacturerTransaction($transactionContainer);
+            $token = $this->tokenRequest($tokenParams);
+            $this->associateManufacturerTransaction($transactionContainer);
             return [
                 'token' => $token,
                 'energy' => $energy
             ];
         }
-
     }
 
     /**
      * Makes the external call to CALIN API and resturns the token.
-     * @param $tokenParams
+     *
+     * @param  $tokenParams
      * @return string
      * @throws Exception
      */
@@ -125,7 +107,6 @@ class CalinApi implements IManufacturerAPI
         if ((int)$tokenResult['result_code'] !== 0) {
             Log::critical('Token generation failed', $tokenParams);
             throw new Exception($tokenResult['reason']);
-
         }
 
         return $tokenResult['result'];
@@ -140,8 +121,16 @@ class CalinApi implements IManufacturerAPI
     private function generateCipherText($serialID, $userID, $meterID, $tokenType, $amount, $timestamp): string
     {
         return md5(
-            sprintf('%s%s%s%s%s%s%s',
-                $serialID, $userID, $meterID, $tokenType, $amount, $timestamp, config('services.calin.key'))
+            sprintf(
+                '%s%s%s%s%s%s%s',
+                $serialID,
+                $userID,
+                $meterID,
+                $tokenType,
+                $amount,
+                $timestamp,
+                config('services.calin.key')
+            )
         );
     }
 
@@ -153,36 +142,41 @@ class CalinApi implements IManufacturerAPI
 
     public function associateManufacturerTransaction(TransactionDataContainer $transactionContainer)
     {
-        $transaction =$this->transaction->newQuery()->with('originalAirtel', 'originalVodacom','orginalAgent','originalThirdParty')->find($transactionContainer->transaction->id);
-        if ($transaction->originalAirtel){
-            $transaction->originalAirtel->update([
-                'manufacturer_transaction_type'=>'calin_transaction',
-                'manufacturer_transaction_id'=>$transaction->id
-            ]);
+        $transaction = $this->transaction
+            ->newQuery()
+            ->with('originalAirtel', 'originalVodacom', 'orginalAgent', 'originalThirdParty')
+            ->find($transactionContainer->transaction->id);
+        if ($transaction->originalAirtel) {
+            $transaction->originalAirtel->update(
+                [
+                    'manufacturer_transaction_type' => 'calin_transaction',
+                    'manufacturer_transaction_id' => $transaction->id
+                ]
+            );
             $transaction->originalAirtel->save();
-
-        }else if($transaction->originalVodacom){
-
-            $transaction->originalVodacom->update([
-                'manufacturer_transaction_type'=>'calin_transaction',
-                'manufacturer_transaction_id'=>$transaction->id
-            ]);
+        } elseif ($transaction->originalVodacom) {
+            $transaction->originalVodacom->update(
+                [
+                    'manufacturer_transaction_type' => 'calin_transaction',
+                    'manufacturer_transaction_id' => $transaction->id
+                ]
+            );
             $transaction->originalVodacom->save();
-
-        }else if($transaction->orginalAgent){
-
-            $transaction->orginalAgent->update([
-                'manufacturer_transaction_type'=>'calin_transaction',
-                'manufacturer_transaction_id'=>$transaction->id
-            ]);
+        } elseif ($transaction->orginalAgent) {
+            $transaction->orginalAgent->update(
+                [
+                    'manufacturer_transaction_type' => 'calin_transaction',
+                    'manufacturer_transaction_id' => $transaction->id
+                ]
+            );
             $transaction->orginalAgent->save();
-
-        }else if($transaction->originalThirdParty){
-
-            $transaction->originalThirdParty->update([
-                'manufacturer_transaction_type'=>'calin_transaction',
-                'manufacturer_transaction_id'=>$transaction->id
-            ]);
+        } elseif ($transaction->originalThirdParty) {
+            $transaction->originalThirdParty->update(
+                [
+                    'manufacturer_transaction_type' => 'calin_transaction',
+                    'manufacturer_transaction_id' => $transaction->id
+                ]
+            );
             $transaction->originalThirdParty->save();
         }
     }

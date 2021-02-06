@@ -40,8 +40,8 @@ class BelongsToMorph extends BelongsTo
     /**
      * Add the constraints for a relationship query.
      *
-     * @param Builder $query
-     * @param Builder $parent
+     * @param  Builder     $query
+     * @param  Builder     $parent
      * @param  array|mixed $columns
      * @return Builder
      */
@@ -61,7 +61,6 @@ class BelongsToMorph extends BelongsTo
     {
         if ($this->getParent()->{$this->morphType} === $this->morphName) {
             return $this->query->first();
-
         }
         return null;
     }
@@ -84,7 +83,7 @@ class BelongsToMorph extends BelongsTo
     /**
      * Define an inverse morph relationship.
      *
-     * @param  Model $parent
+     * @param  Model  $parent
      * @param  string $related
      * @param  string $name
      * @param  string $type

@@ -8,13 +8,13 @@
 
 namespace App\PaymentHandler;
 
-
 use App\Transaction;
 
 class EnergyPayment
 {
     /**
      * EnergyPayment constructor.
+     *
      * @param Transaction $transaction
      */
     public function __construct(Transaction $transaction)
@@ -23,8 +23,5 @@ class EnergyPayment
 
     private function checkAccessRate()
     {
-
     }
-
-
 }

@@ -8,8 +8,9 @@ use App\Http\Resources\ApiResource;
 use App\Models\Meter\MeterType;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
+
 /**
- * @group MeterTypes
+ * @group   MeterTypes
  * Class MeterTypeController
  * @package App\Http\Controllers
  */
@@ -38,7 +39,7 @@ class MeterTypeController extends Controller
      * @bodyParam phase int required
      * @bodyParam max_current int required
      *
-     * @param MeterTypeCreateRequest $request
+     * @param  MeterTypeCreateRequest $request
      * @return ApiResource
      */
     public function store(MeterTypeCreateRequest $request)
@@ -46,20 +47,23 @@ class MeterTypeController extends Controller
         return
             new ApiResource(
                 MeterType::create(
-                    request()->only([
+                    request()->only(
+                        [
                         'online',
                         'phase',
                         'max_current',
-                    ])
+                        ]
+                    )
                 )
             );
     }
 
     /**
      * Detail
+     *
      * @bodyParam id int required
      *
-     * @param int $id
+     * @param  int $id
      * @return ApiResource
      */
     public function show($id)
@@ -73,13 +77,14 @@ class MeterTypeController extends Controller
     /**
      * Update
      * Updates the given meter type
-     * @urlParam id required
+     *
+     * @urlParam  id required
      * @bodyParam online int required
      * @bodyParam phase int required
      * @bodyParam max_current int required
      *
-     * @param MeterTypeUpdateRequest $request
-     * @param MeterType $meterType
+     * @param  MeterTypeUpdateRequest $request
+     * @param  MeterType              $meterType
      * @return ApiResource
      */
     public function update(MeterTypeUpdateRequest $request, MeterType $meterType)
@@ -92,12 +97,13 @@ class MeterTypeController extends Controller
     /**
      * List with Meters
      * Displays the meter types with the associated meters
+     *
      * @urlParam id required
      *
      * @responseFile responses/metertypes/metertypes.meter.list.json
-     * @param Request $request
-     * @param $id
-     * @return ApiResource
+     * @param        Request $request
+     * @param        $id
+     * @return       ApiResource
      */
     public function meterList(Request $request, $id)
     {
@@ -105,5 +111,4 @@ class MeterTypeController extends Controller
             MeterType::with('meters')->findOrFail($id)
         );
     }
-
 }

@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Entities\UserEntity;
-use App\Models\User;
 
 interface IUserService
 {
@@ -13,8 +12,5 @@ interface IUserService
 
     public function resetPassword(string $email);
 
-
     public function list($relations);
-
-
 }

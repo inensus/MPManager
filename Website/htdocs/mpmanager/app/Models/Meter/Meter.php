@@ -15,7 +15,7 @@ use PDO;
 /**
  * Class Meter
  *
- * @package App
+ * @package  App
  * @property string serial_number
  * @property int id;
  */
@@ -84,12 +84,11 @@ class Meter extends BaseModel
         $m = implode(',', $meters);
 
         $sql = 'select  sum(transactions.amount) as total from transactions
-
-        left join airtel_transactions on transactions.original_transaction_id = airtel_transactions.id and transactions.original_transaction_type= \'airtel_transaction\'
-        left join vodacom_transactions on transactions.original_transaction_id = vodacom_transactions.id and transactions.original_transaction_type= \'vodacom_transaction\'
-
+        left join airtel_transactions on transactions.original_transaction_id = airtel_transactions.id
+         and transactions.original_transaction_type= \'airtel_transaction\'
+        left join vodacom_transactions on transactions.original_transaction_id = vodacom_transactions.id
+        and transactions.original_transaction_type= \'vodacom_transaction\'
         where  transactions.message in (' . $m . ')
-
         and transactions.created_at between  \'' . $dateRange[0] . '\' and \'' . $dateRange[1] . '\'
         and (vodacom_transactions.status = 1 or airtel_transactions.status=1)';
 
@@ -99,12 +98,9 @@ class Meter extends BaseModel
 
         $sth->execute();
         return $sth->fetchAll(PDO::FETCH_ASSOC);
-
-
     }
 
     public function averageTransactionPeriod($limit = 50)
     {
-
     }
 }

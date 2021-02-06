@@ -16,6 +16,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 
 /**
  * Class Agent
+ *
  * @package App\Models
  *
  * @property int $id

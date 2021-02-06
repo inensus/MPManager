@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class SocialTariffPiggyBank
+ *
  * @package App\Models
  *
  * @property int $owner_id

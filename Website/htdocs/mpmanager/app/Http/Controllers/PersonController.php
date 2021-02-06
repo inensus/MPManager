@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Http\Requests\PersonRequest;
 use App\Http\Resources\ApiResource;
 use App\Http\Services\PersonService;
@@ -11,6 +10,7 @@ use Exception;
 
 /**
  * Class PersonController
+ *
  * @package App\Http\Controllers
  *
  * @group People
@@ -27,20 +27,23 @@ class PersonController extends Controller
     /**
      * List customer/other
      * [ To get a list of registered customers or non-customer like contact person of Meter Manufacturer. ]
-     * @urlParam is_customer int optinal. To get a list of customers or non customer. Default : 1
+     *
+     * @urlParam     is_customer int optinal. To get a list of customers or non customer. Default : 1
      * @responseFile responses/people/people.list.json
      */
     public function index()
     {
         $customerType = request('is_customer') ?? 1;
         return new ApiResource(
-            Person::with([
+            Person::with(
+                [
                 'addresses' => function ($q) {
                     return $q->where('is_primary', 1);
                 },
                 'addresses.city',
                 'meters.meter',
-            ])
+                ]
+            )
                 ->where('is_customer', $customerType)
                 ->paginate(config('settings.paginate'))
         );
@@ -50,8 +53,9 @@ class PersonController extends Controller
      * Lists all people
      * Lists all registered people without any filtering and pagination
      * The list contains no relations
+     *
      * @responseFile responses/people/people.list.all.json
-     * @return ApiResource
+     * @return       ApiResource
      */
     public function list()
     {
@@ -67,12 +71,13 @@ class PersonController extends Controller
      * - Citizenship
      * - Role
      * - Meter list
+     *
      * @param Person $person
      *
      * @return ApiResource
      *
      * @apiResourceModel App\Models\Person\Person
-     * @responseFile responses/people/people.detail.json
+     * @responseFile     responses/people/people.detail.json
      */
     public function show(Person $person): ApiResource
     {
@@ -84,9 +89,9 @@ class PersonController extends Controller
 
     /**
      * Create
-     * @param PersonRequest $request
-     * @return ApiResource
      *
+     * @param  PersonRequest $request
+     * @return ApiResource
      */
     public function store(PersonRequest $request)
     {
@@ -98,25 +103,27 @@ class PersonController extends Controller
         }
 
         return (new ApiResource(
-            $person)
+            $person
+        )
         )->response()->setStatusCode(201);
     }
 
     /**
      * Update
      * Updates the given parameter of that person
-     * @urlParam id required The ID of the person to update
+     *
+     * @urlParam  id required The ID of the person to update
      * @bodyParam title string. The title of the person. Example: Dr.
      * @bodyParam name string. The title of the person. Example: Dr.
      * @bodyParam surname string. The title of the person. Example: Dr.
      * @bodyParam birth_date string. The title of the person. Example: Dr.
      * @bodyParam sex string. The title of the person. Example: Dr.
      * @bodyParam education string. The title of the person. Example: Dr.
-     * @param Person $person
-     * @return ApiResource
+     * @param     Person $person
+     * @return    ApiResource
      *
      * @apiResourceModel App\Models\Person\Person
-     * @responseFile responses/people/person.update.json
+     * @responseFile     responses/people/person.update.json
      */
     public function update(Person $person): ApiResource
     {
@@ -132,13 +139,14 @@ class PersonController extends Controller
 
     /**
      * Transactions
-     * The list of all transactions(paginated) which belong to that person. Each page contains 7 entries of the last transaction
+     * The list of all transactions(paginated) which belong to that person.
+     * Each page contains 7 entries of the last transaction
      *
      * @param $personId
      *
      * @return ApiResource
      *
-     * @bodyParam person_id int required the ID of the person. Example: 2
+     * @bodyParam    person_id int required the ID of the person. Example: 2
      * @responseFile responses/people/person.transaction.list.json
      */
     public function transactions($personId)
@@ -155,10 +163,11 @@ class PersonController extends Controller
      * - meter serial number
      * - name
      * - surname
+     *
      * @urlParam term  The ID of the post. Example: John Doe
      * @urlParam paginage int The page number. Example:1
      *
-     * @return ApiResource
+     * @return       ApiResource
      * @responseFile responses/people/people.search.json
      */
     public function search()
@@ -166,18 +175,17 @@ class PersonController extends Controller
         $term = request('term');
         $paginate = request('paginate') ?? 1;
         return new ApiResource($this->personService->searchPerson($term, $paginate));
-
-
     }
 
     /**
      * Addresses
      * A list of registered addresses for that person
-     * @bodyParam person int required the ID of the person. Example: 2
-     * @responseFile responses/people/person.addresses.list.json
-     * @param Person $person
      *
-     * @return  ApiResource
+     * @bodyParam    person int required the ID of the person. Example: 2
+     * @responseFile responses/people/person.addresses.list.json
+     * @param        Person $person
+     *
+     * @return ApiResource
      *
      * @apiResourceModel \App\Models\Person\Person
      */
@@ -191,10 +199,11 @@ class PersonController extends Controller
      * Delete
      * Deletes that person with all his/her relations from the database. The person model uses soft deletes.
      * That means the orinal record wont be deleted but all mentioned relations will be removed permanently
+     *
      * @urlParam person required The ID of the person. Example:1
-     * @param Person $person
-     * @return ApiResource
-     * @throws Exception
+     * @param    Person $person
+     * @return   ApiResource
+     * @throws   Exception
      *
      * @apiResourceModel App\Models\Person\Person
      */

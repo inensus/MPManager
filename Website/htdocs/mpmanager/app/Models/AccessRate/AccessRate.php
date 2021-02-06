@@ -7,7 +7,8 @@ use App\Models\Meter\MeterTariff;
 
 /**
  * Class AccessRate
- * @package App
+ *
+ * @package  App
  * @property int id
  * @property int amount
  * @property int tariff_id

@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $date
  * @property string $path
  * @property string $type
- *
  */
 class Report extends BaseModel
 {

@@ -3,7 +3,6 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Http\Requests\SolarCreateRequest;
 use App\Http\Resources\ApiResource;
 use App\Services\ISolarService;
@@ -44,7 +43,8 @@ class SolarController extends Controller
     }
 
     public function store(SolarCreateRequest $request): ApiResource
-    { //unused parameter $request is needed for validation
+    {
+        //unused parameter $request is needed for validation
 
         $solar = $this->solarService->create();
 

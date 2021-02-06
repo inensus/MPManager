@@ -8,7 +8,7 @@ use App\Models\MainSettings;
 class MainSettingsController extends Controller
 {
     /**
-     *  @MainSettings
+     * @MainSettings
      */
 
     private $mainSettings;
@@ -25,9 +25,13 @@ class MainSettingsController extends Controller
 
     public function update(MainSettings $mainSettings): ApiResource
     {
-        $mainSettings->update(request()->only([
-            'site_title', 'company_name', 'currency', 'country', 'language', 'vat_energy', 'vat_appliance'
-        ]));
+        $mainSettings->update(
+            request()->only(
+                [
+                'site_title', 'company_name', 'currency', 'country', 'language', 'vat_energy', 'vat_appliance'
+                ]
+            )
+        );
         return new ApiResource($mainSettings->fresh());
     }
 }

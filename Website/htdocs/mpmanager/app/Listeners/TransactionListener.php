@@ -26,8 +26,6 @@ class TransactionListener
             Log::debug('Transaction failed');
         }
         $baseTransaction->sendResult(false, $transaction);
-
-
     }
 
     public function onTransactionSuccess(Transaction $transaction): void

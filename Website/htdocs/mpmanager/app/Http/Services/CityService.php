@@ -8,7 +8,6 @@
 
 namespace App\Http\Services;
 
-
 use App\Models\City;
 use App\Models\Person\Person;
 
@@ -33,16 +32,21 @@ class CityService
     public function getCityPopulation($cityId, $onlyCustomers = true)
     {
         if ($onlyCustomers) {
-
             $population = $this->person
                 ->where('is_customer', 1)
-                ->whereHas('addresses', function ($q) use ($cityId) {
-                    $q->where('city_id', $cityId)->where('is_primary', 1);
-                })->count();
+                ->whereHas(
+                    'addresses',
+                    function ($q) use ($cityId) {
+                        $q->where('city_id', $cityId)->where('is_primary', 1);
+                    }
+                )->count();
         } else {
-            $population = $this->person->whereHas('addresses', function ($q) use ($cityId) {
-                $q->where('city_id', $cityId)->where('is_primary', 1);
-            })->count();
+            $population = $this->person->whereHas(
+                'addresses',
+                function ($q) use ($cityId) {
+                    $q->where('city_id', $cityId)->where('is_primary', 1);
+                }
+            )->count();
         }
 
         return $population;
@@ -53,17 +57,29 @@ class CityService
         if ($onlyCustomers) {
             $population = $this->person
                 ->where('is_customer', 1)
-                ->whereHas('addresses', function ($q) use ($clusterId) {
-                    $q->where('is_primary', 1)->whereHas('city', function ($q) use ($clusterId) {
-                        $q->where('cluster_id', $clusterId);
-                    });
-                })->count();
+                ->whereHas(
+                    'addresses',
+                    function ($q) use ($clusterId) {
+                        $q->where('is_primary', 1)->whereHas(
+                            'city',
+                            function ($q) use ($clusterId) {
+                                $q->where('cluster_id', $clusterId);
+                            }
+                        );
+                    }
+                )->count();
         } else {
-            $population = $this->person->whereHas('addresses', function ($q) use ($clusterId) {
-                $q->where('is_primary', 1)->whereHas('city', function ($q) use ($clusterId) {
-                    $q->where('cluster_id', $clusterId);
-                });
-            })->count();
+            $population = $this->person->whereHas(
+                'addresses',
+                function ($q) use ($clusterId) {
+                    $q->where('is_primary', 1)->whereHas(
+                        'city',
+                        function ($q) use ($clusterId) {
+                            $q->where('cluster_id', $clusterId);
+                        }
+                    );
+                }
+            )->count();
         }
 
 

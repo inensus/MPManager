@@ -25,6 +25,4 @@ class AgentChargeController extends Controller
 
         return new ApiResource($agentCharge);
     }
-
-
 }

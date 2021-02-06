@@ -17,22 +17,23 @@ class MenuItemsService
     {
 
         $lastOrder = MenuItems::query()->latest()->first();
-        $menuItem = MenuItems::create([
+        $menuItem = MenuItems::create(
+            [
             'name'=>$menuItem['name'],
             'url_slug'=>$menuItem['url_slug'],
             'md_icon'=>$menuItem['md_icon'],
             'menu_order'=>$lastOrder->menu_order+1,
-        ]);
+            ]
+        );
 
-        foreach ($subMenuItems as $key=>$value){
-            SubMenuItems::create([
-               'name'=>$value['name'],
-               'url_slug'=>$value['url_slug'],
-               'parent_id'=>$menuItem->id
-            ]);
-
+        foreach ($subMenuItems as $key => $value) {
+            SubMenuItems::create(
+                [
+                'name'=>$value['name'],
+                'url_slug'=>$value['url_slug'],
+                'parent_id'=>$menuItem->id
+                ]
+            );
         }
-
     }
-
 }

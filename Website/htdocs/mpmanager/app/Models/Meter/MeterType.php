@@ -19,11 +19,11 @@ class MeterType extends BaseModel
 
     public function __toString()
     {
-        return sprintf('%s Phase, %s Amper, Online: %s',
+        return sprintf(
+            '%s Phase, %s Amper, Online: %s',
             $this->phase,
             $this->max_current,
-            $this->online ? 'yes' : 'no');
+            $this->online ? 'yes' : 'no'
+        );
     }
-
-
 }

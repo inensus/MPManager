@@ -10,7 +10,8 @@ use Illuminate\Support\Facades\DB;
 
 /**
  * Class Token
- * @package App
+ *
+ * @package  App
  * @property string token
  * @property double energy
  */

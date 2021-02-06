@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class MeterConsumption
- * @package App\Models\Meter
+ *
+ * @package  App\Models\Meter
  * @property int $id
  * @property int $meter_id
  * @property double $total_consumption
@@ -26,7 +27,7 @@ class MeterConsumption extends Model
 
     public function __toString()
     {
-        return 'Meter  : ' . $this->meter_id . '  consumption : ' . $this->total_consumption . '  credit :' . $this->credit_on_meter;
+        return 'Meter  : ' . $this->meter_id . '  consumption : ' . $this->total_consumption .
+            '  credit :' . $this->credit_on_meter;
     }
-
 }

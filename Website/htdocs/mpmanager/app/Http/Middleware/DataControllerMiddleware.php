@@ -28,14 +28,16 @@ class DataControllerMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \Closure $next
+     * @param  \Illuminate\Http\Request $request
+     * @param  \Closure                 $next
      * @return mixed
      */
     public function handle($request, Closure $next)
     {
-        $restriction = $this->restriction->select('limit')->where('target',
-            'enable-data-stream')->first();
+        $restriction = $this->restriction->select('limit')->where(
+            'target',
+            'enable-data-stream'
+        )->first();
         try {
             $this->miniGrid
                 ->where('id', $request->get('mini_grid_id'))
@@ -49,7 +51,6 @@ class DataControllerMiddleware
             $miniGrid = $this->miniGrid->find($request->get('mini_grid_id'));
             $miniGrid->data_stream = 1;
             $miniGrid->save();
-
         }
 
         return $next($request);

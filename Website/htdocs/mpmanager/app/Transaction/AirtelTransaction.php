@@ -8,7 +8,6 @@
 
 namespace App\Transaction;
 
-
 use App\Jobs\SmsProcessor;
 use App\Lib\ITransactionProvider;
 use App\Models\Transaction\Transaction;
@@ -36,6 +35,7 @@ class AirtelTransaction implements ITransactionProvider
 
     /**
      * contains validated data
+     *
      * @var SimpleXMLElement
      */
     private $validData;
@@ -44,7 +44,7 @@ class AirtelTransaction implements ITransactionProvider
      * DI will initialize the needed models
      *
      * @param \App\Models\Transaction\AirtelTransaction $airtelTransaction
-     * @param Transaction $transaction
+     * @param Transaction                               $transaction
      */
     public function __construct(\App\Models\Transaction\AirtelTransaction $airtelTransaction, Transaction $transaction)
     {
@@ -65,7 +65,7 @@ class AirtelTransaction implements ITransactionProvider
     }
 
     /**
-     * @param bool $requestType
+     * @param bool        $requestType
      * @param Transaction $transaction
      */
     public function sendResult(bool $requestType, Transaction $transaction): void
@@ -76,10 +76,11 @@ class AirtelTransaction implements ITransactionProvider
         if ($requestType) {
             $this->airtelTransaction->status = 1;
             $this->airtelTransaction->save();
-            SmsProcessor::dispatch($transaction,
-                SmsTypes::ENERGY_CONFIRMATION)->allOnConnection('redis')->onQueue('sms');
+            SmsProcessor::dispatch(
+                $transaction,
+                SmsTypes::ENERGY_CONFIRMATION
+            )->allOnConnection('redis')->onQueue('sms');
         } else { //send cancellation to airtel gateway server and this will send the final request to airtel
-
             $requestContent = $this->prepareRequest($this->transaction, $this->airtelTransaction);
 
             $client = new Client();
@@ -93,10 +94,13 @@ class AirtelTransaction implements ITransactionProvider
                     'body' => $requestContent,
                 ]
             );
-            Log::critical('airtel transaction is been cancelled', [
+            Log::critical(
+                'airtel transaction is been cancelled',
+                [
                 'code' => $response->getStatusCode(),
                 'response' => $response->getBody(),
-            ]);
+                ]
+            );
             $this->airtelTransaction->status = -1;
             $this->airtelTransaction->save();
         }
@@ -108,7 +112,9 @@ class AirtelTransaction implements ITransactionProvider
         $transactionData = json_encode($transactionXml);
         $transactionData = json_decode($transactionData, true);
 
-        $validator = Validator::make($transactionData, [
+        $validator = Validator::make(
+            $transactionData,
+            [
             'APIUser' => 'required|in:' . config('services.airtel.api_user'),
             'APIPassword' => 'required|in:' . config('services.airtel.api_password'),
             'INTERFACEID' => 'required',
@@ -118,7 +124,8 @@ class AirtelTransaction implements ITransactionProvider
             'ReferenceField' => 'required',
             'Msisdn' => 'required',
             'TRID' => 'required',
-        ]);
+            ]
+        );
         if ($validator->fails()) {
             dd($validator->errors());
             return false;
@@ -184,6 +191,7 @@ class AirtelTransaction implements ITransactionProvider
 
     /**
      * Saves the airtel transaction
+     *
      * @param \App\Models\Transaction\AirtelTransaction $airtelTransaction
      */
     public function saveData(\App\Models\Transaction\AirtelTransaction $airtelTransaction): void
@@ -207,8 +215,9 @@ class AirtelTransaction implements ITransactionProvider
 
     /**
      * Prepares the data for either a confirmation- or a cancellation-request
-     * @param $transaction
-     * @param \App\Models\Transaction\AirtelTransaction $airtelTransaction
+     *
+     * @param  $transaction
+     * @param  \App\Models\Transaction\AirtelTransaction $airtelTransaction
      * @return string
      */
     private function prepareRequest($transaction, \App\Models\Transaction\AirtelTransaction $airtelTransaction): string
@@ -219,6 +228,5 @@ class AirtelTransaction implements ITransactionProvider
             '<TRID>' . $airtelTransaction->id . '</TRID>' .
             '<MESSAGE>Transaction is cancelled</MESSAGE>' .
             '</COMMAND>';
-
     }
 }

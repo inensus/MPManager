@@ -7,10 +7,8 @@ use App\Models\PaymentHistory;
 use App\Models\Person\Person;
 use Carbon\Carbon;
 use Illuminate\Events\Dispatcher;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Log;
 use function count;
-
 
 class PaymentPeriodListener
 {
@@ -37,7 +35,10 @@ class PaymentPeriodListener
 
     public function recalculate(Person $person): void
     {
-        $transactions = $person->transactions()->with('transaction')->latest()->take(10)->groupBy('transaction_id')->get();
+        $transactions = $person->transactions()
+            ->with('transaction')
+            ->latest()->take(10)
+            ->groupBy('transaction_id')->get();
         $totalAmount = 0;
         $difference = ((new Carbon($transactions[0]->created_at))
                 ->diffInDays((new Carbon($transactions[count($transactions) - 1]->created_at)))) / count($transactions);

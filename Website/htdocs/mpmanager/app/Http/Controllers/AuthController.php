@@ -3,8 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
+
 /**
- * @group Authenticator
+ * @group   Authenticator
  * Class AuthController
  * Responsible for API-Call authentications.
  * @package App\Http\Controllers
@@ -65,6 +66,7 @@ class AuthController extends Controller
      * Refresh token
      * Generates a new valid token for the next 3600 seconds
      * Inorder to generate the new token, a working (Bearer)token has to be provided in the header
+     *
      * @return JsonResponse
      */
     public function refresh()
@@ -81,11 +83,13 @@ class AuthController extends Controller
      */
     protected function respondWithToken($token)
     {
-        return response()->json([
+        return response()->json(
+            [
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth('api')->factory()->getTTL() * 60,
             'user' => auth('api')->user(),
-        ]);
+            ]
+        );
     }
 }

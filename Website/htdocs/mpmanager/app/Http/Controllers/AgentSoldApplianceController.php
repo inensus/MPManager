@@ -23,8 +23,8 @@ class AgentSoldApplianceController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param Agent $agent
-     * @param Request $request
+     * @param  Agent   $agent
+     * @param  Request $request
      * @return ApiResource
      */
     public function index(Request $request)
@@ -46,17 +46,21 @@ class AgentSoldApplianceController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param CreateAgentSoldApplianceRequest $request
+     * @param  CreateAgentSoldApplianceRequest $request
      * @return ApiResource
      */
     public function store(CreateAgentSoldApplianceRequest $request)
     {
 
-        $appliance = $this->agentSoldApplianceService->create($request->only([
-            'person_id',
-            'agent_assigned_appliance_id',
+        $appliance = $this->agentSoldApplianceService->create(
+            $request->only(
+                [
+                'person_id',
+                'agent_assigned_appliance_id',
 
-        ]));
+                ]
+            )
+        );
 
         return new ApiResource($appliance);
     }
@@ -65,8 +69,8 @@ class AgentSoldApplianceController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param agentSoldAppliance $agent_sold_appliance
+     * @param  \Illuminate\Http\Request $request
+     * @param  agentSoldAppliance       $agent_sold_appliance
      * @return void
      */
     public function update(Request $request, agentSoldAppliance $agent_sold_appliance)
@@ -77,7 +81,7 @@ class AgentSoldApplianceController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\agentSoldAppliance $agent_sold_appliance
+     * @param  \App\agentSoldAppliance $agent_sold_appliance
      * @return \Illuminate\Http\Response
      */
     public function destroy(agentSoldAppliance $agent_sold_appliance)

@@ -9,7 +9,7 @@ use App\Services\AgentTransactionService;
 use Illuminate\Http\Request;
 
 /**
- * @group AgentTransactions
+ * @group   AgentTransactions
  * Class AgentTransactionController
  * @package App\Http\Controllers
  */

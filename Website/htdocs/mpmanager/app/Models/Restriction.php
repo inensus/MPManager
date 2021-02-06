@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * Class Restriction
+ *
  * @package App\Models
  *
  * @property int $id

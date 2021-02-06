@@ -72,13 +72,17 @@ class AssetRateController extends Controller
     public function update(Request $request, AssetRate $assetRate): ApiResource
     {
         // notify log listener
-        event('new.log', [
-            'logData' => [
-                'user_id' => $request->get('admin_id'),
-                'affected' => $assetRate->assetPerson,
-                'action' => 'Remaining rate ' . $assetRate->due_date . ' cost updated. From ' . $assetRate->remaining . ' to ' . $request->get('remaining')
+        event(
+            'new.log',
+            [
+                'logData' => [
+                    'user_id' => $request->get('admin_id'),
+                    'affected' => $assetRate->assetPerson,
+                    'action' => 'Remaining rate ' . $assetRate->due_date . ' cost updated. From '
+                        . $assetRate->remaining . ' to ' . $request->get('remaining')
+                ]
             ]
-        ]);
+        );
 
 
         $assetRate->remaining = $request->get('remaining');

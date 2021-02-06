@@ -16,7 +16,6 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
  * @property string $name
  * @property int $cluster_id
  * @property int $data_stream;
- *
  */
 class MiniGrid extends Model
 {
@@ -39,8 +38,8 @@ class MiniGrid extends Model
     {
         return $this->morphOne(GeographicalInformation::class, 'owner');
     }
-    public function agent(){
+    public function agent()
+    {
         return $this->hasOne(Agent::Class);
     }
-
 }

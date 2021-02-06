@@ -8,7 +8,6 @@
 
 namespace App\Sms;
 
-
 use App\Jobs\SmsLoadBalancer;
 use App\Lib\ISmsProvider;
 use function config;
@@ -20,6 +19,7 @@ class AndroidGateway implements ISmsProvider
 
     /**
      * Sends the sms to the sms provider
+     *
      * @param string $number
      * @param string $body
      * @param string $callback
@@ -33,10 +33,12 @@ class AndroidGateway implements ISmsProvider
         }
 
         //add sms to sms_gateway job
-        SmsLoadBalancer::dispatch([
+        SmsLoadBalancer::dispatch(
+            [
             'number' => $number,
             'message' => $body,
             'sms_id' => $callback,
-        ])->onConnection('redis')->onQueue('sms_gateway');
+            ]
+        )->onConnection('redis')->onQueue('sms_gateway');
     }
 }

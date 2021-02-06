@@ -11,17 +11,15 @@ class PluginsService
         return Plugins::query()->orderBy('id')->get();
     }
 
-    public function addPlugin($name,$composer_name, $description)
+    public function addPlugin($name, $composer_name, $description)
     {
 
-        Plugins::query()->create([
+        Plugins::query()->create(
+            [
             'name' => $name,
             'composer_name' => $composer_name,
             'description' => $description,
-        ]);
+            ]
+        );
     }
-
-
-
-
 }

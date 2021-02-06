@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 
-
 class MaintenanceUserController extends Controller
 {
     private $roles;
@@ -44,32 +43,35 @@ class MaintenanceUserController extends Controller
 
         //try to identify the person via phone number
         try {
-            $person = $this->person->whereHas('addresses', static function ($q) use ($phone) {
-                $q->where('phone', $phone);
-            })->firstOrFail();
+            $person = $this->person->whereHas(
+                'addresses',
+                static function ($q) use ($phone) {
+                    $q->where('phone', $phone);
+                }
+            )->firstOrFail();
         } catch (ModelNotFoundException $ex) {
             $personService = App::make(PersonService::class);
             $person = $personService->createFromRequest($request);
         }
 
-        $maintenance_user = $this->maintenance_users::create([
+        $maintenance_user = $this->maintenance_users::create(
+            [
             'person_id' => $person->id,
             'mini_grid_id' => $request->get('mini_grid_id'),
-        ]);
+            ]
+        );
 
 
         return
             (new ApiResource($maintenance_user))
-                ->response()
-                ->setStatusCode(201);
-
+            ->response()
+            ->setStatusCode(201);
     }
 
     /**
      * Updates the user entity
      * Identifies the user with the "key" parameter which is been send with the request
      * TODO: Create an UpdateCustomer request which requires a key parameter with following values (id,phone,email)
-     *
      *
      * @param Request $request
      */

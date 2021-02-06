@@ -6,7 +6,8 @@ use App\Models\BaseModel;
 
 /**
  * Class TransactionConflicts
- * @package App
+ *
+ * @package  App
  * @property int id
  * @property string state
  */

@@ -23,8 +23,8 @@ class AgentReceiptController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param Agent $agent
-     * @param Request $request
+     * @param  Agent   $agent
+     * @param  Request $request
      * @return ApiResource
      */
     public function index(Agent $agent, Request $request)
@@ -37,8 +37,8 @@ class AgentReceiptController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param User $user
-     * @param Request $request
+     * @param  User    $user
+     * @param  Request $request
      * @return ApiResource
      */
     public function listByUsers(Request $request)
@@ -51,7 +51,7 @@ class AgentReceiptController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param Request $request
+     * @param  Request $request
      * @return ApiResource
      */
     public function listAllReceipts(Request $request)
@@ -64,17 +64,23 @@ class AgentReceiptController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param Agent $agent
-     * @param CreateAgentReceiptRequest $request
+     * @param  Agent                     $agent
+     * @param  CreateAgentReceiptRequest $request
      * @return ApiResource
      */
-    public function store(Agent $agent,CreateAgentReceiptRequest $request)
+    public function store(Agent $agent, CreateAgentReceiptRequest $request)
     {
 
         $user = User::find(auth('api')->user()->id);
-        $appliance = $this->agentReceiptService->create($user->id, $agent->id,$request->only([
-            'amount',
-        ]));
+        $appliance = $this->agentReceiptService->create(
+            $user->id,
+            $agent->id,
+            $request->only(
+                [
+                'amount',
+                ]
+            )
+        );
 
         return new ApiResource($appliance);
     }
@@ -83,7 +89,7 @@ class AgentReceiptController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request $request
      * @return void
      */
     public function update(Request $request)
@@ -94,7 +100,7 @@ class AgentReceiptController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param Request $request
+     * @param  Request $request
      * @return void
      */
     public function destroy(Request $request)

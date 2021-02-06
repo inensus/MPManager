@@ -7,9 +7,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class Upgrades
+ *
  * @package App\Models
  *
- * @property  int $id
+ * @property int $id
  * @property int $restriction_id
  * @property int $cost
  * @property int $period_in_months

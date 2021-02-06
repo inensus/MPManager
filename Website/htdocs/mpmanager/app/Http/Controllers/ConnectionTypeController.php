@@ -42,7 +42,6 @@ class ConnectionTypeController extends Controller
         $connectionType->save();
 
         return new ApiResource($connectionType);
-
     }
 
     public function show($connectionTypeId)
@@ -57,7 +56,6 @@ class ConnectionTypeController extends Controller
             return new ApiResource($connectionTypeDetail);
         }
         return new ApiResource(null);
-
     }
 
     public function update(ConnectionType $connectionType): ApiResource
@@ -66,6 +64,4 @@ class ConnectionTypeController extends Controller
         $connectionType->save();
         return new ApiResource($connectionType);
     }
-
-
 }

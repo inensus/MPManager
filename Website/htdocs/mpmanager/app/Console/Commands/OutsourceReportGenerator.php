@@ -48,7 +48,7 @@ class OutsourceReportGenerator extends Command
             $toDay = Carbon::now()->subDays(1)->format('Y-m-d');
         }
         $startDay = Carbon::parse($toDay)->modify("first day of this month")->format('Y-m-d');
-        $this->reports->outsourceWithJob($startDay,$toDay);
+        $this->reports->outsourceWithJob($startDay, $toDay);
         return 0;
     }
 }

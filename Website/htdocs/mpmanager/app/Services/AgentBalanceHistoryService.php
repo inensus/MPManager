@@ -3,7 +3,6 @@
 
 namespace App\Services;
 
-
 use App\Models\AgentAssignedAppliances;
 use App\Models\AgentBalanceHistory;
 use App\Models\AgentCharge;
@@ -20,25 +19,28 @@ class AgentBalanceHistoryService
 
         return AgentBalanceHistory::with(['triggerCharge'])
             ->where('agent_id', $agentId)
-            ->whereHasMorph('trigger',
+            ->whereHasMorph(
+                'trigger',
                 [
                     AgentCharge::class,
                     AgentCommission::class,
                     AgentTransaction::class,
                     AgentAssignedAppliances::class,
                     AgentReceipt::class
-                ])->latest()->paginate();
-
+                ]
+            )->latest()->paginate();
     }
 
     public function create($agent, $data)
     {
-        return AgentBalanceHistory::query()->create([
+        return AgentBalanceHistory::query()->create(
+            [
 
             'agent_id' => $agent->id,
             'amount' => $data['amount'],
             'type' => 'Charge',
             'available_balance' => $agent->balance
-        ]);
+            ]
+        );
     }
 }

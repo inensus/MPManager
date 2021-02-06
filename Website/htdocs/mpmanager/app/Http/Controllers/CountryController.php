@@ -29,10 +29,12 @@ class CountryController extends Controller
         return
             new ApiResource(
                 Country::create(
-                    request()->only([
+                    request()->only(
+                        [
                         'country_name',
                         'country_code',
-                    ])
+                        ]
+                    )
                 )
             );
     }

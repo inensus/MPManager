@@ -22,13 +22,13 @@ class AgentCustomerController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @param Request $request
+     * @param  Request $request
      * @return ApiResource
      */
     public function index(Request $request)
     {
         $agent = Agent::find(auth('agent_api')->user()->id);
-       return new ApiResource($this->agentCustomerService->list($agent));
+        return new ApiResource($this->agentCustomerService->list($agent));
     }
     public function search()
     {
@@ -36,14 +36,12 @@ class AgentCustomerController extends Controller
         $term = request('term');
         $paginate = request('paginate') ?? 1;
         $agent = Agent::find(auth('agent_api')->user()->id);
-        return new ApiResource($this->agentCustomerService->searchAgentsCustomers($term, $paginate,$agent));
-
-
+        return new ApiResource($this->agentCustomerService->searchAgentsCustomers($term, $paginate, $agent));
     }
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
+     * @param  Request $request
      * @return void
      */
     public function store(Request $request)
@@ -54,7 +52,7 @@ class AgentCustomerController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param int $id
+     * @param  int $id
      * @return void
      */
     public function show($id)
@@ -65,8 +63,8 @@ class AgentCustomerController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
-     * @param int $id
+     * @param  Request $request
+     * @param  int     $id
      * @return void
      */
     public function update(Request $request, $id)
@@ -77,7 +75,7 @@ class AgentCustomerController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param int $id
+     * @param  int $id
      * @return void
      */
     public function destroy($id)

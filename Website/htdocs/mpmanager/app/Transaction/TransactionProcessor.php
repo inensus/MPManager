@@ -8,7 +8,6 @@
 
 namespace App\Transaction;
 
-
 use App\Customer;
 use App\PaymentHistory;
 use App\Transaction;

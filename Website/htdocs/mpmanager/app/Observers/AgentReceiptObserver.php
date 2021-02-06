@@ -16,7 +16,6 @@ class AgentReceiptObserver
     public function __construct(AgentBalanceHistory $agentBalanceHistory)
     {
         $this->agentBalanceHistory = $agentBalanceHistory;
-
     }
 
     public function created(AgentReceipt $receipt)
@@ -39,9 +38,12 @@ class AgentReceiptObserver
         }
         try {
             $earlier = AgentReceiptDetail::query()->select('summary')
-                ->whereHas('receipt', static function ($q) use ($agentId) {
-                    $q->where('agent_id', $agentId);
-                })->latest()->firstOrFail()->summary;
+                ->whereHas(
+                    'receipt',
+                    static function ($q) use ($agentId) {
+                        $q->where('agent_id', $agentId);
+                    }
+                )->latest()->firstOrFail()->summary;
         } catch (ModelNotFoundException $exception) {
             $earlier = 0;
         }
@@ -49,7 +51,8 @@ class AgentReceiptObserver
         $summary = $receipt->amount - $agent->due_to_energy_supplier;
         $collected = $receipt->amount;
 
-        AgentReceiptDetail::query()->create([
+        AgentReceiptDetail::query()->create(
+            [
             'agent_receipt_id' => $receipt->id,
             'due' => $due ?? 0,
             'collected' => $collected ?? 0,
@@ -57,18 +60,20 @@ class AgentReceiptObserver
             'earlier' => $earlier ?? 0,
             'summary' => $summary ?? 0
 
-        ]);
+            ]
+        );
 
 
-        $history = AgentBalanceHistory::query()->make([
+        $history = AgentBalanceHistory::query()->make(
+            [
             'agent_id' => $agent->id,
             'amount' => $receipt->amount,
             'transaction_id' => $receipt->id,
             'available_balance' => $agent->balance,
             'due_to_supplier'=>$agent->due_to_energy_supplier
-        ]);
+            ]
+        );
         $history->trigger()->associate($receipt);
         $history->save();
-
     }
 }

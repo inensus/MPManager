@@ -3,7 +3,6 @@
 
 namespace App\Events;
 
-
 use App\Models\AssetPerson;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;

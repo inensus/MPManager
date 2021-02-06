@@ -16,11 +16,13 @@ class UserService implements IUserService
 
     public function create(array $userData)
     {
-        return User::query()->create([
+        return User::query()->create(
+            [
             'name' => $userData['name'],
             'password' => $userData['password'],
             'email' => $userData['email'],
-        ]);
+            ]
+        );
     }
 
     public function update($user, $data): bool
@@ -42,7 +44,6 @@ class UserService implements IUserService
                 return $user;
             }
             return null;
-
         }
 
         $user->address()->update(
@@ -80,12 +81,15 @@ class UserService implements IUserService
                 'You can use ' . $newPassword . ' to Login. <br> Please don\'t forget to change your password.'
             );
         } catch (MailNotSentException $exception) {
-            Log::debug('Failed to reset password', [
+            Log::debug(
+                'Failed to reset password',
+                [
                 'id' => '4
                 78efhd3497gvfdhjkwgsdjkl4ghgdf',
                 'message' => 'Password reset email for ' . $user->email . ' failed',
                 'reason' => $exception->getMessage(),
-            ]);
+                ]
+            );
             return null;
         }
 
@@ -94,7 +98,8 @@ class UserService implements IUserService
 
     /**
      * User list with optional address relation
-     * @param $relations
+     *
+     * @param  $relations
      * @return LengthAwarePaginator
      */
     public function list($relations): LengthAwarePaginator

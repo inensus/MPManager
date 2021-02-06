@@ -8,7 +8,6 @@
 
 namespace App\Sms;
 
-
 use App\Misc\TransactionDataContainer;
 use App\Models\AssetRate;
 use App\Models\PaymentHistory;
@@ -45,7 +44,7 @@ class SmsTypes
     private static function paymentTypeBody($payment)
     {
         switch ($payment->payment_type) {
-            case self::ENERGY_CONFIRMATION :
+            case self::ENERGY_CONFIRMATION:
                 return self::generateEnergyConfirmationBody($payment);
                 break;
             case self::ACCESS_RATE_PAYMENT:
@@ -63,14 +62,15 @@ class SmsTypes
             case self::ASSET_RATE_OVER_DUE_REMINDER:
                 return self::generateOverDueAssetRateReminder($payment);
                 break;
-
         }
     }
 
     private static function pricingDetails(Transaction $transaction)
     {
-        return " VAT 18% \t" . round($transaction->amount * 0.18,
-                0) . " \n Jumla \t " . round($transaction->amount * 0.82, 0);
+        return " VAT 18% \t" . round(
+            $transaction->amount * 0.18,
+            0
+        ) . " \n Jumla \t " . round($transaction->amount * 0.82, 0);
     }
 
     private static function generateAccessRateConfirmationBody(PaymentHistory $paymentHistory)
@@ -92,20 +92,23 @@ class SmsTypes
         $token = $paymentHistory->paidFor()->first();
         $transaction = $paymentHistory->transaction()->first();
 
-        return 'LUKU: {' . $transaction->message . '}, ' . $token->token . ' Unit ' . $token->energy . '. TZS ' . $paymentHistory->amount;
-
+        return 'LUKU: {' . $transaction->message . '}, ' . $token->token . ' Unit ' . $token->energy . '. TZS '
+            . $paymentHistory->amount;
     }
 
     private static function generateResendInformation(TransactionDataContainer $transactionContainer): string
     {
 
-        $smsContent = 'LUKU: {' . $transactionContainer->meter->serial_number . '}, ' . $transactionContainer->token->token . ' Unit ' . $transactionContainer->token->energy . ' KWH.  Service Charge: Tshs ' . ($transactionContainer->historyAccessRate->amount ?? '0.00') . ' \n';
+        $smsContent = 'LUKU: {' . $transactionContainer->meter->serial_number . '}, '
+            . $transactionContainer->token->token . ' Unit ' . $transactionContainer->token->energy
+            . ' KWH.  Service Charge: Tshs ' . ($transactionContainer->historyAccessRate->amount ?? '0.00') . ' \n';
         if (!empty($transactionContainer->paid_rates)) {
             foreach ($transactionContainer->paid_rates as $paid_rate) {
                 $smsContent .= $paid_rate['asset_type_name'] . ' ' . $paid_rate['paid'] . ' TZS \n';
             }
         }
-        $smsContent .= 'VAT 18% \t ' . round((float)($transactionContainer->historyEnergy->amount ?? 0) * 0.18) . ' \n
+        $smsContent .= 'VAT 18% \t ' . round((float)($transactionContainer->historyEnergy->amount ?? 0) * 0.18)
+            . ' \n
                         Jumla \t ' . round((float)($transactionContainer->historyEnergy->amount ?? 0) * 0.82);
 
         return $smsContent;
@@ -113,7 +116,10 @@ class SmsTypes
 
     private static function generateAssetRateReminder($reminderData): string
     {
-        $smsContent = 'Dear ' . $reminderData->assetPerson->person->name . ' ' . $reminderData->assetPerson->person->surname . ', the next rate of ' . $reminderData->assetPerson->assetType->name . '(' . $reminderData->remaining . ') is due on  ' . $reminderData->due_date . ' \n' .
+        $smsContent = 'Dear ' . $reminderData->assetPerson->person->name . ' '
+            . $reminderData->assetPerson->person->surname . ', the next rate of '
+            . $reminderData->assetPerson->assetType->name . '(' . $reminderData->remaining . ') is due on  '
+            . $reminderData->due_date . ' \n' .
             'Your Company';
 
         return $smsContent;
@@ -121,10 +127,12 @@ class SmsTypes
 
     private static function generateOverDueAssetRateReminder($reminderData): string
     {
-        $smsContent = 'Dear ' . $reminderData->assetPerson->person->name . ' ' . $reminderData->assetPerson->person->surname . ', you forgot to pay the rate of ' . $reminderData->assetPerson->assetType->name . '(' . $reminderData->remaining . ')  on  ' . $reminderData->due_date . ' \n' .
+        $smsContent = 'Dear ' . $reminderData->assetPerson->person->name . ' '
+            . $reminderData->assetPerson->person->surname . ', you forgot to pay the rate of '
+            . $reminderData->assetPerson->assetType->name . '(' . $reminderData->remaining . ')  on  '
+            . $reminderData->due_date . ' \n' .
             'Please pay it as soon as possible, unless you wont be able to buy energy \n' .
             'Your Company';
-
         return $smsContent;
     }
 }

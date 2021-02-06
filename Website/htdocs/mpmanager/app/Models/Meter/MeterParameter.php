@@ -13,11 +13,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-
 /**
  * Class MeterParameter
  *
- * @package App
+ * @package  App
  * @property string owner_type
  * @property int owner_id
  * @property int meter_id
@@ -82,5 +81,3 @@ class MeterParameter extends BaseModel
         return $this->hasOne(SocialTariffPiggyBank::class);
     }
 }
-
-
