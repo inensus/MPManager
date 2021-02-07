@@ -78,7 +78,7 @@ export class TariffService {
             }
             this.socialOptions = true
         }
-        if (tariffData.pricing_component.length > 0) {
+        if ('pricingComponent' in tariff && tariffData.pricing_component.length > 0) {
             for (let i = 0; i < tariffData.pricing_component.length; i++) {
                 let component = {
                     id: tariffData.pricing_component[i].id,
@@ -113,7 +113,7 @@ export class TariffService {
             this.list.push(tariff)
 
         }
-        
+
     }
 
     async getTariffs () {
