@@ -19,21 +19,16 @@ class ConnectionGroupController
         $this->connectionGroup = $connectionGroup;
     }
 
-    public function index()
+    public function index(): ApiResource
     {
-
-        $connectionGroups = $this->connectionGroup->get();
-
-        return new ApiResource($connectionGroups);
+        return new ApiResource($this->connectionGroup->get());
     }
 
-    public function store(CreateConnectionGroupRequest $request)
+    public function store(CreateConnectionGroupRequest $request): ApiResource
     {
         $name = $request->input('name');
-
         $this->connectionGroup->name = $name;
         $this->connectionGroup->save();
-
         return new ApiResource($this->connectionGroup);
     }
 

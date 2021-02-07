@@ -18,7 +18,7 @@ class TransactionListener
         $transactionProvider->confirm();
     }
 
-    public function onTransactionFailed(Transaction $transaction, $message = null)
+    public function onTransactionFailed(Transaction $transaction, $message = null): void
     {
         $baseTransaction = TransactionAdapter::getTransaction($transaction->originalTransaction()->first());
         $baseTransaction->addConflict($message);

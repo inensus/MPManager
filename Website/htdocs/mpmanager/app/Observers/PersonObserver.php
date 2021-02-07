@@ -13,9 +13,6 @@ use Illuminate\Support\Facades\Log;
 
 class PersonObserver
 {
-    public function created(Person $person)
-    {
-    }
 
     /**
      * Handle the Person "updated" event

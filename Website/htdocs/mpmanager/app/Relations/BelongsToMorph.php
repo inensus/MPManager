@@ -68,12 +68,13 @@ class BelongsToMorph extends BelongsTo
     /**
      * Get the polymorphic relationship columns.
      *
-     * @param  string $name
-     * @param  string $type
-     * @param  string $id
+     * @param string $name
+     * @param string $type
+     * @param string $id
+     *
      * @return array
      */
-    protected static function getMorphs($name, $type, $id)
+    protected static function getMorphs($name, $type, $id): array
     {
         $type = $type ?: $name . '_type';
         $id = $id ?: $name . '_id';
@@ -83,14 +84,15 @@ class BelongsToMorph extends BelongsTo
     /**
      * Define an inverse morph relationship.
      *
-     * @param  Model  $parent
-     * @param  string $related
-     * @param  string $name
-     * @param  string $type
-     * @param  string $id
-     * @param  string $otherKey
-     * @param  string $relation
-     * @return BelongsTo
+     * @param Model $parent
+     * @param string $related
+     * @param string $name
+     * @param null $type
+     * @param null $id
+     * @param null $otherKey
+     * @param null $relation
+     *
+     * @return BelongsToMorph
      */
     public static function build(
         Model $parent,
@@ -100,7 +102,7 @@ class BelongsToMorph extends BelongsTo
         $id = null,
         $otherKey = null,
         $relation = null
-    ) {
+    ): BelongsToMorph {
         // If no relation name was given, we will use this debug backtrace to extract
         // the calling method's name and use that as the relationship name as most
         // of the time this will be what we desire to use for the relationships.

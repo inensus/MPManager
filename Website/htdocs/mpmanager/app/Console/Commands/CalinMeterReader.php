@@ -50,9 +50,8 @@ class CalinMeterReader extends Command
         $this->calinReadMeter = $calinReadMeter;
     }
 
-    public function handle()
+    public function handle(): int
     {
-        //get all online meters
         $meters = $this->meter::whereHas(
             'meterType',
             function ($q) {
@@ -60,14 +59,12 @@ class CalinMeterReader extends Command
             }
         )->get();
 
-        //date of yesterday
         $readingDate = date('Y-m-d', strtotime('-1 day'));
         $this->calinReadMeter->readBatch(
             $meters,
             1,
             ['date' => $readingDate]
         );
-
         return 0;
     }
 }

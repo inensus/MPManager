@@ -44,9 +44,10 @@ class MeterParameterController extends Controller
      * List
      *
      * @responseFile responses/meterparameters/meterparameters.list.json
-     * @return       void
+     *
+     * @return ApiResource
      */
-    public function index()
+    public function index(): ApiResource
     {
         return new ApiResource($this->meterParameter->get());
     }
@@ -55,7 +56,7 @@ class MeterParameterController extends Controller
     /**
      * Create
      *
-     * @param Request $request
+     * @param MeterParameterRequest $request
      *
      * @return ApiResource
      */
@@ -104,20 +105,21 @@ class MeterParameterController extends Controller
     /**
      * Update
      *
-     * @urlParam  meterId int required
+     * @urlParam meterId int required
+     *
      * @bodyParam tariffId int
      * @bodyParam personId int
      *
-     * @param int $meterId
+     * @param string $meterId
      *
-     * @return void
+     * @return ApiResource|null
      */
     public function update(string $meterId)
     {
 
-        $personId = \request('personId') ?? -1;
-        $tariffId = \request('tariffId') ?? -1;
-        $connectionId = \request('connectionId') ?? -1;
+        $personId = request()->input('personId', -1);
+        $tariffId = request()->input('tariffId',-1);
+        $connectionId = request()->input('connectionId',-1);
         $parameter = $this->meterParameter->where('meter_id', $meterId)->first();
 
         if ($personId !== -1) {
@@ -155,7 +157,7 @@ class MeterParameterController extends Controller
      * @param        Request $request
      * @return       ApiResource
      */
-    public function connectionTypes(Request $request)
+    public function connectionTypes(Request $request): ApiResource
     {
         return new ApiResource($this->connectionType->numberOfConnections());
     }

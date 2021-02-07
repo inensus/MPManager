@@ -15,6 +15,7 @@ use App\Models\Transaction\AirtelTransaction;
 use App\Models\Transaction\ThirdPartyTransaction;
 use App\Models\Transaction\Transaction;
 use App\Models\Transaction\VodacomTransaction;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
 class RevenueService
@@ -41,7 +42,14 @@ class RevenueService
     }
 
 
-    public function getClustersRevenueByPeriod($clusterId, $period, $periodType, $connectionType = null)
+    /**
+     * @param $clusterId
+     * @param array $period
+     * @param $periodType
+     * @param null $connectionType
+     * @return Collection
+     */
+    public function getClustersRevenueByPeriod($clusterId, array $period, $periodType, $connectionType = null): Collection
     {
 
         if ($periodType === 'weekly' || $periodType === 'weekMonth') {
@@ -50,7 +58,13 @@ class RevenueService
         return $this->getClusterTransactionsByMonthlyPeriod($clusterId, $period, $connectionType);
     }
 
-    public function getMiniGridsRevenueByPeriod($miniGridId, $period, $periodType)
+    /**
+     * @param $miniGridId
+     * @param array $period
+     * @param $periodType
+     * @return Collection
+     */
+    public function getMiniGridsRevenueByPeriod($miniGridId, array $period, $periodType): Collection
     {
 
         if ($periodType === 'weekly' || $periodType === 'weekMonth') {
@@ -60,7 +74,7 @@ class RevenueService
     }
 
 
-    public function getMetersRevenueByPeriod($meters, $period, $periodType, $connectionType = null)
+    public function getMetersRevenueByPeriod($meters, $period, $periodType, $connectionType = null): Collection
     {
         /* returns data like
         Month-Year    Week    Revenue
@@ -74,7 +88,7 @@ class RevenueService
         return $this->getClusterTransactionsByMonthlyPeriod($meters, $period, $connectionType);
     }
 
-    private function getMeterTransactionsByWeeklyPeriod($meters, $period)
+    private function getMeterTransactionsByWeeklyPeriod($meters, $period): Collection
     {
         $revenue = $this->meter->transactions()
             ->selectRaw('DATE_FORMAT(created_at,\'%Y-%m\') as period ,DATE_FORMAT(created_at,\'%Y-%u\') ' .
@@ -131,7 +145,12 @@ class RevenueService
         return $revenue;
     }
 
-    public function getMeterSoldEnergy($meters, $period)
+    /**
+     * @param (mixed|string)[] $period
+     * @param array $period
+     * @return Collection|null
+     */
+    public function getMeterSoldEnergy($meters, array $period): ?Collection
     {
         return $this->meter_token
             ->selectRaw('COUNT(id) as amount, SUM(energy) as energy')
@@ -140,9 +159,14 @@ class RevenueService
             ->get();
     }
 
-    public function getMeterTransactions($meters, $period)
+    /**
+     * @param (mixed|string)[] $period
+     * @param array $period
+     * @return Collection
+     */
+    public function getMeterTransactions($meters, array $period): Collection
     {
-        $revenue = $this->meter->transactions()
+        return $this->meter->transactions()
             ->selectRaw('COUNT(id) as amount, SUM(amount) as revenue')
             ->where(
                 function ($q) {
@@ -190,7 +214,6 @@ class RevenueService
             )
             ->whereIn('message', $meters->pluck('serial_number'))
             ->whereBetween('created_at', $period)->get();
-        return $revenue;
     }
 
 

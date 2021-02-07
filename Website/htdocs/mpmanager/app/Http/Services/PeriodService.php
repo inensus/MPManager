@@ -20,16 +20,17 @@ class PeriodService
      * @param $endDate
      * @param $interval
      * @param $initialData
+     * @param (int|int[])[]|int $initialData
      *
      * @return array
+     *
      * @throws Exception
      */
-    public function generatePeriodicList($startDate, $endDate, $interval, $initialData): array
+    public function generatePeriodicList(string $startDate, string $endDate, string $interval, $initialData): array
     {
         $result = [];
         $begin = date_create($startDate);
         $end = date_create($endDate);
-
 
         $daysDifference = $end->diff($begin)->days;
 

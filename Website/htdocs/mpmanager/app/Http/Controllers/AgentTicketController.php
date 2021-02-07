@@ -35,7 +35,7 @@ class AgentTicketController extends Controller
         return new ApiResource($tickets);
     }
 
-    public function agentCustomerTickets($customerId, Request $request)
+    public function agentCustomerTickets($customerId, Request $request): ApiResource
     {
         $agent = request()->attributes->get('user');
         $tickets = $this->agentTicketService->listByCustomer($agent->id, $customerId);

@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
 /**
  * Class AgentCommission
  *
@@ -14,7 +16,7 @@ namespace App\Models;
 class AgentCommission extends BaseModel
 {
 
-    public function agent()
+    public function agent(): HasMany
     {
         return $this->hasMany(Agent::Class);
     }

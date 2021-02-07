@@ -15,7 +15,6 @@ class AgentCustomerController extends Controller
 
     public function __construct(AgentCustomerService $agentCustomerService)
     {
-
         $this->agentCustomerService = $agentCustomerService;
     }
 
@@ -30,56 +29,11 @@ class AgentCustomerController extends Controller
         $agent = Agent::find(auth('agent_api')->user()->id);
         return new ApiResource($this->agentCustomerService->list($agent));
     }
-    public function search()
+    public function search(): ApiResource
     {
-
         $term = request('term');
         $paginate = request('paginate') ?? 1;
         $agent = Agent::find(auth('agent_api')->user()->id);
         return new ApiResource($this->agentCustomerService->searchAgentsCustomers($term, $paginate, $agent));
-    }
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  Request $request
-     * @return void
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int $id
-     * @return void
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  Request $request
-     * @param  int     $id
-     * @return void
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int $id
-     * @return void
-     */
-    public function destroy($id)
-    {
-        //
     }
 }

@@ -130,7 +130,7 @@ class TariffController extends Controller
         return new ApiResource($result);
     }
 
-    public function destroy(MeterTariff $tariff)
+    public function destroy(MeterTariff $tariff): ?bool
     {
         return $tariff->delete();
     }

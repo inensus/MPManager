@@ -23,9 +23,8 @@ class AgentSoldApplianceObserver
         $this->agentBalanceHistory = $agentBalanceHistory;
     }
 
-    public function created(AgentSoldAppliance $appliances)
+    public function created(AgentSoldAppliance $appliances): void
     {
-
         $assignedApplianceId = $appliances->agent_assigned_appliance_id;
         $assignedAppliance = AgentAssignedAppliances::with('applianceType')->find($assignedApplianceId);
 

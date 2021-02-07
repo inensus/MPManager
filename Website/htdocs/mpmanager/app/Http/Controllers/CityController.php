@@ -86,9 +86,10 @@ class CityController extends Controller
     /**
      * Create
      *
-     * @param Request $request
+     * @param CityRequest $request
      *
      * @return ApiResource
+     *
      * @throws ValidationException
      */
     public function store(CityRequest $request)

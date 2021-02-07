@@ -3,6 +3,7 @@
 namespace App\Models\Meter;
 
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class MeterType extends BaseModel
 {
@@ -12,7 +13,7 @@ class MeterType extends BaseModel
         'max_current' => 'required',
     ];
 
-    public function meters()
+    public function meters(): HasMany
     {
         return $this->hasMany(Meter::class);
     }

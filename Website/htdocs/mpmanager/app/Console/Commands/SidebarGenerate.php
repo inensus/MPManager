@@ -2,7 +2,6 @@
 
 namespace App\Console\Commands;
 
-use App\MenuItems;
 use App\Services\MenuItemsService;
 use Illuminate\Console\Command;
 
@@ -17,11 +16,10 @@ class SidebarGenerate extends Command
     public function __construct(MenuItemsService $menuItemsService)
     {
         parent::__construct();
-
         $this->menuItemsService = $menuItemsService;
     }
 
-    public function handle()
+    public function handle(): void
     {
         $path = 'resources/assets/js/components/Sidebar/menu.json';
         $data = $this->menuItemsService->getMenuItems();

@@ -17,6 +17,9 @@ use App\Models\PaymentHistory;
 use App\Models\Sms;
 use App\Relations\BelongsToMorph;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\DB;
 use PDO;
@@ -43,7 +46,7 @@ class Transaction extends BaseModel
     /**
      * A work-around for querying the polymorphic relation with whereHas
      *
-     * @return BelongsTo
+     * @return BelongsToMorph
      */
     public function originalVodacom():BelongsToMorph
     {
@@ -54,7 +57,7 @@ class Transaction extends BaseModel
     /**
      * A work-around for querying the polymorphic relation with whereHas
      *
-     * @return BelongsTo
+     * @return BelongsToMorph
      */
     public function originalAirtel():BelongsToMorph
     {
@@ -70,22 +73,22 @@ class Transaction extends BaseModel
     {
         return BelongsToMorph::build($this, ThirdPartyTransaction::class, 'originalTransaction');
     }
-    public function token()
+    public function token(): HasOne
     {
         return $this->hasOne(MeterToken::class);
     }
 
-    public function sms()
+    public function sms(): MorphOne
     {
         return $this->morphOne(Sms::class, 'trigger');
     }
 
-    public function paymentHistories()
+    public function paymentHistories(): HasMany
     {
         return $this->hasMany(PaymentHistory::class);
     }
 
-    public function meter()
+    public function meter(): HasOne
     {
         return $this->hasOne(Meter::class, 'serial_number', 'message');
     }

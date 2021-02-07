@@ -79,7 +79,10 @@ class PersonService
     }
 
     //assign an address to the person
-    public function addAddress(Person $person, Address $address): Model
+    /**
+     * @return Model|false
+     */
+    public function addAddress(Person $person, Address $address)
     {
         return $person->addresses()->save($address);
     }
@@ -104,8 +107,11 @@ class PersonService
 
     /**
      * @param string $searchTerm could either phone, name or surname
+     * @param Request|array|int|string $paginate
      *
-     * @return Person[]|LengthAwarePaginator|Builder[]|Collection
+     * @return Builder[]|Collection|LengthAwarePaginator
+     *
+     * @psalm-return Collection|LengthAwarePaginator|array<array-key, Builder>
      */
     public function searchPerson($searchTerm, $paginate)
     {
@@ -139,7 +145,7 @@ class PersonService
     }
 
 
-    public function createMaintenancePerson(Request $request)
+    public function createMaintenancePerson(Request $request): Person
     {
         $this->person->is_customer = 0;
         $this->person->name = $request->get('name');

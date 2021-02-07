@@ -94,7 +94,7 @@ class AdminController extends Controller
      * @param     Response                  $response
      * @return    Response
      */
-    public function forgotPassword(AdminResetPasswordRequest $request, Response $response): Response
+    public function forgotPassword(AdminResetPasswordRequest $request, Response $response): self
     {
         if (!$this->userService->resetPassword($request->input('email'))) {
             return $response->setStatusCode(422)->setContent(

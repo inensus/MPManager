@@ -11,6 +11,9 @@ namespace App\Http\Services;
 use App\Models\City;
 use App\Models\Cluster;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
 class ClusterService
@@ -55,11 +58,21 @@ class ClusterService
         $this->transactionService = $transactionService;
     }
 
+    /**
+     * @return Builder|Builder[]|Collection|Model|null
+     *
+     * @psalm-return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|array<array-key, \Illuminate\Database\Eloquent\Builder>|null
+     */
     public function getClusterCities($clusterId)
     {
         return Cluster::query()->with('cities')->find($clusterId);
     }
 
+    /**
+     * @return Builder|Builder[]|Collection|Model|null
+     *
+     * @psalm-return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|array<array-key, \Illuminate\Database\Eloquent\Builder>|null
+     */
     public function getClusterMiniGrids($clusterId)
     {
         return Cluster::query()->with('miniGrids')->find($clusterId);
@@ -73,15 +86,18 @@ class ClusterService
             } catch (FileNotFoundException $e) {
                 continue;
             }
-
-            $clusters[$index]['geo'] = [json_decode($clusterData)];
+            $clusters[$index]['geo'] = [json_decode($clusterData, true)];
         }
         return $clusters;
     }
 
-    public function fetchClusterData($clusters, $range = [])
+    /**
+     * @param (\Illuminate\Http\Request|array|string)[] $range
+     * @param array $range
+     * @return mixed
+     */
+    public function fetchClusterData($clusters, array $range = [])
     {
-
         foreach ($clusters as $index => $cluster) {
             $clusters[$index]->meterCount = $this->meterService->getMeterCountInCluster($cluster->id);
             $clusters[$index]->revenue = $this->transactionService->totalClusterTransactions($cluster->id, $range);
@@ -90,7 +106,7 @@ class ClusterService
         return $clusters;
     }
 
-    public function getClusterList($withCities = false)
+    public function getClusterList(bool $withCities = false)
     {
         if (!$withCities) {
             return $this->cluster->get();
@@ -98,7 +114,7 @@ class ClusterService
         return $this->cluster::with('miniGrids')->get();
     }
 
-    public function getClustersCities($clusters, $callback)
+    public function getClustersCities($clusters, $callback): void
     {
         foreach ($clusters as $cluster) {
             $callback($cluster->cities()->get());

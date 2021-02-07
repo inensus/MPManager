@@ -8,6 +8,7 @@ use App\Http\Services\PersonService;
 use App\Models\MaintenanceUsers;
 use App\Models\Person\Person;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 
@@ -21,27 +22,30 @@ class MaintenanceUserController extends Controller
     /**
      * @var MaintenanceUsers
      */
-    private $maintenance_users;
+    private $maintenanceUsers;
 
 
     public function __construct(MaintenanceUsers $maintenance_users, Person $person)
     {
         $this->person = $person;
-        $this->maintenance_users = $maintenance_users;
+        $this->maintenanceUsers = $maintenance_users;
     }
 
 
     public function index(): ApiResource
     {
-        $maintenance_user_list = $this->maintenance_users::with('person')->get();
+        $maintenance_user_list = $this->maintenanceUsers::with('person')->get();
         return new ApiResource($maintenance_user_list);
     }
 
-    public function store(MaintenanceRequest $request)
+    /**
+     * @param MaintenanceRequest $request
+     * @return JsonResponse
+     */
+    public function store(MaintenanceRequest $request): JsonResponse
     {
         $phone = $request->get('phone');
 
-        //try to identify the person via phone number
         try {
             $person = $this->person->whereHas(
                 'addresses',
@@ -54,48 +58,16 @@ class MaintenanceUserController extends Controller
             $person = $personService->createFromRequest($request);
         }
 
-        $maintenance_user = $this->maintenance_users::create(
+        $maintenanceUser = $this->maintenanceUsers::create(
             [
             'person_id' => $person->id,
             'mini_grid_id' => $request->get('mini_grid_id'),
             ]
         );
 
-
         return
-            (new ApiResource($maintenance_user))
+            (new ApiResource($maintenanceUser))
             ->response()
             ->setStatusCode(201);
-    }
-
-    /**
-     * Updates the user entity
-     * Identifies the user with the "key" parameter which is been send with the request
-     * TODO: Create an UpdateCustomer request which requires a key parameter with following values (id,phone,email)
-     *
-     * @param Request $request
-     */
-    public function update(Request $request)
-    {
-        $key = $request->get('key');
-        $customer = null;
-        switch ($key) {
-            case 'id':
-                //find customer by id
-                break;
-            case 'phone':
-                //find customer by phone
-                break;
-            case 'email':
-                // find customer by email
-                break;
-        }
-    }
-
-    public function destroy($id)
-    {
-        $roleOwner = $this->roles->findOrFail($id);
-
-        dd($roleOwner);
     }
 }

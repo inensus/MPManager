@@ -14,9 +14,8 @@ class AccessRateListener
 {
 
 
-    public function initializeAccessRatePayment(MeterParameter $meterParameter)
+    public function initializeAccessRatePayment(MeterParameter $meterParameter): void
     {
-        // get releated accessRate
         try {
             $accessRatePayment = AccessRate::withMeterParameters($meterParameter);
             $accessRatePayment->initializeAccessRatePayment()->save();

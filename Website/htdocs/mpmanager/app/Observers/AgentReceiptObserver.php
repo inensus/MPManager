@@ -18,7 +18,7 @@ class AgentReceiptObserver
         $this->agentBalanceHistory = $agentBalanceHistory;
     }
 
-    public function created(AgentReceipt $receipt)
+    public function created(AgentReceipt $receipt): void
     {
         $agentId = $receipt->agent_id;
         $agent = Agent::query()->find($agentId);

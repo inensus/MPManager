@@ -103,11 +103,17 @@ class SolarDataListener
     }
 
 
-    private function storeWeatherData($fileName, $data): void
+    private function storeWeatherData(string $fileName, string $data): void
     {
         Storage::disk('local')->put('solar-reading/' . $fileName, $data);
     }
 
+    /**
+     * @param int $miniGridId
+     * @return string[]
+     *
+     * @psalm-return non-empty-list<string>
+     */
     private function getMiniGridLocation(int $miniGridId): array
     {
         $miniGrid = $this->miniGrid

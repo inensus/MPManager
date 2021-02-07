@@ -31,7 +31,7 @@ class Revenue extends Model
         return $sth->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function registeredMetersForMiniGridByConnectionGroupTill($miniGridId, $connectionId, $endDate)
+    public function registeredMetersForMiniGridByConnectionGroupTill($miniGridId, int $connectionId, string $endDate)
     {
         $sql = 'SELECT COUNT(meter_parameters.id) as registered_connections from meter_parameters ' .
             'left join addresses on addresses.owner_id = meter_parameters.id ' .
@@ -48,7 +48,7 @@ class Revenue extends Model
         return $sth->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function registeredMetersForClusterByConnectionGroupTill($clusterId, $connectionId, $endDate)
+    public function registeredMetersForClusterByConnectionGroupTill($clusterId, int $connectionId, string $endDate)
     {
         $sql = 'SELECT COUNT(meter_parameters.id) as registered_connections from meter_parameters ' .
             'left join addresses on addresses.owner_id = meter_parameters.id ' .
@@ -64,7 +64,7 @@ class Revenue extends Model
         return $sth->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function registeredMetersForClusterByConnectionGroup($clusterId, $connectionId, $startDate, $endDate)
+    public function registeredMetersForClusterByConnectionGroup($clusterId, int $connectionId, string $startDate, string $endDate)
     {
         //get meters which are registered in the given period
         $sql = 'SELECT COUNT(meters.serial_number) as registered_connections, connection_groups.name,' .
@@ -87,7 +87,7 @@ class Revenue extends Model
         return $sth->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function registeredMetersForMiniGridByConnectionGroup($miniGridId, $connectionId, $startDate, $endDate)
+    public function registeredMetersForMiniGridByConnectionGroup($miniGridId, int $connectionId, string $startDate, string $endDate)
     {
         //get meters which are registered in the given period
         $sql = 'SELECT COUNT(meters.serial_number) as registered_connections, connection_groups.name,' .
@@ -226,7 +226,7 @@ class Revenue extends Model
         return $sth->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function weeklyConnectionBalanceForPeriod($miniGridId, int $connectionId, string $startDate, string $endDate)
+    public function weeklyConnectionBalanceForPeriod(string $miniGridId, int $connectionId, string $startDate, string $endDate)
     {
 
         $sql = 'SELECT sum(transactions.amount) as total, YEARWEEK(transactions.created_at,3) ' .

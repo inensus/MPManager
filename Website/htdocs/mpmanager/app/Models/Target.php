@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use App\Models\SubTarget;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -32,7 +34,12 @@ class Target extends Model
     }
 
 
-    public function targetForMiniGrid($cityId, $endDate)
+    /**
+     * @param $cityId
+     * @param string $endDate
+     * @return Builder
+     */
+    public function targetForMiniGrid($cityId, string $endDate): Builder
     {
         return $this::with('subTargets.connectionType', 'city')
             ->where('owner_id', $cityId)
@@ -42,7 +49,7 @@ class Target extends Model
             ->limit(1);
     }
 
-    public function targetForCluster($miniGridIds, $endDate)
+    public function targetForCluster($miniGridIds, string $endDate)
     {
         return $this::select(DB::raw("*, YEARWEEK(target_date,3) as period"))
             ->with('subTargets.connectionType', 'city')
@@ -52,7 +59,7 @@ class Target extends Model
             ->orderBy('target_date', 'asc');
     }
 
-    public function owner()
+    public function owner(): MorphTo
     {
         return $this->morphTo();
     }

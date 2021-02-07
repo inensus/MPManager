@@ -7,6 +7,7 @@ use App\Models\User;
 use Closure;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
@@ -57,7 +58,7 @@ class JwtMiddleware extends BaseMiddleware
         return $next($request);
     }
 
-    private function generateResponse($message, $status = 400): \Illuminate\Http\JsonResponse
+    private function generateResponse(string $message, $status = 400): JsonResponse
     {
         return response()->json(['data' => ['message' => $message, 'status' => $status]]);
     }

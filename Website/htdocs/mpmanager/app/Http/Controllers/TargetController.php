@@ -64,7 +64,7 @@ class TargetController extends Controller
     }
 
 
-    public function getSlotsForDate()
+    public function getSlotsForDate(): ApiResource
     {
         $date = request('date');
         $lastDayOfMonth = date('Y-m-t', strtotime($date));

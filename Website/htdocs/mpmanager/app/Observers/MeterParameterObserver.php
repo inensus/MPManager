@@ -30,7 +30,7 @@ class MeterParameterObserver
     }
 
 
-    public function created(MeterParameter $meterParameter)
+    public function created(MeterParameter $meterParameter): void
     {
         CreatePiggyBankEntry::dispatch($meterParameter)
             ->allOnConnection('redis')

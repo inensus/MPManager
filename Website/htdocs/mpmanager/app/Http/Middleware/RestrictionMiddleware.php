@@ -89,14 +89,4 @@ class RestrictionMiddleware
         // everything is still in limits
         return true;
     }
-
-
-    private function handleDataControllerRestriction()
-    {
-    }
-
-
-    private function handleMaintenanceUserRestriction()
-    {
-    }
 }

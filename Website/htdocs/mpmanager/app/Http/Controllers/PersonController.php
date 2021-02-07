@@ -7,6 +7,7 @@ use App\Http\Resources\ApiResource;
 use App\Http\Services\PersonService;
 use App\Models\Person\Person;
 use Exception;
+use Illuminate\Http\JsonResponse;
 
 /**
  * Class PersonController
@@ -28,10 +29,13 @@ class PersonController extends Controller
      * List customer/other
      * [ To get a list of registered customers or non-customer like contact person of Meter Manufacturer. ]
      *
-     * @urlParam     is_customer int optinal. To get a list of customers or non customer. Default : 1
+     * @urlParam is_customer int optinal. To get a list of customers or non customer. Default : 1
+     *
      * @responseFile responses/people/people.list.json
+     *
+     * @return ApiResource
      */
-    public function index()
+    public function index(): ApiResource
     {
         $customerType = request('is_customer') ?? 1;
         return new ApiResource(
@@ -90,10 +94,11 @@ class PersonController extends Controller
     /**
      * Create
      *
-     * @param  PersonRequest $request
-     * @return ApiResource
+     * @param PersonRequest $request
+     *
+     * @return JsonResponse
      */
-    public function store(PersonRequest $request)
+    public function store(PersonRequest $request): JsonResponse
     {
         $customerType = $request->get('customer_type');
         if ($customerType === null || $customerType === 'customer') {

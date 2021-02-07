@@ -3,6 +3,7 @@
 namespace App\Models\Transaction;
 
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * Class TransactionConflicts
@@ -13,7 +14,7 @@ use App\Models\BaseModel;
  */
 class TransactionConflicts extends BaseModel
 {
-    public function transaction()
+    public function transaction(): MorphTo
     {
         return $this->morphTo();
     }

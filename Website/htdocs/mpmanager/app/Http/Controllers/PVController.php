@@ -55,15 +55,17 @@ class PVController extends Controller
     /**
      * Create
      *
-     * @param     PVRequest $request
-     * @param     Response  $response
+     * @param PVRequest $request
+     * @param Response  $response
+     *
      * @bodyParam mini_grid_id int required
      * @bodyParam node_id int required
      * @bodyParam device_id int required
      * @bodyParam pv array required
-     * @return    Response|void
+     *
+     * @return Response|null
      */
-    public function store(PVRequest $request, Response $response)
+    public function store(PVRequest $request, Response $response): ?Response
     {
         $pv = $request->input('pv');
 

@@ -353,15 +353,19 @@ class TransactionController extends Controller
      * Compares two given periods with each other
      *
      * @urlParam period required 0 for Yesterday, 1 for same day last week, 2 for last 7 days, 3 for last 30 days
-     * @param    $period int is one of following;
+     *
+     * @param $period int is one of following;
      *                   Yesterday = 0,
      *                   Same day last week =1,
      *                   Last 7 days =2
      *                   Last 30 days =3
      *
-     * @return       array
-     * @throws       Exception
+     * @return array
+     *
+     * @throws Exception
+     *
      * @responseFile responses/transactions/transactions.compare.json
+     *
      */
     public function compare($period): array
     {
@@ -386,7 +390,10 @@ class TransactionController extends Controller
         ];
     }
 
-    private function emptyCompareResult()
+    /**
+     * @return array
+     */
+    private function emptyCompareResult(): array
     {
         return [
             'total' => 0,
@@ -404,6 +411,7 @@ class TransactionController extends Controller
      * @param array $comparisionPeriod
      *
      * @return array
+     *
      */
     private function getTransactions(array $comparisionPeriod): array
     {
@@ -616,6 +624,7 @@ class TransactionController extends Controller
      * @param $transactions
      *
      * @return array|null
+     *
      */
     private function getTransactionAnalysis($transactions): ?array
     {
@@ -664,6 +673,7 @@ class TransactionController extends Controller
      * @param array $pastTransactions
      *
      * @return array
+     *
      */
     private function comparePeriods(array $currentTransactions, array $pastTransactions): array
     {
@@ -727,9 +737,11 @@ class TransactionController extends Controller
      * @param $period
      *
      * @return array|null
+     *
      * @throws Exception
+     *
      */
-    private function determinePeriod($period)
+    private function determinePeriod($period): ?array
     {
         $comparisionPeriod = null;
         switch ($period) {

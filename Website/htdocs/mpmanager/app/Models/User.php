@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Models\Address\Address;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Hash;
@@ -67,7 +69,7 @@ class User extends Authenticatable implements JWTSubject
     }
 
 
-    public function address()
+    public function address(): MorphOne
     {
         return $this->morphOne(Address::class, 'owner');
     }
@@ -76,11 +78,11 @@ class User extends Authenticatable implements JWTSubject
     {
         return $this->address()->with('city');
     }
-    public function balanceHistory()
+    public function balanceHistory(): HasMany
     {
         return $this->hasMany(AgentBalanceHistory::class);
     }
-    public function assignedAppliance()
+    public function assignedAppliance(): HasMany
     {
         return $this->hasMany(AgentAssignedAppliances::class);
     }

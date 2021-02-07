@@ -23,17 +23,6 @@ class AssetPersonController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
-     *
-     * @return Response
-     */
-    public function index()
-    {
-        //
-    }
-
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  AssetType $assetType
@@ -68,28 +57,5 @@ class AssetPersonController extends Controller
             ->where('person_id', $person->id)
             ->get();
         return new ApiResource($assets);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  Request     $request
-     * @param  AssetPerson $assetPerson
-     * @return Response
-     */
-    public function update(Request $request, AssetPerson $assetPerson)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  AssetPerson $assetPerson
-     * @return Response
-     */
-    public function destroy(AssetPerson $assetPerson)
-    {
-        //
     }
 }

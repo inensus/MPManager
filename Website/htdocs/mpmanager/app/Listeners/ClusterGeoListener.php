@@ -76,8 +76,11 @@ class ClusterGeoListener
      *
      * @param $data
      *
-     * @return array
+     * @return array[]
+     *
      * @throws GeoFormatException
+     *
+     * @psalm-return list<array{0: mixed, 1: mixed}>
      */
     public function reformatExternalData($data): array
     {

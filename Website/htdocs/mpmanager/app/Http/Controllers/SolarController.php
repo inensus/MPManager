@@ -25,7 +25,7 @@ class SolarController extends Controller
         return new ApiResource($solarReadings);
     }
 
-    public function listByMiniGrid($miniGridId)
+    public function listByMiniGrid($miniGridId): ApiResource
     {
         echo "miniGridId " . $miniGridId;
         $solarReadings = $this->solarService->lisByMiniGrid($miniGridId);

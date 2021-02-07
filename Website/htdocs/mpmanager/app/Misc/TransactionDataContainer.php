@@ -163,7 +163,10 @@ class TransactionDataContainer
 
     /**
      * @param MeterParameter $meterParameter
+     *
+     * @return MeterTariff|Model|BelongsTo|object
      * @throws TariffNotFound
+     *
      */
     private function getTariff(MeterParameter $meterParameter)
     {

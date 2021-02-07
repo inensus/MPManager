@@ -144,14 +144,13 @@ class AccessRate
     }
 
 
-    public function updatePayment($accessRatePayment, int $paidAmount, bool $satisfied = false)
+    public function updatePayment($accessRatePayment, int $paidAmount, bool $satisfied = false): void
     {
         $accessRatePayment->debt = $satisfied === true ? 0 : $accessRatePayment->debt - $paidAmount;
         $accessRatePayment->save();
     }
 
-
-    private function getAccessRatePayment(Meter $meter)
+    private function getAccessRatePayment(Meter $meter): ?object
     {
         return $meter->accessRatePayment()->first();
     }

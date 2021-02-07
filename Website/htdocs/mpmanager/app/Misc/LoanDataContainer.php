@@ -4,10 +4,14 @@
 namespace App\Misc;
 
 use App\Exceptions\MeterParameter\MeterParameterNotFound;
+use App\Exceptions\Meters\MeterIsNotAssignedToCustomer;
+use App\Exceptions\Meters\MeterIsNotInUse;
 use App\Models\AssetPerson;
 use App\Models\AssetRate;
 use App\Models\Meter\Meter;
 use App\Models\Transaction\Transaction;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class LoanDataContainer
@@ -19,7 +23,7 @@ class LoanDataContainer
 
     public $paid_rates = array();
 
-    public function initialize(Transaction $transaction)
+    public function initialize(Transaction $transaction): void
     {
         $this->transaction = $transaction;
         $this->meterOwner = $this->getMeterOwner($transaction->message);
@@ -84,18 +88,20 @@ class LoanDataContainer
     }
 
 
+    /**
+     * @param $owner
+     * @return Builder[]|Collection
+     *
+     * @psalm-return \Illuminate\Database\Eloquent\Collection|array<array-key, \Illuminate\Database\Eloquent\Builder>
+     */
     private function getCustomerDueRates($owner)
     {
         $loans = AssetPerson::where('person_id', $owner->id)->pluck('id');
-
-
-        $due_rates = AssetRate::with('assetPerson.assetType')
+        return AssetRate::with('assetPerson.assetType')
             ->whereIn('asset_person_id', $loans)
             ->where('remaining', '>', 0)
             ->whereDate('due_date', '<', date('Y-m-d'))
             ->get();
-
-        return $due_rates;
     }
 
     /**

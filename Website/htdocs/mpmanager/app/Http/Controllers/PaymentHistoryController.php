@@ -125,11 +125,13 @@ class PaymentHistoryController
      * Person payment flow per year
      *
      * @urlParam personId integer required
-     * @param    int      $personId
-     * @param    int|null $year
-     * @return   array
-     */
-    public function byYear(int $personId, int $year = null)
+     *
+     * @param int $personId
+     * @param int|null $year
+     *
+     * @return array
+     **/
+    public function byYear(int $personId, int $year = null): array
     {
         $year = $year ?? (int)date('Y');
         $payments = $this->history->getPaymentFlow('person', $personId, $year);
@@ -158,10 +160,7 @@ class PaymentHistoryController
                 $ad += $m->meter->accessRatePayment->debt;
             }
         }
-
-
         $deferredDebt = 0;
-
         return new ApiResource(['access_rate' => $ad, 'deferred' => $deferredDebt]);
     }
 
@@ -194,14 +193,17 @@ class PaymentHistoryController
         return new ApiResource(array_values($result));
     }
 
-    public function preparePaymentFlow($payments)
+    /**
+     * @return array[]
+     *
+     * @psalm-return array<array-key, array>
+     */
+    public function preparePaymentFlow($payments): array
     {
         $flowList = [];
-
         foreach ($payments as $payment) {
             $flowList[$payment['aperiod']][$payment['payment_type']] = $payment['amount'];
         }
-
         return $flowList;
     }
 }

@@ -35,7 +35,7 @@ class AgentSoldApplianceController extends Controller
         return new ApiResource($soldAppliances);
     }
 
-    public function customerSoldAppliances($customerId, Request $request)
+    public function customerSoldAppliances($customerId, Request $request): ApiResource
     {
         $agent = Agent::find(auth('agent_api')->user()->id);
         $soldAppliances = $this->agentSoldApplianceService->customerSoldList($customerId, $agent->id);
@@ -65,31 +65,7 @@ class AgentSoldApplianceController extends Controller
         return new ApiResource($appliance);
     }
 
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param  agentSoldAppliance       $agent_sold_appliance
-     * @return void
-     */
-    public function update(Request $request, agentSoldAppliance $agent_sold_appliance)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\agentSoldAppliance $agent_sold_appliance
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(agentSoldAppliance $agent_sold_appliance)
-    {
-        //
-    }
-
-    public function indexWeb(Agent $agent, Request $request)
+    public function indexWeb(Agent $agent, Request $request): ApiResource
     {
 
         $soldAppliances = $this->agentSoldApplianceService->listForWeb($agent->id);

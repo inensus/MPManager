@@ -68,6 +68,8 @@ class CalinReadMeter implements IMeterReader
      *
      * @param $meterId
      * @param $type
+     *
+     * @return void
      */
     public function readMeter($meterId, $type)
     {
@@ -79,6 +81,8 @@ class CalinReadMeter implements IMeterReader
      * @param $meterList
      * @param int   $type      defines what to read from the remote api
      * @param array $options
+     *
+     * @return void
      */
     public function readBatch($meterList, $type, $options)
     {
@@ -137,9 +141,13 @@ class CalinReadMeter implements IMeterReader
     }
 
     /**
-     * @param  $data
-     * @return string
+     * @param $data
+     *
+     * @return string[]
+     *
      * @throws MeterIsNotReadable
+     *
+     * @psalm-return non-empty-list<string>
      */
     private function fetchResponseData($data): array
     {
@@ -154,7 +162,17 @@ class CalinReadMeter implements IMeterReader
         return explode(',', $out[2]); // return the interesting data
     }
 
-    private function prepareDailyReadRequest($meterId, $year, $month, $day, $action = 'Read'): array
+    /**
+     * @param string $meterId
+     * @param string $year
+     * @param string $month
+     * @param string $day
+     * @param string $action
+     * @return array (\Illuminate\Config\Repository|float|mixed)[]
+     *
+     * @psalm-return array{userId: \Illuminate\Config\Repository|mixed, meterId: mixed, dataWay: mixed, timestamp: float, cipherText: mixed, year: mixed, month: mixed, day: mixed}
+     */
+    private function prepareDailyReadRequest(string $meterId, string $year, string $month, string $day, $action = 'Read'): array
     {
         [$t1, $t2] = explode(' ', microtime());
         $timestamp = (float)sprintf('%.0f', ((float)$t1 + (float)$t2) * 1000);
@@ -172,7 +190,7 @@ class CalinReadMeter implements IMeterReader
         return $params;
     }
 
-    private function generateCipher($meterId, $timestamp, $dataWay)
+    private function generateCipher($meterId, float $timestamp, $dataWay): string
     {
         return md5(
             sprintf(

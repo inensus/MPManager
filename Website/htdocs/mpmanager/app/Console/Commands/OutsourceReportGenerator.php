@@ -40,7 +40,7 @@ class OutsourceReportGenerator extends Command
      *
      * @return int
      */
-    public function handle()
+    public function handle(): int
     {
         if ($this->option('start-date') !== "") {
             $toDay = Carbon::parse($this->option('start-date'))->format('Y-m-d');

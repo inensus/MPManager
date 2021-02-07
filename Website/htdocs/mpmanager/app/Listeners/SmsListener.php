@@ -58,7 +58,7 @@ class SmsListener
         return true;
     }
 
-    public function subscribe(Dispatcher $events)
+    public function subscribe(Dispatcher $events): void
     {
         $events->listen('sms.send.token', '\App\Listeners\SmsListener@sendSms');
         $events->listen('sms.send', '\App\Listeners\SmsListener@sendSms');

@@ -30,9 +30,13 @@ class CalinSmartApi implements IManufacturerAPI
 
 
     /**
-     * @param  $transactionContainer
-     * @return array
+     * @param $transactionContainer
+     *
+     * @return (float|mixed|string)[]
+     *
      * @throws Exception
+     *
+     * @psalm-return array{token: mixed|string, energy: float}
      */
     public function chargeMeter($transactionContainer): array
     {
@@ -69,7 +73,15 @@ class CalinSmartApi implements IManufacturerAPI
             ];
         }
     }
-    public function clearMeter(Meter $meter)
+
+    /**
+     * @param Meter $meter
+     * @return array
+     *
+     * @throws GuzzleException
+     * @psalm-return array{result_code: mixed}
+     */
+    public function clearMeter(Meter $meter): array
     {
         $url = config('services.calinSmart.url.clear');
         $tokenParams = [
@@ -86,12 +98,15 @@ class CalinSmartApi implements IManufacturerAPI
     /**
      * Makes the external call to CALIN API and resturns the token.
      *
-     * @param  $tokenParams
+     * @param $tokenParams
      * @param $url
+     * @param (\Illuminate\Config\Repository|float|mixed|true)[] $tokenParams
+     *
      * @return array
+     *
      * @throws GuzzleException
      */
-    private function tokenRequest($tokenParams, $url): array
+    private function tokenRequest(array $tokenParams, $url): array
     {
         $request = $this->api->post(
             $url,
@@ -111,7 +126,11 @@ class CalinSmartApi implements IManufacturerAPI
         return $tokenResult['result'];
     }
 
-    public function associateManufacturerTransaction(TransactionDataContainer $transactionContainer)
+    /**
+     * @param TransactionDataContainer $transactionContainer
+     * @return void
+     */
+    public function associateManufacturerTransaction(TransactionDataContainer $transactionContainer): void
     {
         $transaction = $this->transaction->newQuery()->with(
             'originalAirtel',

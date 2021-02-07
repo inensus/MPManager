@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * Class History holds all the changes in the system for the current day.
@@ -19,7 +20,7 @@ class History extends Model
     public const ACTION_UPDATE = 'update';
     public const ACTION_DELETE = 'delete';
 
-    public function target()
+    public function target(): MorphTo
     {
         return $this->morphTo();
     }

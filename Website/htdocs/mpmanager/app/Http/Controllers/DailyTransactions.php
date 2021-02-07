@@ -102,15 +102,13 @@ class DailyTransactions extends Controller
             'Pragma' => 'public',
         ];
 
-
         array_unshift($transactionData, array_keys($transactionData[0]));
-
-        $callback = function () use ($transactionData) {
-            $FH = fopen('php://output', 'wb');
+        $callback = function () use ($transactionData): void {
+            $fh = fopen('php://output', 'wb');
             foreach ($transactionData as $row) {
-                fputcsv($FH, $row);
+                fputcsv($fh, $row);
             }
-            fclose($FH);
+            fclose($fh);
         };
 
         return response()->stream($callback, 200, $headers);

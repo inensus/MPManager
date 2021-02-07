@@ -256,8 +256,10 @@ class MeterController extends Controller
      * @urlParam serialNumber the serial number of the meter
      *
      * @responseFile responses/meters/meter.transaction.list.json
+     *
+     * @return ApiResource
      */
-    public function transactionList($serialNumber)
+    public function transactionList($serialNumber): ApiResource
     {
         $token = new MeterToken();
         $transactions = new Transaction();

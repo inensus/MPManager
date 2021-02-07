@@ -22,8 +22,10 @@ class MeterTypeController extends Controller
      * List
      *
      * @responseFile responses/metertypes/meter.types.list.json
+     *
+     * @return ApiResource
      */
-    public function index()
+    public function index(): ApiResource
     {
         return new ApiResource(
             MeterType::paginate(15)

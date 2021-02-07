@@ -21,7 +21,7 @@ class AgentCommissionController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return ApiResource
      */
     public function index(): ApiResource
     {
@@ -46,9 +46,10 @@ class AgentCommissionController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  Request         $request
-     * @param  AgentCommission $commission
-     * @return void
+     * @param CreateAgentCommissionRequest $request
+     * @param AgentCommission $commission
+     *
+     * @return ApiResource
      */
     public function update(CreateAgentCommissionRequest $request, AgentCommission $commission): ApiResource
     {
@@ -59,8 +60,9 @@ class AgentCommissionController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  AgentCommission $commission
-     * @return void
+     * @param AgentCommission $commission
+     *
+     * @return ApiResource
      */
     public function destroy(AgentCommission $commission): ApiResource
     {

@@ -14,7 +14,7 @@ class RoleDefinition extends BaseModel
 {
     public $timestamps = false;
 
-    public function roles()
+    public function roles(): void
     {
         $this->hasMany(Roles::class);
     }

@@ -36,7 +36,7 @@ class AdminJWT
         return $token;
     }
 
-    private function validateJWT()
+    private function validateJWT(): bool
     {
         try {
             $token = JWTAuth::parseToken();

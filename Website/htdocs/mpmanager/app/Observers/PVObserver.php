@@ -23,11 +23,13 @@ class PVObserver
         $this->pv = $pv;
     }
 
+    /**
+     * @return void
+     */
     public function created()
     {
         //get last 2 rows to calculate the difference between them
         $p = $this->pv->latest()->take(2)->get();
-
 
         if (count($p) === 1) {
             return;

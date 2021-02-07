@@ -5,63 +5,9 @@ namespace App\Http\Controllers;
 use App\Http\Resources\ApiResource;
 use App\Models\AssetRate;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 class AssetRateController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return Response
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param Request $request
-     * @return Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param AssetRate $assetRate
-     * @return Response
-     */
-    public function show(AssetRate $assetRate)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param AssetRate $assetRate
-     * @return Response
-     */
-    public function edit(AssetRate $assetRate)
-    {
-        //
-    }
-
     /**
      * Update the specified resource in storage.
      *
@@ -83,21 +29,8 @@ class AssetRateController extends Controller
                 ]
             ]
         );
-
-
         $assetRate->remaining = $request->get('remaining');
         $assetRate->update();
         return new ApiResource($assetRate);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param AssetRate $assetRate
-     * @return Response
-     */
-    public function destroy(AssetRate $assetRate)
-    {
-        //
     }
 }

@@ -5,6 +5,7 @@ namespace App\Models\Meter;
 use App\Models\BaseModel;
 use App\Models\PaymentHistory;
 use App\Models\Transaction\Transaction;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Support\Facades\DB;
 
@@ -18,12 +19,12 @@ use Illuminate\Support\Facades\DB;
 class MeterToken extends BaseModel
 {
 
-    public function transaction()
+    public function transaction(): BelongsTo
     {
         return $this->belongsTo(Transaction::class);
     }
 
-    public function meter()
+    public function meter(): BelongsTo
     {
         return $this->belongsTo(Meter::class);
     }

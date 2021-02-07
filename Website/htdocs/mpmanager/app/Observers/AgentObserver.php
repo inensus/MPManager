@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Log;
 
 class AgentObserver
 {
-    public function created(Agent $agent)
+    public function created(Agent $agent): void
     {
     }
 
@@ -26,7 +26,6 @@ class AgentObserver
 
     public function deleted(Agent $agent): void
     {
-
         $person = Person::find($agent->person_id);
         $person->delete();
         foreach ($agent->addresses()->get() as $address) {

@@ -18,6 +18,8 @@ use App\Models\Transaction\AirtelTransaction;
 use App\Models\Transaction\Transaction;
 use App\Models\Transaction\VodacomTransaction;
 use Generator;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -126,7 +128,7 @@ class Reports
         $this->report = $report;
     }
 
-    private function monthlyTargetRibbon(Worksheet $sheet)
+    private function monthlyTargetRibbon(Worksheet $sheet): void
     {
         $sheet->setCellValue('a5', 'Category');
         $sheet->mergeCells('c5:e5');
@@ -185,7 +187,7 @@ class Reports
         }
     }
 
-    private function addTargetConnectionGroups(Worksheet $sheet)
+    private function addTargetConnectionGroups(Worksheet $sheet): void
     {
         $column = 'A';
         $subColumn = 'B';
@@ -282,7 +284,7 @@ class Reports
      *
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      */
-    private function styleSheet(Worksheet $sheet, $column, ?string $border, ?string $color): void
+    private function styleSheet(Worksheet $sheet, string $column, ?string $border, ?string $color): void
     {
         $style = $sheet->getStyle($column);
 
@@ -299,8 +301,10 @@ class Reports
      * @param $dateRange
      *
      * @throws \PhpOffice\PhpSpreadsheet\Exception
+     *
+     * @return void
      */
-    private function addStaticText(Worksheet $sheet, $dateRange)
+    private function addStaticText(Worksheet $sheet, string $dateRange): void
     {
         $this->styleSheet($sheet, 'A1:L4', Border::BORDER_THIN, null);
         $this->fillBackground($sheet, 'A1:A5', 'FFFABF8F');
@@ -351,7 +355,7 @@ class Reports
     /**
      * @param Worksheet $sheet
      * @param String $dateRange
-     * @param $transactions
+     * @param Builder[]|Collection $transactions
      *
      * @throws CustomerGroupNotFound
      * @throws \PhpOffice\PhpSpreadsheet\Exception
@@ -384,9 +388,8 @@ class Reports
 
     /**
      * @param Worksheet $sheet
-     * @param $transactions
-     *
      * @param bool $addPurchaseBreakDown
+     * @param Builder[]|Collection $transactions
      *
      * @throws CustomerGroupNotFound
      */
@@ -396,7 +399,7 @@ class Reports
         $balance = 0;
 
         foreach ($transactions as $index => $transaction) {
-            if (!isset($transaction->meter->meterParameter)) {
+            if (!count($transaction->meter->meterParameter)) {
                 continue;
             }
 
@@ -493,7 +496,8 @@ class Reports
     /**
      * @param String $connectionGroupName
      *
-     * @return mixed
+     * @return string
+     *
      * @throws CustomerGroupNotFound
      */
     private function getConnectionGroupColumn(string $connectionGroupName): string
@@ -518,6 +522,7 @@ class Reports
      * @param $connectionGroups
      * @param string $startingColumn
      * @param int $startingRow
+     * @param Builder[]|Collection $connectionGroups
      *
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      */
@@ -560,7 +565,7 @@ class Reports
         }
     }
 
-    private function addSoldTotal($connectionGroupName, array $amount, $unit = null): void
+    private function addSoldTotal(string $connectionGroupName, array $amount, $unit = null): void
     {
         if (!array_key_exists($connectionGroupName, $this->totalSold)) {
             $this->totalSold[$connectionGroupName] = [
@@ -621,7 +626,12 @@ class Reports
         }
     }
 
-    private function excelColumnRange($lower, $upper): ?Generator
+    /**
+     * @return Generator
+     *
+     * @psalm-return Generator<int, mixed, mixed, void>
+     */
+    private function excelColumnRange(string $lower, string $upper): Generator
     {
         ++$upper;
         for ($i = $lower; $i !== $upper; ++$i) {
@@ -648,7 +658,7 @@ class Reports
         int $cityId,
         $cityName,
         $startDate,
-        $endDate,
+        string $endDate,
         $reportType
     ): void {
 
@@ -707,8 +717,8 @@ class Reports
 
         $writer = new Xlsx($this->spreadsheet);
         $dirPath = storage_path('./'.$reportType);
-        if (!file_exists($dirPath)) {
-            mkdir($dirPath, 0774, true);
+        if (!file_exists($dirPath) && !mkdir($dirPath, 0774, true) && !is_dir($dirPath)) {
+            throw new \RuntimeException(sprintf('Directory "%s" was not created', $dirPath));
         }
         try {
             $fileName = str_slug($reportType . '-' . $cityName . '-' . $dateRange) . '.xlsx';
@@ -730,10 +740,11 @@ class Reports
      * Total number of customer groups until given date
      *
      * @param string $date
+     *
+     * @return void
      */
-    private function getCustomerGroupCountPerMonth(string $date)
+    private function getCustomerGroupCountPerMonth(string $date): void
     {
-        //meter parameter i connection type olarak grupla ve relation dan connection type name'i al
         $connectionGroupsCount = MeterParameter::selectRaw('Count(id) as total, connection_group_id')
             ->with('connectionGroup')
             ->where('created_at', '<', $date)
@@ -748,10 +759,9 @@ class Reports
                 'average_revenue_per_customer' => 0.0,
             ];
         }
-        // dump($this->monthlyTargetDatas);
     }
 
-    private function getCustomerGroupEnergyUsagePerMonth(array $dates)
+    private function getCustomerGroupEnergyUsagePerMonth(array $dates): void
     {
 
         foreach ($this->monthlyTargetDatas as $connectionName => $targetData) {
@@ -781,7 +791,7 @@ class Reports
     }
 
 
-    public function sumOfTransactions($connectionGroupId, $dateRange): array
+    public function sumOfTransactions($connectionGroupId, array $dateRange): array
     {
         return DB::select(
             DB::raw(
@@ -821,7 +831,7 @@ class Reports
         }
     }
 
-    private function addStoredTargets($sheet, $cityId, $endDate): void
+    private function addStoredTargets(Worksheet $sheet, int $cityId, $endDate): void
     {
         $targetData = $this->target::with('subTargets.connectionType')
             ->where('target_date', '>', $endDate)

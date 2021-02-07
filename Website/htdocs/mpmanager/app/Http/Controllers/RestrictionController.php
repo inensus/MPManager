@@ -33,7 +33,10 @@ class RestrictionController extends Controller
     }
 
 
-    public function store(Request $request, Response $response)
+    /**
+     * @return Response
+     */
+    public function store(Request $request, Response $response): Response
     {
         $productId = $request->input('product_id');
         $token = $request->input('token');
@@ -55,7 +58,6 @@ class RestrictionController extends Controller
                 ]
             );
             if ($validation->getStatusCode() !== 200) {
-                // validation failed
                 return $response->setContent('validation failed')->setStatusCode(409);
             }
         } catch (RequestException $e) {
@@ -100,10 +102,14 @@ class RestrictionController extends Controller
     }
 
     /**
-     * @param  $target
+     * @param $target
+     * @param int $toAdd
+     *
      * @throws PurchaseNotProcessable
+     *
+     * @return void
      */
-    private function updateRestriction($target, $toAdd = 1)
+    private function updateRestriction(string $target, int $toAdd = 1): void
     {
         try {
             $restriction = $this->restriction->where('target', $target)->firstOrFail();

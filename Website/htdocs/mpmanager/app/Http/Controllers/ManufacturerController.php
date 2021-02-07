@@ -13,8 +13,10 @@ class ManufacturerController extends Controller
 {
     /**
      * Display a listing of the resource.
+     *
+     * @return ApiResource
      */
-    public function index()
+    public function index(): ApiResource
     {
         return new ApiResource(
             Manufacturer::paginate(15)
@@ -62,29 +64,5 @@ class ManufacturerController extends Controller
         return new ApiResource(
             $manufacturer::with('address.city.country')->get()
         );
-    }
-
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  Request      $request
-     * @param  Manufacturer $manufacturer
-     * @return Response
-     */
-    public function update(Request $request, Manufacturer $manufacturer)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  Manufacturer $manufacturer
-     * @return Response
-     */
-    public function destroy(Manufacturer $manufacturer)
-    {
-        //
     }
 }

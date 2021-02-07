@@ -358,12 +358,15 @@ class RevenueController extends Controller
         return new ApiResource($response);
     }
 
-    private function reformatPeriod($period)
+    private function reformatPeriod($period): string
     {
         return substr_replace($period, '-', 4, 0);
     }
 
 
+    /**
+     * @return array
+     */
     private function fetchTargets($targetData): array
     {
         $formattedTarget = [];
@@ -551,6 +554,9 @@ class RevenueController extends Controller
     }
 
 
+    /**
+     * @return array
+     */
     public function periodDifference(
         $startDate,
         $endDate,
@@ -614,6 +620,9 @@ class RevenueController extends Controller
         return new DateInterval('P1M');
     }
 
+    /**
+     * @return array
+     */
     private function connectionGroupNames($connectionTypes): array
     {
         $names = array_flip(
@@ -693,6 +702,8 @@ class RevenueController extends Controller
      * Fetch all transactions for the cluster in weekly or monthly perspective
      *
      * @param Request $request
+     *
+     * @return void
      */
     public function getClusterRevenueByPeriod(Request $request)
     {
@@ -794,7 +805,7 @@ class RevenueController extends Controller
     }
 
 
-    public function getRevenueAnalysisForCluster($id, Request $request)
+    public function getRevenueAnalysisForCluster($id, Request $request): ApiResource
     {
         /**
          * !!!!

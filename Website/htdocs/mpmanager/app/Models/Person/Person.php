@@ -16,6 +16,7 @@ use App\Models\PaymentHistory;
 use App\Models\Role\RoleInterface;
 use App\Models\Role\Roles;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -46,7 +47,7 @@ class Person extends BaseModel implements HasAddressesInterface, RoleInterface
     ];
 
 
-    public function tickets()
+    public function tickets(): MorphMany
     {
         return $this->morphMany(Ticket::class, 'owner');
     }
@@ -56,6 +57,9 @@ class Person extends BaseModel implements HasAddressesInterface, RoleInterface
         $this->addresses()->save($address);
     }
 
+    /**
+     * @return MorphMany
+     */
     public function addresses(): HasOneOrMany
     {
         return $this->morphMany(Address::class, 'owner');
@@ -72,6 +76,9 @@ class Person extends BaseModel implements HasAddressesInterface, RoleInterface
         return $this->morphMany(MeterParameter::class, 'owner');
     }
 
+    /**
+     * @return MorphMany
+     */
     public function roleOwner(): HasOneOrMany
     {
         return $this->morphMany(Roles::class, 'role_owner');
@@ -85,11 +92,11 @@ class Person extends BaseModel implements HasAddressesInterface, RoleInterface
     {
         return $this->belongsTo(CustomerGroup::class);
     }
-    public function agent()
+    public function agent(): HasOne
     {
         return $this->hasOne(Agent::Class);
     }
-    public function agentSoldAppliance()
+    public function agentSoldAppliance(): HasOne
     {
         return $this->hasOne(AgentSoldAppliance::Class);
     }

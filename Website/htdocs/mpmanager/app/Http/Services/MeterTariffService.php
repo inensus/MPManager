@@ -11,6 +11,8 @@ use App\Models\Meter\MeterTariff;
 use App\Models\SocialTariff;
 use App\Models\TariffPricingComponent;
 use App\Models\TimeOfUsage;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -18,7 +20,14 @@ class MeterTariffService
 {
 
 
-    public function update(MeterTariff $tariff, TariffCreateRequest $request): Model
+    /**
+     * @param MeterTariff $tariff
+     * @param TariffCreateRequest $request
+     * @return Model|Builder|Builder[]|Collection|null
+     *
+     * @psalm-return Model|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Collection|array<array-key, \Illuminate\Database\Eloquent\Builder>|null
+     */
+    public function update(MeterTariff $tariff, TariffCreateRequest $request)
     {
         if ($accessRate = request()->input('access_rate')) {
             if ($accessRate['id']) {
@@ -27,11 +36,10 @@ class MeterTariffService
                 $updatedAccessRate->period = $accessRate['access_rate_period'];
                 $updatedAccessRate->update();
             } else {
-                AccessRate::create(
-                    [
-                    'tariff_id' => $tariff->id,
-                    'amount' => $accessRate['access_rate_amount'],
-                    'period' => $accessRate['access_rate_period'],
+                AccessRate::create([
+                        'tariff_id' => $tariff->id,
+                        'amount' => $accessRate['access_rate_amount'],
+                        'period' => $accessRate['access_rate_period'],
                     ]
                 );
             }
@@ -118,7 +126,7 @@ class MeterTariffService
         )->find($tariff->id);
     }
 
-    public function meterTariffUsageCount($tariffId)
+    public function meterTariffUsageCount($tariffId): array
     {
 
         return DB::select(
@@ -131,12 +139,17 @@ class MeterTariffService
         );
     }
 
-    public function changeMetersTariff($currentId, $changeId)
+    /**
+     * @return Builder[]|Collection
+     *
+     * @psalm-return \Illuminate\Database\Eloquent\Collection|array<array-key, \Illuminate\Database\Eloquent\Builder>
+     */
+    public function changeMetersTariff($currentId, int $changeId)
     {
         $meterParameters = MeterParameter::query()->where('tariff_id', $currentId)->get();
         foreach ($meterParameters as $key => $value) {
-                $value->tariff_id = $changeId;
-                $value->update();
+            $value->tariff_id = $changeId;
+            $value->update();
         }
         return $meterParameters;
     }

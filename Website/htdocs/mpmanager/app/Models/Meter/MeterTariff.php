@@ -10,6 +10,7 @@ use App\Models\TariffPricingComponent;
 use App\Models\TimeOfUsage;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
@@ -52,16 +53,16 @@ class MeterTariff extends BaseModel
         return $this->hasOne(AccessRate::class, 'tariff_id');
     }
 
-    public function pricingComponent(): \Illuminate\Database\Eloquent\Relations\MorphMany
+    public function pricingComponent(): MorphMany
     {
         return $this->morphMany(TariffPricingComponent::class, 'owner');
     }
 
-    public function socialTariff()
+    public function socialTariff(): HasOne
     {
         return $this->hasOne(SocialTariff::class, 'tariff_id');
     }
-    public function tou()
+    public function tou(): HasMany
     {
         return $this->hasMany(TimeOfUsage::class, 'tariff_id');
     }

@@ -71,7 +71,7 @@ class SmsController extends Controller
         $this->meterParameter = $meterParameter;
     }
 
-    public function index()
+    public function index(): ApiResource
     {
 
         $list = $this->sms
@@ -82,6 +82,9 @@ class SmsController extends Controller
         return new ApiResource($list);
     }
 
+    /**
+     * @return void
+     */
     public function storeBulk(Request $request)
     {
 
@@ -339,9 +342,11 @@ class SmsController extends Controller
     /**
      * Marks the sms as sent
      *
-     * @param Sms $sms
+     * @param string $uuid
+     *
+     * @return void
      */
-    public function update($uuid)
+    public function update($uuid): void
     {
         Log::critical(
             'Sms confirmation failed ',
@@ -366,7 +371,7 @@ class SmsController extends Controller
         }
     }
 
-    public function show($person_id)
+    public function show($person_id): ApiResource
     {
         $personAddresses = $this->person::with(
             [
@@ -385,14 +390,14 @@ class SmsController extends Controller
         return new ApiResource($smses);
     }
 
-    public function byPhone($phone)
+    public function byPhone($phone): ApiResource
     {
         $smses = $this->sms->where('receiver', $phone)->get();
         return new ApiResource($smses);
     }
 
 
-    public function search($search)
+    public function search($search): ApiResource
     {
         //search in people
         $list = $this->person::with('addresses')

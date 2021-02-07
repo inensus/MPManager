@@ -88,7 +88,7 @@ class MeterService
     }
 
 
-    public function meterTransactions(City $city)
+    public function meterTransactions(City $city): City
     {
         $cityId = $city->id;
         $meters = $this->meter::whereHas(
@@ -196,7 +196,14 @@ class MeterService
     }
 
 
-    public function updateMeterGeoLocations($meters)
+    /**
+     * @param array $meters
+     * @return true[]
+     *
+     * @throws Exception
+     * @psalm-return array{data: true}
+     */
+    public function updateMeterGeoLocations(array $meters): array
     {
         try {
             foreach ($meters as $key => $meter) {
@@ -204,8 +211,6 @@ class MeterService
                     $meter['lat'],
                     $meter['lng']
                 ];
-
-
                 if ($points) {
                     $meter = $this->meter->find($meter['id']);
                     $geo = $meter->meterParameter()->first()->address()->first()->geo()->first();

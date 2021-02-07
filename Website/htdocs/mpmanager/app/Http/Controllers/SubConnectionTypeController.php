@@ -58,32 +58,11 @@ class SubConnectionTypeController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  SubConnectionType $subConnectionType
-     * @return Response
-     */
-    public function show(SubConnectionType $subConnectionType)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  SubConnectionType $subConnectionType
-     * @return Response
-     */
-    public function edit(SubConnectionType $subConnectionType)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
-     * @param  SubConnectionType $subConnectionType
-     * @return Response
+     * @param SubConnectionType $subConnectionType
+     *
+     * @return ApiResource
      */
     public function update(SubConnectionType $subConnectionType): ApiResource
     {
@@ -93,14 +72,4 @@ class SubConnectionTypeController extends Controller
         return new ApiResource($subConnectionType);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  SubConnectionType $subConnectionType
-     * @return Response
-     */
-    public function destroy(SubConnectionType $subConnectionType)
-    {
-        //
-    }
 }

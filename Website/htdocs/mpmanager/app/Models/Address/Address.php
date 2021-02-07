@@ -5,6 +5,8 @@ namespace App\Models\Address;
 use App\Models\City;
 use App\Models\BaseModel;
 use App\Models\GeographicalInformation;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * Class Address
@@ -23,18 +25,18 @@ class Address extends BaseModel
     'city_id' => 'required|exists:cities,id',
     ];
 
-    public function city()
+    public function city(): BelongsTo
     {
         return $this->belongsTo(City::class);
     }
 
     // client & company
-    public function owner()
+    public function owner(): MorphTo
     {
         return $this->morphTo();
     }
 
-    public function geo()
+    public function geo(): BelongsTo
     {
         return $this->belongsTo(GeographicalInformation::class);
     }

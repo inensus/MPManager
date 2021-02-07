@@ -8,7 +8,7 @@ use App\Http\Resources\ApiResource;
 
 class CountryController extends Controller
 {
-    public function index()
+    public function index(): ApiResource
     {
         return new ApiResource(
             Country::paginate(
@@ -17,14 +17,14 @@ class CountryController extends Controller
         );
     }
 
-    public function show(Country $country)
+    public function show(Country $country): ApiResource
     {
         return new ApiResource(
             $country
         );
     }
 
-    public function store(CountryRequest $request)
+    public function store(CountryRequest $request): ApiResource
     {
         return
             new ApiResource(

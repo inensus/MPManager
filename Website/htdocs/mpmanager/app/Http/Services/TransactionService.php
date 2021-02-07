@@ -52,7 +52,12 @@ class TransactionService
         return $total[0]['total'] ?? 0;
     }
 
-    public function totalClusterTransactions($clusterId, $range)
+    /**
+     * @param (mixed|string)[] $range
+     * @param array $range
+     * @return int|mixed
+     */
+    public function totalClusterTransactions($clusterId, array $range)
     {
 
         return
