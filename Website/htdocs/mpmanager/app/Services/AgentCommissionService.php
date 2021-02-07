@@ -4,9 +4,9 @@
 namespace App\Services;
 
 use App\Models\AgentCommission;
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
 
 class AgentCommissionService
 {
@@ -34,17 +34,19 @@ class AgentCommissionService
      */
     public function update(AgentCommission $agentCommission, array $data)
     {
-        $agentCommission->name = $data['name'];
-        $agentCommission->energy_commission = $data['energy_commission'];
-        $agentCommission->appliance_commission = $data['appliance_commission'];
-        $agentCommission->risk_balance = $data['risk_balance'];
-        $agentCommission->update();
-        return AgentCommission::find($agentCommission->id);
+        $agentCommission->update([
+            'name' => $data['name'],
+            'energy_commission' =>$data['energy_commission'],
+            'appliance_commission' =>$data['appliance_commission'],
+            'risk_balance' =>$data['risk_balance']
+        ]);
+
+        return $agentCommission->fresh();
     }
 
     /**
      * @param AgentCommission $agentCommission
-     * @throws \Exception
+     * @throws Exception
      */
     public function delete(AgentCommission $agentCommission): void
     {
