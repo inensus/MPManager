@@ -13,7 +13,7 @@
 
             <div class="row">
                 <div class="col-sm-12">
-                    <cluster-map></cluster-map>
+                    <cluster-map/>
                 </div>
 
             </div>
@@ -37,7 +37,6 @@ import { ClusterService } from '../../services/ClusterService'
 
 export default {
     name: 'ClusterList',
-
     components: { ClusterMap, FinancialOverview, BoxGroup },
     data () {
         return {
@@ -52,12 +51,7 @@ export default {
         async getClusterList () {
             this.clusters = await this.clusterService.getClusters()
         },
-
     },
-
 }
 </script>
 
-<style>
-
-</style>
