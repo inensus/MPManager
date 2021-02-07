@@ -14,6 +14,8 @@ use App\Models\Country;
 use App\Models\Person\Person;
 use Complex\Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -35,7 +37,11 @@ class AgentService implements IUserService
         $this->periodService = $periodService;
     }
 
-    public function createFromRequest(Request $request): Model
+    /**
+     * @param Request $request
+     * @return Model|Builder
+     */
+    public function createFromRequest(Request $request)
     {
         $person = Person::query()->create(
             request()->only(
@@ -66,8 +72,6 @@ class AgentService implements IUserService
         ];
 
         $address = $this->addressService->instantiate($addressParams);
-
-
         $agent = Agent::query()->create(
             [
                 'person_id' => $person->id,
@@ -78,7 +82,6 @@ class AgentService implements IUserService
                 'agent_commission_id' => $request['agent_commission_id']
             ]
         );
-
         $this->addressService->assignAddressToOwner($agent->person, $address);
 
 
@@ -86,10 +89,13 @@ class AgentService implements IUserService
     }
 
 
+    /**
+     * @param $agent
+     * @param $data
+     * @return Model|Builder
+     */
     public function update($agent, $data)
     {
-
-
         $person = Person::find($data['personId']);
         $person->name = $data['name'];
         $person->surname = $data['surname'];
@@ -113,13 +119,17 @@ class AgentService implements IUserService
             ->where('id', $agent->id)->firstOrFail();
     }
 
-    public function updateDevice($agent, $deviceId)
+    public function updateDevice($agent, $deviceId): void
     {
         $agent->device_id = $deviceId;
         $agent->update();
         $agent->fresh();
     }
 
+    /**
+     * @param string $email
+     * @return int|string
+     */
     public function resetPassword(string $email)
     {
         try {
@@ -145,7 +155,7 @@ class AgentService implements IUserService
         return Agent::with(['person.addresses', 'miniGrid'])->paginate(config('settings.paginate'));
     }
 
-    public function setFirebaseToken($agent, $firebaseToken)
+    public function setFirebaseToken($agent, $firebaseToken): void
     {
         $agent->fire_base_token = $firebaseToken;
         $agent->update();
@@ -163,16 +173,14 @@ class AgentService implements IUserService
         $lastReceiptDate = AgentReceipt::query()->where('agent_id', $agent->id)->get()->last();
         if ($lastReceiptDate) {
             return $lastReceiptDate->created_at;
-        } else {
-            return $agent->created_at;
         }
+        return $agent->created_at;
+
     }
 
     public function getTransactionAverage($agent)
     {
-
         $lastReceipt = AgentReceipt::query()->where('id', $agent->id)->get()->last();
-
         if ($lastReceipt) {
             $averageTransactionAmounts = AgentBalanceHistory::query()
                 ->where('agent_id', $agent->id)
@@ -187,11 +195,15 @@ class AgentService implements IUserService
                 ->get()
                 ->avg('amount');
         }
-
-
         return -1 * $averageTransactionAmounts;
     }
 
+    /**
+     * @param Request|array|string $searchTerm
+     * @param Request|array|int|string $paginate
+     *
+     * @return LengthAwarePaginator|Builder[]|Collection
+     */
     public function searchAgent($searchTerm, $paginate)
     {
         if ($paginate === 1) {
@@ -219,22 +231,31 @@ class AgentService implements IUserService
         return $person->citizenship()->associate($country);
     }
 
+    /**
+     * @return void
+     */
     public function create(array $userData)
     {
         // TODO: Implement create() method.
     }
 
-    public function getAgentDetail($agent)
+    /**
+     * @return Model|Builder
+     */
+    public function getAgentDetail(Agent $agent)
     {
         return Agent::with(['person', 'person.addresses', 'miniGrid', 'commission'])
             ->where('id', $agent->id)->firstOrFail();
     }
 
-    public function deleteAgent($agent)
+    public function deleteAgent(Agent $agent): void
     {
         $agent->delete();
     }
 
+    /**
+     * @return array|false|string
+     */
     public function getGraphValues($agent)
     {
         $periodDate = $this->getLastReceiptDate($agent);
@@ -282,6 +303,9 @@ class AgentService implements IUserService
         return $period;
     }
 
+    /**
+     * @return int[][]
+     */
     public function getPeriod($agent, $date): array
     {
         $days = AgentBalanceHistory::query()->selectRaw('DATE_FORMAT(created_at,\'%Y-%m-%d\') as day')
@@ -294,17 +318,15 @@ class AgentService implements IUserService
         $period = array();
         foreach ($days as $key => $item) {
             $period[$item->day] = [
-
                 'balance' => 0,
                 'due' => 0
             ];
         }
-
         return $period;
     }
 
 
-    public function getAgentRevenuesWeekly($agent)
+    public function getAgentRevenuesWeekly($agent): array
     {
         $startDate = date("Y-m-d", strtotime("-3 months"));
         $endDate = date("Y-m-d");
@@ -315,7 +337,6 @@ class AgentService implements IUserService
             ->get();
 
         $p = $this->periodService->generatePeriodicList($startDate, $endDate, 'weekly', ['revenue' => 0]);
-
         foreach ($Revenues as $rIndex => $revenue) {
             $p[$revenue->period]['revenue'] = $revenue->revenue;
         }

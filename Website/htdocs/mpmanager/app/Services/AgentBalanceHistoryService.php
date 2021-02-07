@@ -3,20 +3,21 @@
 
 namespace App\Services;
 
+use App\Models\Agent;
 use App\Models\AgentAssignedAppliances;
 use App\Models\AgentBalanceHistory;
 use App\Models\AgentCharge;
 use App\Models\AgentCommission;
 use App\Models\AgentReceipt;
 use App\Models\Transaction\AgentTransaction;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class AgentBalanceHistoryService
 {
 
-    public function agentBalanceHistories($agentId)
+    public function agentBalanceHistories(int $agentId): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
-
-
         return AgentBalanceHistory::with(['triggerCharge'])
             ->where('agent_id', $agentId)
             ->whereHasMorph(
@@ -31,16 +32,18 @@ class AgentBalanceHistoryService
             )->latest()->paginate();
     }
 
-    public function create($agent, $data)
+    /**
+     * @param Agent $agent
+     * @param array $data
+     * @return Builder|Model
+     */
+    public function create(Agent $agent, array $data)
     {
-        return AgentBalanceHistory::query()->create(
-            [
-
+        return AgentBalanceHistory::query()->create([
             'agent_id' => $agent->id,
             'amount' => $data['amount'],
             'type' => 'Charge',
             'available_balance' => $agent->balance
-            ]
-        );
+        ]);
     }
 }

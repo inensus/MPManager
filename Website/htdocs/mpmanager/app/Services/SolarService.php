@@ -6,6 +6,8 @@ namespace App\Services;
 use App\Models\Solar;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class SolarService implements ISolarService
@@ -33,6 +35,11 @@ class SolarService implements ISolarService
         return Solar::create($solarRecord);
     }
 
+    /**
+     * @return Builder[]|Collection
+     *
+     * @psalm-return \Illuminate\Database\Eloquent\Collection|array<array-key, Builder>
+     */
     public function list()
     {
         $solarReadings = $this->filter(Solar::query());
@@ -40,21 +47,24 @@ class SolarService implements ISolarService
         return $solarReadings->get();
     }
 
+    /**
+     * @return Builder[]|Collection
+     *
+     * @psalm-return \Illuminate\Database\Eloquent\Collection|array<array-key, Builder>
+     */
     public function lisByMiniGrid(int $miniGridId)
     {
         $solarReadings = $this->filter(Solar::query());
         $solarReadings->where('mini_grid_id', $miniGridId);
-
         return $solarReadings->get();
     }
 
+    /**
+     * @return Builder|Model|null
+     */
     public function showByMiniGrid(int $miniGridId)
     {
-        try {
-            return Solar::query()->where('mini_grid_id', $miniGridId)->firstOrFail();
-        } catch (ModelNotFoundException $exception) {
-            return null;
-        }
+        return Solar::query()->where('mini_grid_id', $miniGridId)->first();
     }
 
 

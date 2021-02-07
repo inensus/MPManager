@@ -38,7 +38,7 @@ class AgentCommissionController extends Controller
      */
     public function store(CreateAgentCommissionRequest $request)
     {
-        $commission = $this->agentCommissionService->create($request);
+        $commission = $this->agentCommissionService->create();
         return new ApiResource($commission);
     }
 
@@ -63,6 +63,7 @@ class AgentCommissionController extends Controller
      * @param AgentCommission $commission
      *
      * @return ApiResource
+     * @throws \Exception
      */
     public function destroy(AgentCommission $commission): ApiResource
     {

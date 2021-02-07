@@ -4,6 +4,7 @@
 namespace App\Services;
 
 use App\Models\AgentCommission;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
@@ -11,7 +12,10 @@ class AgentCommissionService
 {
 
 
-    public function create(Request $request)
+    /**
+     * @return Model|Builder
+     */
+    public function create()
     {
         return AgentCommission::query()->create(
             request()->only(
@@ -23,9 +27,13 @@ class AgentCommissionService
         );
     }
 
-    public function update($agentCommission, $data)
+    /**
+     * @param AgentCommission $agentCommission
+     * @param array $data
+     * @return mixed
+     */
+    public function update(AgentCommission $agentCommission, array $data)
     {
-
         $agentCommission->name = $data['name'];
         $agentCommission->energy_commission = $data['energy_commission'];
         $agentCommission->appliance_commission = $data['appliance_commission'];
@@ -34,7 +42,11 @@ class AgentCommissionService
         return AgentCommission::find($agentCommission->id);
     }
 
-    public function delete($agentCommission)
+    /**
+     * @param AgentCommission $agentCommission
+     * @throws \Exception
+     */
+    public function delete(AgentCommission $agentCommission): void
     {
         $agentCommission->delete();
     }

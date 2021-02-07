@@ -7,10 +7,14 @@ use App\Models\Meter\Meter;
 use App\Models\Meter\MeterParameter;
 use App\Models\Transaction\AgentTransaction;
 use App\Models\Transaction\Transaction;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class AgentTransactionService implements IAgentRelatedService
 {
 
+    /**
+     * @return LengthAwarePaginator
+     */
     public function list($agentId)
     {
         return Transaction::with(['originalAgent', 'meter.meterParameter.owner'])
@@ -24,21 +28,16 @@ class AgentTransactionService implements IAgentRelatedService
             ->latest()->paginate();
     }
 
-    public function listByCustomer($agentId, $customerId)
+    public function listByCustomer($agentId, $customerId): ?LengthAwarePaginator
     {
-
         $customerMeters = MeterParameter::query()->select('meter_id')->where('owner_id', $customerId)->get();
-
         if ($customerMeters->count() === 0) {
-            // customer has no meters
             return null;
         }
-
         $meterIds = array();
         foreach ($customerMeters as $key => $item) {
-            array_push($meterIds, $item->meter_id);
+            $meterIds[] = $item->meter_id;
         }
-
 
         $customerMeterSerialNumbers = Meter::query()
             ->has('meterParameter')
@@ -48,7 +47,6 @@ class AgentTransactionService implements IAgentRelatedService
                     $q->whereIn('meter_id', $meterIds);
                 }
             )->get('serial_number');
-
 
         return Transaction::with(['originalAgent', 'meter.meterParameter.owner'])
             ->whereHasMorph(
@@ -68,9 +66,9 @@ class AgentTransactionService implements IAgentRelatedService
     }
 
 
-    public function listForWeb($agentId)
+    public function listForWeb(int $agentId): LengthAwarePaginator
     {
-        $transactions = Transaction::with('meter.meterParameter.owner')
+        return Transaction::with('meter.meterParameter.owner')
             ->where('type', 'energy')
             ->whereHasMorph(
                 'originalTransaction',
@@ -80,8 +78,5 @@ class AgentTransactionService implements IAgentRelatedService
                 }
             )
             ->latest()->paginate();
-
-
-        return $transactions;
     }
 }

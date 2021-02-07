@@ -4,6 +4,10 @@ namespace App\Services;
 
 use App\Models\Agent;
 use App\Models\Person\Person;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Request;
 
 class AgentCustomerService
 {
@@ -16,7 +20,7 @@ class AgentCustomerService
         $this->agent = $agent;
     }
 
-    public function list(Agent $agent)
+    public function list(Agent $agent): LengthAwarePaginator
     {
 
         $miniGridId = $agent->mini_grid_id;
@@ -44,6 +48,13 @@ class AgentCustomerService
             ->paginate(config('settings.paginate'));
     }
 
+    /**
+     * @param Request|array|string $searchTerm
+     * @param Request|array|int|string $paginate
+     *
+     * @return LengthAwarePaginator|Builder[]|Collection
+     *
+     */
     public function searchAgentsCustomers($searchTerm, $paginate, $agent)
     {
 
@@ -89,7 +100,6 @@ class AgentCustomerService
         if ($paginate === 1) {
             return $personQuery->paginate(15);
         }
-
         return $personQuery->get();
     }
 }

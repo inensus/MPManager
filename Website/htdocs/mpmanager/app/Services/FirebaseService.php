@@ -12,7 +12,7 @@ class FirebaseService
 {
 
 
-    public function sendNotify($firebaseToken, $body)
+    public function sendNotify($firebaseToken, $body): string
     {
         try {
             $httpClient = new Client();

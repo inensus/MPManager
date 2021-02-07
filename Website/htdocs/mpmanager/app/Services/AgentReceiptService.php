@@ -5,11 +5,17 @@ namespace App\Services;
 
 use App\Models\AgentReceipt;
 use App\Models\AgentBalanceHistory;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Matrix\Exception;
 
 class AgentReceiptService implements IAgentRelatedService
 {
-    public function list($agentId)
+    /**
+     * @return LengthAwarePaginator
+     */
+    public function list($agentId):LengthAwarePaginator
     {
         return AgentReceipt::with(['user', 'agent', 'history'])
             ->whereHas(
@@ -21,12 +27,12 @@ class AgentReceiptService implements IAgentRelatedService
             ->latest()->paginate();
     }
 
-    public function listAllReceipts()
+    public function listAllReceipts(): LengthAwarePaginator
     {
         return AgentReceipt::with(['user', 'agent', 'history'])->latest()->paginate();
     }
 
-    public function listReceiptsForUser($userId)
+    public function listReceiptsForUser($userId): LengthAwarePaginator
     {
         return AgentReceipt::with(['user', 'agent', 'history'])
             ->whereHas(
@@ -38,7 +44,13 @@ class AgentReceiptService implements IAgentRelatedService
             ->latest()->paginate();
     }
 
-    public function create($userId, $agentId, $receiptData)
+    /**
+     * @param $userId
+     * @param int $agentId
+     * @param array $receiptData
+     * @return Builder|Model
+     */
+    public function create($userId, int $agentId, array $receiptData)
     {
 
         $lastBalanceHistoryId = AgentBalanceHistory::where('agent_id', $agentId)->get()->last();

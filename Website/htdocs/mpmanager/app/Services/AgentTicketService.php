@@ -6,6 +6,8 @@ namespace App\Services;
 use App\Models\Agent;
 use App\Models\Person\Person;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
 use Inensus\Ticket\Exceptions\TicketOwnerNotFoundException;
@@ -43,6 +45,9 @@ class AgentTicketService implements IAgentRelatedService
         $this->ticketsService = $ticketsService;
     }
 
+    /**
+     * @return LengthAwarePaginator
+     */
     public function list($agentId)
     {
         $tickets = Ticket::with('category', 'owner')
@@ -60,7 +65,7 @@ class AgentTicketService implements IAgentRelatedService
         return $this->getTicketDetailsFromSource($tickets);
     }
 
-    public function listByCustomer($agentId, $customerId)
+    public function listByCustomer($agentId, $customerId): LengthAwarePaginator
     {
         return Ticket::with(['category','owner'])
             ->whereHasMorph(
@@ -93,7 +98,7 @@ class AgentTicketService implements IAgentRelatedService
      * @return mixed
      * @throws TicketOwnerNotFoundException
      */
-    public function create($ticketData)
+    public function create(array $ticketData)
     {
         $board = $this->boardService->initializeBoard();
         $card = $this->cardService->initalizeList($board);
@@ -135,7 +140,11 @@ class AgentTicketService implements IAgentRelatedService
         return $ticket;
     }
 
-    public function getBatch($tickets)
+    /**
+     * @param array $tickets
+     * @return array
+     */
+    public function getBatch(array $tickets): array
     {
         $ticketData = [];
 
@@ -148,11 +157,18 @@ class AgentTicketService implements IAgentRelatedService
         return $tickets;
     }
 
+    /**
+     * @param $ticketId
+     * @return Builder|Model|null
+     */
     public function getTicket($ticketId)
     {
         $ticket = Ticket::with('category', 'owner')->where('ticket_id', $ticketId)->first();
-        $ticket['ticket'] = $this->ticketsService->getTicket($ticketId);
-        $ticket['actions'] = $this->ticketsService->getActions($ticketId);
+        if($ticket !== null) {
+            $ticket->ticket = $this->ticketsService->getTicket($ticketId);
+            $ticket->actions = $this->ticketsService->getActions($ticketId);
+        }
+
         return $ticket;
     }
 

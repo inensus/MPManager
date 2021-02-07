@@ -16,10 +16,11 @@ use App\Models\Transaction\VodacomTransaction;
 class TransactionAdapter
 {
     /**
-     * @param  $transactionProvider
+     * @param ITransactionProvider $transactionProvider
+     *
      * @return ITransactionProvider
      */
-    public static function getTransaction($transactionProvider): ?ITransactionProvider
+    public static function getTransaction(ITransactionProvider $transactionProvider): ?ITransactionProvider
     {
         if ($transactionProvider instanceof VodacomTransaction) {
             $baseTransaction = resolve('VodacomPaymentProvider');

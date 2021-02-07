@@ -55,13 +55,11 @@ class AgentTransaction implements ITransactionProvider
         $this->saveData($this->agentTransaction);
     }
 
-    private function assignData($data): void
+    private function assignData(array $data): void
     {
-
         //provider specific data
         $this->agentTransaction->agent_id = (int)$data['agent_id'];
         $this->agentTransaction->device_id = (int)$data['device_id'];
-
 
         // common transaction data
         $this->transaction->amount = (int)$data['amount'];
@@ -121,10 +119,12 @@ class AgentTransaction implements ITransactionProvider
         $this->fireBaseService->sendNotify($agent->fire_base_token, $body);
     }
 
-    private function prepareBodySuccess(Transaction $transaction)
+    /**
+     * @param Transaction $transaction
+     * @return array
+     */
+    private function prepareBodySuccess(Transaction $transaction): array
     {
-
-
         $transaction = Transaction::with(
             'token',
             'originalTransaction',
@@ -139,8 +139,6 @@ class AgentTransaction implements ITransactionProvider
         $transaction['firebase_notify_status'] = 1;
         $transaction['title'] = "Successful Payment!";
         $transaction['content'] = 1;
-
-
         return [
             'id' => $transaction->id,
             'firebase_notification_status' => 1,
@@ -148,7 +146,11 @@ class AgentTransaction implements ITransactionProvider
         ];
     }
 
-    private function prepareBodyFail(Transaction $transaction)
+    /**
+     * @param Transaction $transaction
+     * @return array
+     */
+    private function prepareBodyFail(Transaction $transaction): array
     {
         return [
             'message' => 'Transaction failed',
@@ -165,7 +167,6 @@ class AgentTransaction implements ITransactionProvider
      */
     public function validateRequest($request): void
     {
-
         $deviceId = request()->header('device-id');
         $agent = Agent::query()->find(auth('agent_api')->user()->id);
         $agentId = $agent->id;
@@ -207,9 +208,11 @@ class AgentTransaction implements ITransactionProvider
         return $this->transaction->sender;
     }
 
+    /**
+     * @return Model|false
+     */
     public function saveCommonData(): Model
     {
-
         return $this->agentTransaction->transaction()->save($this->transaction);
     }
 

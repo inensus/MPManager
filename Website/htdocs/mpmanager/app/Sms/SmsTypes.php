@@ -23,10 +23,8 @@ class SmsTypes
     public const ASSET_RATE_OVER_DUE_REMINDER = 4;
 
 
-    public static function generateSmsBody($data)
+    public static function generateSmsBody(TransactionDataContainer $data): string
     {
-
-
         if ($data instanceof Transaction) {
             $payments = $data->paymentHistories()->get();
             $body = '';
@@ -37,11 +35,10 @@ class SmsTypes
         } elseif ($data instanceof AssetRate) {
             return self::generateAssetRateReminder($data);
         }
-
         return $body;
     }
 
-    private static function paymentTypeBody($payment)
+    private static function paymentTypeBody($payment): ?string
     {
         switch ($payment->payment_type) {
             case self::ENERGY_CONFIRMATION:
@@ -65,7 +62,7 @@ class SmsTypes
         }
     }
 
-    private static function pricingDetails(Transaction $transaction)
+    private static function pricingDetails(Transaction $transaction): string
     {
         return " VAT 18% \t" . round(
             $transaction->amount * 0.18,
@@ -73,32 +70,28 @@ class SmsTypes
         ) . " \n Jumla \t " . round($transaction->amount * 0.82, 0);
     }
 
-    private static function generateAccessRateConfirmationBody(PaymentHistory $paymentHistory)
+    private static function generateAccessRateConfirmationBody(PaymentHistory $paymentHistory): string
     {
         return 'Service Charge: TZS ' . $paymentHistory->amount . ' ';
     }
 
 
-    private static function generateAssetRatePayment(PaymentHistory $paymentHistory)
+    private static function generateAssetRatePayment(PaymentHistory $paymentHistory): string
     {
         $asset = $paymentHistory->paidFor()->first()->asset()->first();
-
         return 'Appliance: ' . $asset->name . ' Tshs ' . $paymentHistory->amount . '. ';
     }
 
     private static function generateEnergyConfirmationBody(PaymentHistory $paymentHistory): string
     {
-
         $token = $paymentHistory->paidFor()->first();
         $transaction = $paymentHistory->transaction()->first();
-
         return 'LUKU: {' . $transaction->message . '}, ' . $token->token . ' Unit ' . $token->energy . '. TZS '
             . $paymentHistory->amount;
     }
 
     private static function generateResendInformation(TransactionDataContainer $transactionContainer): string
     {
-
         $smsContent = 'LUKU: {' . $transactionContainer->meter->serial_number . '}, '
             . $transactionContainer->token->token . ' Unit ' . $transactionContainer->token->energy
             . ' KWH.  Service Charge: Tshs ' . ($transactionContainer->historyAccessRate->amount ?? '0.00') . ' \n';
@@ -114,25 +107,22 @@ class SmsTypes
         return $smsContent;
     }
 
-    private static function generateAssetRateReminder($reminderData): string
+    private static function generateAssetRateReminder(AssetRate $reminderData): string
     {
-        $smsContent = 'Dear ' . $reminderData->assetPerson->person->name . ' '
+        return 'Dear ' . $reminderData->assetPerson->person->name . ' '
             . $reminderData->assetPerson->person->surname . ', the next rate of '
             . $reminderData->assetPerson->assetType->name . '(' . $reminderData->remaining . ') is due on  '
             . $reminderData->due_date . ' \n' .
             'Your Company';
-
-        return $smsContent;
     }
 
     private static function generateOverDueAssetRateReminder($reminderData): string
     {
-        $smsContent = 'Dear ' . $reminderData->assetPerson->person->name . ' '
+        return 'Dear ' . $reminderData->assetPerson->person->name . ' '
             . $reminderData->assetPerson->person->surname . ', you forgot to pay the rate of '
             . $reminderData->assetPerson->assetType->name . '(' . $reminderData->remaining . ')  on  '
             . $reminderData->due_date . ' \n' .
             'Please pay it as soon as possible, unless you wont be able to buy energy \n' .
             'Your Company';
-        return $smsContent;
     }
 }

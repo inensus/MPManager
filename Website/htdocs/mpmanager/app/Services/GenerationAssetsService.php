@@ -7,6 +7,8 @@ use App\Helpers\PowerConverter;
 use App\Models\Battery;
 use App\Models\Energy;
 use App\Models\PV;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 
 class GenerationAssetsService
@@ -33,22 +35,23 @@ class GenerationAssetsService
     }
 
 
-    public function getGenerationAssets($miniGridId)
+    /**
+     * @param $miniGridId
+     * @return array (mixed|null)[][]
+     *
+     * @psalm-return array<array-key, array{new_generated_energy: mixed|null, d_newly_energy: mixed|null, c_newly_energy: mixed|null}>
+     */
+    public function getGenerationAssets($miniGridId): array
     {
         $startDate = request()->input('start_date');
         $endDate = request()->input('end_date');
 
-        //get battery discharge
         $batteryReadings = $this->getBatteryReadings($miniGridId, $startDate, $endDate)->toArray();
-        //get pv generated energy
         $pvReadings = $this->getPvReadings($miniGridId, $startDate, $endDate)->toArray();
-        //get total energy served to village
         $energyReadings = $this->getServedEnergyReadings($miniGridId, $startDate, $endDate)->toArray();
-        //calculate generator from the difference
         $arrays = array_merge_recursive($batteryReadings, $pvReadings, $energyReadings);
         $arrays = array_map(
             function ($a) {
-
                 $a['read_key'] = is_array($a['read_key']) ?
                     $a['read_key'][0]
                     : $a['read_key'];
@@ -138,7 +141,13 @@ class GenerationAssetsService
         return array_merge($baseArray, $a);
     }
 
-    private function getBatteryReadings($miniGridId, $startDate, $endDate)
+    /**
+     * @param $miniGridId
+     * @param $startDate
+     * @param $endDate
+     * @return GenerationAssetsService
+     */
+    private function getBatteryReadings($miniGridId, $startDate, $endDate): self
     {
         $readings = $this->battery::query()
             ->select(DB::raw("CONCAT(DATE(read_out),\"-\"," .
@@ -158,6 +167,12 @@ class GenerationAssetsService
             ->get()->keyBy('read_key');
     }
 
+    /**
+     * @param $miniGridId
+     * @param $startDate
+     * @param $endDate
+     * @return GenerationAssetsService|Builder[]|Collection
+     */
     private function getPvReadings($miniGridId, $startDate, $endDate)
     {
         $readings = $this->pv::query()
@@ -178,7 +193,13 @@ class GenerationAssetsService
             ->get()->keyBy('read_key');
     }
 
-    private function getServedEnergyReadings($miniGridId, $startDate, $endDate)
+    /**
+     * @param $miniGridId
+     * @param $startDate
+     * @param $endDate
+     * @return Collection
+     */
+    private function getServedEnergyReadings($miniGridId, $startDate, $endDate): Collection
     {
         $readings = $this->energy::query()
             ->select(DB::raw("CONCAT(DATE(read_out),\"-\"," .

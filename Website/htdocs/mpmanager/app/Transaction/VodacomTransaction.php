@@ -249,8 +249,7 @@ class VodacomTransaction implements ITransactionProvider
      */
     public function saveCommonData(): Model
     {
-        $transaction = $this->vodacomTransaction->transaction()->save($this->transaction);
-        return $transaction;
+        return  $this->vodacomTransaction->transaction()->save($this->transaction);
     }
 
 
@@ -259,7 +258,7 @@ class VodacomTransaction implements ITransactionProvider
      *
      * @param $data
      */
-    private function assignData($data): void
+    private function assignData(SimpleXMLElement $data): void
     {
         $transaction_data = $data->request->transaction;
         $this->vodacomTransaction->conversation_id = (string)$transaction_data->conversationID;
@@ -353,7 +352,7 @@ class VodacomTransaction implements ITransactionProvider
     }
 
 
-    private function encryptProviderPassword($time)
+    private function encryptProviderPassword(string $time): string
     {
         $password = strtoupper(
             hash(

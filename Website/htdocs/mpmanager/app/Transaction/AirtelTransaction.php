@@ -176,7 +176,7 @@ class AirtelTransaction implements ITransactionProvider
     }
 
 
-    private function assignData($data): void
+    private function assignData(SimpleXMLElement $data): void
     {
         //provider specific data
         $this->airtelTransaction->interface_id = (string)$data->INTERFACEID;
@@ -220,7 +220,7 @@ class AirtelTransaction implements ITransactionProvider
      * @param  \App\Models\Transaction\AirtelTransaction $airtelTransaction
      * @return string
      */
-    private function prepareRequest($transaction, \App\Models\Transaction\AirtelTransaction $airtelTransaction): string
+    private function prepareRequest(Transaction $transaction, \App\Models\Transaction\AirtelTransaction $airtelTransaction): string
     {
         return '<COMMAND>' .
             '<TYPE>ROLLBACK</TYPE>' .
