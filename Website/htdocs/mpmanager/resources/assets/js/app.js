@@ -21,7 +21,6 @@ Vue.component('default', Default)
 
 router.beforeEach((to, from, next) => {
     const authToken = store.getters['auth/getToken']
-
     if (authToken === undefined || authToken === '') {
         return next({ name: 'login' })
     }
@@ -33,7 +32,6 @@ router.beforeEach((to, from, next) => {
     }).catch(() => {
         return next({ name: 'login' })
     })
-    return next()
 })
 
 /*eslint-disable */
@@ -52,6 +50,7 @@ const app = new Vue({
             ticketSettingsService: new TicketSettingsService(),
         }
     },
+
     mounted () {
         this.$el.addEventListener('click', this.onHtmlClick)
     },
