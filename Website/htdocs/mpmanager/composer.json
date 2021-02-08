@@ -74,7 +74,9 @@
         "post-create-project-cmd": [
             "@php artisan key:generate --ansi"
         ],
-        "lint": "find . -name \\*.php -not -path './lib/composer/*' -not -path './build/.phan/*' -exec php -l \"{}\" \\;"
+        "lint": "find . -name \\*.php -not -path './lib/composer/*' -not -path './vendor/*' -not -path './build/.phan/*' -exec php -l \"{}\" \\;",
+        "phpcs": "phpcs --standard=PSR12 app/",
+        "phpcbf": "phpcbf --standard=PSR12 app/"
     }
 
 }
