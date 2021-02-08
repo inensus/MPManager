@@ -40,7 +40,6 @@ const app = new Vue({
     components: {
         Breadcrumb,
         UserData,
-
     },
     data () {
         return {
