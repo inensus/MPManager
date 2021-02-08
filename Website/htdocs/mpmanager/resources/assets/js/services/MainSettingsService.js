@@ -1,12 +1,10 @@
 import RepositoryFactory from '../repositories/RepositoryFactory'
 import { ErrorHandler } from '../Helpers/ErrorHander'
 
-
 export class MainSettingsService {
 
     constructor () {
         this.repository = RepositoryFactory.get('mainSettings')
-
         this.mainSettings = {
             siteTitle: null,
             companyName: null,
@@ -14,10 +12,8 @@ export class MainSettingsService {
             country: null,
             language: null,
             vatEnergy: null,
-            vatAppliance: null
-
+            vatAppliance: null,
         }
-
     }
 
     fromJson (mainSettings) {
@@ -29,9 +25,8 @@ export class MainSettingsService {
             country: mainSettings.country,
             language: mainSettings.language,
             vatEnergy: mainSettings.vat_energy,
-            vatAppliance: mainSettings.vat_appliance
+            vatAppliance: mainSettings.vat_appliance,
         }
-
         return this.mainSettings
     }
 
@@ -44,10 +39,8 @@ export class MainSettingsService {
             } else {
                 return new ErrorHandler(response.error, 'http', response.status)
             }
-
         } catch (e) {
-            let erorMessage = e.response.data.message
-            return new ErrorHandler(erorMessage, 'http')
+            return new ErrorHandler(e.response.data.message, 'http')
         }
     }
 
@@ -61,21 +54,18 @@ export class MainSettingsService {
                 country: this.mainSettings.country,
                 language: this.mainSettings.language,
                 vat_energy: this.mainSettings.vatEnergy,
-                vat_appliance: this.mainSettings.vatAppliance
+                vat_appliance: this.mainSettings.vatAppliance,
             }
-            let response = await this.repository.update(mainSettingsPm.id, mainSettingsPm)
+            let response = await this.repository.update(mainSettingsPm.id,
+                mainSettingsPm)
             if (response.status === 200) {
                 this.fromJson(response.data.data)
-
                 return this.mainSettings
             } else {
                 return new ErrorHandler(response.error, 'http', response.status)
             }
         } catch (e) {
-            let erorMessage = e.response.data.message
-            return new ErrorHandler(erorMessage, 'http')
+            return new ErrorHandler(e.response.data.message, 'http')
         }
     }
-
-
 }
