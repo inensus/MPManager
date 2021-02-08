@@ -21,11 +21,11 @@ Vue.component('default', Default)
 
 router.beforeEach((to, from, next) => {
     const authToken = store.getters['auth/getToken']
-    if (authToken === undefined || authToken === '') {
-        return next({ name: 'login' })
-    }
     if (['login', 'forgot_password'].includes(to.name)) {
         return next()
+    }
+    if (authToken === undefined || authToken === '') {
+        return next({ name: 'login' })
     }
     store.dispatch('auth/refreshToken', authToken).then((result) => {
         return result ? next() : next({ name: 'login' })
@@ -42,7 +42,6 @@ const app = new Vue({
         UserData,
 
     },
-
     data () {
         return {
             mainSettingsService: new MainSettingsService(),
@@ -50,7 +49,6 @@ const app = new Vue({
             ticketSettingsService: new TicketSettingsService(),
         }
     },
-
     mounted () {
         this.$el.addEventListener('click', this.onHtmlClick)
     },
