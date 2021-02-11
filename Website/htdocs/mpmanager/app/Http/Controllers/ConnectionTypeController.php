@@ -27,25 +27,20 @@ class ConnectionTypeController extends Controller
         } else {
             $connectionTypes = $this->connectionType->get();
         }
-
-
         return new ApiResource($connectionTypes);
     }
 
 
-    public function store(Request $request)
+    public function store(Request $request): ApiResource
     {
         $connectionName = $request->get('name');
-
         $connectionType = $this->connectionType->create();
         $connectionType->name = $connectionName;
         $connectionType->save();
-
         return new ApiResource($connectionType);
-
     }
 
-    public function show($connectionTypeId)
+    public function show($connectionTypeId): ApiResource
     {
         $meter_count_relation = request()->input('meter_count');
         if ($connectionTypeId !== null) {
@@ -57,7 +52,6 @@ class ConnectionTypeController extends Controller
             return new ApiResource($connectionTypeDetail);
         }
         return new ApiResource(null);
-
     }
 
     public function update(ConnectionType $connectionType): ApiResource
@@ -66,6 +60,4 @@ class ConnectionTypeController extends Controller
         $connectionType->save();
         return new ApiResource($connectionType);
     }
-
-
 }

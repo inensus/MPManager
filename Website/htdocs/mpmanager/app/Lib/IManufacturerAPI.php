@@ -15,10 +15,10 @@ use App\Models\Meter\MeterToken;
 interface IManufacturerAPI
 {
     /**
-     * @param TransactionDataContainer $transactionContainer
+     * @param  TransactionDataContainer $transactionContainer
      * @return array
      */
-    public function  chargeMeter(TransactionDataContainer $transactionContainer): array;
+    public function chargeMeter(TransactionDataContainer $transactionContainer): array;
 
     public function clearMeter(Meter $meter);
 

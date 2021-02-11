@@ -4,10 +4,14 @@
 namespace App\Misc;
 
 use App\Exceptions\MeterParameter\MeterParameterNotFound;
+use App\Exceptions\Meters\MeterIsNotAssignedToCustomer;
+use App\Exceptions\Meters\MeterIsNotInUse;
 use App\Models\AssetPerson;
 use App\Models\AssetRate;
 use App\Models\Meter\Meter;
 use App\Models\Transaction\Transaction;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class LoanDataContainer
@@ -19,7 +23,7 @@ class LoanDataContainer
 
     public $paid_rates = array();
 
-    public function initialize(Transaction $transaction)
+    public function initialize(Transaction $transaction): void
     {
         $this->transaction = $transaction;
         $this->meterOwner = $this->getMeterOwner($transaction->message);
@@ -33,10 +37,11 @@ class LoanDataContainer
         $loans = $this->getCustomerDueRates($this->meterOwner);
 
         foreach ($loans as $loan) {
-
             if ($loan->remaining > $this->transaction->amount) {// money is not enough to cover the whole rate
                 //add payment history for the loan
-                event('payment.successful', [
+                event(
+                    'payment.successful',
+                    [
                     'amount' => $this->transaction->amount,
                     'paymentService' => $this->transaction->original_transaction_type,
                     'paymentType' => 'loan rate',
@@ -44,7 +49,8 @@ class LoanDataContainer
                     'paidFor' => $loan,
                     'payer' => $this->meterOwner,
                     'transaction' => $this->transaction,
-                ]);
+                    ]
+                );
                 $loan->remaining -= $this->transaction->amount;
                 $loan->update();
 
@@ -57,7 +63,9 @@ class LoanDataContainer
                 break;
             } else {
                 //add payment history for the loan
-                event('payment.successful', [
+                event(
+                    'payment.successful',
+                    [
                     'amount' => $loan->remaining,
                     'paymentService' => $this->transaction->original_transaction_type,
                     'paymentType' => 'loan rate',
@@ -65,7 +73,8 @@ class LoanDataContainer
                     'paidFor' => $loan,
                     'payer' => $this->meterOwner,
                     'transaction' => $this->transaction,
-                ]);
+                    ]
+                );
                 $this->paid_rates[] = [
                     'asset_type_name' => $loan->assetPerson->assetType->name,
                     'paid' => $loan->remaining,
@@ -79,18 +88,20 @@ class LoanDataContainer
     }
 
 
+    /**
+     * @param $owner
+     * @return Builder[]|Collection
+     *
+     * @psalm-return \Illuminate\Database\Eloquent\Collection|array<array-key, \Illuminate\Database\Eloquent\Builder>
+     */
     private function getCustomerDueRates($owner)
     {
         $loans = AssetPerson::where('person_id', $owner->id)->pluck('id');
-
-
-        $due_rates = AssetRate::with('assetPerson.assetType')
+        return AssetRate::with('assetPerson.assetType')
             ->whereIn('asset_person_id', $loans)
             ->where('remaining', '>', 0)
             ->whereDate('due_date', '<', date('Y-m-d'))
             ->get();
-
-        return $due_rates;
     }
 
     /**
@@ -116,6 +127,4 @@ class LoanDataContainer
         }
         return $meter->meterParameter->owner;
     }
-
-
 }

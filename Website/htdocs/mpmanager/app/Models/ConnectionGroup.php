@@ -26,5 +26,4 @@ class ConnectionGroup extends BaseModel
             ->where('created_at', '<=', $till)
             ->groupBy('connection_group_id');
     }
-
 }

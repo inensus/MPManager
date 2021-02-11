@@ -3,7 +3,6 @@
 
 namespace App\Observers;
 
-
 use App\Helpers\PowerConverter;
 use App\Models\Battery;
 

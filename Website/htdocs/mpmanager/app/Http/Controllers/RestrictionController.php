@@ -3,7 +3,6 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Exceptions\PurchaseNotProcessable;
 use App\Models\Restriction;
 use GuzzleHttp\Client;
@@ -34,15 +33,20 @@ class RestrictionController extends Controller
     }
 
 
-    public function store(Request $request, Response $response)
+    /**
+     * @return Response
+     */
+    public function store(Request $request, Response $response): Response
     {
         $productId = $request->input('product_id');
         $token = $request->input('token');
         $type = $request->input('type');
         $url = 'https://stripe.micropowermanager.com/api/mpm/checkPurchasing';
         try {
-
-            $validation = $this->httpClient->request('POST', $url, [
+            $validation = $this->httpClient->request(
+                'POST',
+                $url,
+                [
                 'json' => [
                     'product_id' => $productId,
                     'type' => $type,
@@ -51,19 +55,21 @@ class RestrictionController extends Controller
                 'headers' => [
                     'mpm-secret' => '22]Qq&e5[2FYu\'t{'
                 ]
-            ]);
+                ]
+            );
             if ($validation->getStatusCode() !== 200) {
-                // validation failed
                 return $response->setContent('validation failed')->setStatusCode(409);
             }
         } catch (RequestException $e) {
-            if ($e->getResponse()->getStatusCode() === 400 &&
-                (string)$e->getResponse()->getBody() === 'Invalid code.') {
+            if ($e->getResponse()->getStatusCode() === 400
+                && (string)$e->getResponse()->getBody() === 'Invalid code.'
+            ) {
                 $response->setContent('Invalid token');
             }
             return $response->setStatusCode(409);
         } catch (GuzzleException $e) {
-            Log::critical('Token validation failed ',
+            Log::critical(
+                'Token validation failed ',
                 ['purchase_token' => $token, 'id' => '896789ghjk79gjklig6778tf']
             );
             return $response->setStatusCode(409);
@@ -72,12 +78,12 @@ class RestrictionController extends Controller
         if ($type === 'mini-grid') {
             $target = 'enable-data-stream';
             $toAdd = 1;
-
         } elseif ($type === 'maintenance') {
             $target = 'maintenance-user';
             $toAdd = 5;
         } else {
-            Log::critical('Unknown type of purchase ',
+            Log::critical(
+                'Unknown type of purchase ',
                 ['purchase_token' => $token, 'id' => '43edui4ed09rdkceqw0s289']
             );
             return $response->setStatusCode(409);
@@ -87,19 +93,23 @@ class RestrictionController extends Controller
             $this->updateRestriction($target, $toAdd);
             return $response->setStatusCode(201);
         } catch (PurchaseNotProcessable $e) {
-            Log::critical('Purchase is not processable',
+            Log::critical(
+                'Purchase is not processable',
                 ['purchase_token' => $token, 'id' => '48fkj24ofdhjkl4fhlsqjkl']
             );
             return $response->setStatusCode(409);
         }
-
     }
 
     /**
      * @param $target
+     * @param int $toAdd
+     *
      * @throws PurchaseNotProcessable
+     *
+     * @return void
      */
-    private function updateRestriction($target, $toAdd = 1)
+    private function updateRestriction(string $target, int $toAdd = 1): void
     {
         try {
             $restriction = $this->restriction->where('target', $target)->firstOrFail();
@@ -110,7 +120,3 @@ class RestrictionController extends Controller
         }
     }
 }
-
-
-
-

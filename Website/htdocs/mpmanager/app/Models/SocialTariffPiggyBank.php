@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class SocialTariffPiggyBank
+ *
  * @package App\Models
  *
  * @property int $owner_id
@@ -23,7 +24,7 @@ class SocialTariffPiggyBank extends Model
         return $this->belongsTo(MeterParameter::class);
     }
 
-    public function socialTariff()
+    public function socialTariff(): BelongsTo
     {
         return $this->belongsTo(SocialTariff::class);
     }

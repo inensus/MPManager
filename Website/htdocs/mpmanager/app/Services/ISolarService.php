@@ -3,7 +3,6 @@
 
 namespace App\Services;
 
-
 interface ISolarService
 {
     public function create();

@@ -7,6 +7,7 @@ use App\Models\User;
 use Closure;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Exceptions\TokenExpiredException;
 use Tymon\JWTAuth\Exceptions\TokenInvalidException;
@@ -14,15 +15,14 @@ use Tymon\JWTAuth\Exceptions\UserNotDefinedException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Http\Middleware\BaseMiddleware;
 
-
 class JwtMiddleware extends BaseMiddleware
 {
     /**
      * Handle an incoming request.
      *
-     * @param Request $request
-     * @param Closure $next
-     * @param string $type
+     * @param  Request $request
+     * @param  Closure $next
+     * @param  string  $type
      * @return mixed
      */
     public function handle($request, Closure $next, $type = 'user')
@@ -38,7 +38,6 @@ class JwtMiddleware extends BaseMiddleware
                 throw new UserNotDefinedException('Authentication failed');
             }
         } catch (Exception $e) {
-
             if ($e instanceof ModelNotFoundException) {
                 return $this->generateResponse('No user found for authentication');
             }
@@ -59,7 +58,7 @@ class JwtMiddleware extends BaseMiddleware
         return $next($request);
     }
 
-    private function generateResponse($message, $status = 400): \Illuminate\Http\JsonResponse
+    private function generateResponse(string $message, $status = 400): JsonResponse
     {
         return response()->json(['data' => ['message' => $message, 'status' => $status]]);
     }

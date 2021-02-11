@@ -3,10 +3,12 @@
 namespace App\Models\Meter;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * Class MeterConsumption
- * @package App\Models\Meter
+ *
+ * @package  App\Models\Meter
  * @property int $id
  * @property int $meter_id
  * @property double $total_consumption
@@ -18,7 +20,7 @@ class MeterConsumption extends Model
 {
     protected $table = 'meter_consumptions';
 
-    public function meter()
+    public function meter(): BelongsTo
     {
         return $this->belongsTo(Meter::class);
     }
@@ -26,7 +28,7 @@ class MeterConsumption extends Model
 
     public function __toString()
     {
-        return 'Meter  : ' . $this->meter_id . '  consumption : ' . $this->total_consumption . '  credit :' . $this->credit_on_meter;
+        return 'Meter  : ' . $this->meter_id . '  consumption : ' . $this->total_consumption .
+            '  credit :' . $this->credit_on_meter;
     }
-
 }

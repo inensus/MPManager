@@ -8,7 +8,6 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Events\ClusterEvent;
 use App\Http\Requests\ClusterRequest;
 use App\Http\Resources\ApiResource;
@@ -47,11 +46,11 @@ class ClusterController
     /**
      * ClusterController constructor.
      *
-     * @param ClusterService $clusterService
-     * @param CityService $cityService
-     * @param MeterService $meterService
+     * @param ClusterService     $clusterService
+     * @param CityService        $cityService
+     * @param MeterService       $meterService
      * @param TransactionService $transactionService
-     * @param Cluster $cluster
+     * @param Cluster            $cluster
      */
     public function __construct(
         ClusterService $clusterService,
@@ -67,7 +66,7 @@ class ClusterController
         $this->cluster = $cluster;
     }
 
-    public function index()
+    public function index(): ApiResource
     {
         $startDate = request('start_date');
         $endDate = request('end_date');
@@ -78,7 +77,6 @@ class ClusterController
         } else {
             $dateRange[0] = date('Y-m-d', strtotime('today - 31 days'));
             $dateRange[1] = date('Y-m-d', strtotime('today - 1 days'));
-
         }
         $clusters = $this->clusterService->getClusterList();
 
@@ -87,15 +85,14 @@ class ClusterController
         return new ApiResource($this->clusterService->fetchClusterData($clusters, $dateRange));
     }
 
-    public function show($id)
+    public function show($id): ApiResource
     {
-
         $cluster = $this->cluster::with('miniGrids.location')
             ->find($id);
         return new ApiResource($cluster);
     }
 
-    public function showGeo(Cluster $cluster)
+    public function showGeo(Cluster $cluster): ApiResource
     {
         try {
             $clusterData = Storage::disk('local')->get($cluster->name . '.json');
@@ -108,7 +105,7 @@ class ClusterController
     }
 
 
-    public function store(ClusterRequest $request)
+    public function store(ClusterRequest $request): ApiResource
     {
         //type of geo data its either remote or manual
         $geoType = $request->get('geo_type');
@@ -129,6 +126,5 @@ class ClusterController
         event(new ClusterEvent($this->cluster, $geoType, $geoData));
 
         return new ApiResource($this->cluster);
-
     }
 }

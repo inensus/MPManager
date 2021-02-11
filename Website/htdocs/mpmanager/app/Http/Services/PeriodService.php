@@ -8,7 +8,6 @@
 
 namespace App\Http\Services;
 
-
 use DateInterval;
 use DatePeriod;
 use Exception;
@@ -21,16 +20,17 @@ class PeriodService
      * @param $endDate
      * @param $interval
      * @param $initialData
+     * @param (int|int[])[]|int $initialData
      *
      * @return array
+     *
      * @throws Exception
      */
-    public function generatePeriodicList($startDate, $endDate, $interval, $initialData): array
+    public function generatePeriodicList(string $startDate, string $endDate, string $interval, $initialData): array
     {
         $result = [];
         $begin = date_create($startDate);
         $end = date_create($endDate);
-
 
         $daysDifference = $end->diff($begin)->days;
 
@@ -53,7 +53,6 @@ class PeriodService
 
         foreach ($period as $p) {
             if ($interval === 'weekMonth') {
-
                 $mPeriod = new DatePeriod(
                     date_create($p->format('o-m-1')),
                     new DateInterval('P1W'),
@@ -69,8 +68,6 @@ class PeriodService
             } else {
                 $result[$p->format('o-W')] = $initialData;
             }
-
-
         }
 
         return $result;

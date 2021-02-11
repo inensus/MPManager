@@ -16,7 +16,6 @@ use Psr\Http\Message\StreamInterface;
 use function GuzzleHttp\Psr7\build_query;
 use Illuminate\Support\Facades\Log;
 
-
 class Bongo implements ISmsProvider
 {
 
@@ -49,8 +48,8 @@ class Bongo implements ISmsProvider
     public $defer = true;
 
     /**
-     * @param string $number
-     * @param string $body
+     * @param  string $number
+     * @param  string $body
      * @return StreamInterface
      * @throws Exception
      */
@@ -61,9 +60,11 @@ class Bongo implements ISmsProvider
             $number = '+' . $number;
         }
 
-        $request = $httpClient->get(config()->get('services.sms.bongo.url'),
+        $request = $httpClient->get(
+            config()->get('services.sms.bongo.url'),
             [
-                'query' => build_query([
+                'query' => build_query(
+                    [
                     'sendername' => config()->get('services.sms.bongo.sender'),
                     'username' => config()->get('services.sms.bongo.username'),
                     'password' => config()->get('services.sms.bongo.password'),
@@ -71,8 +72,10 @@ class Bongo implements ISmsProvider
                     'destnum' => $number,
                     'message' => $body,
                     'senddate' => '',
-                ]),
-            ]);
+                    ]
+                ),
+            ]
+        );
         $response = (string)$request->getBody();
         if ((int)$response < 0) {
             throw  new Exception($this->errorCodes[$response]);
@@ -82,9 +85,9 @@ class Bongo implements ISmsProvider
 
 
     /**
-     * @param string $number
-     * @param string $body
-     * @param string $callback
+     * @param  string $number
+     * @param  string $body
+     * @param  string $callback
      * @return mixed|StreamInterface
      * @throws Exception
      */
@@ -121,11 +124,13 @@ class Bongo implements ISmsProvider
             'Content-Type' => 'application/x-www-form-urlencoded;',
         ];
 
-        $request = $httpClient->post('http://www.bongolive.co.tz/api/broadcastSMS.php',
+        $request = $httpClient->post(
+            'http://www.bongolive.co.tz/api/broadcastSMS.php',
             [
                 'form_params' => ['messageXML' => $messageXML],
                 'headers' => $headers,
-            ]);
+            ]
+        );
         $response = (string)$request->getBody();
 
         Log::critical('SMS', [$response, $request->getStatusCode()]);
@@ -135,5 +140,3 @@ class Bongo implements ISmsProvider
         return $request->getBody();
     }
 }
-
-

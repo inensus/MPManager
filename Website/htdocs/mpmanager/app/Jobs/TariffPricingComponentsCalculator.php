@@ -43,10 +43,12 @@ class TariffPricingComponentsCalculator implements ShouldQueue
         foreach ($this->components as $component) {
             $totalPrice += $component['price'];
             $this->tariff->pricingComponent()->save(
-                TariffPricingComponent::make([
+                TariffPricingComponent::make(
+                    [
                     'name' => $component['name'],
                     'price' => $component['price'],
-                ])
+                    ]
+                )
             );
         }
         $this->tariff->update(['total_price' => $totalPrice]);

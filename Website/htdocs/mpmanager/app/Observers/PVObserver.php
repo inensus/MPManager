@@ -8,13 +8,13 @@ use App\Models\PV;
 
 /**
  * Class PVCreated
- * @package App\Observers
  *
+ * @package App\Observers
  */
 class PVObserver
 {
     /**
-     * @var  PV
+     * @var PV
      */
     private $pv;
 
@@ -23,11 +23,13 @@ class PVObserver
         $this->pv = $pv;
     }
 
+    /**
+     * @return void
+     */
     public function created()
     {
         //get last 2 rows to calculate the difference between them
         $p = $this->pv->latest()->take(2)->get();
-
 
         if (count($p) === 1) {
             return;
@@ -37,6 +39,5 @@ class PVObserver
 
         $p[0]->new_generated_energy = $lastDailyPower - $prevDailyPower;
         $p[0]->save();
-
     }
 }

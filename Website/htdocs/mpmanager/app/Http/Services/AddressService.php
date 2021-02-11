@@ -8,7 +8,6 @@
 
 namespace App\Http\Services;
 
-
 use App\Models\Address\Address;
 use App\Models\Address\HasAddressesInterface;
 use Illuminate\Database\Eloquent\Model;
@@ -27,18 +26,21 @@ class AddressService
     }
 
     // fills the object and returns it without saving.
-    public function instantiate(Array $params): Model
+    public function instantiate(Array $params): Address
     {
-        $a = $this->address;
-        $a->city_id = $params['city_id'] ?? null;
-        $a->email = $params['email'] ?? null;
-        $a->phone = $params['phone'];
-        $a->street = $params['street'] ?? null;
-        $a->is_primary = $params['is_primary'] ?? null;
-        return $a;
+        return $this->address->fill([
+            'city_id' => $params['city_id'] ?? null,
+            'email' => $params['email'] ?? null,
+            'phone' => $params['phone'],
+            'street' => $params['street'] ?? null,
+            'is_primary' => $params['is_primary'] ?? null
+        ]);
     }
 
-    public function assignAddressToOwner(HasAddressesInterface $owner, $address)
+    /**
+     * @return Model|false
+     */
+    public function assignAddressToOwner(HasAddressesInterface $owner, Address $address)
     {
         return $owner->addresses()->save($address);
     }

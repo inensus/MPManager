@@ -8,7 +8,6 @@
 
 namespace App\Exceptions\Tariffs;
 
-
 use Exception;
 
 class TariffNotFound extends Exception

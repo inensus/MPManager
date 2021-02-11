@@ -10,14 +10,14 @@ use App\Models\GeographicalInformation;
 use App\Models\SocialTariffPiggyBank;
 use App\Models\SubConnectionType;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-
 
 /**
  * Class MeterParameter
  *
- * @package App
+ * @package  App
  * @property string owner_type
  * @property int owner_id
  * @property int meter_id
@@ -60,6 +60,11 @@ class MeterParameter extends BaseModel
         return $this->morphOne(GeographicalInformation::class, 'owner');
     }
 
+    /**
+     * @return string[]
+     *
+     * @psalm-return non-empty-list<string>
+     */
     public function latLon(): array
     {
         return explode(',', $this->geo()->first()->points ?? '0.0,0.0');
@@ -77,10 +82,8 @@ class MeterParameter extends BaseModel
     }
 
 
-    public function socialTariffPiggyBank()
+    public function socialTariffPiggyBank(): HasOne
     {
         return $this->hasOne(SocialTariffPiggyBank::class);
     }
 }
-
-

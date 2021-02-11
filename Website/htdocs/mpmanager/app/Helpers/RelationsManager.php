@@ -37,38 +37,30 @@ trait RelationsManager
             self::initAllRelations();
         }
         if ($type) {
-
             return  self::$relationsList[strtolower($type)];
-
         } else {
             return self::$relationsList;
         }
-
     }
 
-    protected static function initAllRelations()
+    protected static function initAllRelations(): void
     {
         self::$relationsInitialized = true;
 
         $reflect = new ReflectionClass(static::class);
 
         foreach ($reflect->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
-            /** @var ReflectionMethod $method */
-
             if ($method->hasReturnType()) {
-
                 foreach (self::$relationClasses as $key => $relationClass) {
                     if ((string)$method->getReturnType() === $relationClass) {
                         self::$relationsList[$key][] = $method->getName();
                     }
                 }
-
-
             }
         }
     }
 
-    public static function withAll($type = null)
+    public static function withAll($type = null): array
     {
         $relations = array_flatten(static::getAllRelations($type));
 

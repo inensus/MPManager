@@ -20,6 +20,4 @@ class MaintenanceUsers extends Model
     {
         return $this->belongsTo(MiniGrid::class, 'mini_grid_id', 'id');
     }
-
-
 }

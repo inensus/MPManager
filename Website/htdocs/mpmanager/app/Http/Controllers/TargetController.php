@@ -43,8 +43,10 @@ class TargetController extends Controller
      */
     public function index(): ApiResource
     {
-        $targets = $this->target::with('owner', 'subTargets.connectionType')->orderBy('target_date',
-            'desc')->paginate(15);
+        $targets = $this->target::with('owner', 'subTargets.connectionType')->orderBy(
+            'target_date',
+            'desc'
+        )->paginate(15);
         return new ApiResource($targets);
     }
 
@@ -62,7 +64,7 @@ class TargetController extends Controller
     }
 
 
-    public function getSlotsForDate()
+    public function getSlotsForDate(): ApiResource
     {
         $date = request('date');
         $lastDayOfMonth = date('Y-m-t', strtotime($date));
@@ -87,7 +89,6 @@ class TargetController extends Controller
         if ($targetType === "cluster") {
             $targetOwner = $this->cluster->find($targetId);
         } else {
-
             $targetOwner = $this->miniGrid->find($targetId);
         }
 
@@ -102,7 +103,6 @@ class TargetController extends Controller
 
 
         foreach ($data as $subTargetData) {
-
             $subTarget = $this->subTarget->create();
             $subTarget->target_id = $target->id;
 
@@ -114,7 +114,6 @@ class TargetController extends Controller
             $subTarget->average_revenue_per_month = $subTargetData['target']['averageRevenuePerMonth'];
 
             $subTarget->save();
-
         }        //create sub targets
 
         return $target;

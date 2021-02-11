@@ -27,6 +27,4 @@ class SubConnectionType extends BaseModel
     {
         return $this->belongsTo(MeterTariff::class, 'tariff_id', 'id');
     }
-
-
 }

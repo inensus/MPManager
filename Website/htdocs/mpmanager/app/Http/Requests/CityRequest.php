@@ -12,7 +12,7 @@ class CityRequest extends FormRequest
      * @return bool
      */
     public function authorize(): bool
-	{
+    {
         return true;
     }
 
@@ -22,7 +22,7 @@ class CityRequest extends FormRequest
      * @return array
      */
     public function rules(): array
-	{
+    {
         return [
             'name' => 'required|unique:cities',
             'mini_grid_id' => 'required|exists:mini_grids,id'

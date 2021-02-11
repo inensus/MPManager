@@ -8,7 +8,6 @@
 
 namespace App\Jobs;
 
-
 use GuzzleHttp\Client;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Bus\Queueable;
@@ -20,7 +19,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
-
 
 class SmsLoadBalancer implements ShouldQueue
 {
@@ -40,20 +38,23 @@ class SmsLoadBalancer implements ShouldQueue
 
     public function handle(): void
     {
-        Redis::throttle('smsgateway')->allow(1)->every(1)->block(1)->then(function () {
-            $fireBaseResult = $this->sendSms($this->smsBody);
-            Log::debug('smsgateway', ['data' => $this->smsBody, 'firebase' => $fireBaseResult]);
-
-        }, function () {
-            return $this->release(1);
-        });
+        Redis::throttle('smsgateway')->allow(1)->every(1)->block(1)->then(
+            function () {
+                $fireBaseResult = $this->sendSms($this->smsBody);
+                Log::debug('smsgateway', ['data' => $this->smsBody, 'firebase' => $fireBaseResult]);
+            },
+            function () {
+                return $this->release(1);
+            }
+        );
     }
 
     private function sendSms($data): string
     {
 
         $httpClient = new Client();
-        $request = $httpClient->post(config()->get('services.sms.android.url'),
+        $request = $httpClient->post(
+            config()->get('services.sms.android.url'),
             [
                 'headers' => [
                     'Content-Type' => 'application/json',
@@ -68,6 +69,4 @@ class SmsLoadBalancer implements ShouldQueue
         );
         return (string)$request->getBody();
     }
-
-
 }

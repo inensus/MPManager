@@ -14,7 +14,8 @@ class AddressesObserver
 {
     /**
      * Handles 'deleted' event of Address
-     * @param Address $address
+     *
+     * @param  Address $address
      * @return void
      */
     public function deleted(Address $address): void

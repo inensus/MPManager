@@ -3,7 +3,6 @@
 
 namespace App\Transaction;
 
-
 use App\Lib\ITransactionProvider;
 use App\Models\Agent;
 use App\Models\AgentBalanceHistory;
@@ -29,6 +28,7 @@ class AgentTransaction implements ITransactionProvider
 
     /**
      * contains validated data
+     *
      * @var array
      */
     private $validData;
@@ -55,13 +55,11 @@ class AgentTransaction implements ITransactionProvider
         $this->saveData($this->agentTransaction);
     }
 
-    private function assignData($data): void
+    private function assignData(array $data): void
     {
-
         //provider specific data
         $this->agentTransaction->agent_id = (int)$data['agent_id'];
         $this->agentTransaction->device_id = (int)$data['device_id'];
-
 
         // common transaction data
         $this->transaction->amount = (int)$data['amount'];
@@ -87,13 +85,15 @@ class AgentTransaction implements ITransactionProvider
         }
 
         $body = $this->prepareBodySuccess($transaction);
-        $history = AgentBalanceHistory::query()->make([
-            'agent_id' => $agent->id,
-            'amount' => ($transaction->amount)>0?(-1*($transaction->amount)):($transaction->amount),
-            'transaction_id' => $transaction->id,
-            'available_balance' => $agent->balance,
-            'due_to_supplier' => $agent->due_to_energy_supplier
-        ]);
+        $history = AgentBalanceHistory::query()->make(
+            [
+                'agent_id' => $agent->id,
+                'amount' => ($transaction->amount) > 0 ? (-1 * ($transaction->amount)) : ($transaction->amount),
+                'transaction_id' => $transaction->id,
+                'available_balance' => $agent->balance,
+                'due_to_supplier' => $agent->due_to_energy_supplier
+            ]
+        );
 
         $history->trigger()->associate($this->agentTransaction);
         $history->save();
@@ -102,32 +102,43 @@ class AgentTransaction implements ITransactionProvider
         //create agent commission
         $commission = AgentCommission::query()->find($agent->agent_commission_id);
 
-        $history = AgentBalanceHistory::query()->make([
-            'agent_id' => $agent->id,
-            'amount' => ($transaction->amount * $commission->energy_commission) < 0 ? -1 * ($transaction->amount * $commission->energy_commission):($transaction->amount * $commission->energy_commission),
-            'transaction_id' => $transaction->id,
-            'available_balance' => $agent->commission_revenue,
-            'due_to_supplier' => $agent->due_to_energy_supplier
-        ]);
+        $history = AgentBalanceHistory::query()->make(
+            [
+                'agent_id' => $agent->id,
+                'amount' => ($transaction->amount * $commission->energy_commission) < 0 ?
+                    -1 * ($transaction->amount * $commission->energy_commission) :
+                    ($transaction->amount * $commission->energy_commission),
+                'transaction_id' => $transaction->id,
+                'available_balance' => $agent->commission_revenue,
+                'due_to_supplier' => $agent->due_to_energy_supplier
+            ]
+        );
         $history->trigger()->associate($commission);
         $history->save();
 
         $this->fireBaseService->sendNotify($agent->fire_base_token, $body);
-
     }
 
-    private function prepareBodySuccess(Transaction $transaction)
+    /**
+     * @param Transaction $transaction
+     * @return array
+     */
+    private function prepareBodySuccess(Transaction $transaction): array
     {
-
-
-        $transaction = Transaction::with('token', 'originalTransaction', 'originalTransaction.conflicts', 'sms',
-            'token.meter', 'meter.meterParameter.owner', 'token.meter.meterParameter', 'token.meter.meterType',
-            'paymentHistories')->where('id', $transaction->id)->first();
+        $transaction = Transaction::with(
+            'token',
+            'originalTransaction',
+            'originalTransaction.conflicts',
+            'sms',
+            'token.meter',
+            'meter.meterParameter.owner',
+            'token.meter.meterParameter',
+            'token.meter.meterType',
+            'paymentHistories'
+        )->where('id', $transaction->id)->first();
         $transaction['firebase_notify_status'] = 1;
         $transaction['title'] = "Successful Payment!";
         $transaction['content'] = 1;
-
-
         return [
             'id' => $transaction->id,
             'firebase_notification_status' => 1,
@@ -135,7 +146,11 @@ class AgentTransaction implements ITransactionProvider
         ];
     }
 
-    private function prepareBodyFail(Transaction $transaction)
+    /**
+     * @param Transaction $transaction
+     * @return array
+     */
+    private function prepareBodyFail(Transaction $transaction): array
     {
         return [
             'message' => 'Transaction failed',
@@ -144,16 +159,14 @@ class AgentTransaction implements ITransactionProvider
             'meter' => $transaction->message,
             'date' => $transaction->created_at
         ];
-
     }
 
     /**
-     * @param $request
+     * @param  $request
      * @throws \Exception
      */
     public function validateRequest($request): void
     {
-
         $deviceId = request()->header('device-id');
         $agent = Agent::query()->find(auth('agent_api')->user()->id);
         $agentId = $agent->id;
@@ -164,7 +177,6 @@ class AgentTransaction implements ITransactionProvider
                 ->where('device_id', $deviceId)
                 ->where('id', $agentId)
                 ->firstOrFail();
-
         } catch (ModelNotFoundException $e) {
             throw new \Exception($e->getMessage());
         }
@@ -196,11 +208,12 @@ class AgentTransaction implements ITransactionProvider
         return $this->transaction->sender;
     }
 
+    /**
+     * @return Model|false
+     */
     public function saveCommonData(): Model
     {
-
         return $this->agentTransaction->transaction()->save($this->transaction);
-
     }
 
     public function init($transaction): void

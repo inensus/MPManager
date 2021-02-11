@@ -21,7 +21,6 @@ class PaymentListener
             Log::critical('Unkown meterId', ["meter_id" => $transaction->message, "amount" => $transaction->amount]);
             event('transaction.failed', $transactionProvider);
         }
-
     }
 
     public function onLoanPayment(string $customer_id, int $amount): void
@@ -35,11 +34,11 @@ class PaymentListener
     }
 
     /**
-     * @param int $amount
+     * @param int    $amount
      * @param string $paymentService the name of the Payment gateway
      * @param $paymentType
-     * @param mixed $sender : The number or person who sent the money
-     * @param mixed $paidFor the identifier for the payment. Ex; { LoanID, TokenID }
+     * @param mixed  $sender         : The number or person who sent the money
+     * @param mixed  $paidFor        the identifier for the payment. Ex; { LoanID, TokenID }
      * @param $payer
      * @param $transaction
      */
@@ -61,12 +60,11 @@ class PaymentListener
         $paymentHistory->payer()->associate($payer); //the related payer
         $paymentHistory->paidFor()->associate($paidFor); // Loan , Token {Energy} , AccessRate
         $paymentHistory->transaction()->associate($transaction);
-        if ($paymentHistory->payment_service==='third_party_transaction'){
+        if ($paymentHistory->payment_service==='third_party_transaction') {
             $paymentHistory->created_at=$transaction->created_at;
             $paymentHistory->updated_at=$transaction->updated_at;
         }
         $paymentHistory->save();
-
     }
 
     public function subscribe(Dispatcher $events): void

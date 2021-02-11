@@ -40,8 +40,10 @@ class ClusterGeoListener
             try {
                 $data = $this->reformatExternalData($event->data);
             } catch (GeoFormatException $exception) {
-                Log::critical('Cluster polygon creating failed. External geo-coordinate object is not well formatted.',
-                    ['id' => '58gjw3f9w392de12dkbkwelkkud', 'message' => $exception->getMessage()]);
+                Log::critical(
+                    'Cluster polygon creating failed. External geo-coordinate object is not well formatted.',
+                    ['id' => '58gjw3f9w392de12dkbkwelkkud', 'message' => $exception->getMessage()]
+                );
                 return;
             }
         } else {
@@ -49,12 +51,12 @@ class ClusterGeoListener
         }
         try {
             $this->storeData($cluster, $data);
-
         } catch (Exception $exception) {
-            Log::critical('Cluster Geo Coorinates could not be stored',
-                ['id' => 'gjdfk8fkj49fkw3opfdgil', 'message' => $exception->getMessage()]);
+            Log::critical(
+                'Cluster Geo Coorinates could not be stored',
+                ['id' => 'gjdfk8fkj49fkw3opfdgil', 'message' => $exception->getMessage()]
+            );
         }
-
     }
 
     /**
@@ -74,8 +76,11 @@ class ClusterGeoListener
      *
      * @param $data
      *
-     * @return array
+     * @return array[]
+     *
      * @throws GeoFormatException
+     *
+     * @psalm-return list<array{0: mixed, 1: mixed}>
      */
     public function reformatExternalData($data): array
     {
@@ -100,6 +105,4 @@ class ClusterGeoListener
         }
         return $formatted;
     }
-
-
 }

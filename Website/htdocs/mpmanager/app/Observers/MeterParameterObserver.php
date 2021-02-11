@@ -17,6 +17,7 @@ class MeterParameterObserver
 {
     /**
      * Handle "deleted" event
+     *
      * @param MeterParameter $meterParameter
      * @return void
      */
@@ -29,17 +30,20 @@ class MeterParameterObserver
     }
 
 
-    public function created(MeterParameter $meterParameter)
+    public function created(MeterParameter $meterParameter): void
     {
-        CreatePiggyBankEntry::dispatch($meterParameter)->allOnConnection('redis')->onQueue(config('services.queues.misc'));
+        CreatePiggyBankEntry::dispatch($meterParameter)
+            ->allOnConnection('redis')
+            ->onQueue(config('services.queues.misc'));
         $meter = Meter::find($meterParameter->meter_id);
         $meter->in_use = 1;
         $meter->save();
     }
 
-
-    public function updated(MeterParameter $meterParameter)
+    public function updated(MeterParameter $meterParameter): void
     {
-        UpdatePiggyBankEntry::dispatch($meterParameter)->allOnConnection('redis')->onQueue(config('services.queues.misc'));
+        UpdatePiggyBankEntry::dispatch($meterParameter)
+            ->allOnConnection('redis')
+            ->onQueue(config('services.queues.misc'));
     }
 }

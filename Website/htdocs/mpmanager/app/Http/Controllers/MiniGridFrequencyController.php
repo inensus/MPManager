@@ -7,21 +7,21 @@ use App\Models\MiniGridFrequency;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-
 class MiniGridFrequencyController extends Controller
 {
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param Request $request
+     * @param  Request $request
      * @return ApiResource
      */
     public function store(Request $request): ApiResource
     {
         $gridData = $request->input('grid');
 
-        $frequency = MiniGridFrequency::make([
+        $frequency = MiniGridFrequency::make(
+            [
             'mini_grid_id' => $request->input('mini_grid_id'),
             'node_id' => $request->input('node_id'),
             'device_id' => $request->input('device_id'),
@@ -29,9 +29,9 @@ class MiniGridFrequencyController extends Controller
             'frequency_unit' => $gridData['unit'],
             'time_stamp' => date('Y-m-d H:i:s', strtotime($gridData['time_stamp'])),
 
-        ]);
+            ]
+        );
         $frequency->save();
         return new ApiResource($frequency);
     }
-
 }

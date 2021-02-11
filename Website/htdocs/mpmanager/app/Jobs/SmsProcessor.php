@@ -16,8 +16,7 @@ use Illuminate\Support\Facades\Log;
 use Webpatser\Uuid\Uuid;
 use function config;
 
-
-class   SmsProcessor implements ShouldQueue
+class SmsProcessor implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -28,7 +27,7 @@ class   SmsProcessor implements ShouldQueue
      * Create a new job instance.
      *
      * @param Transaction $transaction
-     * @param int $smsType
+     * @param int         $smsType
      */
     public function __construct(Transaction $transaction)
     {
@@ -67,8 +66,10 @@ class   SmsProcessor implements ShouldQueue
                 );
         } catch (Exception $e) {
             //slack failure
-            Log::critical('Sms Service failed ' . $this->transactionContainer->transaction->sender,
-                ['id' => '58365682988725', 'reason' => $e->getMessage()]);
+            Log::critical(
+                'Sms Service failed ' . $this->transactionContainer->transaction->sender,
+                ['id' => '58365682988725', 'reason' => $e->getMessage()]
+            );
             return;
         }
         $phone = $this->transactionContainer->transaction->sender;

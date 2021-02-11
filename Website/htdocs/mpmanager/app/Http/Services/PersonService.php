@@ -8,7 +8,6 @@
 
 namespace App\Http\Services;
 
-
 use App;
 use App\Models\Address\Address;
 use App\Models\MaintenanceUsers;
@@ -35,15 +34,19 @@ class PersonService
     public function createFromRequest(Request $request): Model
     {
 
-        $person = $this->person::create(request()->only([
-            'title',
-            'education',
-            'name',
-            'surname',
-            'birth_date',
-            'sex',
-            'is_customer',
-        ]));
+        $person = $this->person::create(
+            request()->only(
+                [
+                'title',
+                'education',
+                'name',
+                'surname',
+                'birth_date',
+                'sex',
+                'is_customer',
+                ]
+            )
+        );
 
 
         $countryService = App::make(CountryService::class);
@@ -76,7 +79,10 @@ class PersonService
     }
 
     //assign an address to the person
-    public function addAddress(Person $person, Address $address): Model
+    /**
+     * @return Model|false
+     */
+    public function addAddress(Person $person, Address $address)
     {
         return $person->addresses()->save($address);
     }
@@ -86,7 +92,8 @@ class PersonService
         if (!$allRelations) {
             return $this->person->find($personID);
         }
-        return $this->person::with([
+        return $this->person::with(
+            [
             'addresses' =>
                 function ($q) {
                     return $q->orderBy('is_primary')->get();
@@ -94,38 +101,51 @@ class PersonService
             'citizenship',
             'roleOwner.definitions',
             'meters.meter',
-        ])->find($personID);
+            ]
+        )->find($personID);
     }
 
     /**
      * @param string $searchTerm could either phone, name or surname
+     * @param Request|array|int|string $paginate
      *
-     * @return Person[]|LengthAwarePaginator|Builder[]|Collection
+     * @return Builder[]|Collection|LengthAwarePaginator
+     *
+     * @psalm-return Collection|LengthAwarePaginator|array<array-key, Builder>
      */
     public function searchPerson($searchTerm, $paginate)
     {
         if ($paginate === 1) {
-            return $this->person::with('addresses.city', 'meters.meter')->whereHas('addresses',
+            return $this->person::with('addresses.city', 'meters.meter')->whereHas(
+                'addresses',
                 function ($q) use ($searchTerm) {
                     $q->where('phone', 'LIKE', '%' . $searchTerm . '%');
-                })->orWhereHas('meters.meter', function ($q) use ($searchTerm) {
-                $q->where('serial_number', 'LIKE', '%' . $searchTerm . '%');
-            })->orWhere('name', 'LIKE', '%' . $searchTerm . '%')
+                }
+            )->orWhereHas(
+                'meters.meter',
+                function ($q) use ($searchTerm) {
+                        $q->where('serial_number', 'LIKE', '%' . $searchTerm . '%');
+                }
+            )->orWhere('name', 'LIKE', '%' . $searchTerm . '%')
                 ->orWhere('surname', 'LIKE', '%' . $searchTerm . '%')->paginate(15);
         }
 
-        return $this->person::with('addresses.city', 'meters.meter')->whereHas('addresses',
+        return $this->person::with('addresses.city', 'meters.meter')->whereHas(
+            'addresses',
             function ($q) use ($searchTerm) {
                 $q->where('phone', 'LIKE', '%' . $searchTerm . '%');
-            })->orWhereHas('meters.meter', function ($q) use ($searchTerm) {
-            $q->where('serial_number', 'LIKE', '%' . $searchTerm . '%');
-        })->orWhere('name', 'LIKE', '%' . $searchTerm . '%')
+            }
+        )->orWhereHas(
+            'meters.meter',
+            function ($q) use ($searchTerm) {
+                    $q->where('serial_number', 'LIKE', '%' . $searchTerm . '%');
+            }
+        )->orWhere('name', 'LIKE', '%' . $searchTerm . '%')
             ->orWhere('surname', 'LIKE', '%' . $searchTerm . '%')->get();
-
     }
 
 
-    public function createMaintenancePerson(Request $request)
+    public function createMaintenancePerson(Request $request): Person
     {
         $this->person->is_customer = 0;
         $this->person->name = $request->get('name');

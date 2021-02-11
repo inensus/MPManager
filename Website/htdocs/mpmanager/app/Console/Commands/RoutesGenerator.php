@@ -44,7 +44,7 @@ class RoutesGenerator extends Command
         }
     }
 
-    private function createPluginRoutesTmp($src, $coreRoutesTmp)
+    private function createPluginRoutesTmp(string $src, string $coreRoutesTmp): void
     {
         $packageRoutes = $src . "/js/routes.js";
         $packageRoutesTmp = $src . "/js/routes.tmp";
@@ -55,7 +55,10 @@ class RoutesGenerator extends Command
         $this->appendLines($packageRoutesTmp, $coreRoutesTmp);
     }
 
-    private function removeLine($packageRoutesTmp, $type)
+    /**
+     * @return void
+     */
+    private function removeLine(string $packageRoutesTmp, string $type)
     {
         $lines = file($packageRoutesTmp);
         if ($type === 'first') {
@@ -69,18 +72,18 @@ class RoutesGenerator extends Command
         file_put_contents($packageRoutesTmp, $file);
     }
 
-    private function appendLines($packageRoutesTmp, $coreRoutesTmp)
+    private function appendLines(string $packageRoutesTmp, $coreRoutesTmp): void
     {
        
         $lines = file($packageRoutesTmp);
         $tmp = fopen($coreRoutesTmp, 'a+');
         $counter =1;
         foreach ($lines as $key => $value) {
-              if ($counter%5===0||$counter%5==1){
-                  $newLine = str_pad($value, strlen($value) + 2, ' ', STR_PAD_LEFT);
-              }else{
-                  $newLine = str_pad($value, strlen($value) + 4, ' ', STR_PAD_LEFT);
-              }
+            if ($counter%5===0||$counter%5==1) {
+                $newLine = str_pad($value, strlen($value) + 2, ' ', STR_PAD_LEFT);
+            } else {
+                $newLine = str_pad($value, strlen($value) + 4, ' ', STR_PAD_LEFT);
+            }
             fwrite($tmp, $newLine);
             $counter ++;
         }

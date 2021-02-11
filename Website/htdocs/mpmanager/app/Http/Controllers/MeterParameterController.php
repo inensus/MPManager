@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Http\Requests\MeterParameterRequest;
 use App\Http\Resources\ApiResource;
 use App\Models\ConnectionType;
@@ -14,7 +13,7 @@ use App\Models\SubConnectionType;
 use Illuminate\Http\Request;
 
 /**
- * @group MeterParameter
+ * @group   MeterParameter
  * Class MeterParameterController
  * @package App\Http\Controllers
  */
@@ -43,10 +42,12 @@ class MeterParameterController extends Controller
 
     /**
      * List
+     *
      * @responseFile responses/meterparameters/meterparameters.list.json
-     * @return void
+     *
+     * @return ApiResource
      */
-    public function index()
+    public function index(): ApiResource
     {
         return new ApiResource($this->meterParameter->get());
     }
@@ -55,7 +56,7 @@ class MeterParameterController extends Controller
     /**
      * Create
      *
-     * @param Request $request
+     * @param MeterParameterRequest $request
      *
      * @return ApiResource
      */
@@ -87,9 +88,10 @@ class MeterParameterController extends Controller
      * - Owner
      * - Meter
      * - Tariff
-     * @urlParam meterParameter int required
+     *
+     * @urlParam     meterParameter int required
      * @responseFile responses/meterparameters/meterparameter.detail.json
-     * @param MeterParameter $meterParameter
+     * @param        MeterParameter $meterParameter
      *
      * @return ApiResource
      */
@@ -102,20 +104,22 @@ class MeterParameterController extends Controller
 
     /**
      * Update
+     *
      * @urlParam meterId int required
+     *
      * @bodyParam tariffId int
      * @bodyParam personId int
      *
-     * @param int $meterId
+     * @param string $meterId
      *
-     * @return void
+     * @return ApiResource|null
      */
     public function update(string $meterId)
     {
 
-        $personId = \request('personId') ?? -1;
-        $tariffId = \request('tariffId') ?? -1;
-        $connectionId = \request('connectionId') ?? -1;
+        $personId = request()->input('personId', -1);
+        $tariffId = request()->input('tariffId',-1);
+        $connectionId = request()->input('connectionId',-1);
         $parameter = $this->meterParameter->where('meter_id', $meterId)->first();
 
         if ($personId !== -1) {
@@ -127,7 +131,7 @@ class MeterParameterController extends Controller
             $parameter->tariff()->associate($tariff);
             $accessRate = $tariff->accessRate()->first();
             $acP = $parameter->meter()->first()->accessRatePayment()->first();
-            if ($acP){
+            if ($acP) {
                 $acP->access_rate_id = $accessRate->id;
                 $acP->update();
             }
@@ -136,8 +140,10 @@ class MeterParameterController extends Controller
         }
         $person=Person::find($parameter->owner_id);
         if ($person) {
-            $person->update([
-                'updated_at' => date('Y-m-d h:i:s')]);
+            $person->update(
+                [
+                'updated_at' => date('Y-m-d h:i:s')]
+            );
         }
         $parameter->save();
         return new ApiResource($parameter);
@@ -146,13 +152,13 @@ class MeterParameterController extends Controller
     /**
      * List of connection types
      * A list of connection types and the meters which belong to the connection type
+     *
      * @responseFile /responses/meterparameters/meterparameter.connectiontype.list.json
-     * @param Request $request
-     * @return ApiResource
+     * @param        Request $request
+     * @return       ApiResource
      */
-    public function connectionTypes(Request $request)
+    public function connectionTypes(Request $request): ApiResource
     {
         return new ApiResource($this->connectionType->numberOfConnections());
     }
-
 }

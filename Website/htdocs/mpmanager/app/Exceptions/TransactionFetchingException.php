@@ -8,7 +8,6 @@
 
 namespace App\Exceptions;
 
-
 use Exception;
 
 class TransactionFetchingException extends Exception

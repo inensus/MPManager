@@ -14,9 +14,8 @@ class AccessRateListener
 {
 
 
-    public function initializeAccessRatePayment(MeterParameter $meterParameter)
+    public function initializeAccessRatePayment(MeterParameter $meterParameter): void
     {
-        // get releated accessRate
         try {
             $accessRatePayment = AccessRate::withMeterParameters($meterParameter);
             $accessRatePayment->initializeAccessRatePayment()->save();
@@ -27,7 +26,9 @@ class AccessRateListener
 
     public function subscribe(Dispatcher $events): void
     {
-        $events->listen('accessRatePayment.initialize',
-            '\App\Listeners\AccessRateListener@initializeAccessRatePayment');
+        $events->listen(
+            'accessRatePayment.initialize',
+            '\App\Listeners\AccessRateListener@initializeAccessRatePayment'
+        );
     }
 }

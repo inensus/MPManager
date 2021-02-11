@@ -9,7 +9,7 @@ use App\Services\AgentTransactionService;
 use Illuminate\Http\Request;
 
 /**
- * @group AgentTransactions
+ * @group   AgentTransactions
  * Class AgentTransactionController
  * @package App\Http\Controllers
  */
@@ -34,7 +34,7 @@ class AgentTransactionsController extends Controller
         $transactions = $this->agentTransactionService->list($agent->id);
         return new ApiResource($transactions);
     }
-    public function agentCustomerTransactions($customerId, Request $request)
+    public function agentCustomerTransactions($customerId, Request $request): ApiResource
     {
         $agent = request()->attributes->get('user');
         $transactions = $this->agentTransactionService->listByCustomer($agent->id, $customerId);
@@ -47,7 +47,7 @@ class AgentTransactionsController extends Controller
         return new ApiResource($transactions);
     }
 
-    public function indexWeb(Agent $agent)
+    public function indexWeb(Agent $agent): ApiResource
     {
         $transactions = $this->agentTransactionService->listForWeb($agent->id);
         return new ApiResource($transactions);

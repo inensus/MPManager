@@ -6,21 +6,20 @@ use App\Http\Resources\ApiResource;
 use App\Jobs\ProcessPayment;
 use App\Lib\ITransactionProvider;
 use App\Misc\TransactionDataContainer;
+use App\Models\Transaction\AgentTransaction;
 use App\Models\Transaction\AirtelTransaction;
 use App\Models\Transaction\ThirdPartyTransaction;
 use App\Models\Transaction\Transaction;
 use App\Models\Transaction\VodacomTransaction;
-use App\Models\Transaction\AgentTransaction;
 use DateInterval;
 use DateTime;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use function count;
-use function is_array;
 
 /**
- * @group Transactions
+ * @group   Transactions
  * Class TransactionController
  * @package App\Http\Controllers
  */
@@ -55,7 +54,8 @@ class TransactionController extends Controller
      * List
      * The latest transactions.
      * The result is paginated and contains 15 results on default
-     * @urlParam per_page int
+     *
+     * @urlParam     per_page int
      * @responseFile responses/transactions/transactions.list.json
      *
      * @return ApiResource
@@ -73,16 +73,23 @@ class TransactionController extends Controller
      * The search term will be search in following fields;
      * - Sender/ Phone number
      * - Send message
-     * @bodyParam term string required
+     *
+     * @bodyParam    term string required
      * @responseFile responses/transactions/transactions.search.json
-     * @return ApiResource
+     * @return       ApiResource
      */
     public function search()
     {
         $term = request('term');
-        $transactions = Transaction::with('originalTransaction')->where('sender', 'LIKE',
-            '%' . $term . '%')->orWhere('message', 'LIKE',
-            '%' . $term . '%')->latest()->paginate(15);
+        $transactions = Transaction::with('originalTransaction')->where(
+            'sender',
+            'LIKE',
+            '%' . $term . '%'
+        )->orWhere(
+            'message',
+            'LIKE',
+            '%' . $term . '%'
+        )->latest()->paginate(15);
         return new ApiResource($transactions);
     }
 
@@ -111,7 +118,7 @@ class TransactionController extends Controller
      * @bodyParam terms JSON required
      *
      * @responseFile responses/transactions/transactions.search.json
-     * @return ApiResource
+     * @return       ApiResource
      */
     public function searchAdvanced()
     {
@@ -122,55 +129,92 @@ class TransactionController extends Controller
         $search = Transaction::with('originalTransaction');
 
         if (request('serial_number')) {
-
             $search->where('message', 'LIKE', '%' . request('serial_number') . '%');
             $whereApplied = true;
         }
         if (request('tariff')) {
             $tariff = request('tariff');
             if ($whereApplied) {
-                $search->orWhereHas('token', function ($q) use ($tariff) {
-                    $q->whereHas('meter', function ($q) use ($tariff) {
-                        $q->whereHas('meterParameter', function ($q) use ($tariff) {
-                            $q->whereHas('tariff', function ($q) use ($tariff) {
-                                $q->where('id', $tariff);
-                            });
-                        });
-                    });
-                });
+                $search->orWhereHas(
+                    'token',
+                    function ($q) use ($tariff) {
+                        $q->whereHas(
+                            'meter',
+                            function ($q) use ($tariff) {
+                                $q->whereHas(
+                                    'meterParameter',
+                                    function ($q) use ($tariff) {
+                                        $q->whereHas(
+                                            'tariff',
+                                            function ($q) use ($tariff) {
+                                                $q->where('id', $tariff);
+                                            }
+                                        );
+                                    }
+                                );
+                            }
+                        );
+                    }
+                );
             } else {
                 $whereApplied = true;
-                $search->whereHas('token', function ($q) use ($tariff) {
-                    $q->whereHas('meter', function ($q) use ($tariff) {
-                        $q->whereHas('meterParameter', function ($q) use ($tariff) {
-                            $q->whereHas('tariff', function ($q) use ($tariff) {
-                                $q->where('id', $tariff);
-                            });
-                        });
-                    });
-                });
+                $search->whereHas(
+                    'token',
+                    function ($q) use ($tariff) {
+                        $q->whereHas(
+                            'meter',
+                            function ($q) use ($tariff) {
+                                $q->whereHas(
+                                    'meterParameter',
+                                    function ($q) use ($tariff) {
+                                        $q->whereHas(
+                                            'tariff',
+                                            function ($q) use ($tariff) {
+                                                $q->where('id', $tariff);
+                                            }
+                                        );
+                                    }
+                                );
+                            }
+                        );
+                    }
+                );
             }
         }
         if (request('provider')) {
-            $search->with(request('provider'))->where(function ($q)  {
-                $q->whereHas(request('provider'), function ($q) {
-                    $q->whereNotNull('id');
-                });
-            });
+            $search->with(request('provider'))->where(
+                function ($q) {
+                    $q->whereHas(
+                        request('provider'),
+                        function ($q) {
+                            $q->whereNotNull('id');
+                        }
+                    );
+                }
+            );
         }
         if (request('status')) {
             $status = request('status');
-            if (request('provider') && request('provider') !=='-1' ) {
-                $search->where(function ($q) use ($status) {
-                    $q->whereHas(request('provider'), function ($q) use ($status) {
-                        $q->where('status', $status);
-                    });
-                });
+            if (request('provider') && request('provider') !== '-1') {
+                $search->where(
+                    function ($q) use ($status) {
+                        $q->whereHas(
+                            request('provider'),
+                            function ($q) use ($status) {
+                                $q->where('status', $status);
+                            }
+                        );
+                    }
+                );
             } else {
-                $search->whereHasMorph('originalTransaction', '*' ,  function ($q) use ($status)
-                { $q->where('status',$status); })->get();
+                $search->whereHasMorph(
+                    'originalTransaction',
+                    '*',
+                    function ($q) use ($status) {
+                        $q->where('status', $status);
+                    }
+                )->get();
             }
-
         }
         if (request('from')) {
             $search->where('created_at', '>=', request('from'));
@@ -196,10 +240,18 @@ class TransactionController extends Controller
     {
 
         $transactions = Transaction::with('originalAirtel', 'originalVodacom')
-            ->whereHasMorph('originalTransaction', [VodacomTransaction::class, AirtelTransaction::class,AgentTransaction::class,ThirdPartyTransaction::class],
+            ->whereHasMorph(
+                'originalTransaction',
+                [
+                    VodacomTransaction::class,
+                    AirtelTransaction::class,
+                    AgentTransaction::class,
+                    ThirdPartyTransaction::class
+                ],
                 static function ($q) {
                     $q->where('status', 1);
-                })->latest()->paginate();
+                }
+            )->latest()->paginate();
         return new ApiResource($transactions);
     }
 
@@ -207,16 +259,25 @@ class TransactionController extends Controller
     /**
      * Cancelled List
      * A list of cancelled transactions
+     *
      * @responseFile responses/transactions/transactions.cancelled.list.json
-     * @return ApiResource
+     * @return       ApiResource
      */
     public function cancelled(): ApiResource
     {
         $transactions = Transaction::with('originalAirtel', 'originalVodacom')
-            ->whereHasMorph('originalTransaction', [VodacomTransaction::class, AirtelTransaction::class,AgentTransaction::class,ThirdPartyTransaction::class],
+            ->whereHasMorph(
+                'originalTransaction',
+                [
+                    VodacomTransaction::class,
+                    AirtelTransaction::class,
+                    AgentTransaction::class,
+                    ThirdPartyTransaction::class
+                ],
                 static function ($q) {
                     $q->where('status', -1);
-                })->latest()->paginate();
+                }
+            )->latest()->paginate();
         return new ApiResource($transactions);
     }
 
@@ -263,7 +324,7 @@ class TransactionController extends Controller
      * - Generated token
      * - Payment history
      *
-     * @urlParam id int required
+     * @urlParam     id int required
      * @responseFile responses/transactions/transaction.detail.json
      *
      * @param int $id
@@ -273,9 +334,17 @@ class TransactionController extends Controller
     public function show($id): ApiResource
     {
         return new ApiResource(
-            Transaction::with('token', 'originalTransaction', 'originalTransaction.conflicts', 'sms', 'token.meter',
-                'token.meter.meterParameter', 'token.meter.meterType', 'paymentHistories',
-                'meter.meterParameter.owner')->where('id', $id)->first()
+            Transaction::with(
+                'token',
+                'originalTransaction',
+                'originalTransaction.conflicts',
+                'sms',
+                'token.meter',
+                'token.meter.meterParameter',
+                'token.meter.meterType',
+                'paymentHistories',
+                'meter.meterParameter.owner'
+            )->where('id', $id)->first()
         );
     }
 
@@ -284,41 +353,47 @@ class TransactionController extends Controller
      * Compares two given periods with each other
      *
      * @urlParam period required 0 for Yesterday, 1 for same day last week, 2 for last 7 days, 3 for last 30 days
+     *
      * @param $period int is one of following;
-     * Yesterday = 0,
-     * Same day last week =1,
-     * Last 7 days =2
-     * Last 30 days =3
+     *                   Yesterday = 0,
+     *                   Same day last week =1,
+     *                   Last 7 days =2
+     *                   Last 30 days =3
      *
      * @return array
+     *
      * @throws Exception
+     *
      * @responseFile responses/transactions/transactions.compare.json
+     *
      */
     public function compare($period): array
     {
 
-        $comparisionPeriod = $this->_determinePeriod($period);
+        $comparisionPeriod = $this->determinePeriod($period);
 
         //get transactions for both current and previous periods
-        $transactions = $this->_getTransactions($comparisionPeriod);
+        $transactions = $this->getTransactions($comparisionPeriod);
 
 
         // get data for the current period
-        $currentTransactions = $this->_getTransactionAnalysis($transactions['current']) ?? $this->emptyCompareResult();
+        $currentTransactions = $this->getTransactionAnalysis($transactions['current']) ?? $this->emptyCompareResult();
         // get data for the previous period
-        $pastTransactions = $this->_getTransactionAnalysis($transactions['past']) ?? $this->emptyCompareResult();
+        $pastTransactions = $this->getTransactionAnalysis($transactions['past']) ?? $this->emptyCompareResult();
 
         //compare current period with the previous period
         return [
             'success' => true,
             'current' => $currentTransactions,
             'past' => $pastTransactions,
-            'analytics' => $this->_comparePeriods($currentTransactions, $pastTransactions),
+            'analytics' => $this->comparePeriods($currentTransactions, $pastTransactions),
         ];
-
     }
 
-    private function emptyCompareResult()
+    /**
+     * @return array
+     */
+    private function emptyCompareResult(): array
     {
         return [
             'total' => 0,
@@ -336,19 +411,26 @@ class TransactionController extends Controller
      * @param array $comparisionPeriod
      *
      * @return array
+     *
      */
-    private function _getTransactions(array $comparisionPeriod): array
+    private function getTransactions(array $comparisionPeriod): array
     {
 
-        $currentTransactions = Transaction::whereBetween('created_at', [
-            $comparisionPeriod['currentPeriod']['begins'],
-            $comparisionPeriod['currentPeriod']['ends'],
-        ])
+        $currentTransactions = Transaction::whereBetween(
+            'created_at',
+            [
+                $comparisionPeriod['currentPeriod']['begins'],
+                $comparisionPeriod['currentPeriod']['ends'],
+            ]
+        )
             ->pluck('id');
-        $pastTransactionons = Transaction::whereBetween('created_at', [
-            $comparisionPeriod['lastPeriod']['begins'],
-            $comparisionPeriod['lastPeriod']['ends'],
-        ])
+        $pastTransactionons = Transaction::whereBetween(
+            'created_at',
+            [
+                $comparisionPeriod['lastPeriod']['begins'],
+                $comparisionPeriod['lastPeriod']['ends'],
+            ]
+        )
             ->pluck('id');
         return [
             'current' => $currentTransactions,
@@ -358,114 +440,180 @@ class TransactionController extends Controller
 
     /**
      * Calculates the amount of cancelled transactions for the given ids
-     * @param $transactionIds
+     *
+     * @param  $transactionIds
      * @return mixed
      */
-    private function _getCancelledTransactions($transactionIds)
+    private function getCancelledTransactions($transactionIds)
     {
-        return Transaction::where(static function ($q) {
-            $q->where(static function ($q) {
-                $q->where('original_transaction_type', 'airtel_transaction');
-                $q->whereHas('originalAirtel', static function ($q) {
-                    $q->where('status', -1);
-                });
-            });
-            $q->orWhere(static function ($q) {
-                $q->where('original_transaction_type', 'vodacom_transaction');
-                $q->whereHas('originalVodacom', static function ($q) {
-                    $q->where('status', -1);
-                });
-            });
-            $q->orWhere(static function ($q) {
-                $q->where('original_transaction_type', 'agent_transaction');
-                $q->whereHas('originalAgent', static function ($q) {
-                    $q->where('status', -1);
-                });
-            });
-            $q->orWhere(static function ($q) {
-                $q->where('original_transaction_type', 'third_party_transaction');
-                $q->whereHas('originalThirdParty', static function ($q) {
-                    $q->where('status', -1);
-                });
-            });
-
-        })
+        return Transaction::where(
+            static function ($q) {
+                $q->where(
+                    static function ($q) {
+                        $q->where('original_transaction_type', 'airtel_transaction');
+                        $q->whereHas(
+                            'originalAirtel',
+                            static function ($q) {
+                                $q->where('status', -1);
+                            }
+                        );
+                    }
+                );
+                $q->orWhere(
+                    static function ($q) {
+                        $q->where('original_transaction_type', 'vodacom_transaction');
+                        $q->whereHas(
+                            'originalVodacom',
+                            static function ($q) {
+                                $q->where('status', -1);
+                            }
+                        );
+                    }
+                );
+                $q->orWhere(
+                    static function ($q) {
+                        $q->where('original_transaction_type', 'agent_transaction');
+                        $q->whereHas(
+                            'originalAgent',
+                            static function ($q) {
+                                $q->where('status', -1);
+                            }
+                        );
+                    }
+                );
+                $q->orWhere(
+                    static function ($q) {
+                        $q->where('original_transaction_type', 'third_party_transaction');
+                        $q->whereHas(
+                            'originalThirdParty',
+                            static function ($q) {
+                                $q->where('status', -1);
+                            }
+                        );
+                    }
+                );
+            }
+        )
             ->whereIn('id', $transactionIds)
             ->count();
     }
 
     /**
      * Calculates the amount of confirmed transactions for the given ids
-     * @param $transactionIds
+     *
+     * @param  $transactionIds
      * @return mixed
      */
-    private function _getConfirmedTransactions($transactionIds)
+    private function getConfirmedTransactions($transactionIds)
     {
-        return Transaction::where(static function ($q) {
-            $q->where(static function ($q) {
-                $q->where('original_transaction_type', 'airtel_transaction');
-                $q->whereHas('originalAirtel', static function ($q) {
-                    $q->where('status', 1);
-                });
-            });
-            $q->orWhere(static function ($q) {
-                $q->where('original_transaction_type', 'vodacom_transaction');
-                $q->whereHas('originalVodacom', static function ($q) {
-                    $q->where('status', 1);
-                });
-            });
-            $q->orWhere(static function ($q) {
-                $q->where('original_transaction_type', 'agent_transaction');
-                $q->whereHas('originalAgent', static function ($q) {
-                    $q->where('status', 1);
-                });
-            });
-            $q->orWhere(static function ($q) {
-                $q->where('original_transaction_type', 'third_party_transaction');
-                $q->whereHas('originalThirdParty', static function ($q) {
-                    $q->where('status', 1);
-                });
-            });
-
-
-        })
+        return Transaction::where(
+            static function ($q) {
+                $q->where(
+                    static function ($q) {
+                        $q->where('original_transaction_type', 'airtel_transaction');
+                        $q->whereHas(
+                            'originalAirtel',
+                            static function ($q) {
+                                $q->where('status', 1);
+                            }
+                        );
+                    }
+                );
+                $q->orWhere(
+                    static function ($q) {
+                        $q->where('original_transaction_type', 'vodacom_transaction');
+                        $q->whereHas(
+                            'originalVodacom',
+                            static function ($q) {
+                                $q->where('status', 1);
+                            }
+                        );
+                    }
+                );
+                $q->orWhere(
+                    static function ($q) {
+                        $q->where('original_transaction_type', 'agent_transaction');
+                        $q->whereHas(
+                            'originalAgent',
+                            static function ($q) {
+                                $q->where('status', 1);
+                            }
+                        );
+                    }
+                );
+                $q->orWhere(
+                    static function ($q) {
+                        $q->where('original_transaction_type', 'third_party_transaction');
+                        $q->whereHas(
+                            'originalThirdParty',
+                            static function ($q) {
+                                $q->where('status', 1);
+                            }
+                        );
+                    }
+                );
+            }
+        )
             ->whereIn('id', $transactionIds)
             ->count();
     }
 
     /**
      * Calculates the summary of confirmed transactions based on the given ids
-     * @param $transactionIds
+     *
+     * @param  $transactionIds
      * @return mixed
      */
-    private function _getAmountOfConfirmedTransaction($transactionIds)
+    private function getAmountOfConfirmedTransaction($transactionIds)
     {
-        return Transaction::where(static function ($q) {
-            $q->where(static function ($q) {
-                $q->where('original_transaction_type', 'airtel_transaction');
-                $q->whereHas('originalAirtel', static function ($q) {
-                    $q->where('status', 1);
-                });
-            });
-            $q->orWhere(static function ($q) {
-                $q->where('original_transaction_type', 'vodacom_transaction');
-                $q->whereHas('originalVodacom', static function ($q) {
-                    $q->where('status', 1);
-                });
-            });
-            $q->orWhere(static function ($q) {
-                $q->where('original_transaction_type', 'agent_transaction');
-                $q->whereHas('originalAgent', static function ($q) {
-                    $q->where('status', 1);
-                });
-            });
-            $q->orWhere(static function ($q) {
-                $q->where('original_transaction_type', 'third_party_transaction');
-                $q->whereHas('originalThirdParty', static function ($q) {
-                    $q->where('status', 1);
-                });
-            });
-        })
+        return Transaction::where(
+            static function ($q) {
+                $q->where(
+                    static function ($q) {
+                        $q->where('original_transaction_type', 'airtel_transaction');
+                        $q->whereHas(
+                            'originalAirtel',
+                            static function ($q) {
+                                $q->where('status', 1);
+                            }
+                        );
+                    }
+                );
+                $q->orWhere(
+                    static function ($q) {
+                        $q->where('original_transaction_type', 'vodacom_transaction');
+                        $q->whereHas(
+                            'originalVodacom',
+                            static function ($q) {
+                                $q->where('status', 1);
+                            }
+                        );
+                    }
+                );
+                $q->orWhere(
+                    static function ($q) {
+                        $q->where('original_transaction_type', 'agent_transaction');
+                        $q->whereHas(
+                            'originalAgent',
+                            static function ($q) {
+                                $q->where('status', 1);
+                            }
+                        );
+                    }
+                );
+                $q->orWhere(
+                    static function ($q) {
+                        $q->where('original_transaction_type', 'third_party_transaction');
+                        $q->whereHas(
+                            'originalThirdParty',
+                            static function ($q) {
+                                $q->where('status', 1);
+                            }
+                        );
+                    }
+                );
+            }
+        )
             ->whereIn('id', $transactionIds)
             ->sum('amount');
     }
@@ -476,8 +624,9 @@ class TransactionController extends Controller
      * @param $transactions
      *
      * @return array|null
+     *
      */
-    private function _getTransactionAnalysis($transactions): ?array
+    private function getTransactionAnalysis($transactions): ?array
     {
 
         if (count($transactions) === 0) {
@@ -487,12 +636,12 @@ class TransactionController extends Controller
         $total = count($transactions);
 
         // the total amount of confirmed transactions
-        $amount = $this->_getAmountOfConfirmedTransaction($transactions);
+        $amount = $this->getAmountOfConfirmedTransaction($transactions);
 
         // the number of confirmed transactions
-        $confirmation = $this->_getConfirmedTransactions($transactions);
+        $confirmation = $this->getConfirmedTransactions($transactions);
         // The number of cancelled transactions
-        $cancellation = $this->_getCancelledTransactions($transactions);
+        $cancellation = $this->getCancelledTransactions($transactions);
 
         /*
                 foreach ($transactions as $transaction) {
@@ -515,7 +664,6 @@ class TransactionController extends Controller
             'cancelled' => $cancellation,
             'cancelledPercentage' => $cancellationPercentage,
         ];
-
     }
 
     /**
@@ -525,15 +673,20 @@ class TransactionController extends Controller
      * @param array $pastTransactions
      *
      * @return array
+     *
      */
-    private function _comparePeriods(array $currentTransactions, array $pastTransactions): array
+    private function comparePeriods(array $currentTransactions, array $pastTransactions): array
     {
-        $totalPercentage = $this->_getPercentage($pastTransactions['total'], $currentTransactions['total'], false);
-        $confirmationPercentage = round($currentTransactions['confirmedPercentage'] - $pastTransactions['confirmedPercentage'],
-            2);
-        $cancellationPercentage = round($currentTransactions['cancelledPercentage'] - $pastTransactions['cancelledPercentage'],
-            2);
-        $amountPercentage = $this->_getPercentage($pastTransactions['amount'], $currentTransactions['amount'], false);
+        $totalPercentage = $this->getPercentage($pastTransactions['total'], $currentTransactions['total'], false);
+        $confirmationPercentage = round(
+            $currentTransactions['confirmedPercentage'] - $pastTransactions['confirmedPercentage'],
+            2
+        );
+        $cancellationPercentage = round(
+            $currentTransactions['cancelledPercentage'] - $pastTransactions['cancelledPercentage'],
+            2
+        );
+        $amountPercentage = $this->getPercentage($pastTransactions['amount'], $currentTransactions['amount'], false);
         return [
             'totalPercentage' => [
                 'percentage' => $totalPercentage,
@@ -561,7 +714,7 @@ class TransactionController extends Controller
      *
      * @return float
      */
-    private function _getPercentage($base, $wanted, bool $baseShouldGreater = true): float
+    private function getPercentage($base, $wanted, bool $baseShouldGreater = true): float
     {
 
         if ($base === 0 || $wanted === 0) {
@@ -584,9 +737,11 @@ class TransactionController extends Controller
      * @param $period
      *
      * @return array|null
+     *
      * @throws Exception
+     *
      */
-    private function _determinePeriod($period)
+    private function determinePeriod($period): ?array
     {
         $comparisionPeriod = null;
         switch ($period) {
@@ -644,11 +799,9 @@ class TransactionController extends Controller
                     ],
                 ];
                 break;
-
         }
 
         return $comparisionPeriod;
-
     }
 
 
@@ -662,34 +815,43 @@ class TransactionController extends Controller
         try {
             $transactionContainer = $this->container::initialize($transaction, true);
 
-            $transactionContainer->historyAccessRate = $transactionContainer->transaction->paymentHistories()->where('payment_type',
-                'access rate')->first();
-            $transactionContainer->historyEnergy = $transactionContainer->transaction->paymentHistories()->where('payment_type',
-                'energy')->first();
+            $transactionContainer->historyAccessRate = $transactionContainer->transaction->paymentHistories()->where(
+                'payment_type',
+                'access rate'
+            )->first();
+            $transactionContainer->historyEnergy = $transactionContainer->transaction->paymentHistories()->where(
+                'payment_type',
+                'energy'
+            )->first();
         } catch (Exception $e) {
             return new ApiResource(['data' => ['success' => false, 'message' => $e->getMessage()]]);
         }
 
-        $messageSent = event('sms.send.token',
+        $messageSent = event(
+            'sms.send.token',
             [
                 'sender' => $number ?? $transactionContainer->transaction->sender,
                 'data' => $transactionContainer->transaction,
                 'trigger' => $transactionContainer->transaction,
-            ]);
+            ]
+        );
         if (!$messageSent) {
-            return new ApiResource([
-                'data' => [
-                    'success' => false,
-                    'message' => 'Something went wrong while sending sms',
-                ],
-            ]);
+            return new ApiResource(
+                [
+                    'data' => [
+                        'success' => false,
+                        'message' => 'Something went wrong while sending sms',
+                    ],
+                ]
+            );
         }
-        return new ApiResource([
-            'data' => [
-                'success' => true,
-                'message' => 'Sms sent to ' . $transactionContainer->transaction->sender,
-            ],
-        ]);
+        return new ApiResource(
+            [
+                'data' => [
+                    'success' => true,
+                    'message' => 'Sms sent to ' . $transactionContainer->transaction->sender,
+                ],
+            ]
+        );
     }
-
 }

@@ -12,9 +12,10 @@ interface ISmsProvider
 {
     /**
      * Sends the sms to the sms provider
-     * @param string $number
-     * @param string $body
-     * @param string $callback
+     *
+     * @param  string $number
+     * @param  string $body
+     * @param  string $callback
      * @return mixed
      */
     public function sendSms(string $number, string $body, string $callback);

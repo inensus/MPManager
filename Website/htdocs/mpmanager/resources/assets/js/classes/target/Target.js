@@ -17,13 +17,13 @@ export class Target {
         this.type = jsonData.type
         this.owner = jsonData.owner
 
-        for (let i = 0; i < jsonData.sub_targets.length; i++) {
-            let subTarget = new SubTarget()
-
-            this.subTargets.push(
-                subTarget.fromJson(jsonData.sub_targets[i])
-            )
-
+        if ('sub_targets' in jsonData) {
+            for (let i = 0; i < jsonData.sub_targets.length; i++) {
+                let subTarget = new SubTarget()
+                this.subTargets.push(
+                    subTarget.fromJson(jsonData.sub_targets[i]),
+                )
+            }
         }
         return this
     }

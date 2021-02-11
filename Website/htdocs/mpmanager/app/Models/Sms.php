@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-
 use App\Models\Address\Address;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -10,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 /**
  * Class Sms
  *
- * @package App
+ * @package  App
  * @property integer $id
  * @property string $trigger_type
  * @property int $trigger_id

@@ -11,17 +11,13 @@ namespace App\Observers;
 use App\Models\Person\Person;
 use Illuminate\Support\Facades\Log;
 
-
 class PersonObserver
 {
-    public function created(Person $person)
-    {
-
-    }
 
     /**
      * Handle the Person "updated" event
-     * @param Person $person
+     *
+     * @param  Person $person
      * @return void
      */
     public function updated(Person $person): void

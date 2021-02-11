@@ -4,10 +4,15 @@ namespace App\Models\AccessRate;
 
 use App\Models\BaseModel;
 use App\Models\Meter\MeterTariff;
+use App\Models\PaymentHistory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
  * Class AccessRate
- * @package App
+ *
+ * @package  App
  * @property int id
  * @property int amount
  * @property int tariff_id
@@ -15,12 +20,12 @@ use App\Models\Meter\MeterTariff;
  */
 class AccessRate extends BaseModel
 {
-    public function tariff()
+    public function tariff(): BelongsTo
     {
         return $this->belongsTo(MeterTariff::class, 'tariff_id', 'id');
     }
 
-    public function accessRatePayments()
+    public function accessRatePayments(): HasMany
     {
         return $this->hasMany(AccessRatePayment::class);
     }
@@ -30,7 +35,7 @@ class AccessRate extends BaseModel
         return sprintf('For tariff : %s', $this->tariff()->first()->name);
     }
 
-    public function paymentHistories()
+    public function paymentHistories(): MorphMany
     {
         return $this->morphMany(PaymentHistory::class, 'paid_for');
     }

@@ -5,128 +5,86 @@ export class ClusterService {
     constructor () {
         this.repository = RepositoryFactory.get('cluster')
         this.clusters = []
-
     }
 
     async createCluster (geoType, location, name, managerId) {
+        const cluster_PM = {
+            geo_type: geoType,
+            geo_data: location,
+            name: name,
+            manager_id: managerId,
+        }
         try {
-            let cluster_PM = {
-                geo_type: geoType,
-                geo_data: location,
-                name: name,
-                manager_id: managerId
-            }
-
-            let response = await this.repository.create(cluster_PM)
-
-            if (response.status === 201 || response.status === 200) {
-                return response
-            } else {
-                return new ErrorHandler(response.error, 'http', response.status)
-            }
+            const response = await this.repository.create(cluster_PM)
+            return this.responseValidator(response, [200,201])
         } catch (e) {
-
-            let erorMessage = e.response.data.data.message
-            return new ErrorHandler(erorMessage, 'http')
+            return new ErrorHandler(e.response.data.data.message, 'http')
         }
     }
 
     async getClusters () {
         try {
-
-            let response = await this.repository.list()
-            if (response.status === 201 || response.status === 200) {
-                this.clusters = response.data.data
-                return this.clusters
-            } else {
-                return new ErrorHandler(response.error, 'http', response.status)
-            }
+            const response = await this.repository.list()
+            return this.responseValidator(response)
         } catch (e) {
-            let erorMessage = e.response.data.data.message
-            return new ErrorHandler(erorMessage, 'http')
+            return new ErrorHandler(e.response.data.data.message, 'http')
         }
     }
 
     async getClusterGeoLocation (clusterId) {
         try {
-
-            let response = await this.repository.getGeoLocation(clusterId)
-            if (response.status === 201 || response.status === 200) {
-                return response.data.data.geo
-            } else {
-                return new ErrorHandler(response.error, 'http', response.status)
-            }
+            const response = await this.repository.getGeoLocation(clusterId)
+            return this.responseValidator(response)
         } catch (e) {
-            let erorMessage = e.response.data.data.message
-            return new ErrorHandler(erorMessage, 'http')
+            return new ErrorHandler(e.response.data.data.message, 'http')
         }
     }
 
     async getDetails (clusterId) {
         try {
-
-            let response = await this.repository.get(clusterId)
-            if (response.status === 201 || response.status === 200) {
-                return response.data.data
-            } else {
-                return new ErrorHandler(response.error, 'http', response.status)
-            }
+            const response = await this.repository.get(clusterId)
+            return this.responseValidator(response)
         } catch (e) {
-            let erorMessage = e.response.data.data.message
-            return new ErrorHandler(erorMessage, 'http')
+            return new ErrorHandler(e.response.data.data.message, 'http')
         }
     }
 
     async getClusterCitiesRevenue (clusterId, period, startDate, endDate) {
+        const queryString = `?period=${period}&startDate=${startDate ??
+        ''}&endDate=${endDate ?? ''}`
         try {
-
-            const queryString = `?period=${period}&startDate=${startDate ?? ''}&endDate=${endDate ?? ''}`
-
-            let response = await this.repository.getClusterCitiesRevenue(
+            const response = await this.repository.getClusterCitiesRevenue(
                 clusterId,
                 queryString)
-            if (response.status === 200) {
-                return response.data.data
-            } else {
-                return new ErrorHandler(response.error, 'http', response.status)
-            }
+            return this.responseValidator(response)
         } catch (e) {
-            let erorMessage = e.response.data.data.message
-            return new ErrorHandler(erorMessage, 'http')
+            return new ErrorHandler(e.response.data.data.message, 'http')
         }
     }
 
     async getClusterRevenues (clusterId) {
         try {
-
-            let response = await this.repository.getClusterRevenues(clusterId)
-            if (response.status === 200) {
-                return response.data.data
-            } else {
-                return new ErrorHandler(response.error, 'http', response.status)
-            }
+            const response = await this.repository.getClusterRevenues(clusterId)
+            return this.responseValidator(response)
         } catch (e) {
-            let erorMessage = e.response.data.data.message
-            return new ErrorHandler(erorMessage, 'http')
+            return new ErrorHandler(e.response.data.data.message, 'http')
         }
     }
 
     async getAllRevenues (period, startDate, endDate) {
+        const queryString = `?period=${period}&startDate=${startDate ??
+        ''}&endDate=${endDate ?? ''}`
         try {
-
-            const queryString = `?period=${period}&startDate=${startDate ??
-            ''}&endDate=${endDate ?? ''}`
-
-            let response = await this.repository.getAllRevenues(queryString)
-            if (response.status === 201 || response.status === 200) {
-                return response.data.data
-            } else {
-                return new ErrorHandler(response.error, 'http', response.status)
-            }
+            const response = await this.repository.getAllRevenues(queryString)
+            return this.responseValidator(response, [200,201])
         } catch (e) {
-
-            let erorMessage = e.response.data.data.message
-            return new ErrorHandler(erorMessage, 'http')
+            return new ErrorHandler(e.response.data.data.message, 'http')
         }
+    }
+
+    responseValidator (response, expectedStatus = [200]) {
+        return expectedStatus.includes(response.status)
+            ? response.data.data :
+            new ErrorHandler(response.error, 'http', response.status)
     }
 }

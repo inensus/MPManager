@@ -8,19 +8,27 @@ use App\Helpers\PasswordGenerator;
 use App\Models\User;
 use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
 
 class UserService implements IUserService
 {
 
+    /**
+     * @return Builder|Model
+     */
     public function create(array $userData)
     {
-        return User::query()->create([
+        return User::query()->create(
+            [
             'name' => $userData['name'],
             'password' => $userData['password'],
             'email' => $userData['email'],
-        ]);
+            ]
+        );
     }
 
     public function update($user, $data): bool
@@ -42,7 +50,6 @@ class UserService implements IUserService
                 return $user;
             }
             return null;
-
         }
 
         $user->address()->update(
@@ -64,9 +71,7 @@ class UserService implements IUserService
         } catch (ModelNotFoundException $x) {
             return null;
         }
-
-        $user->password = $newPassword;
-        $user->update();
+        $user->update(['password' => $newPassword]);
 
 
         //send the new password
@@ -80,12 +85,15 @@ class UserService implements IUserService
                 'You can use ' . $newPassword . ' to Login. <br> Please don\'t forget to change your password.'
             );
         } catch (MailNotSentException $exception) {
-            Log::debug('Failed to reset password', [
+            Log::debug(
+                'Failed to reset password',
+                [
                 'id' => '4
                 78efhd3497gvfdhjkwgsdjkl4ghgdf',
                 'message' => 'Password reset email for ' . $user->email . ' failed',
                 'reason' => $exception->getMessage(),
-            ]);
+                ]
+            );
             return null;
         }
 
@@ -94,10 +102,14 @@ class UserService implements IUserService
 
     /**
      * User list with optional address relation
+     *
      * @param $relations
-     * @return LengthAwarePaginator
+     *
+     * @return Builder[]|Collection|LengthAwarePaginator
+     *
+     * @psalm-return Collection|LengthAwarePaginator|array<array-key, Builder>
      */
-    public function list($relations): LengthAwarePaginator
+    public function list($relations)
     {
         $user = User::query()->select('id', 'name', 'email');
         // the only supported filter is currently address
@@ -105,7 +117,7 @@ class UserService implements IUserService
             $user->with('address');
         }
 
-        if (array_key_exists('paginate', $relations) &&  $relations['paginate'] === 0) {
+        if (array_key_exists('paginate', $relations) && $relations['paginate'] === 0) {
             return $user->get();
         }
         return $user->paginate();

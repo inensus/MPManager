@@ -8,7 +8,6 @@
 
 namespace App\Misc;
 
-
 use App\Exceptions\Meters\MeterIsNotAssignedToCustomer;
 use App\Exceptions\Meters\MeterIsNotInUse;
 use App\Exceptions\Tariffs\TariffNotFound;
@@ -104,21 +103,26 @@ class TransactionDataContainer
             Log::debug($e->getMessage(), ['id' => '462534735267424885838']);
             throw new Exception($e->getMessage());
         } catch (TariffNotFound $e) {
-            Log::critical('Meter ' . $transaction->message . ' has no assigned tariff ',
-                ['id' => 78243432]);
+            Log::critical(
+                'Meter ' . $transaction->message . ' has no assigned tariff ',
+                ['id' => 78243432]
+            );
             throw new Exception($e->getMessage());
         } catch (MeterIsNotAssignedToCustomer $e) {
-            Log::critical('Meter ' . $transaction->message . ' is not assigned to a customer',
-                ['id' => 342434]);
+            Log::critical(
+                'Meter ' . $transaction->message . ' is not assigned to a customer',
+                ['id' => 342434]
+            );
             throw new Exception($e->getMessage());
         }
         if ($withToken) {
             try {
                 $container->token = $transaction->token()->firstOrFail();
-
             } catch (ModelNotFoundException $exception) {
-                Log::critical('The token for' . $transaction->message . ' not found',
-                    ['id' => 3424342376236]);
+                Log::critical(
+                    'The token for' . $transaction->message . ' not found',
+                    ['id' => 3424342376236]
+                );
                 throw new RuntimeException($exception->getMessage());
             }
         }
@@ -160,14 +164,16 @@ class TransactionDataContainer
     /**
      * @param MeterParameter $meterParameter
      *
-     * @return MeterTariff
+     * @return MeterTariff|Model|BelongsTo|object
      * @throws TariffNotFound
+     *
      */
-    private function getTariff(MeterParameter $meterParameter): MeterTariff
+    private function getTariff(MeterParameter $meterParameter)
     {
         $tariff = $meterParameter->tariff()->first();
         if ($tariff === null) {
-            throw new TariffNotFound($meterParameter->tariff_id . ' is assigned to the meter, but the tariff does not exit');
+            throw new TariffNotFound($meterParameter->tariff_id .
+                ' is assigned to the meter, but the tariff does not exit');
         }
         return $tariff;
     }

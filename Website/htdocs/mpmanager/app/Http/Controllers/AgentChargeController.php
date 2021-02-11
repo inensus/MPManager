@@ -17,14 +17,9 @@ class AgentChargeController extends Controller
         $this->agentChargeService = $agentChargeService;
     }
 
-    public function store(Agent $agent, CreateAgentChargeRequest $request)
+    public function store(Agent $agent, CreateAgentChargeRequest $request): ApiResource
     {
-
         $agentCharge = $this->agentChargeService->create($agent, $request->only(['user_id']));
-
-
         return new ApiResource($agentCharge);
     }
-
-
 }

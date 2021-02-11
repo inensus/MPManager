@@ -31,7 +31,8 @@ class CalinReadMeter implements IMeterReader
 
     /**
      * CalinReadMeter constructor.
-     * @param MeterConsumption $consumption
+     *
+     * @param  MeterConsumption $consumption
      * @throws \SoapFault
      */
     public function __construct(MeterConsumption $consumption)
@@ -45,8 +46,8 @@ class CalinReadMeter implements IMeterReader
     }
 
     /**
-     * @param string $meterId serial number of the meter
-     * @param string $date y-m-d format date.
+     * @param  string $meterId serial number of the meter
+     * @param  string $date    y-m-d format date.
      * @return mixed
      */
     public function readDailyData($meterId, $date)
@@ -64,8 +65,11 @@ class CalinReadMeter implements IMeterReader
 
     /**
      * Reads the total consumption of a meter
+     *
      * @param $meterId
      * @param $type
+     *
+     * @return void
      */
     public function readMeter($meterId, $type)
     {
@@ -73,9 +77,12 @@ class CalinReadMeter implements IMeterReader
 
     /**
      * Reads the data for a given meter list
+     *
      * @param $meterList
-     * @param int $type defines what to read from the remote api
+     * @param int   $type      defines what to read from the remote api
      * @param array $options
+     *
+     * @return void
      */
     public function readBatch($meterList, $type, $options)
     {
@@ -92,8 +99,10 @@ class CalinReadMeter implements IMeterReader
                         continue;
                     }
                     if ((int)$meterData[0] < 0) {
-                        Log::critical('Meter Reading, negative consumption ',
-                            ['meter_id' => $meter->id, 'consumption' => $meterData[0]]);
+                        Log::critical(
+                            'Meter Reading, negative consumption ',
+                            ['meter_id' => $meter->id, 'consumption' => $meterData[0]]
+                        );
                         continue;
                     }
 
@@ -104,10 +113,11 @@ class CalinReadMeter implements IMeterReader
 
                     $consumption->reading_date = $options['date'];
                     $this->calculateDifference($consumption)->save();
-
                 } catch (MeterIsNotReadable $e) {
-                    Log::debug('Meter is not readable',
-                        ['meter' => $meter->serial_number, 'meter_id' => $meter->id]);
+                    Log::debug(
+                        'Meter is not readable',
+                        ['meter' => $meter->serial_number, 'meter_id' => $meter->id]
+                    );
                 }
             }
         }
@@ -115,7 +125,8 @@ class CalinReadMeter implements IMeterReader
 
     /**
      * Calculates the difference of usages with the prev. reading.
-     * @param MeterConsumption $consumption
+     *
+     * @param  MeterConsumption $consumption
      * @return MeterConsumption
      */
     private function calculateDifference(MeterConsumption $consumption): MeterConsumption
@@ -131,8 +142,12 @@ class CalinReadMeter implements IMeterReader
 
     /**
      * @param $data
-     * @return string
+     *
+     * @return string[]
+     *
      * @throws MeterIsNotReadable
+     *
+     * @psalm-return non-empty-list<string>
      */
     private function fetchResponseData($data): array
     {
@@ -145,10 +160,19 @@ class CalinReadMeter implements IMeterReader
             throw new MeterIsNotReadable($data);
         }
         return explode(',', $out[2]); // return the interesting data
-
     }
 
-    private function prepareDailyReadRequest($meterId, $year, $month, $day, $action = 'Read'): array
+    /**
+     * @param string $meterId
+     * @param string $year
+     * @param string $month
+     * @param string $day
+     * @param string $action
+     * @return array (\Illuminate\Config\Repository|float|mixed)[]
+     *
+     * @psalm-return array{userId: \Illuminate\Config\Repository|mixed, meterId: mixed, dataWay: mixed, timestamp: float, cipherText: mixed, year: mixed, month: mixed, day: mixed}
+     */
+    private function prepareDailyReadRequest(string $meterId, string $year, string $month, string $day, $action = 'Read'): array
     {
         [$t1, $t2] = explode(' ', microtime());
         $timestamp = (float)sprintf('%.0f', ((float)$t1 + (float)$t2) * 1000);
@@ -166,14 +190,17 @@ class CalinReadMeter implements IMeterReader
         return $params;
     }
 
-    private function generateCipher($meterId, $timestamp, $dataWay)
+    private function generateCipher($meterId, float $timestamp, $dataWay): string
     {
-        return md5(sprintf('%s%s%s%s%s',
-            config('services.calin.meter.user'),
-            $meterId,
-            $dataWay,
-            $timestamp,
-            config('services.calin.meter.key')
-        ));
+        return md5(
+            sprintf(
+                '%s%s%s%s%s',
+                config('services.calin.meter.user'),
+                $meterId,
+                $dataWay,
+                $timestamp,
+                config('services.calin.meter.key')
+            )
+        );
     }
 }

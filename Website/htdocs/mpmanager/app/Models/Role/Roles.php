@@ -8,10 +8,9 @@
 
 namespace App\Models\Role;
 
-
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Roles extends BaseModel
 {
@@ -24,7 +23,7 @@ class Roles extends BaseModel
         return $this->belongsTo(RoleDefinition::class, 'role_definition_id');
     }
 
-    public function roleOwner()
+    public function roleOwner(): MorphTo
     {
         return $this->morphTo();
     }

@@ -8,7 +8,6 @@
 
 namespace App\Exceptions\Meters;
 
-
 use Exception;
 
 class MeterIsNotInUse extends Exception

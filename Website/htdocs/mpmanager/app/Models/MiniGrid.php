@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 /**
@@ -16,7 +17,6 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
  * @property string $name
  * @property int $cluster_id
  * @property int $data_stream;
- *
  */
 class MiniGrid extends Model
 {
@@ -39,8 +39,8 @@ class MiniGrid extends Model
     {
         return $this->morphOne(GeographicalInformation::class, 'owner');
     }
-    public function agent(){
+    public function agent(): HasOne
+    {
         return $this->hasOne(Agent::Class);
     }
-
 }

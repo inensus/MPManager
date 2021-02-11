@@ -13,7 +13,10 @@ class PowerConverter
         'MWh' => 1000000,
     ];
 
-    public static function convert($power, $powerUnit, $expectedUnit = 'Wh')
+    /**
+     * @param int|string $power
+     */
+    public static function convert($power, $powerUnit, string $expectedUnit = 'Wh')
     {
 
         return $power * self::$powerUnits[$powerUnit] / self::$powerUnits[$expectedUnit];

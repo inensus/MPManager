@@ -48,9 +48,9 @@ class UpdatePiggyBankEntry implements ShouldQueue
             //update bank entry
             $piggyBank->savings = $socialTariff->initial_energy_budget;
         } else {
-            CreatePiggyBankEntry::dispatch($this->meterParameter)->allOnConnection('redis')->onQueue(config('services.queues.misc'));
+            CreatePiggyBankEntry::dispatch($this->meterParameter)
+                ->allOnConnection('redis')
+                ->onQueue(config('services.queues.misc'));
         }
-
-
     }
 }

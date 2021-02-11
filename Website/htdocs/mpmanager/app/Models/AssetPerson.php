@@ -9,11 +9,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-
 /**
  * Class AssetPerson
- * @package App\Models
  *
+ * @package App\Models
  *
  * @property int $asset_type_id
  * @property int $person_id

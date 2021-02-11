@@ -8,18 +8,12 @@
 
 namespace App\PaymentHandler;
 
-
 use App\Exceptions\AccessRates\NoAccessRateFound;
-use App\Jobs\SmsProcessor;
 use App\Misc\TransactionDataContainer;
 use App\Models\AccessRate\AccessRatePayment;
 use App\Models\Meter\Meter;
 use App\Models\Meter\MeterParameter;
-use App\Sms\SmsTypes;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Faker\Generator as Faker;
-use Illuminate\Support\Facades\Log;
 
 class AccessRate
 {
@@ -35,11 +29,11 @@ class AccessRate
 
     /**
      * AccessRatePayment constructor.
+     *
      * @param AccessRate $accessRate
      */
     public function __construct()
     {
-
     }
 
 
@@ -73,9 +67,11 @@ class AccessRate
     {
         if ($this->accessRate === null || $this->meterParameter === null) {
             throw new NoAccessRateFound(
-                sprintf('%s %s',
+                sprintf(
+                    '%s %s',
                     $this->accessRate === null ? 'Access Rate is not set' : '',
-                    $this->meterParameter === null ? 'Meter Parameter is not set' : '')
+                    $this->meterParameter === null ? 'Meter Parameter is not set' : ''
+                )
             );
         }
         // get current date and add AccessRate.period days
@@ -121,7 +117,7 @@ class AccessRate
 
         if ($debt_amount > 0) { //there is unpaid amount
             $satisfied = true;
-            if ($debt_amount > $transactionData->transaction->amount) { //sent amount doesn't cover the debt. Spend all money for the debt.
+            if ($debt_amount > $transactionData->transaction->amount) {
                 $debt_amount = $transactionData->transaction->amount;
                 $transactionData->transaction->amount = 0;
                 $satisfied = false;
@@ -131,28 +127,30 @@ class AccessRate
             $nonStaticGateway->updatePayment($accessRatePayment, $debt_amount, $satisfied);
 
             //add payment history for the client
-            event('payment.successful', [
-                'amount' => $debt_amount,
-                'paymentService' =>  $transactionData->transaction->original_transaction_type, //$tokenData->transaction->owner_type,
-                'paymentType' => 'access rate',
-                'sender' => $transactionData->transaction->sender,
-                'paidFor' => $transactionData->meter->accessRate(),
-                'payer' => $transactionData->meterParameter->owner,
-                'transaction' => $transactionData->transaction,
-            ]);
+            event(
+                'payment.successful',
+                [
+                    'amount' => $debt_amount,
+                    'paymentService' => $transactionData->transaction->original_transaction_type,
+                    'paymentType' => 'access rate',
+                    'sender' => $transactionData->transaction->sender,
+                    'paidFor' => $transactionData->meter->accessRate(),
+                    'payer' => $transactionData->meterParameter->owner,
+                    'transaction' => $transactionData->transaction,
+                ]
+            );
         }
         return $debt_amount ?? 0;
     }
 
 
-    public function updatePayment($accessRatePayment, int $paidAmount, bool $satisfied = false)
+    public function updatePayment($accessRatePayment, int $paidAmount, bool $satisfied = false): void
     {
         $accessRatePayment->debt = $satisfied === true ? 0 : $accessRatePayment->debt - $paidAmount;
         $accessRatePayment->save();
     }
 
-
-    private function getAccessRatePayment(Meter $meter)
+    private function getAccessRatePayment(Meter $meter): ?object
     {
         return $meter->accessRatePayment()->first();
     }

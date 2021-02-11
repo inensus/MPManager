@@ -42,7 +42,4 @@ interface ITransactionProvider
     public function addConflict(?string $message): void;
 
     public function getTransaction(): Transaction;
-
 }
-
-

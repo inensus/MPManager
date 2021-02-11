@@ -4,13 +4,13 @@ export let resources = {
         download: '/tickets/api/export/download/', //{id}/book-keeping
     },
     sms: {
-        list: '/api/sms/',
+        list: '/api/sms',
         byPhone: '/api/sms/phone',
         search: '/api/sms/search/',
         groups: '/api/connection-groups',
         types: '/api/connection-types',
         send: '/api/sms/storeandsend',
-        bulk: '/api/sms/bulk'
+        bulk: '/api/sms/bulk',
     },
     reports: {
         weekly: {

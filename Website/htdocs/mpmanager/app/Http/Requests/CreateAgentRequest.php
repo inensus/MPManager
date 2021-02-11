@@ -6,9 +6,8 @@ use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * Class CreateUserRequest
+ *
  * @package App\Http\Requests
- *
- *
  */
 class CreateAgentRequest extends FormRequest
 {
@@ -24,7 +23,6 @@ class CreateAgentRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
-     *
      *
      * @return array
      */

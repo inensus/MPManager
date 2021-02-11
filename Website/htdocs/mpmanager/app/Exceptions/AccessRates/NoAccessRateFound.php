@@ -8,10 +8,9 @@
 
 namespace App\Exceptions\AccessRates;
 
-
 use Exception;
 
-class NoAccessRateFound extends  Exception
+class NoAccessRateFound extends Exception
 {
 
 }

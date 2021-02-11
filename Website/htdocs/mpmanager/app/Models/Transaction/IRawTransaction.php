@@ -8,7 +8,6 @@
 
 namespace App\Models\Transaction;
 
-
 interface IRawTransaction
 {
     //returns the filtered transaction

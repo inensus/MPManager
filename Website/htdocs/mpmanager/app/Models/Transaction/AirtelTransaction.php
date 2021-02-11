@@ -3,11 +3,14 @@
 namespace App\Models\Transaction;
 
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * Class AirtelTransaction
- * @package App
+ *
+ * @package  App
  * @property int $id
  * @property string $interface_id
  * @property string $business_number
@@ -17,7 +20,10 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  */
 class AirtelTransaction extends BaseModel implements IRawTransaction
 {
-    public function transaction()
+    /**
+     * @return MorphOne
+     */
+    public function transaction(): MorphOne
     {
         return $this->morphOne(Transaction::class, 'original_transaction');
     }
@@ -27,7 +33,7 @@ class AirtelTransaction extends BaseModel implements IRawTransaction
         return $this->morphTo();
     }
 
-    public function conflicts()
+    public function conflicts(): MorphMany
     {
         return $this->morphMany(TransactionConflicts::class, 'transaction');
     }

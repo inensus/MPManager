@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Class TicketSettings
  *
- * @package App\Models
+ * @package  App\Models
  * @property int $id
  * @property string $name
  * @property string $api_token

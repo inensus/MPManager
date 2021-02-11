@@ -3,29 +3,26 @@
 
 namespace App\Http\Controllers;
 
-
+use App\Exceptions\CustomerGroup\CustomerGroupNotFound;
 use App\Http\Resources\ApiResource;
-
 use App\Models\City;
 use App\Models\ConnectionGroup;
-use App\Exceptions\CustomerGroup\CustomerGroupNotFound;
 use App\Models\ConnectionType;
 use App\Models\Meter\MeterParameter;
 use App\Models\PaymentHistory;
 use App\Models\Report;
 use App\Models\SubConnectionType;
 use App\Models\Target;
+use App\Models\Transaction\AgentTransaction;
 use App\Models\Transaction\AirtelTransaction;
-
-
 use App\Models\Transaction\Transaction;
 use App\Models\Transaction\VodacomTransaction;
-use App\Models\Transaction\AgentTransaction;
-use Illuminate\Support\Facades\Log;
-use function count;
 use Generator;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Color;
@@ -33,9 +30,11 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Writer\Exception;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use function count;
 
 /**
  * Class Reports
+ *
  * @package App\Http\Controllers\Export
  *
  * @group Export
@@ -115,7 +114,6 @@ class Reports
         City $city,
         Target $target,
         Report $report
-
     ) {
         $this->subConnectionRows = [];
         $this->spreadsheet = $spreadsheet;
@@ -130,7 +128,7 @@ class Reports
         $this->report = $report;
     }
 
-    private function monthlyTargetRibbon(Worksheet $sheet)
+    private function monthlyTargetRibbon(Worksheet $sheet): void
     {
         $sheet->setCellValue('a5', 'Category');
         $sheet->mergeCells('c5:e5');
@@ -189,16 +187,18 @@ class Reports
         }
     }
 
-    private function addTargetConnectionGroups(Worksheet $sheet)
+    private function addTargetConnectionGroups(Worksheet $sheet): void
     {
         $column = 'A';
         $subColumn = 'B';
         $row = 7;
-        $connections = $this->connectionType::with([
-            'subConnections.meterParameters' => function ($q) {
-                $q->groupBy('connection_group_id');
-            },
-        ])->get();
+        $connections = $this->connectionType::with(
+            [
+                'subConnections.meterParameters' => function ($q) {
+                    $q->groupBy('connection_group_id');
+                },
+            ]
+        )->get();
         foreach ($connections as $connection) {
             $sheet->setCellValue($column . $row, $connection->name);
             ++$row;
@@ -236,9 +236,15 @@ class Reports
         $this->getCustomerGroupCountPerMonth($endDate);
         $this->getCustomerGroupEnergyUsagePerMonth([$startDate, $endDate]);
 
-        return new ApiResource($this->generateReportForCity($city->id, $city->name, $startDate, $endDate,
-            $reportType));
-
+        return new ApiResource(
+            $this->generateReportForCity(
+                $city->id,
+                $city->name,
+                $startDate,
+                $endDate,
+                $reportType
+            )
+        );
     }
 
     public function generateWithJob($startDate, $endDate, $reportType): void
@@ -246,17 +252,16 @@ class Reports
         try {
             $cities = $this->city->get();
             foreach ($cities as $city) {
-
                 $this->getCustomerGroupCountPerMonth($endDate);
                 $this->getCustomerGroupEnergyUsagePerMonth([$startDate, $endDate]);
                 $this->generateReportForCity($city->id, $city->name, $startDate, $endDate, $reportType);
             }
         } catch (\Exception $e) {
-            Log::critical($reportType . ' report job failed.',
+            Log::critical(
+                $reportType . ' report job failed.',
                 ['Exception' => $e]
             );
         }
-
     }
 
     /**
@@ -279,7 +284,7 @@ class Reports
      *
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      */
-    private function styleSheet(Worksheet $sheet, $column, ?string $border, ?string $color): void
+    private function styleSheet(Worksheet $sheet, string $column, ?string $border, ?string $color): void
     {
         $style = $sheet->getStyle($column);
 
@@ -289,8 +294,6 @@ class Reports
         if ($color !== null) {
             $style->getFill()->setFillType(FILL::FILL_SOLID)->setStartColor((new Color($color)));
         }
-
-
     }
 
     /**
@@ -298,8 +301,10 @@ class Reports
      * @param $dateRange
      *
      * @throws \PhpOffice\PhpSpreadsheet\Exception
+     *
+     * @return void
      */
-    private function addStaticText(Worksheet $sheet, $dateRange)
+    private function addStaticText(Worksheet $sheet, string $dateRange): void
     {
         $this->styleSheet($sheet, 'A1:L4', Border::BORDER_THIN, null);
         $this->fillBackground($sheet, 'A1:A5', 'FFFABF8F');
@@ -350,7 +355,7 @@ class Reports
     /**
      * @param Worksheet $sheet
      * @param String $dateRange
-     * @param $transactions
+     * @param Builder[]|Collection $transactions
      *
      * @throws CustomerGroupNotFound
      * @throws \PhpOffice\PhpSpreadsheet\Exception
@@ -378,16 +383,13 @@ class Reports
 
         $sheet->getRowDimension(1)->setRowHeight(30);
         $sheet->getRowDimension(2)->setRowHeight(30);
-
-
     }
 
 
     /**
      * @param Worksheet $sheet
-     * @param $transactions
-     *
      * @param bool $addPurchaseBreakDown
+     * @param Builder[]|Collection $transactions
      *
      * @throws CustomerGroupNotFound
      */
@@ -397,8 +399,7 @@ class Reports
         $balance = 0;
 
         foreach ($transactions as $index => $transaction) {
-
-            if (!isset($transaction->meter->meterParameter)) {
+            if (!count($transaction->meter->meterParameter)) {
                 continue;
             }
 
@@ -410,15 +411,24 @@ class Reports
             $sheet->setCellValue('F' . $sheetIndex, $transaction->amount);
 
             if (count($transaction->paymentHistories)) {
-                $sheet->setCellValue('I' . $sheetIndex,
-                    $transaction->paymentHistories[0]->payer->name . ' ' . $transaction->paymentHistories[0]->payer->surname);
+                $sheet->setCellValue(
+                    'I' . $sheetIndex,
+                    $transaction->paymentHistories[0]->payer->name . ' ' .
+                    $transaction->paymentHistories[0]->payer->surname
+                );
             }
             $sheet->setCellValue('K' . $sheetIndex, $balance);
-            $sheet->setCellValue('J' . $sheetIndex,
-                $transaction->meter()->first()->meterParameter()->first()->tariff()->first()->name . '-' . $transaction->meter()->first()->meterParameter()->first()->connectionType()->first()->name);
+            $sheet->setCellValue(
+                'J' . $sheetIndex,
+                $transaction->meter()->first()->meterParameter()->first()->tariff()->first()->name . '-' .
+                $transaction->meter()->first()->meterParameter()->first()->connectionType()->first()->name
+            );
 
 
-            $connectionGroupName = $transaction->meter()->first()->meterParameter()->first()->connectionGroup()->first()->name;
+            $connectionGroupName = $transaction
+                ->meter()->first()
+                ->meterParameter()->first()
+                ->connectionGroup()->first()->name;
 
             $paymentHistories = $this->paymentHistory
                 ->selectRaw('id, sum(amount) as amount, payment_type ')
@@ -427,11 +437,14 @@ class Reports
                 ->get();
 
             if ($addPurchaseBreakDown) {
-                $this->purchaseBreakDown($sheet, $paymentHistories, $sheetIndex,
+                $this->purchaseBreakDown(
+                    $sheet,
+                    $paymentHistories,
+                    $sheetIndex,
                     $connectionGroupName,
-                    $transaction->meter()->first()->meterParameter()->first()->tariff()->first());
+                    $transaction->meter()->first()->meterParameter()->first()->tariff()->first()
+                );
             }
-
         }
         $this->lastIndex = $sheetIndex;
     }
@@ -462,7 +475,6 @@ class Reports
         $soldAmount = [];
         $unit = 0;
         foreach ($paymentHistories as $paymentHistory) {
-
             $sheet->setCellValue($column . $index, $paymentHistory->amount);
 
             if ($paymentHistory->payment_type === 'access_rate' || $paymentHistory->payment_type === 'access rate') {
@@ -484,13 +496,17 @@ class Reports
     /**
      * @param String $connectionGroupName
      *
-     * @return mixed
+     * @return string
+     *
      * @throws CustomerGroupNotFound
      */
     private function getConnectionGroupColumn(string $connectionGroupName): string
     {
-        if (array_key_exists($connectionGroupName,
-            $this->connectionTypeCells)) {
+        if (array_key_exists(
+            $connectionGroupName,
+            $this->connectionTypeCells
+        )
+        ) {
             return $this->connectionTypeCells[$connectionGroupName];
         }
         throw new CustomerGroupNotFound($connectionGroupName . ' not found');
@@ -506,6 +522,7 @@ class Reports
      * @param $connectionGroups
      * @param string $startingColumn
      * @param int $startingRow
+     * @param Builder[]|Collection $connectionGroups
      *
      * @throws \PhpOffice\PhpSpreadsheet\Exception
      */
@@ -518,10 +535,10 @@ class Reports
         $tmpConnectionTypeName = null;
 
         foreach ($connectionGroups as $connectionGroup) {
-
-
-            $this->storeConnectionGroupColumn($connectionGroup->name,
-                $startingColumn);
+            $this->storeConnectionGroupColumn(
+                $connectionGroup->name,
+                $startingColumn
+            );
 
             $sheet->setCellValue($startingColumn . $startingRow, $connectionGroup->name);
 
@@ -530,19 +547,17 @@ class Reports
                     //store column to get them later when payments are placed
                     $accessRate = $meterParameter->tariff()->first()->accessRate()->first();
                     //merge two cells if tariff has access rate
-                    if ($accessRate){
+                    if ($accessRate) {
                         if ($accessRate->amount > 0) {
                             $nextColumn = $startingColumn;
                             ++$nextColumn;
-                            $sheet->mergeCells($startingColumn . $startingRow . ':' . $nextColumn . $startingRow);
+                            $sheet->mergeCells($startingColumn . $startingRow . ':' .
+                                $nextColumn . $startingRow);
                             ++$startingColumn;
                             break;
                         }
                     }
-
-
                 }
-
             }
 
 
@@ -550,7 +565,7 @@ class Reports
         }
     }
 
-    private function addSoldTotal($connectionGroupName, array $amount, $unit = null): void
+    private function addSoldTotal(string $connectionGroupName, array $amount, $unit = null): void
     {
         if (!array_key_exists($connectionGroupName, $this->totalSold)) {
             $this->totalSold[$connectionGroupName] = [
@@ -566,8 +581,6 @@ class Reports
         foreach ($amount as $type => $soldAmount) {
             $this->totalSold[$connectionGroupName][$type] += (int)$soldAmount;
         }
-
-
     }
 
     /**
@@ -588,14 +601,20 @@ class Reports
         $lastColumn = $sheet->getHighestColumn();
 
 
-        $this->styleSheet($sheet, 'K5:K' . $sheet->getHighestRow(),
+        $this->styleSheet(
+            $sheet,
+            'K5:K' . $sheet->getHighestRow(),
             null,
-            'FFFABF8F');
+            'FFFABF8F'
+        );
 
 
-        $this->styleSheet($sheet, 'A' . $energyIndex . ':' . $lastColumn . $energyIndex,
+        $this->styleSheet(
+            $sheet,
+            'A' . $energyIndex . ':' . $lastColumn . $energyIndex,
             null,
-            'ffaee571');
+            'ffaee571'
+        );
 
         $sheet->setCellValue('K' . $energyIndex, 'Purchased');
         $sheet->mergeCells('K' . $energyIndex . ':L' . $energyIndex);
@@ -604,12 +623,15 @@ class Reports
             $column = $this->getConnectionGroupColumn($connectionName);
             $sheet->setCellValue($column . $index, $connectionData['energy']);
             $sheet->setCellValue($column . $energyIndex, $connectionData['unit']);
-
-
         }
     }
 
-    private function excelColumnRange($lower, $upper): ?Generator
+    /**
+     * @return Generator
+     *
+     * @psalm-return Generator<int, mixed, mixed, void>
+     */
+    private function excelColumnRange(string $lower, string $upper): Generator
     {
         ++$upper;
         for ($i = $lower; $i !== $upper; ++$i) {
@@ -618,7 +640,7 @@ class Reports
     }
 
 
-//holds the connection group and its data for the target
+    //holds the connection group and its data for the target
     private $monthlyTargetDatas = [];
 
     /**
@@ -636,7 +658,7 @@ class Reports
         int $cityId,
         $cityName,
         $startDate,
-        $endDate,
+        string $endDate,
         $reportType
     ): void {
 
@@ -649,14 +671,19 @@ class Reports
 
         $transactions = $this->transaction::with(['meter.meterParameter.tariff', 'meter.meterParameter.connectionType'])
             ->selectRaw('id,message,SUM(amount) as amount,GROUP_CONCAT(DISTINCT id SEPARATOR \',\') AS transaction_ids')
-            ->whereHas('meter.meterParameter.address', function ($q) use ($cityId) {
-                $q->where('city_id', $cityId);
-            })
-            ->whereHasMorph('originalTransaction',
+            ->whereHas(
+                'meter.meterParameter.address',
+                function ($q) use ($cityId) {
+                    $q->where('city_id', $cityId);
+                }
+            )
+            ->whereHasMorph(
+                'originalTransaction',
                 [VodacomTransaction::class, AirtelTransaction::class, AgentTransaction::class],
                 static function ($q) {
                     $q->where('status', 1);
-                })
+                }
+            )
             ->whereBetween('created_at', [$startDate, $endDate])
             ->groupBy('message')
             ->latest()
@@ -671,15 +698,12 @@ class Reports
         $this->generateXls($sheet, $dateRange, $transactions);
 
         if ($reportType === 'weekly') {
-
             $sheet2 = new Worksheet();
             $sheet2 = $this->spreadsheet->addSheet($sheet2);
             $this->addStaticText($sheet2, $dateRange);
             $sheet2->setTitle($dateRange);
             //Add transactions, customer name, balances to the sheet
             $this->addTransactions($sheet2, $transactions, false);
-
-
         } elseif ($reportType === 'monthly') {
             $sheet2 = new Worksheet();
             $sheet2 = $this->spreadsheet->addSheet($sheet2);
@@ -693,32 +717,34 @@ class Reports
 
         $writer = new Xlsx($this->spreadsheet);
         $dirPath = storage_path('./'.$reportType);
-        if (!file_exists($dirPath)) {
-            mkdir($dirPath, 0774, true);
+        if (!file_exists($dirPath) && !mkdir($dirPath, 0774, true) && !is_dir($dirPath)) {
+            throw new \RuntimeException(sprintf('Directory "%s" was not created', $dirPath));
         }
         try {
             $fileName = str_slug($reportType . '-' . $cityName . '-' . $dateRange) . '.xlsx';
             $writer->save(storage_path('./' . $reportType . '/' . $fileName));
-            $this->report->create([
-                'path' => storage_path('./' . $reportType . '/' . $fileName),
-                'type' => $reportType,
-                'date' => $startDate . '---' . $endDate,
-                'name' => $cityName,
-            ]);
+            $this->report->create(
+                [
+                    'path' => storage_path('./' . $reportType . '/' . $fileName),
+                    'type' => $reportType,
+                    'date' => $startDate . '---' . $endDate,
+                    'name' => $cityName,
+                ]
+            );
         } catch (Exception $e) {
             echo 'error' . $e->getMessage();
         }
-
     }
 
     /**
      * Total number of customer groups until given date
      *
      * @param string $date
+     *
+     * @return void
      */
-    private function getCustomerGroupCountPerMonth(string $date)
+    private function getCustomerGroupCountPerMonth(string $date): void
     {
-        //meter parameter i connection type olarak grupla ve relation dan connection type name'i al
         $connectionGroupsCount = MeterParameter::selectRaw('Count(id) as total, connection_group_id')
             ->with('connectionGroup')
             ->where('created_at', '<', $date)
@@ -733,58 +759,63 @@ class Reports
                 'average_revenue_per_customer' => 0.0,
             ];
         }
-        // dump($this->monthlyTargetDatas);
     }
 
-    private function getCustomerGroupEnergyUsagePerMonth(array $dates)
+    private function getCustomerGroupEnergyUsagePerMonth(array $dates): void
     {
 
         foreach ($this->monthlyTargetDatas as $connectionName => $targetData) {
-
             $customerGroupRevenue = $this->sumOfTransactions($targetData['connection_id'], $dates);
             foreach ($customerGroupRevenue as $groupRevenue) {
-
-                $this->monthlyTargetDatas[$connectionName]['revenue'] += $groupRevenue->revenue;;//$this->sumOfPayments($groupRevenue->meter, $dates);
+                $this->monthlyTargetDatas[$connectionName]['revenue'] += $groupRevenue->revenue;
 
                 $energyRevenue = $groupRevenue->total;
 
                 $tariffPrice = $groupRevenue->tariff_price;
 
-                if (!$tariffPrice || $tariffPrice == 0) {
+                if (!$tariffPrice || $tariffPrice === 0) {
                     continue;
                 }
-                if (!$energyRevenue || $energyRevenue == 0) {
+                if (!$energyRevenue || $energyRevenue === 0) {
                     continue;
                 }
-                $tariffPrice = $tariffPrice / 100;
-                if ($energyRevenue != 0) {
+                $tariffPrice /= 100;
+                if ($energyRevenue !== 0) {
                     $this->monthlyTargetDatas[$connectionName]['energy_per_month'] += $energyRevenue / $tariffPrice;
                 }
-                $this->monthlyTargetDatas[$connectionName]['average_revenue_per_customer'] = $this->monthlyTargetDatas[$connectionName]['revenue'] / $this->monthlyTargetDatas[$connectionName]['connections'];
+                $this->monthlyTargetDatas[$connectionName]['average_revenue_per_customer']
+                    = $this->monthlyTargetDatas[$connectionName]['revenue'] /
+                    $this->monthlyTargetDatas[$connectionName]['connections'];
             }
-
         }
-
     }
 
 
-    public function sumOfTransactions($connectionGroupId, $dateRange)
+    public function sumOfTransactions($connectionGroupId, array $dateRange): array
     {
-        return DB::select(DB::raw("select meter_parameters.connection_group_id, meters.serial_number as meter, sum(transactions.amount) as revenue, meter_tariffs.price as tariff_price,IFNULL(sum(payment_histories.amount),0) as total
+        return DB::select(
+            DB::raw(
+                "select meter_parameters.connection_group_id, meters.serial_number as meter,".
+                " sum(transactions.amount) as revenue, meter_tariffs.price as tariff_price,".
+                "IFNULL(sum(payment_histories.amount),0) as total
         from transactions
         inner JOIN meters  on transactions.message = meters.serial_number
-        left JOIN  airtel_transactions   on transactions.original_transaction_id = airtel_transactions.id and transactions.original_transaction_type= 'airtel_transaction'
-        left JOIN  vodacom_transactions   on transactions.original_transaction_id = vodacom_transactions.id and transactions.original_transaction_type= 'vodacom_transaction'
-        left JOIN agent_transactions   on transactions.original_transaction_id = agent_transactions.id and transactions.original_transaction_type= 'agent_transaction'
+        left JOIN  airtel_transactions on transactions.original_transaction_id = airtel_transactions.id ".
+                "and transactions.original_transaction_type= 'airtel_transaction'
+        left JOIN vodacom_transactions on transactions.original_transaction_id = vodacom_transactions.id ".
+                "and transactions.original_transaction_type= 'vodacom_transaction'
+        left JOIN agent_transactions on transactions.original_transaction_id = agent_transactions.id and".
+                " transactions.original_transaction_type= 'agent_transaction'
         inner join meter_parameters on meters.id=meter_parameters.meter_id
         inner join meter_tariffs on meter_parameters.tariff_id=meter_tariffs.id
         inner join `payment_histories` on transactions.id = payment_histories.transaction_id
-        where meter_parameters.connection_group_id = $connectionGroupId and transactions.created_at  >=  '$dateRange[0]'  and transactions.created_at <=  '$dateRange[1]'
+        where meter_parameters.connection_group_id = $connectionGroupId and ".
+                "transactions.created_at  >=  '$dateRange[0]'  and transactions.created_at <=  '$dateRange[1]'
          and (vodacom_transactions . status = 1 or airtel_transactions . status = 1 or agent_transactions . status = 1)
-         GROUP by meter_parameters.meter_id"));
-
+         GROUP by meter_parameters.meter_id"
+            )
+        );
     }
-
 
     private function addTargetsToXls(Worksheet $sheet): void
     {
@@ -800,7 +831,7 @@ class Reports
         }
     }
 
-    private function addStoredTargets($sheet, $cityId, $endDate): void
+    private function addStoredTargets(Worksheet $sheet, int $cityId, $endDate): void
     {
         $targetData = $this->target::with('subTargets.connectionType')
             ->where('target_date', '>', $endDate)
@@ -813,7 +844,6 @@ class Reports
         }
 
         foreach ($targetData->subTargets as $subTarget) {
-
             if (!isset($this->subConnectionRows[$subTarget->connectionType->name])) {
                 continue;
             }

@@ -8,7 +8,6 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Http\Requests\SmsRequest;
 use App\Http\Requests\StoreSmsRequest;
 use App\Http\Resources\ApiResource;
@@ -72,7 +71,7 @@ class SmsController extends Controller
         $this->meterParameter = $meterParameter;
     }
 
-    public function index()
+    public function index(): ApiResource
     {
 
         $list = $this->sms
@@ -83,6 +82,9 @@ class SmsController extends Controller
         return new ApiResource($list);
     }
 
+    /**
+     * @return void
+     */
     public function storeBulk(Request $request)
     {
 
@@ -99,12 +101,14 @@ class SmsController extends Controller
             foreach ($receivers as $receiver) {
                 $phone = $receiver;
 
-                $this->sms->create([
-                    'receiver' => $phone,
-                    'body' => $message,
-                    'direction' => 1,
-                    'sender_id' => $senderId,
-                ]);
+                $this->sms->create(
+                    [
+                        'receiver' => $phone,
+                        'body' => $message,
+                        'direction' => 1,
+                        'sender_id' => $senderId,
+                    ]
+                );
 
                 resolve('SmsProvider')
                     ->sendSms(
@@ -122,32 +126,42 @@ class SmsController extends Controller
                             static function ($q) {
                                 $q->where('is_primary', 1);
                             },
-                    ])
-                    ->whereHas('address', static function ($q) use ($miniGrid) {
-                        if ((int)$miniGrid === 0) {
-                            $q->where('city_id', '>', 0);
-                        } else {
-                            $q->where('city_id', $miniGrid);
+                    ]
+                )
+                    ->whereHas(
+                        'address',
+                        static function ($q) use ($miniGrid) {
+                            if ((int)$miniGrid === 0) {
+                                $q->where('city_id', '>', 0);
+                            } else {
+                                $q->where('city_id', $miniGrid);
+                            }
                         }
-                    })->whereHas('connectionGroup', function ($q) use ($receivers) {
-                        $q->where('id', $receivers);
-                    })->get();
+                    )->whereHas(
+                        'connectionGroup',
+                        function ($q) use ($receivers) {
+                            $q->where('id', $receivers);
+                        }
+                    )->get();
             } elseif ($type === 'all') {
-
                 $meters = $this->meterParameter::with(
                     [
                         'owner.addresses' =>
                             static function ($q) {
                                 $q->where('is_primary', 1);
                             },
-                    ])
-                    ->whereHas('address', static function ($q) use ($miniGrid) {
-                        if ((int)$miniGrid === 0) {
-                            $q->where('city_id', '>', 0);
-                        } else {
-                            $q->where('city_id', $miniGrid);
+                    ]
+                )
+                    ->whereHas(
+                        'address',
+                        static function ($q) use ($miniGrid) {
+                            if ((int)$miniGrid === 0) {
+                                $q->where('city_id', '>', 0);
+                            } else {
+                                $q->where('city_id', $miniGrid);
+                            }
                         }
-                    })->get();
+                    )->get();
             } else {
                 $meters = $this->meterParameter::with(
                     [
@@ -155,16 +169,23 @@ class SmsController extends Controller
                             static function ($q) {
                                 $q->where('is_primary', 1);
                             },
-                    ])
-                    ->whereHas('address', static function ($q) use ($miniGrid) {
-                        if ((int)$miniGrid === 0) {
-                            $q->where('city_id', '>', 0);
-                        } else {
-                            $q->where('city_id', $miniGrid);
+                    ]
+                )
+                    ->whereHas(
+                        'address',
+                        static function ($q) use ($miniGrid) {
+                            if ((int)$miniGrid === 0) {
+                                $q->where('city_id', '>', 0);
+                            } else {
+                                $q->where('city_id', $miniGrid);
+                            }
                         }
-                    })->whereHas('connectionType', function ($q) use ($receivers) {
-                        $q->where('id', $receivers);
-                    })->get();
+                    )->whereHas(
+                        'connectionType',
+                        function ($q) use ($receivers) {
+                            $q->where('id', $receivers);
+                        }
+                    )->get();
             }
 
 
@@ -173,12 +194,14 @@ class SmsController extends Controller
                 if ($address === null) {
                     continue;
                 }
-                $this->sms->create([
-                    'receiver' => $address[0]->phone,
-                    'body' => $message,
-                    'direction' => 1,
-                    'sender_id' => $senderId,
-                ]);
+                $this->sms->create(
+                    [
+                        'receiver' => $address[0]->phone,
+                        'body' => $message,
+                        'direction' => 1,
+                        'sender_id' => $senderId,
+                    ]
+                );
 
                 resolve('SmsProvider')
                     ->sendSms(
@@ -195,12 +218,14 @@ class SmsController extends Controller
         $sender = $request->get('sender');
         $message = $request->get('message');
 
-        $sms = $this->sms->create([
-            'receiver' => $sender,
-            'body' => $message,
-            'direction' => 0,
-            'sender_id' => null,
-        ]);
+        $sms = $this->sms->create(
+            [
+                'receiver' => $sender,
+                'body' => $message,
+                'direction' => 0,
+                'sender_id' => null,
+            ]
+        );
 
         if (stripos($message, 'luku') === 0) {
             //get last generated token
@@ -218,20 +243,22 @@ class SmsController extends Controller
                             "Namba ya mita uliyoandika siyo sahihi. Tafadhali hakikisha namba yako ya mita.",
                             'demand'
                         );
-                    return new ApiResource([
-                        'success' => 'false',
-                        'message' => 'given serial number was not found in the system'
-                    ]);
+                    return new ApiResource(
+                        [
+                            'success' => 'false',
+                            'message' => 'given serial number was not found in the system'
+                        ]
+                    );
                 }
                 $smsBody .= ' ' . $t->amount . ' at ' . $t->created_at . ' ';
 
                 foreach ($t->paymentHistories as $paymentHistory) {
                     $smsBody .= '* ' . $paymentHistory->amount . 'TZS for ' . $paymentHistory->payment_type . ' ';
                     if (get_class($paymentHistory->paidFor) === 'App\\Models\\Meter\\MeterToken') {
-                        $smsBody .= 'LUKU ya Umeme(' . $paymentHistory->paidFor->token . ') ya ' . $paymentHistory->paidFor->energy . 'kWH.';
+                        $smsBody .= 'LUKU ya Umeme(' . $paymentHistory->paidFor->token . ') ya ' .
+                            $paymentHistory->paidFor->energy . 'kWH.';
                     }
                 }
-
             }
             resolve('SmsProvider')
                 ->sendSms(
@@ -245,15 +272,20 @@ class SmsController extends Controller
 
 
         // store a comment if the sender is an maintenance guy  and responds with sms to an open ticket.
-        $person = $this->person::with([
-            'addresses',
-            'tickets' => static function ($q) {
-                $q->where('status', 0)->latest()->limit(1);
-            },
-        ])
-            ->whereHas('addresses', static function ($q) use ($sender) {
-                $q->where('phone', $sender);
-            })
+        $person = $this->person::with(
+            [
+                'addresses',
+                'tickets' => static function ($q) {
+                    $q->where('status', 0)->latest()->limit(1);
+                },
+            ]
+        )
+            ->whereHas(
+                'addresses',
+                static function ($q) use ($sender) {
+                    $q->where('phone', $sender);
+                }
+            )
             ->where('is_customer', 0)
             ->first();
 
@@ -264,7 +296,6 @@ class SmsController extends Controller
 
 
         return new ApiResource($sms);
-
     }
 
     public function storeAndSend(SmsRequest $request): ApiResource
@@ -277,9 +308,12 @@ class SmsController extends Controller
         if ($personId !== null) {
             //get person primary phone
             $primaryAddress = $this->person::with('addresses')
-                ->whereHas('addresses', static function ($q) {
-                    $q->where('is_primary', 1);
-                })
+                ->whereHas(
+                    'addresses',
+                    static function ($q) {
+                        $q->where('is_primary', 1);
+                    }
+                )
                 ->find($personId);
             $phone = $primaryAddress->addresses[0]->phone;
         } else {
@@ -288,12 +322,14 @@ class SmsController extends Controller
 
         //$phone = str_replace('+', '', $phone);
 
-        $sms = $this->sms->create([
-            'receiver' => $phone,
-            'body' => $message,
-            'direction' => 1,
-            'sender_id' => $senderId,
-        ]);
+        $sms = $this->sms->create(
+            [
+                'receiver' => $phone,
+                'body' => $message,
+                'direction' => 1,
+                'sender_id' => $senderId,
+            ]
+        );
         resolve('SmsProvider')
             ->sendSms(
                 $phone,
@@ -306,34 +342,44 @@ class SmsController extends Controller
     /**
      * Marks the sms as sent
      *
-     * @param Sms $sms
+     * @param string $uuid
+     *
+     * @return void
      */
-    public function update($uuid)
+    public function update($uuid): void
     {
-        Log::critical('Sms confirmation failed ', [
-            'uuid' => $uuid,
-            'content' => request()->getContent(),
-        ]);
+        Log::critical(
+            'Sms confirmation failed ',
+            [
+                'uuid' => $uuid,
+                'content' => request()->getContent(),
+            ]
+        );
         try {
             $sms = $this->sms->where('uuid', $uuid)->firstOrFail();
             $sms->status = 1;
             $sms->save();
         } catch (ModelNotFoundException $e) {
-            Log::critical('Sms confirmation failed ', [
-                'uuid' => $uuid,
-                'message' => 'the given uuid is not found in the database',
-                'id' => 'r4378563zjfhdfkjtwe-rtw423',
-            ]);
+            Log::critical(
+                'Sms confirmation failed ',
+                [
+                    'uuid' => $uuid,
+                    'message' => 'the given uuid is not found in the database',
+                    'id' => 'r4378563zjfhdfkjtwe-rtw423',
+                ]
+            );
         }
     }
 
-    public function show($person_id)
+    public function show($person_id): ApiResource
     {
-        $personAddresses = $this->person::with([
-            'addresses' => function ($q) {
-                $q->select(DB::raw('phone'), 'owner_id');
-            },
-        ])
+        $personAddresses = $this->person::with(
+            [
+                'addresses' => function ($q) {
+                    $q->select(DB::raw('phone'), 'owner_id');
+                },
+            ]
+        )
             ->where('id', $person_id)
             ->first();
 
@@ -344,27 +390,28 @@ class SmsController extends Controller
         return new ApiResource($smses);
     }
 
-    public function byPhone($phone)
+    public function byPhone($phone): ApiResource
     {
         $smses = $this->sms->where('receiver', $phone)->get();
         return new ApiResource($smses);
     }
 
 
-    public function search($search)
+    public function search($search): ApiResource
     {
         //search in people
         $list = $this->person::with('addresses')
-            ->whereHas('addresses', function ($q) use ($search) {
-                $q->where('phone', 'like', '%' . $search . '%')
-                    ->where('is_primary', 1);
-            })
+            ->whereHas(
+                'addresses',
+                function ($q) use ($search) {
+                    $q->where('phone', 'like', '%' . $search . '%')
+                        ->where('is_primary', 1);
+                }
+            )
             ->orWhere('name', 'like', '%' . $search . '%')
             ->orWhere('surname', 'like', '%' . $search . '%')
             ->get();
 
         return new ApiResource($list);
     }
-
-
 }

@@ -18,7 +18,7 @@ class HistoryListener
     /**
      * Create the event listener.
      *
-     * @param  $historyModel
+     * @param $historyModel
      */
     public function __construct(History $historyModel)
     {
@@ -28,9 +28,10 @@ class HistoryListener
 
     /**
      * Saves a new event in to the histories table
-     * @param mixed $data is an object which should be stored on the histories table
-     * @param string $content the stringified message about the entry
-     * @param string $type
+     *
+     * @param mixed       $data    is an object which should be stored on the histories table
+     * @param string      $content the stringified message about the entry
+     * @param string      $type
      * @param null|string $field
      */
 
@@ -44,14 +45,16 @@ class HistoryListener
         $this->historyModel->save();
 
         broadcast(new HistoryEvent($this->historyModel));
-
     }
 
     public function subscribe(Dispatcher $events): void
     {
         $events->listen('history.create', 'App\Listeners\HistoryListener@save');
-        $events->listen('history.hearth.beat', function () {
-            Log::debug('hearth beat of history listener');
-        });
+        $events->listen(
+            'history.hearth.beat',
+            function () {
+                Log::debug('hearth beat of history listener');
+            }
+        );
     }
 }

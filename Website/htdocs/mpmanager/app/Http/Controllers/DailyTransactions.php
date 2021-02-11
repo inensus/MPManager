@@ -8,12 +8,12 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Models\Transaction\Transaction;
 use Illuminate\Http\Request;
 
 /**
  * Class DailyTransactions
+ *
  * @package App\Http\Controllers\Export
  *
  * @group Export
@@ -23,6 +23,7 @@ class DailyTransactions extends Controller
 
     /**
      * The used transaction model
+     *
      * @var Transaction
      */
     private $transaction;
@@ -40,7 +41,6 @@ class DailyTransactions extends Controller
         $transactions = $this->transaction::with('originalTransaction')->whereDate('created_at', $date)->get();
         $transactionOutput = [];
         foreach ($transactions as $t) {
-
             if ($t->originalTransaction->status !== 1) { //the transaction is either not confirmed or cancelled
                 continue;
             }
@@ -102,15 +102,13 @@ class DailyTransactions extends Controller
             'Pragma' => 'public',
         ];
 
-
         array_unshift($transactionData, array_keys($transactionData[0]));
-
-        $callback = function () use ($transactionData) {
-            $FH = fopen('php://output', 'wb');
+        $callback = function () use ($transactionData): void {
+            $fh = fopen('php://output', 'wb');
             foreach ($transactionData as $row) {
-                fputcsv($FH, $row);
+                fputcsv($fh, $row);
             }
-            fclose($FH);
+            fclose($fh);
         };
 
         return response()->stream($callback, 200, $headers);

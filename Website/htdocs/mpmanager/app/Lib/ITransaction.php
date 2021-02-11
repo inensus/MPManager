@@ -6,7 +6,9 @@
  * Time: 20:53
  */
 namespace App\Lib;
-interface  ITransaction {
+
+interface ITransaction
+{
     public function getAmount();
     public function getSender();
     public function getProvider();

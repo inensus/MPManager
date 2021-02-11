@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 
 /**
  * Class RestrictionMiddleware
+ *
  * @package App\Http\Middleware
  *
  * Checks if an incoming request is still in the allowed limits that are defined in the restrictions table
@@ -41,9 +42,9 @@ class RestrictionMiddleware
     /**
      * Handle an incoming request.
      *
-     * @param \Illuminate\Http\Request $request
-     * @param \Closure $next
-     * @param $type
+     * @param  \Illuminate\Http\Request $request
+     * @param  \Closure                 $next
+     * @param  $type
      * @return mixed
      */
     public function handle($request, Closure $next, $target)
@@ -64,7 +65,6 @@ class RestrictionMiddleware
                 }
                 return response()->json(['data' => ['message' => $message, 'url' => $url, 'status' => 409]], 409);
             }
-
         } catch (ModelNotFoundException $exception) { // there is no restriction found for that target.
             return $next($request);
         }
@@ -85,21 +85,8 @@ class RestrictionMiddleware
             if ($enabled >= $limit) {
                 return false;
             }
-
         }
         // everything is still in limits
         return true;
-    }
-
-
-    private function handleDataControllerRestriction()
-    {
-
-    }
-
-
-    private function handleMaintenanceUserRestriction()
-    {
-
     }
 }

@@ -8,7 +8,6 @@
 
 namespace App\Console\Commands;
 
-
 use App\ManufacturerApi\CalinReadMeter;
 use App\Models\Meter\Meter;
 use Illuminate\Console\Command;
@@ -17,6 +16,7 @@ use Illuminate\Support\Facades\Log;
 /**
  * Reads the daily consumptions of meters
  * Class CalinMeterReader
+ *
  * @package App\Console\Commands
  */
 class CalinMeterReader extends Command
@@ -40,6 +40,7 @@ class CalinMeterReader extends Command
 
     /**
      * CalinMeterReader constructor.
+     *
      * @param Meter $meter
      */
     public function __construct(Meter $meter, CalinReadMeter $calinReadMeter)
@@ -49,20 +50,21 @@ class CalinMeterReader extends Command
         $this->calinReadMeter = $calinReadMeter;
     }
 
-    public function handle()
+    public function handle(): int
     {
-        //get all online meters
-        $meters = $this->meter::whereHas('meterType', function ($q) {
-            return $q->where('online', 1);
-        })->get();
+        $meters = $this->meter::whereHas(
+            'meterType',
+            function ($q) {
+                return $q->where('online', 1);
+            }
+        )->get();
 
-        //date of yesterday
         $readingDate = date('Y-m-d', strtotime('-1 day'));
-        $this->calinReadMeter->readBatch($meters,
+        $this->calinReadMeter->readBatch(
+            $meters,
             1,
             ['date' => $readingDate]
         );
-
         return 0;
     }
 }

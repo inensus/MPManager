@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 
 /**
- * @group City
+ * @group   City
  * Class CityController
  * @package App\Http\Controllers
  */
@@ -28,7 +28,7 @@ class CityController extends Controller
     private $miniGrid;
 
     private $cluster;
-    public function __construct(City $city, MiniGrid $miniGrid,Cluster $cluster)
+    public function __construct(City $city, MiniGrid $miniGrid, Cluster $cluster)
     {
         $this->city = $city;
         $this->miniGrid = $miniGrid;
@@ -71,7 +71,7 @@ class CityController extends Controller
      * Updates the given city
      *
      * @param CityRequest $request
-     * @param City $city
+     * @param City        $city
      *
      * @return ApiResource
      */
@@ -85,9 +85,11 @@ class CityController extends Controller
 
     /**
      * Create
-     * @param Request $request
+     *
+     * @param CityRequest $request
      *
      * @return ApiResource
+     *
      * @throws ValidationException
      */
     public function store(CityRequest $request)

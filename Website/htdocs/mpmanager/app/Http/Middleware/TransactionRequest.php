@@ -16,8 +16,8 @@ class TransactionRequest
     /**
      * Handle an incoming request.
      *
-     * @param Request $request
-     * @param Closure $next
+     * @param  Request $request
+     * @param  Closure $next
      * @return mixed
      */
     public function handle($request, Closure $next)
@@ -28,11 +28,14 @@ class TransactionRequest
         } catch (VodacomHeartBeatException $ex) {
             // no need to do anything.
         } catch (Exception $e) {
-            Log::critical('Transaction Validation failed', [
+            Log::critical(
+                'Transaction Validation failed',
+                [
                 'message' => $e->getMessage(),
                 'content' => $request->getContent(),
                 'id' => 'dfguige4fghz27dfvvjtz84'
-            ]);
+                ]
+            );
             return response()->json(['data' => ['message' => $e->getMessage()]], 401);
         }
         return $next($request);

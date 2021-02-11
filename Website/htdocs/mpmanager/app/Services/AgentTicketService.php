@@ -3,10 +3,11 @@
 
 namespace App\Services;
 
-
 use App\Models\Agent;
 use App\Models\Person\Person;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
 use Inensus\Ticket\Exceptions\TicketOwnerNotFoundException;
@@ -28,8 +29,9 @@ class AgentTicketService implements IAgentRelatedService
 
     /**
      * AgentTicketService constructor.
+     *
      * @param BoardService $boardService
-     * @param CardService $cardService
+     * @param CardService  $cardService
      */
     public function __construct(
         BoardService $boardService,
@@ -43,28 +45,36 @@ class AgentTicketService implements IAgentRelatedService
         $this->ticketsService = $ticketsService;
     }
 
+    /**
+     * @return LengthAwarePaginator
+     */
     public function list($agentId)
     {
         $tickets = Ticket::with('category', 'owner')
-            ->whereHasMorph('creator', [Agent::class],
+            ->whereHasMorph(
+                'creator',
+                [Agent::class],
                 static function ($q) use ($agentId) {
                     $q->where('id', $agentId);
-                })
+                }
+            )
             ->latest()
             ->paginate(5);
 
 
         return $this->getTicketDetailsFromSource($tickets);
-
     }
 
-    public function listByCustomer($agentId, $customerId)
+    public function listByCustomer($agentId, $customerId): LengthAwarePaginator
     {
         return Ticket::with(['category','owner'])
-            ->whereHasMorph('creator', [Agent::class],
+            ->whereHasMorph(
+                'creator',
+                [Agent::class],
                 static function ($q) use ($agentId) {
                     $q->where('id', $agentId);
-                })
+                }
+            )
             ->where('owner_id', $customerId)
             ->latest()
             ->paginate();
@@ -81,15 +91,14 @@ class AgentTicketService implements IAgentRelatedService
         }
 
         return $ticketList;
-
     }
 
     /**
-     * @param $ticketData
+     * @param  $ticketData
      * @return mixed
      * @throws TicketOwnerNotFoundException
      */
-    public function create($ticketData)
+    public function create(array $ticketData)
     {
         $board = $this->boardService->initializeBoard();
         $card = $this->cardService->initalizeList($board);
@@ -117,41 +126,49 @@ class AgentTicketService implements IAgentRelatedService
 
         $ticketId = $this->tickets->createTicket($trelloParams)->id;
 
-        $ticket = Ticket::make([
+        $ticket = Ticket::make(
+            [
             'ticket_id' => $ticketId,
             'category_id' => $categoryId,
             'creator_type' => 'agent',
             'creator_id' => $creator->id
-        ]);
+            ]
+        );
 
         $ticket->owner()->associate($owner);
         $ticket->save();
         return $ticket;
-
     }
 
-    public function getBatch($tickets)
+    /**
+     * @param array $tickets
+     * @return array
+     */
+    public function getBatch(array $tickets): array
     {
         $ticketData = [];
 
         foreach ($tickets as $index => $ticket) {
-
             $tickets[$index]['ticket'] = $this->getTicket($ticket->ticket_id);
             $tickets[$index]['actions'] = $this->getActions($ticket->ticket_id);
             //$t['self'] = $ticket;
-
-
         }
 
         return $tickets;
-
     }
 
+    /**
+     * @param $ticketId
+     * @return Builder|Model|null
+     */
     public function getTicket($ticketId)
     {
         $ticket = Ticket::with('category', 'owner')->where('ticket_id', $ticketId)->first();
-        $ticket['ticket'] = $this->ticketsService->getTicket($ticketId);
-        $ticket['actions'] = $this->ticketsService->getActions($ticketId);
+        if($ticket !== null) {
+            $ticket->ticket = $this->ticketsService->getTicket($ticketId);
+            $ticket->actions = $this->ticketsService->getActions($ticketId);
+        }
+
         return $ticket;
     }
 

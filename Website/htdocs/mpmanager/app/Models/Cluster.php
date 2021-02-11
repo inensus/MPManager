@@ -30,7 +30,7 @@ class Cluster extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function cities()
+    public function cities(): HasMany
     {
         return $this->hasMany(City::class);
     }

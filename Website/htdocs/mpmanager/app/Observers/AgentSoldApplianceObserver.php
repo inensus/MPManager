@@ -3,7 +3,6 @@
 
 namespace App\Observers;
 
-
 use App\Models\Agent;
 use App\Models\AgentAssignedAppliances;
 use App\Models\AgentBalanceHistory;
@@ -22,12 +21,10 @@ class AgentSoldApplianceObserver
     public function __construct(AgentBalanceHistory $agentBalanceHistory)
     {
         $this->agentBalanceHistory = $agentBalanceHistory;
-
     }
 
-    public function created(AgentSoldAppliance $appliances)
+    public function created(AgentSoldAppliance $appliances): void
     {
-
         $assignedApplianceId = $appliances->agent_assigned_appliance_id;
         $assignedAppliance = AgentAssignedAppliances::with('applianceType')->find($assignedApplianceId);
 
@@ -35,21 +32,27 @@ class AgentSoldApplianceObserver
         $agent = Agent::query()->find($assignedAppliance->agent_id);
         $buyer = Person::query()->find(request()->input('person_id'));
         //create agent transaction
-        $agentTransaction = AgentTransaction::query()->create([
+        $agentTransaction = AgentTransaction::query()->create(
+            [
             'agent_id' => $agent->id,
             'device_id' => $agent->device_id,
             'status' => 1,
-        ]);
+            ]
+        );
 
-        $transaction = Transaction::query()->make([
+        $transaction = Transaction::query()->make(
+            [
             'amount' => request()->input('down_payment'),
             'sender' => $agent->device_id,
             'message' => '-',
-        ]);
+            ]
+        );
         $transaction->originalTransaction()->associate($agentTransaction);
         $transaction->save();
 
-        event('payment.successful', [
+        event(
+            'payment.successful',
+            [
             'amount' => $transaction->amount,
             'paymentService' => 'agent',
             'paymentType' => 'appliance',
@@ -57,16 +60,19 @@ class AgentSoldApplianceObserver
             'paidFor' => $appliance,
             'payer' => $buyer,
             'transaction' => $transaction,
-        ]);
+            ]
+        );
 
-        $history = AgentBalanceHistory::query()->make([
+        $history = AgentBalanceHistory::query()->make(
+            [
             'agent_id' => $agent->id,
             'amount' => (-1 * request()->input('down_payment')),
             'transaction_id' => $transaction->id,
             'available_balance' => $agent->balance,
             'due_to_supplier' => $agent->due_to_energy_supplier
 
-        ]);
+            ]
+        );
 
         $history->trigger()->associate($assignedAppliance);
         $history->save();
@@ -75,23 +81,27 @@ class AgentSoldApplianceObserver
         //create agent commission
         $commission = AgentCommission::query()->find($agent->agent_commission_id);
 
-        $history = AgentBalanceHistory::query()->make([
+        $history = AgentBalanceHistory::query()->make(
+            [
             'agent_id' => $agent->id,
             'amount' => ($assignedAppliance->cost * $commission->appliance_commission),
             'transaction_id' => $transaction->id,
             'available_balance' => $agent->commission_revenue,
             'due_to_supplier' => $agent->due_to_energy_supplier
-        ]);
+            ]
+        );
         $history->trigger()->associate($commission);
         $history->save();
-        $assetPerson = AssetPerson::make([
+        $assetPerson = AssetPerson::make(
+            [
             'person_id' => $buyer->id,
             'first_payment_date' => request()->input('first_payment_date'),
             'rate_count' => request()->input('tenure'),
             'total_cost' => $assignedAppliance->cost,
             'down_payment' => request()->input('down_payment'),
             'asset_type_id' => $assignedAppliance->applianceType->id,
-        ]);
+            ]
+        );
         $assetPerson->creator()->associate($agent);
         $assetPerson->save();
     }

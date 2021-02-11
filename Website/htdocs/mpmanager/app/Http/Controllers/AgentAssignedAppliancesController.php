@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Http\Requests\CreateAgentAssignedApplianceRequest;
 use App\Http\Resources\ApiResource;
 use App\Models\Agent;
@@ -8,7 +9,7 @@ use App\Services\AgentAssignedApplianceService;
 use Illuminate\Http\Request;
 
 /**
- * @group Agent-Appliances
+ * @group   Agent-Appliances
  * Class AgentAssignedApplianceController
  * @package App\Http\Controllers
  */
@@ -25,7 +26,7 @@ class AgentAssignedAppliancesController extends Controller
     /**
      * List for Android-APP.
      *
-     * @param Request $request
+     * @param  Request $request
      * @return ApiResource
      */
     public function index(Request $request)
@@ -37,22 +38,27 @@ class AgentAssignedAppliancesController extends Controller
 
     /**
      * Store a newly created resource in storage.
+     *
      * @bodyParam agent_id integer required
      * @bodyParam user_id integer required
      * @bodyParam appliance_type_id integer required
      * @bodyParam cost integer required
-     * @param CreateAgentAssignedApplianceRequest $request
-     * @return ApiResource
+     * @param     CreateAgentAssignedApplianceRequest $request
+     * @return    ApiResource
      */
     public function store(CreateAgentAssignedApplianceRequest $request)
     {
 
-        $appliance = $this->agentAssignedApplianceService->create($request->only([
-            'agent_id',
-            'user_id',
-            'appliance_type_id',
-            'cost',
-        ]));
+        $appliance = $this->agentAssignedApplianceService->create(
+            $request->only(
+                [
+                'agent_id',
+                'user_id',
+                'appliance_type_id',
+                'cost',
+                ]
+            )
+        );
 
         return new ApiResource($appliance);
     }
@@ -63,8 +69,8 @@ class AgentAssignedAppliancesController extends Controller
     /**
      * List for Web interface.
      *
-     * @param Agent $agent
-     * @param Request $request
+     * @param  Agent   $agent
+     * @param  Request $request
      * @return ApiResource
      */
     public function indexWeb(Agent $agent, Request $request)

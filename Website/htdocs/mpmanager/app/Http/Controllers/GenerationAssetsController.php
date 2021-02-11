@@ -14,6 +14,7 @@ class GenerationAssetsController extends Controller
 
     /**
      * GenerationAssetsController constructor.
+     *
      * @param GenerationAssetsService $generationAssetsService
      */
     public function __construct(GenerationAssetsService $generationAssetsService)

@@ -21,18 +21,18 @@ class MiniGridController extends Controller
         $this->miniGrid = $miniGrid;
     }
 
-    public function store(StoreMiniGridRequest $request)
+    public function store(StoreMiniGridRequest $request): ApiResource
     {
         $miniGrid = $this->miniGrid::create($request->only('cluster_id', 'name'));
-
         return new ApiResource($miniGrid);
     }
 
     /**
      * List
+     *
      * @urlParam data_stream filters the list based on data_stream column
      *
-     * @param Request $request
+     * @param  Request $request
      * @return ApiResource
      */
     public function index(Request $request): ApiResource
@@ -47,9 +47,10 @@ class MiniGridController extends Controller
 
     /**
      * Detail
+     *
      * @bodyParam id int required
      *
-     * @param int $id
+     * @param int     $id
      *
      * @param Request $request
      *
@@ -70,11 +71,12 @@ class MiniGridController extends Controller
 
     /**
      * Update
+     *
      * @bodyParam name string The name of the MiniGrid.
      * @bodyParam data_stream int If the data_stream is enabled or not.
      *
-     * @param MiniGrid $miniGrid
-     * @param UpdateMiniGridRequest $request
+     * @param  MiniGrid              $miniGrid
+     * @param  UpdateMiniGridRequest $request
      * @return ApiResource
      */
     public function update(MiniGrid $miniGrid, UpdateMiniGridRequest $request): ApiResource

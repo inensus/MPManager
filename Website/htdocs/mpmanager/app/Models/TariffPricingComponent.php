@@ -3,10 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * Class TariffPricingComponent
+ *
  * @package App\Models
  *
  * @property int $id
@@ -19,9 +20,8 @@ class TariffPricingComponent extends Model
 {
     protected $guarded = [];
 
-    public function owner()
+    public function owner(): MorphTo
     {
         return $this->morphTo();
     }
-
 }

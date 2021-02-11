@@ -8,7 +8,6 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Http\Resources\ApiResource;
 use App\Models\PaymentHistory;
 use App\Models\Person\Person;
@@ -17,9 +16,8 @@ use Carbon\CarbonInterval;
 use DatePeriod;
 use function count;
 
-
 /**
- * @group Payment-History
+ * @group   Payment-History
  * Class PaymentHistoryController
  * @package App\Http\Controllers
  */
@@ -32,6 +30,7 @@ class PaymentHistoryController
 
     /**
      * PaymentHistoryController constructor.
+     *
      * @param PaymentHistory $history
      */
     public function __construct(PaymentHistory $history)
@@ -41,15 +40,16 @@ class PaymentHistoryController
 
     /**
      * Detail
+     *
      * @urlParam payerId integer required
      * @urlParam period string required
      * @urlParam limit integer
      * @urlParam order string
-     * @param int $payerId
-     * @param string $period
-     * @param null $limit
-     * @param string $order
-     * @return array
+     * @param    int    $payerId
+     * @param    string $period
+     * @param    null   $limit
+     * @param    string $order
+     * @return   array
      */
     public function show(int $payerId, string $period, $limit = null, $order = 'ASC')
     {
@@ -79,7 +79,8 @@ class PaymentHistoryController
         $period = strtoupper($period);
         switch ($period) {
             case 'D':
-                $period = 'Day(payment_histories.created_at), Month(payment_histories.created_at), Year(payment_histories.created_at)';
+                $period = 'Day(payment_histories.created_at), '.
+                    'Month(payment_histories.created_at), Year(payment_histories.created_at)';
                 break;
             case 'W':
                 $period = 'Week(payment_histories.created_at), Year(payment_histories.created_at)';
@@ -98,10 +99,11 @@ class PaymentHistoryController
 
     /**
      * Payment Periods
+     *
      * @urlParam personId integer required
-     * @param $personId
-     * @return ApiResource
-     * @throws \Exception
+     * @param    $personId
+     * @return   ApiResource
+     * @throws   \Exception
      */
     public function getPaymentPeriod($personId)
     {
@@ -121,12 +123,15 @@ class PaymentHistoryController
 
     /**
      * Person payment flow per year
+     *
      * @urlParam personId integer required
+     *
      * @param int $personId
      * @param int|null $year
+     *
      * @return array
-     */
-    public function byYear(int $personId, int $year = null)
+     **/
+    public function byYear(int $personId, int $year = null): array
     {
         $year = $year ?? (int)date('Y');
         $payments = $this->history->getPaymentFlow('person', $personId, $year);
@@ -140,34 +145,32 @@ class PaymentHistoryController
 
     /**
      * Person Debts
+     *
      * @urlParam personId integer required
      * checks if the person has any debts to the system
-     * @param int $personId
-     * @return ApiResource
+     * @param    int $personId
+     * @return   ApiResource
      */
     public function debts($personId)
     {
         $ad = 0;
         $accessDebt = Person::with('meters.meter.accessRatePayment')->find($personId);
         foreach ($accessDebt->meters as $m) {
-            if ($ad += $m->meter->accessRatePayment){
+            if ($ad += $m->meter->accessRatePayment) {
                 $ad += $m->meter->accessRatePayment->debt;
             }
         }
-
-
         $deferredDebt = 0;
-
         return new ApiResource(['access_rate' => $ad, 'deferred' => $deferredDebt]);
-
     }
 
     /**
      * Payments list with date range
+     *
      * @bodyParam begin string
      * @bodyParam end string
-     * @return ApiResource
-     * @throws \Exception
+     * @return    ApiResource
+     * @throws    \Exception
      */
     public function getPaymentRange(): ApiResource
     {
@@ -190,14 +193,17 @@ class PaymentHistoryController
         return new ApiResource(array_values($result));
     }
 
-    public function preparePaymentFlow($payments)
+    /**
+     * @return array[]
+     *
+     * @psalm-return array<array-key, array>
+     */
+    public function preparePaymentFlow($payments): array
     {
         $flowList = [];
-
         foreach ($payments as $payment) {
             $flowList[$payment['aperiod']][$payment['payment_type']] = $payment['amount'];
         }
-
         return $flowList;
     }
 }

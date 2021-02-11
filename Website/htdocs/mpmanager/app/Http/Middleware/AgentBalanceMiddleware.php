@@ -25,16 +25,15 @@ class AgentBalanceMiddleware
         $commission = $agent->commission()->first();
         $amount = $agent->balance;
 
-
         if ($routeName === 'agent-sell-appliance') {
-            $assignedApplianceCost = AgentAssignedAppliances::findOrFail($request->input('agent_assigned_appliance_id'));
+            $assignedApplianceCost =
+                AgentAssignedAppliances::findOrFail($request->input('agent_assigned_appliance_id'));
             if ($downPayment = $request->input('down_payment')) {
                 $amount -= $downPayment;
             } else {
                 throw  new DownPaymentNotFoundException('DownPayment not found');
             }
             if ($assignedApplianceCost->cost < $request->input('down_payment')) {
-
                 throw new  DownPaymentBiggerThanAmountException('Down payment is bigger than amount');
             }
         }
@@ -44,8 +43,6 @@ class AgentBalanceMiddleware
             } else {
                 throw  new TransactionAmountNotFoundException('Transaction amount not found');
             }
-
-
         }
 
         if ($amount < $commission->risk_balance) {

@@ -45,7 +45,6 @@ class EnergyController extends Controller
                     $totalAbsorbedEnergy = str_replace(array('.', ','), array('', '.'), $value['value']);
                     $totalAbsorbedEnergyUnit = $value['unit'];
                 }
-
             }
 
             if ($lastEnergyInput !== null) {
@@ -65,7 +64,8 @@ class EnergyController extends Controller
                 PowerConverter::convert($lastTotalAbsorbed, $lastTotalAbsorbedUnit, 'kW');
 
 
-            $this->energy->newQuery()->create([
+            $this->energy->newQuery()->create(
+                [
                 'meter_id' => $meter["id"],
                 'active' => 1,
                 'mini_grid_id' => $request->input('mini_grid_id'),
@@ -79,8 +79,8 @@ class EnergyController extends Controller
                 'absorbed_energy_since_last' => $absorbedEnergySinceLastInput,
                 'absorbed_energy_since_last_unit' => 'kWh',
 
-            ]);
-
+                ]
+            );
         }
         return new ApiResource(['result' => 'success']);
     }
@@ -92,12 +92,16 @@ class EnergyController extends Controller
             ->where('mini_grid_id', $miniGridId);
 
         if ($startDate = $request->input('start_date')) {
-            $energyReadings->where('read_out', '>=',
-                Carbon::createFromTimestamp($startDate)->format('Y-m-d H:i:s'));
+            $energyReadings->where(
+                'read_out',
+                '>=',
+                Carbon::createFromTimestamp($startDate)->format('Y-m-d H:i:s')
+            );
         }
         if ($endDate = $request->input('end_date')) {
-
-            $energyReadings->where('read_out', '<=',
+            $energyReadings->where(
+                'read_out',
+                '<=',
                 Carbon::createFromTimestamp($endDate)->format('Y-m-d H:i:s')
             );
         }

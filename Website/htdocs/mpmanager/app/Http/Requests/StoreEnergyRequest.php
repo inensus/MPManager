@@ -3,18 +3,19 @@
 
 namespace App\Http\Requests;
 
-
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreEnergyRequest extends FormRequest
 {
 
-    public function authorize():bool {
+    public function authorize():bool
+    {
         return true;
     }
 
 
-    public function rules(): array {
+    public function rules(): array
+    {
         return [
             'mini_grid_id' => 'required',
             'node_id' => 'required',

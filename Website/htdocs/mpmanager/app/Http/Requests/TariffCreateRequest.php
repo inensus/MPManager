@@ -58,7 +58,8 @@ class TariffCreateRequest extends FormRequest
                     'message' => 'The given data was invalid',
                     'errors' => $validator->errors(),
                 ],
-            ], 422
+            ],
+            422
         );
 
         throw new ValidationException($validator, $response);

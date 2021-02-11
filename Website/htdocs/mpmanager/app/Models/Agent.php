@@ -6,9 +6,12 @@ use App\Models\Address\Address;
 use App\Models\Address\HasAddressesInterface;
 use App\Models\Person\Person;
 use App\Models\Transaction\Transaction;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Facades\Hash;
 use Inensus\Ticket\Models\Ticket;
@@ -16,6 +19,7 @@ use Tymon\JWTAuth\Contracts\JWTSubject;
 
 /**
  * Class Agent
+ *
  * @package App\Models
  *
  * @property int $id
@@ -72,6 +76,8 @@ class Agent extends Authenticatable implements JWTSubject
      * Return a key value array, containing any custom claims to be added to the JWT.
      *
      * @return array
+     *
+     * @psalm-return array<empty, empty>
      */
     public function getJWTCustomClaims()
     {
@@ -79,42 +85,43 @@ class Agent extends Authenticatable implements JWTSubject
     }
 
 
-    public function address()
+    public function address(): MorphOne
     {
         return $this->morphOne(Address::class, 'owner');
     }
 
-    public function tickets()
+    public function tickets(): MorphMany
     {
         return $this->morphMany(Ticket::class, 'creator');
     }
 
-    public function transaction()
+    public function transaction(): HasMany
     {
         return $this->hasMany(Transaction::class);
     }
 
-    public function balanceHistory()
+    public function balanceHistory(): HasMany
     {
         return $this->hasMany(AgentBalanceHistory::class);
     }
 
-    public function assignedAppliance()
+    public function assignedAppliance(): HasMany
     {
         return $this->hasMany(AgentAssignedAppliances::class);
     }
+
 
     public function addressDetails()
     {
         return $this->addresses()->with('city');
     }
 
-    public function person()
+    public function person(): BelongsTo
     {
         return $this->belongsTo(Person::class);
     }
 
-    public function commission()
+    public function commission(): BelongsTo
     {
         return $this->belongsTo(AgentCommission::class, 'agent_commission_id', 'id');
     }
@@ -124,12 +131,12 @@ class Agent extends Authenticatable implements JWTSubject
         return $this->morphMany(AssetPerson::class, 'creator');
     }
 
-    public function addresses(): HasOneOrMany
+    public function addresses(): MorphMany
     {
         return $this->morphMany(Address::class, 'owner');
     }
 
-    public function receipt()
+    public function receipt(): HasMany
     {
         return $this->hasMany(AgentReceipt::class, 'agent_id', 'id');
     }

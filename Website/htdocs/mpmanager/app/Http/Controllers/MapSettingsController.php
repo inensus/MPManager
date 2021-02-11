@@ -8,7 +8,7 @@ use App\Models\MapSettings;
 class MapSettingsController extends Controller
 {
     /**
-     *  @MapSettings
+     * @MapSettings
      */
 
     private $mapSettings;
@@ -16,7 +16,6 @@ class MapSettingsController extends Controller
     public function __construct(MapSettings $mapSettings)
     {
         $this->mapSettings = $mapSettings;
-
     }
 
     public function index(): ApiResource
@@ -26,9 +25,13 @@ class MapSettingsController extends Controller
 
     public function update(MapSettings $mapSettings): ApiResource
     {
-        $mapSettings->update(request()->only([
-            'zoom', 'latitude', 'longitude'
-        ]));
+        $mapSettings->update(
+            request()->only(
+                [
+                'zoom', 'latitude', 'longitude'
+                ]
+            )
+        );
         return new ApiResource($mapSettings->fresh());
     }
 }

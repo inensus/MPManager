@@ -45,7 +45,6 @@ use App\Observers\TransactionObserver;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Horizon\Horizon;
 
-
 class ServicesProvider extends ServiceProvider
 {
     /**
@@ -61,9 +60,11 @@ class ServicesProvider extends ServiceProvider
         AssetPerson::observe(AssetPersonObserver::class);
         PV::observe(PVObserver::class);
         Battery::observe(BatteryObserver::class);
-        Horizon::auth(static function ($request) {
-            return true;
-        });
+        Horizon::auth(
+            static function ($request) {
+                return true;
+            }
+        );
         Solar::observe(SolarObserver::class);
 
 
@@ -83,20 +84,31 @@ class ServicesProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(AddressService::class, function ($app) {
-            return new AddressService($this->app->make(Address::class));
-        });
+        $this->app->bind(
+            AddressService::class,
+            function ($app) {
+                return new AddressService($this->app->make(Address::class));
+            }
+        );
 
-        $this->app->bind(RolesService::class, function ($app) {
-            return new RolesService($this->app->make(Roles::class), $this->app->make(RoleDefinition::class));
-        });
+        $this->app->bind(
+            RolesService::class,
+            function ($app) {
+                return new RolesService($this->app->make(Roles::class), $this->app->make(RoleDefinition::class));
+            }
+        );
 
-        $this->app->bind(PersonService::class, function ($app) {
-            return new PersonService($this->app->make(Person::class));
-        });
-        $this->app->bind(CountryService::class, function ($app) {
-            return new CountryService($this->app->make(Country::class));
-        });
-
+        $this->app->bind(
+            PersonService::class,
+            function ($app) {
+                return new PersonService($this->app->make(Person::class));
+            }
+        );
+        $this->app->bind(
+            CountryService::class,
+            function ($app) {
+                return new CountryService($this->app->make(Country::class));
+            }
+        );
     }
 }

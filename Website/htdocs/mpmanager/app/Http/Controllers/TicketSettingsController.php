@@ -5,11 +5,10 @@ namespace App\Http\Controllers;
 use App\Http\Resources\ApiResource;
 use App\Models\TicketSettings;
 
-
 class TicketSettingsController extends Controller
 {
     /**
-     *  @TicketSettings
+     * @TicketSettings
      */
 
     private $ticketSettings;
@@ -26,9 +25,13 @@ class TicketSettingsController extends Controller
 
     public function update(TicketSettings $ticketSettings): ApiResource
     {
-        $ticketSettings->update(request()->only([
-            'name', 'api_token', 'api_url', 'api_key'
-        ]));
+        $ticketSettings->update(
+            request()->only(
+                [
+                'name', 'api_token', 'api_url', 'api_key'
+                ]
+            )
+        );
         return new ApiResource($ticketSettings->fresh());
     }
 }

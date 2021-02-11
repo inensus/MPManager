@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Http\Requests\TariffCreateRequest;
 use App\Http\Resources\ApiResource;
 use App\Http\Services\MeterTariffService;
 use App\Models\Meter\MeterTariff;
 
 /**
- * @group Tariffs
+ * @group   Tariffs
  * Class TariffController
  * @package App\Http\Controllers
  */
@@ -28,37 +27,43 @@ class TariffController extends Controller
      * List
      * a list of all tariffs.
      * The list is paginated and each page contains 15 results
+     *
      * @responseFile responses/tariffs/tariffs.list.json
-     * @return ApiResource
+     * @return       ApiResource
      */
     public function index()
     {
         return new ApiResource(
-            MeterTariff::with([
-                'accessRate',
-                'pricingComponent',
-                'socialTariff',
-                'tou'
-            ])->paginate(15)
+            MeterTariff::with(
+                [
+                    'accessRate',
+                    'pricingComponent',
+                    'socialTariff',
+                    'tou'
+                ]
+            )->paginate(15)
         );
     }
 
     /**
      * Detail
-     * @urlParam id int required
+     *
+     * @urlParam     id int required
      * @responseFile responses/tariffs/tariff.detail.json
      * @param MeterTariff $tariff
-     * @return ApiResource
+     * @return       ApiResource
      */
     public function show(MeterTariff $tariff)
     {
 
-        $meterTariff = MeterTariff::with([
-            'accessRate',
-            'pricingComponent',
-            'socialTariff',
-            'tou'
-        ])->where('id', $tariff->id)->first();
+        $meterTariff = MeterTariff::with(
+            [
+                'accessRate',
+                'pricingComponent',
+                'socialTariff',
+                'tou'
+            ]
+        )->where('id', $tariff->id)->first();
 
         return new ApiResource(
             $meterTariff
@@ -67,10 +72,11 @@ class TariffController extends Controller
 
     /**
      * Create
+     *
      * @bodyParam name string required
      * @bodyParam factor int. The factor between two different sub tariffs. Like day/night sub-tariffs.
      * @bodyParam currency string
-     * @bodyParam price int required The price is;  wanted-kWh-price  X 100 . The last two digits are basically the amount after  comma.
+     * @bodyParam price int required. kWh-price X 100 . The last two digits are basically the amount after comma.
      * @param TariffCreateRequest $request
      * @return ApiResource
      */
@@ -84,14 +90,17 @@ class TariffController extends Controller
                     'currency' => $request->input('currency'),
                     'price' => $request->input('price'),
                     'total_price' => $request->input('price'),
-                ]);
+                ]
+            );
 
-        $tariff = MeterTariff::with([
-            'accessRate',
-            'pricingComponent',
-            'socialTariff',
-            'tou'
-        ])->find($newTariff->id);
+        $tariff = MeterTariff::with(
+            [
+                'accessRate',
+                'pricingComponent',
+                'socialTariff',
+                'tou'
+            ]
+        )->find($newTariff->id);
 
         return new ApiResource($tariff);
     }
@@ -121,9 +130,8 @@ class TariffController extends Controller
         return new ApiResource($result);
     }
 
-    public function destroy(MeterTariff $tariff)
+    public function destroy(MeterTariff $tariff): ?bool
     {
         return $tariff->delete();
-
     }
 }

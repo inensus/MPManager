@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * Class MainSettings
  *
- * @package App\Models
+ * @package  App\Models
  * @property int $id
  * @property string $site_title
  * @property string $company_name

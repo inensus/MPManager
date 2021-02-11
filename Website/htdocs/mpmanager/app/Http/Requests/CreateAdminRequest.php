@@ -6,9 +6,8 @@ use Illuminate\Foundation\Http\FormRequest;
 
 /**
  * Class CreateUserRequest
+ *
  * @package App\Http\Requests
- *
- *
  */
 class CreateAdminRequest extends FormRequest
 {
@@ -24,8 +23,6 @@ class CreateAdminRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
-     *
-
      *
      * @return array
      */

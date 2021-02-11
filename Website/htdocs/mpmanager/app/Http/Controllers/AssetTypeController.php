@@ -40,7 +40,7 @@ class AssetTypeController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param AssetTypeCreateRequest $request
+     * @param  AssetTypeCreateRequest $request
      * @return ApiResource
      */
     public function store(AssetTypeCreateRequest $request): ApiResource
@@ -56,8 +56,8 @@ class AssetTypeController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param AssetTypeUpdateRequest $request
-     * @param AssetType $assetType
+     * @param  AssetTypeUpdateRequest $request
+     * @param  AssetType              $assetType
      * @return ApiResource
      */
     public function update(AssetTypeUpdateRequest $request, AssetType $assetType): ApiResource
@@ -69,7 +69,7 @@ class AssetTypeController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param AssetType $assetType
+     * @param  AssetType $assetType
      * @return ApiResource
      * @throws Exception
      */

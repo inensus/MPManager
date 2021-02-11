@@ -40,10 +40,8 @@ class SocialTariffPiggyBankManager implements ShouldQueue
     }
 
 
-    private function chargeClients(SocialTariff $socialTariff)
+    private function chargeClients(SocialTariff $socialTariff): void
     {
-
-        // update all that have less then max allowed energy
         SocialTariffPiggyBank::query()->
         where('social_tariff_id', $socialTariff->id)
             ->where('savings', '<=', $socialTariff->maximum_stacked_energy)
@@ -54,7 +52,5 @@ class SocialTariffPiggyBankManager implements ShouldQueue
         where('social_tariff_id', $socialTariff->id)
             ->where('savings', '>', $socialTariff->maximum_stacked_energy)
             ->update(['savings' => $socialTariff->initial_energy_budget]);
-
-
     }
 }

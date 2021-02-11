@@ -2,16 +2,14 @@
 
 namespace App\Models\Transaction;
 
-
 /**
  * Class Transaction
  *
- * @package App
+ * @package  App
  * @property int id
  */
 
 use App\Helpers\RelationsManager;
-use App\Models\Agent;
 use App\Models\BaseModel;
 use App\Models\Meter\Meter;
 use App\Models\Meter\MeterToken;
@@ -19,6 +17,9 @@ use App\Models\PaymentHistory;
 use App\Models\Sms;
 use App\Relations\BelongsToMorph;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\DB;
 use PDO;
@@ -26,7 +27,7 @@ use PDO;
 /**
  * Class Transaction
  *
- * @package App
+ * @package  App
  * @property integer id
  * @property integer amount
  * @property string $type
@@ -45,7 +46,7 @@ class Transaction extends BaseModel
     /**
      * A work-around for querying the polymorphic relation with whereHas
      *
-     * @return BelongsTo
+     * @return BelongsToMorph
      */
     public function originalVodacom():BelongsToMorph
     {
@@ -56,7 +57,7 @@ class Transaction extends BaseModel
     /**
      * A work-around for querying the polymorphic relation with whereHas
      *
-     * @return BelongsTo
+     * @return BelongsToMorph
      */
     public function originalAirtel():BelongsToMorph
     {
@@ -72,22 +73,22 @@ class Transaction extends BaseModel
     {
         return BelongsToMorph::build($this, ThirdPartyTransaction::class, 'originalTransaction');
     }
-    public function token()
+    public function token(): HasOne
     {
         return $this->hasOne(MeterToken::class);
     }
 
-    public function sms()
+    public function sms(): MorphOne
     {
         return $this->morphOne(Sms::class, 'trigger');
     }
 
-    public function paymentHistories()
+    public function paymentHistories(): HasMany
     {
         return $this->hasMany(PaymentHistory::class);
     }
 
-    public function meter()
+    public function meter(): HasOne
     {
         return $this->hasOne(Meter::class, 'serial_number', 'message');
     }
@@ -104,8 +105,10 @@ class Transaction extends BaseModel
             " WHERE transactions.id in (" .
             " SELECT DISTINCT(transactions.id) " .
             " from transactions" .
-            " LEFT join airtel_transactions on transactions.original_transaction_id = airtel_transactions.id and transactions.original_transaction_type = 'airtel_transaction'" .
-            " LEFT join vodacom_transactions on transactions.original_transaction_id = vodacom_transactions.id and transactions.original_transaction_type = 'vodacom_transaction'" .
+            " LEFT join airtel_transactions on transactions.original_transaction_id = airtel_transactions.id and" .
+            " transactions.original_transaction_type = 'airtel_transaction'" .
+            " LEFT join vodacom_transactions on transactions.original_transaction_id = vodacom_transactions.id and" .
+            " transactions.original_transaction_type = 'vodacom_transaction'" .
             " LEFT join meters on transactions.message = meters.serial_number" .
             " LEFT JOIN meter_parameters on meter_parameters.meter_id = meters.id" .
             " LEFT JOIN people on people.id = meter_parameters.owner_id and owner_type = 'person'" .
@@ -125,6 +128,5 @@ class Transaction extends BaseModel
 
         $sth->execute();
         return $sth->fetchAll(PDO::FETCH_ASSOC);
-
     }
 }
