@@ -17,6 +17,7 @@ use App\Models\Transaction\Transaction;
 use App\Models\Transaction\VodacomTransaction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Bus;
 use Tests\TestCase;
 
 class AccessRateTest extends TestCase
@@ -25,6 +26,7 @@ class AccessRateTest extends TestCase
 
     private function initApplication(): void
     {
+        Bus::fake();
         $manufacturer = factory(Manufacturer::class)->create();
         $meterType = factory(MeterType::class)->create();
         $connectionType = factory(ConnectionType::class)->create();
@@ -60,6 +62,7 @@ class AccessRateTest extends TestCase
      */
     public function testWithNoAccessRate(): void
     {
+
         $this->initApplication();
         $vodacomTransaction = factory(VodacomTransaction::class)->create();
         $transaction = factory(Transaction::class)->make();
