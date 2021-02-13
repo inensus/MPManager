@@ -24,9 +24,11 @@ class MeterTariffObserver
         }
         if ($social = request()->input('social_tariff')) {
             // create social tariff for the given tariff
-            if ($social['daily_allowance'] !== null & $social['price']
+            if (
+                $social['daily_allowance'] !== null & $social['price']
                 && $social['initial_energy_budget']
-                && $social['maximum_stacked_energy']) {
+                && $social['maximum_stacked_energy']
+            ) {
                 SocialTariff::create(
                     [
                         'tariff_id' => $tariff->id,

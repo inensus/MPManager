@@ -12,7 +12,11 @@ use Illuminate\Foundation\Bus\Dispatchable;
 
 class MeterReader implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+
     /**
      * @var CalinReadMeter
      */

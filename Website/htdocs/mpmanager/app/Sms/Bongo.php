@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: kemal
@@ -12,13 +13,12 @@ use App\Lib\ISmsProvider;
 use App\Models\Sms;
 use Exception;
 use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Query;
 use Psr\Http\Message\StreamInterface;
-use function GuzzleHttp\Psr7\build_query;
 use Illuminate\Support\Facades\Log;
 
 class Bongo implements ISmsProvider
 {
-
     private $errorCodes = [
         '-1' => 'Invalid XML format',
         '-2' => 'Not enough credits in account',
@@ -63,7 +63,7 @@ class Bongo implements ISmsProvider
         $request = $httpClient->get(
             config()->get('services.sms.bongo.url'),
             [
-                'query' => build_query(
+                'query' => Query::build(
                     [
                     'sendername' => config()->get('services.sms.bongo.sender'),
                     'username' => config()->get('services.sms.bongo.username'),
@@ -89,7 +89,7 @@ class Bongo implements ISmsProvider
      * @param  string $body
      * @param  string $callback
      * @return mixed|StreamInterface
-     * @throws Exception
+     * @throws \Exception
      */
     public function sendSms(string $number, string $body, $callback)
     {
@@ -135,7 +135,7 @@ class Bongo implements ISmsProvider
 
         Log::critical('SMS', [$response, $request->getStatusCode()]);
         if ((int)$response < 0) {
-            throw new Exception($this->errorCodes[$response]);
+            throw new \Exception($this->errorCodes[$response]);
         }
         return $request->getBody();
     }

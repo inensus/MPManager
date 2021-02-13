@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: kemal
@@ -9,11 +10,12 @@
 namespace App\ManufacturerApi;
 
 use App\Exceptions\Manufacturer\MeterIsNotReadable;
-use \App\Lib\IMeterReader;
+use App\Lib\IMeterReader;
 use App\Models\Meter\MeterConsumption;
 use Carbon\Exceptions\InvalidDateException;
 use Illuminate\Support\Facades\Log;
 use SoapClient;
+
 use function config;
 use function count;
 
@@ -59,7 +61,7 @@ class CalinReadMeter implements IMeterReader
             throw new InvalidDateException($date, 'date is not in y-m-d format');
         }
         $dates = explode('-', $date);
-        $body = $this->prepareDailyReadRequest($meterId, $dates[0], $dates[1], $dates[2]);
+        $body = $this->prepareDailyReq($meterId, $dates[0], $dates[1], $dates[2]);
         return $this->api->GetDataDaily($body)->GetDataDailyResult;
     }
 
@@ -169,10 +171,8 @@ class CalinReadMeter implements IMeterReader
      * @param string $day
      * @param string $action
      * @return array (\Illuminate\Config\Repository|float|mixed)[]
-     *
-     * @psalm-return array{userId: \Illuminate\Config\Repository|mixed, meterId: mixed, dataWay: mixed, timestamp: float, cipherText: mixed, year: mixed, month: mixed, day: mixed}
      */
-    private function prepareDailyReadRequest(string $meterId, string $year, string $month, string $day, $action = 'Read'): array
+    private function prepareDailyReq(string $meterId, string $year, string $month, string $day, $action = 'Read'): array
     {
         [$t1, $t2] = explode(' ', microtime());
         $timestamp = (float)sprintf('%.0f', ((float)$t1 + (float)$t2) * 1000);

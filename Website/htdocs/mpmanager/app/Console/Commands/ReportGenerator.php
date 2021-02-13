@@ -39,7 +39,7 @@ class ReportGenerator extends Command
     /**
      * Execute the console command.
      */
-    public function handle():void
+    public function handle(): void
     {
 
         $startDay = Carbon::now()->format('Y-m-d');

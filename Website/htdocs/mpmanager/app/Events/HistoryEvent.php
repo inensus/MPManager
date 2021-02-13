@@ -13,7 +13,10 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
 class HistoryEvent implements ShouldBroadcast
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
+
     /**
      * @var History
      */
@@ -26,7 +29,7 @@ class HistoryEvent implements ShouldBroadcast
      */
     public function __construct(History $historyModel)
     {
-        $this->broadcastQueue =config('services.queues.energy');
+        $this->broadcastQueue = config('services.queues.energy');
 
         //initialize the history model
         $this->historyModel = $historyModel;

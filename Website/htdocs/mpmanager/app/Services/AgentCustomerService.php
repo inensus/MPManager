@@ -59,7 +59,7 @@ class AgentCustomerService
     {
 
         $miniGridId = $agent->mini_grid_id;
-        $personQuery =Person::with(
+        $personQuery = Person::with(
             [
             'addresses' => function ($q) {
                 return $q->where('is_primary', 1);

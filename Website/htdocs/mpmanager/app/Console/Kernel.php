@@ -34,7 +34,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('reports:city-revenue weekly')->weeklyOn(1, '3:00');
         $schedule->command('reports:city-revenue monthly')->monthlyOn(1, '3:00');
         $schedule->command('reports:outsource')->monthlyOn(1, '3:30');
-        $schedule->job(new SocialTariffPiggyBankManager)->daily();
+        $schedule->job(new SocialTariffPiggyBankManager())->daily();
     }
 
     /**

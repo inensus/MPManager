@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: kemal
@@ -9,7 +10,6 @@
 namespace App\Lib;
 
 use App\Models\Transaction\Transaction;
-
 use Illuminate\Database\Eloquent\Model;
 
 interface ITransactionProvider

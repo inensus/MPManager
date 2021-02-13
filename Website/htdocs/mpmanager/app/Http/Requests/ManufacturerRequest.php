@@ -33,7 +33,7 @@ class ManufacturerRequest extends FormRequest
             'city_id' => 'sometimes|integer|exists:cities,id',
             'address' => 'sometimes|string|required_with:city_id',
             'api_name' => 'sometimes|unique:manufacturers',
-            'master_key' => 'required_with:api_name|in:'.(string)(config()->get('services.manufacturer_master_key'))
+            'master_key' => 'required_with:api_name|in:' . (string)(config()->get('services.manufacturer_master_key'))
         ];
     }
 }

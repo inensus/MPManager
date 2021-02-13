@@ -15,7 +15,11 @@ use Illuminate\Queue\SerializesModels;
 
 class EnergyTransactionProcessor implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+
     private $transaction;
 
     /**

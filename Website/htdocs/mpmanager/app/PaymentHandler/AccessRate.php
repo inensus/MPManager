@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: kemal
@@ -106,7 +107,7 @@ class AccessRate
      */
     public static function payAccessRate(TransactionDataContainer $transactionData): int
     {
-        $nonStaticGateway = new self;
+        $nonStaticGateway = new self();
         //get accessRatePayment
         $accessRatePayment = $nonStaticGateway->getAccessRatePayment($transactionData->meter);
         try {

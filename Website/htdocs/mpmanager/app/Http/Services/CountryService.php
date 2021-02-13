@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: kemal
@@ -20,7 +21,7 @@ class CountryService
         $this->country = $country;
     }
 
-    public function getByCode(String $countryCode)
+    public function getByCode(string $countryCode)
     {
         return $this->country->where('country_code', $countryCode)->first();
     }

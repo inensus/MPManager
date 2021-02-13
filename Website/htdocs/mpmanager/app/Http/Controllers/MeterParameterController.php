@@ -118,8 +118,8 @@ class MeterParameterController extends Controller
     {
 
         $personId = request()->input('personId', -1);
-        $tariffId = request()->input('tariffId',-1);
-        $connectionId = request()->input('connectionId',-1);
+        $tariffId = request()->input('tariffId', -1);
+        $connectionId = request()->input('connectionId', -1);
         $parameter = $this->meterParameter->where('meter_id', $meterId)->first();
 
         if ($personId !== -1) {
@@ -138,7 +138,7 @@ class MeterParameterController extends Controller
         } else {
             return;
         }
-        $person=Person::find($parameter->owner_id);
+        $person = Person::find($parameter->owner_id);
         if ($person) {
             $person->update(
                 [

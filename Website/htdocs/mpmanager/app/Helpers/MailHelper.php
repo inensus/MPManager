@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Helpers;
 
 use App\Exceptions\MailNotSentException;

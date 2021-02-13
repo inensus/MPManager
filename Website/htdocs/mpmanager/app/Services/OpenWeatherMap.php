@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Exceptions\WeatherParametersMissing;
 use GuzzleHttp\Client;
 use Psr\Http\Message\ResponseInterface;
+
 use function config;
 
 class OpenWeatherMap implements IWeatherDataProvider

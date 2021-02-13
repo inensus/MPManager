@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Services;
 
 use App\Helpers\PowerConverter;
@@ -38,8 +37,6 @@ class GenerationAssetsService
     /**
      * @param $miniGridId
      * @return array (mixed|null)[][]
-     *
-     * @psalm-return array<array-key, array{new_generated_energy: mixed|null, d_newly_energy: mixed|null, c_newly_energy: mixed|null}>
      */
     public function getGenerationAssets($miniGridId): array
     {
@@ -91,7 +88,8 @@ class GenerationAssetsService
                 }
 
 
-                if ($a['c_newly_energy'] !== null
+                if (
+                    $a['c_newly_energy'] !== null
                     && $a['d_newly_energy'] !== null
                     && $a['new_generated_energy'] !== null
                     && $a['absorbed_energy_since_last'] !== null

@@ -64,7 +64,7 @@ class Revenue extends Model
         return $sth->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function registeredMetersForClusterByConnectionGroup($clusterId, int $connectionId, string $startDate, string $endDate)
+    public function clusterMetersByConnectionGroup($clusterId, int $connectionId, string $startDate, string $endDate)
     {
         //get meters which are registered in the given period
         $sql = 'SELECT COUNT(meters.serial_number) as registered_connections, connection_groups.name,' .
@@ -87,7 +87,7 @@ class Revenue extends Model
         return $sth->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function registeredMetersForMiniGridByConnectionGroup($miniGridId, int $connectionId, string $startDate, string $endDate)
+    public function miniGridMetersByConnectionGroup($miniGridId, int $connectionId, string $startDate, string $endDate)
     {
         //get meters which are registered in the given period
         $sql = 'SELECT COUNT(meters.serial_number) as registered_connections, connection_groups.name,' .
@@ -226,9 +226,8 @@ class Revenue extends Model
         return $sth->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function weeklyConnectionBalanceForPeriod(string $miniGridId, int $connectionId, string $startDate, string $endDate)
+    public function weeklyConnectionBalances(string $miniGridId, int $connectionId, string $startDate, string $endDate)
     {
-
         $sql = 'SELECT sum(transactions.amount) as total, YEARWEEK(transactions.created_at,3) ' .
             'as result_date FROM transactions' .
             ' LEFT JOIN vodacom_transactions on vodacom_transactions.id = transactions.original_transaction_id' .

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Transaction;
 
 use App\Lib\ITransactionProvider;

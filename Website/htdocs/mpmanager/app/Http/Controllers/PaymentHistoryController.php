@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: kemal
@@ -14,6 +15,7 @@ use App\Models\Person\Person;
 use Carbon\Carbon;
 use Carbon\CarbonInterval;
 use DatePeriod;
+
 use function count;
 
 /**
@@ -68,7 +70,7 @@ class PaymentHistoryController
                 $period = 'Year(created_at)';
                 break;
         }
-        $payments = (new PaymentHistory)->getFlow('person', $payerId, $period, $limit, $order);
+        $payments = (new PaymentHistory())->getFlow('person', $payerId, $period, $limit, $order);
         return $this->preparePaymentFlow($payments);
     }
 
@@ -79,7 +81,7 @@ class PaymentHistoryController
         $period = strtoupper($period);
         switch ($period) {
             case 'D':
-                $period = 'Day(payment_histories.created_at), '.
+                $period = 'Day(payment_histories.created_at), ' .
                     'Month(payment_histories.created_at), Year(payment_histories.created_at)';
                 break;
             case 'W':
@@ -92,7 +94,7 @@ class PaymentHistoryController
                 $period = 'Year(payment_histories.created_at)';
                 break;
         }
-        $payments = (new PaymentHistory)->getFlowForAgentCustomers('person', $agent->id, $period, $limit, $order);
+        $payments = (new PaymentHistory())->getAgentCustomersFlow('person', $agent->id, $period, $limit, $order);
         return $this->preparePaymentFlow($payments);
     }
 

@@ -5,31 +5,15 @@ namespace App\Listeners;
 use App\Events\ClusterEvent;
 use App\Exceptions\GeoFormatException;
 use App\Models\Cluster;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use function is_array;
 use Mockery\Exception;
-use function json_encode;
 
 class ClusterGeoListener
 {
     /**
-     * Create the event listener.
-     *
-     * @return void
-     */
-    public function __construct()
-    {
-        //
-    }
-
-    /**
      * Handle the event.
-     *
      * @param ClusterEvent $event
-     *
      * @return void
      */
     public function handle(ClusterEvent $event): void

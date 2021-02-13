@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class AssetTypeController extends Controller
 {
-
     use SoftDeletes;
 
     /**

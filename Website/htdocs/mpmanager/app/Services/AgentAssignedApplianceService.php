@@ -14,7 +14,7 @@ class AgentAssignedApplianceService implements IAgentRelatedService
      * @param $agentId
      * @return LengthAwarePaginator
      */
-    public function list($agentId):LengthAwarePaginator
+    public function list($agentId): LengthAwarePaginator
     {
         return AgentAssignedAppliances::with(['user', 'agent', 'applianceType'])
             ->whereHas(

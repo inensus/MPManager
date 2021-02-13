@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Services;
 
 use App\Models\Agent;
@@ -164,7 +163,7 @@ class AgentTicketService implements IAgentRelatedService
     public function getTicket($ticketId)
     {
         $ticket = Ticket::with('category', 'owner')->where('ticket_id', $ticketId)->first();
-        if($ticket !== null) {
+        if ($ticket !== null) {
             $ticket->ticket = $this->ticketsService->getTicket($ticketId);
             $ticket->actions = $this->ticketsService->getActions($ticketId);
         }

@@ -12,7 +12,10 @@ use Illuminate\Queue\SerializesModels;
 
 class TariffPricingComponentsCalculator implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     /**
      * @var MeterTariff

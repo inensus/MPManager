@@ -70,7 +70,7 @@ class AgentReceiptObserver
             'amount' => $receipt->amount,
             'transaction_id' => $receipt->id,
             'available_balance' => $agent->balance,
-            'due_to_supplier'=>$agent->due_to_energy_supplier
+            'due_to_supplier' => $agent->due_to_energy_supplier
             ]
         );
         $history->trigger()->associate($receipt);

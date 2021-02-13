@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: kemal
@@ -17,6 +18,7 @@ use Exception;
 use GuzzleHttp\Client;
 use Illuminate\Support\Facades\Log;
 use SoapClient;
+
 use function config;
 
 class CalinApi implements IManufacturerAPI

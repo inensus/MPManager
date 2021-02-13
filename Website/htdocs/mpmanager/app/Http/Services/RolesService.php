@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: kemal
@@ -32,7 +33,7 @@ class RolesService
         $this->definiton = $definition;
     }
 
-    public function findOrCreateRoleDefinition(String $roleName)
+    public function findOrCreateRoleDefinition(string $roleName)
     {
         return $this->definiton->firstOrCreate(['role_name' => $roleName]);
     }
