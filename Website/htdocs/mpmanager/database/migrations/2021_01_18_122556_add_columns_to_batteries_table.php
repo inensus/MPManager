@@ -14,15 +14,15 @@ class AddColumnsToBatteriesTable extends Migration
     public function up()
     {
         Schema::table('batteries', function (Blueprint $table) {
-            $table->boolean('active');
-            $table->double('c_total');
-            $table->string('c_total_unit');
-            $table->double('c_newly_energy');
-            $table->string('c_newly_energy_unit');
-            $table->double('temperature_min');
-            $table->double('temperature_max');
-            $table->double('temperature_average');
-            $table->string('temperature_unit');
+            $table->boolean('active')->default(0);
+            $table->double('c_total')->default(0);
+            $table->string('c_total_unit')->default(0);
+            $table->double('c_newly_energy')->default(0);
+            $table->string('c_newly_energy_unit')->default('Wh');
+            $table->double('temperature_min')->default(0);
+            $table->double('temperature_max')->default(0);
+            $table->double('temperature_average')->default(0);
+            $table->string('temperature_unit')->default('°C');
         });
     }
 
