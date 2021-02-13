@@ -26,6 +26,6 @@ jobs:
         working-directory: ./Website/htdocs/mpmanager
 
       - name: PhpCS
-        run: vendor/bin/phpcs
+        run: composer phpcs
         working-directory: ./Website/htdocs/mpmanager
 
