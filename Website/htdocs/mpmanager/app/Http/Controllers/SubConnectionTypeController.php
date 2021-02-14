@@ -71,5 +71,4 @@ class SubConnectionTypeController extends Controller
         $subConnectionType->load('tariff');
         return new ApiResource($subConnectionType);
     }
-
 }

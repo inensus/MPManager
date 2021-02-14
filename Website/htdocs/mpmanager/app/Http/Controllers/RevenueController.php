@@ -27,6 +27,7 @@ use Illuminate\Http\Request;
 use Inensus\Ticket\Models\Label;
 use Inensus\Ticket\Models\Ticket;
 use stdClass;
+
 use function count;
 
 class RevenueController extends Controller
@@ -338,7 +339,7 @@ class RevenueController extends Controller
 
         //return $response;
         foreach ($connections as $connection) {
-            $tariffRevenue = $this->revenue->weeklyConnectionBalanceForPeriod(
+            $tariffRevenue = $this->revenue->weeklyConnectionBalances(
                 $cityIds,
                 $connection->id,
                 $startDate,
@@ -505,14 +506,14 @@ class RevenueController extends Controller
 
             $revenues[$connectionGroup->name] = $revenue[0]['total'] ?? 0;
             if ($targetType === 'mini-grid') {
-                $connectionsData = $this->revenue->registeredMetersForMiniGridByConnectionGroup(
+                $connectionsData = $this->revenue->miniGridMetersByConnectionGroup(
                     $targetTypeId,
                     $connectionGroup->id,
                     $startDate,
                     $endDate
                 );
             } else {
-                $connectionsData = $this->revenue->registeredMetersForClusterByConnectionGroup(
+                $connectionsData = $this->revenue->clusterMetersByConnectionGroup(
                     $targetTypeId,
                     $connectionGroup->id,
                     $startDate,
@@ -541,7 +542,7 @@ class RevenueController extends Controller
     }
 
 
-    public function addConnectionReveneues(Array $baseList, $revenues): array
+    public function addConnectionReveneues(array $baseList, $revenues): array
     {
         foreach ($revenues as $revenue) {
             if ($revenue['result_date'] === null) {
@@ -561,7 +562,7 @@ class RevenueController extends Controller
         $startDate,
         $endDate,
         $periodType,
-        ?Array $initValue
+        ?array $initValue
     ): array {
         $begin = new DateTime($startDate);
         $end = new DateTime($endDate);
@@ -738,7 +739,7 @@ class RevenueController extends Controller
     {
         $startDate = $request->get('startDate');
         if (!$startDate) {
-            $start = new DateTime;
+            $start = new DateTime();
             $start->setDate($start->format('Y'), $start->format('n'), 1); // Normalize the day to 1
             $start->setTime(0, 0, 0); // Normalize time to midnight
             $start->sub(new DateInterval('P12M'));
@@ -754,7 +755,7 @@ class RevenueController extends Controller
         foreach ($clusters as $clusterIndex => $cluster) {
             $totalRevenue = 0;
             $p = $periods;
-            $revenues = $this->revenueService->getClustersRevenueByPeriod(
+            $revenues = $this->revenueService->clustersRevenueByPeriod(
                 $cluster->id,
                 [$startDate, $endDate],
                 $period
@@ -835,7 +836,7 @@ class RevenueController extends Controller
             }
 
             //get meters in city with connection type
-            $revenues = $this->revenueService->getClustersRevenueByPeriod(
+            $revenues = $this->revenueService->clustersRevenueByPeriod(
                 $clusterId,
                 [$startDate, $endDate],
                 $period,

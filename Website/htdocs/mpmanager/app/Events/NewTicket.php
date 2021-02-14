@@ -13,7 +13,10 @@ use Inensus\Ticket\Models\Ticket;
 
 class NewTicket implements ShouldBroadcast
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
+
     /**
      * @var Ticket
      */

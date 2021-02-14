@@ -48,7 +48,7 @@ class PaymentHistory extends BaseModel
         return $this->executeSqlCommand($sql, $payer_id, null, $payer_type);
     }
 
-    public function getFlowForAgentCustomers(string $payer_type, $agent_id, string $period, $limit = null, $order = 'ASC')
+    public function getAgentCustomersFlow(string $payer_type, $agent_id, string $period, $limit = null, $order = 'ASC')
     {
         $sql = 'SELECT sum(amount) as amount, payment_type, CONCAT_WS("/", ' . $period . ') as aperiod ' .
             'from payment_histories inner join addresses on payment_histories.payer_id = addresses.owner_id ' .

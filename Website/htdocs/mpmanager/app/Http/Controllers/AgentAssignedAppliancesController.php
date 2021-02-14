@@ -64,7 +64,7 @@ class AgentAssignedAppliancesController extends Controller
     }
 
 
-   
+
 
     /**
      * List for Web interface.

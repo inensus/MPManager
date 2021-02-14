@@ -1,4 +1,4 @@
-name: Tests
+name: PHP Tests and CS
 
 on: [ push, pull_request ]
 
@@ -23,5 +23,9 @@ jobs:
 
       - name: Execute tests
         run: vendor/bin/phpunit --verbose
+        working-directory: ./Website/htdocs/mpmanager
+
+      - name: PhpCS
+        run: composer phpcs
         working-directory: ./Website/htdocs/mpmanager
 

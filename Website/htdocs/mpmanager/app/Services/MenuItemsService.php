@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Services;
 
 use App\Models\MenuItems;
@@ -33,9 +32,9 @@ class MenuItemsService
         foreach ($subMenuItems as $key => $value) {
             SubMenuItems::create(
                 [
-                'name'=>$value['name'],
-                'url_slug'=>$value['url_slug'],
-                'parent_id'=>$menuItem->id
+                'name' => $value['name'],
+                'url_slug' => $value['url_slug'],
+                'parent_id' => $menuItem->id
                 ]
             );
         }

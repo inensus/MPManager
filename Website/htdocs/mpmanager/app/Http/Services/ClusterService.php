@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: kemal
@@ -59,9 +60,8 @@ class ClusterService
     }
 
     /**
+     * @param $clusterId
      * @return Builder|Builder[]|Collection|Model|null
-     *
-     * @psalm-return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|array<array-key, \Illuminate\Database\Eloquent\Builder>|null
      */
     public function getClusterCities($clusterId)
     {
@@ -69,9 +69,8 @@ class ClusterService
     }
 
     /**
+     * @param $clusterId
      * @return Builder|Builder[]|Collection|Model|null
-     *
-     * @psalm-return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model|array<array-key, \Illuminate\Database\Eloquent\Builder>|null
      */
     public function getClusterMiniGrids($clusterId)
     {

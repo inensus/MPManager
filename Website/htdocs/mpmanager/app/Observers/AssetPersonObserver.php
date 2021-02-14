@@ -24,7 +24,7 @@ class AssetPersonObserver
      * @param AssetPerson $assetPerson
      * @return void
      */
-    public function created(AssetPerson $assetPerson):void
+    public function created(AssetPerson $assetPerson): void
     {
         $base_time = $assetPerson->first_payment_date ?? date('Y-m-d');
 

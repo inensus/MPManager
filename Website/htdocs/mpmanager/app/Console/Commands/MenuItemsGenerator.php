@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Console\Commands;
 
 use App\Services\MenuItemsService;
@@ -28,7 +27,7 @@ class MenuItemsGenerator extends Command
     public function __construct(MenuItemsService $menuItemService)
     {
          parent::__construct();
-         $this->menuItemService=$menuItemService;
+         $this->menuItemService = $menuItemService;
     }
 
     /**

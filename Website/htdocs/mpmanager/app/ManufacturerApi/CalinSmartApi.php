@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\ManufacturerApi;
 
 use App\Lib\IManufacturerAPI;

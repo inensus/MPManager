@@ -8,6 +8,7 @@ use App\Models\Person\Person;
 use Carbon\Carbon;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Support\Facades\Log;
+
 use function count;
 
 class PaymentPeriodListener

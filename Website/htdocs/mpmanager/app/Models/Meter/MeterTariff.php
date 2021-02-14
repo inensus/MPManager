@@ -27,6 +27,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class MeterTariff extends BaseModel
 {
     use SoftDeletes;
+
     protected $table = 'meter_tariffs';
     protected $guarded = [];
 

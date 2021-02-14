@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Services;
 
 use App\Models\AgentCommission;
@@ -36,9 +35,9 @@ class AgentCommissionService
     {
         $agentCommission->update([
             'name' => $data['name'],
-            'energy_commission' =>$data['energy_commission'],
-            'appliance_commission' =>$data['appliance_commission'],
-            'risk_balance' =>$data['risk_balance']
+            'energy_commission' => $data['energy_commission'],
+            'appliance_commission' => $data['appliance_commission'],
+            'risk_balance' => $data['risk_balance']
         ]);
 
         return $agentCommission->fresh();

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: kemal
@@ -12,6 +13,7 @@ use App\Models\City;
 use App\Models\Meter\Meter;
 use Exception;
 use Illuminate\Support\Facades\Log;
+
 use function count;
 
 class MeterService
@@ -218,7 +220,7 @@ class MeterService
                     $geo->save();
                 }
             }
-            return ['data'=>true];
+            return ['data' => true];
         } catch (Exception $exception) {
              throw  new Exception($exception->getMessage());
         }

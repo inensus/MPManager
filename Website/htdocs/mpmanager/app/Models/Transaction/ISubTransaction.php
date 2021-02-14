@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Models\Transaction;
 
 interface ISubTransaction

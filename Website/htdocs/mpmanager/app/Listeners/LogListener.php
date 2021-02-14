@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Listeners;
 
 use App\Models\Log;

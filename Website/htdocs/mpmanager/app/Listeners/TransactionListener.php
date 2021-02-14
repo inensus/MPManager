@@ -3,11 +3,11 @@
 namespace App\Listeners;
 
 use App\Lib\ITransactionProvider;
-
 use App\Models\Transaction\Transaction;
 use App\Transaction\TransactionAdapter;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Support\Facades\Log;
+
 use function config;
 
 class TransactionListener

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: kemal
@@ -84,12 +85,12 @@ class TransactionDataContainer
      */
     public static function initialize(Transaction $transaction, bool $withToken = false): TransactionDataContainer
     {
-        $container = new self;
+        $container = new self();
         $container->chargedEnergy = 0;
 
         $container->transaction = $transaction;
-        $container->totalAmount= $transaction->amount;
-        $container->amount= $transaction->amount;
+        $container->totalAmount = $transaction->amount;
+        $container->amount = $transaction->amount;
         //get meter
         try {
             $container->meter = $container->getMeter($transaction->message);
@@ -136,7 +137,7 @@ class TransactionDataContainer
      * @return mixed
      * @throws MeterIsNotInUse
      */
-    private function getMeter(String $serialNumber)
+    private function getMeter(string $serialNumber)
     {
         $meter = Meter::where('serial_number', $serialNumber)->firstOrFail();
         //meter is not been used by anyone

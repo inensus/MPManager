@@ -18,6 +18,7 @@ use PDO;
  * @package  App
  * @property string serial_number
  * @property int id;
+ * @property int in_use;
  */
 class Meter extends BaseModel
 {

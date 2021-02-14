@@ -35,7 +35,6 @@ use App\Observers\AgentTransactionObserver;
 use App\Observers\AssetPersonObserver;
 use App\Observers\BatteryObserver;
 use App\Observers\MeterParameterObserver;
-
 use App\Observers\MeterTariffObserver;
 use App\Observers\MiniGridObserver;
 use App\Observers\PersonObserver;

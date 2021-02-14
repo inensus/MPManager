@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: kemal
@@ -26,7 +27,7 @@ class AddressService
     }
 
     // fills the object and returns it without saving.
-    public function instantiate(Array $params): Address
+    public function instantiate(array $params): Address
     {
         return $this->address->fill([
             'city_id' => $params['city_id'] ?? null,

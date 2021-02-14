@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Services;
 
 use App\Models\Agent;
@@ -22,8 +21,8 @@ class AgentChargeService
             [
             'agent_id' => $agent->id,
             'amount' => request()->input('amount'),
-            'available_balance'=>$agent->balance,
-            'due_to_supplier'=>$agent->due_to_energy_supplier
+            'available_balance' => $agent->balance,
+            'due_to_supplier' => $agent->due_to_energy_supplier
             ]
         );
         $history->trigger()->associate($agentCharge);
