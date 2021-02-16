@@ -63,7 +63,7 @@
                         </md-button>
                         <md-menu-content>
                             <md-menu-item @click="replaceRoute('/settings')">
-                                <span>Settings</span>
+                                <span>Config</span>
                                 <md-icon>settings</md-icon>
                             </md-menu-item>
                             <md-divider></md-divider>
