@@ -32,7 +32,8 @@
             "Users": "Users",
             "Sites": "Sites",
             "Meters": "Meters",
-            "Agents": "Agents"
+            "Agents": "Agents",
+            "Settings":"Settings"
         },
         "Targets": "Targets",
         "Tariffs": "Tariffs",
