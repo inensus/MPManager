@@ -143,9 +143,9 @@ class GenerationAssetsService
      * @param $miniGridId
      * @param $startDate
      * @param $endDate
-     * @return GenerationAssetsService
+     * @return Collection
      */
-    private function getBatteryReadings($miniGridId, $startDate, $endDate): self
+    private function getBatteryReadings($miniGridId, $startDate, $endDate): Collection
     {
         $readings = $this->battery::query()
             ->select(DB::raw("CONCAT(DATE(read_out),\"-\"," .
