@@ -24,7 +24,7 @@ class SmsTypes
     public const ASSET_RATE_OVER_DUE_REMINDER = 4;
 
 
-    public static function generateSmsBody(TransactionDataContainer $data): string
+    public static function generateSmsBody($data): string
     {
         if ($data instanceof Transaction) {
             $payments = $data->paymentHistories()->get();
@@ -79,7 +79,8 @@ class SmsTypes
 
     private static function generateAssetRatePayment(PaymentHistory $paymentHistory): string
     {
-        $asset = $paymentHistory->paidFor()->first()->asset()->first();
+
+        $asset = $paymentHistory->paidFor->assetPerson->assetType;
         return 'Appliance: ' . $asset->name . ' Tshs ' . $paymentHistory->amount . '. ';
     }
 
