@@ -361,14 +361,15 @@ export default {
             this.editableLayer.clearLayers()
             let editableLayer = this.editableLayer
             let nonEditableLayers = new L.FeatureGroup()
-            for (let i = 0; i < geoData.length; i++) {
-                let geoType = geoData[i].geojson.type
+            const geographicalInformation = geoData
+            for (let i in geographicalInformation) {
+                let geoData = geographicalInformation[i].geo !== undefined ? geographicalInformation[i].geo : geographicalInformation[i]
+                let geoType = geoData.geojson.type
                 let coordinatesClone = []
                 coordinatesClone[0] = []
-                geoData[i].geojson.coordinates[0].forEach(e => {
+                geoData.geojson.coordinates[0].forEach(e => {
                     coordinatesClone[0].push([e[1], e[0]])
                 })
-
                 let drawing = {
                     'type': 'FeatureCollection',
                     'crs': {
@@ -380,19 +381,19 @@ export default {
                     'features': [{
                         'type': 'Feature',
                         'properties': {
-                            'popupContent': geoData[i].display_name,
-                            'draw_type': geoData[i].draw_type === undefined ? 'set' : geoData[i].draw_type,
-                            'selected': geoData[i].selected === undefined ? false : geoData[i].selected,
-                            'clusterId': geoData[i].clusterId === undefined ? -1 : geoData[i].clusterId,
+                            'popupContent': geoData.display_name,
+                            'draw_type': geoData.draw_type === undefined ? 'set' : geoData.draw_type,
+                            'selected': geoData.selected === undefined ? false : geoData.selected,
+                            'clusterId': geoData.clusterId === undefined ? -1 : geoData.clusterId,
                         },
                         'geometry': {
                             'type': geoType,
-                            'coordinates': geoData[i].searched === true ? geoData[i].geojson.coordinates : coordinatesClone
+                            'coordinates': geoData.searched ? geoData.geojson.coordinates : coordinatesClone
                         }
                     }]
                 }
 
-                let polygonColor = this.mappingService.strToHex(geoData[i].display_name)
+                let polygonColor = this.mappingService.strToHex(geoData.display_name)
                 let geoDataItems = this.geoDataItems
                 let router = this.$router
                 let map = this.map
@@ -424,24 +425,24 @@ export default {
                                 leaflet_id: layer._leaflet_id,
                                 type: 'manual',
                                 geojson: {
-                                    type: geoData[i].geojson.type,
-                                    coordinates: geoData[i].searched === true ? coordinatesClone : geoData[i].geojson.coordinates
+                                    type: geoData.geojson.type,
+                                    coordinates: geoData.searched === true ? coordinatesClone : geoData.geojson.coordinates
                                 },
                                 searched: false,
-                                display_name: geoData[i].display_name,
+                                display_name: geoData.display_name,
                                 selected: feature.properties.selected,
                                 draw_type: feature.properties.draw_type,
-                                lat: geoData[i].lat,
-                                lon: geoData[i].lon,
+                                lat: geoData.lat,
+                                lon: geoData.lon,
                             }
                             geoDataItems.push(geoDataItem)
                         }
                     })
 
-                this.map.setView([geoData[i].lat, geoData[i].lon], this.zoom)
+                this.map.setView([geoData.lat, geoData.lon], this.zoom)
             }
             EventBus.$emit('getSearchedGeoDataItems', this.geoDataItems)
-        },
+        },     
         setMarker (markerLocations, isConstant) {
 
             if (isConstant) {
