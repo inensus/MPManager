@@ -31,7 +31,7 @@ class AssetTypeController extends Controller
      */
     public function index(): ApiResource
     {
-        return new ApiResource(
+       return ApiResource::make(
             $this->assetType->newQuery()->paginate(15)
         );
     }
@@ -49,7 +49,7 @@ class AssetTypeController extends Controller
             ->create(
                 $request->only(['name', 'price'])
             );
-        return new ApiResource($asset);
+       return ApiResource::make($asset);
     }
 
 
@@ -63,7 +63,7 @@ class AssetTypeController extends Controller
     public function update(AssetTypeUpdateRequest $request, AssetType $assetType): ApiResource
     {
         $assetType->update($request->only(['name', 'price']));
-        return new ApiResource($assetType);
+       return ApiResource::make($assetType);
     }
 
     /**
@@ -76,6 +76,6 @@ class AssetTypeController extends Controller
     public function destroy(AssetType $assetType): ApiResource
     {
         $assetType->delete();
-        return new ApiResource($assetType);
+       return ApiResource::make($assetType);
     }
 }

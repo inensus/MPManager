@@ -32,14 +32,14 @@ class AgentTicketController extends Controller
         $agent = request()->attributes->get('user');
         $tickets = $this->agentTicketService->list($agent->id);
 
-        return new ApiResource($tickets);
+       return ApiResource::make($tickets);
     }
 
     public function agentCustomerTickets($customerId, Request $request): ApiResource
     {
         $agent = request()->attributes->get('user');
         $tickets = $this->agentTicketService->listByCustomer($agent->id, $customerId);
-        return new ApiResource($tickets);
+       return ApiResource::make($tickets);
     }
 
     /**
@@ -71,6 +71,6 @@ class AgentTicketController extends Controller
     public function show($ticketId): ApiResource
     {
         $ticket = $this->agentTicketService->getTicket($ticketId);
-        return new ApiResource($ticket);
+       return ApiResource::make($ticket);
     }
 }

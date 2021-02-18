@@ -38,7 +38,7 @@ class AgentBalanceHistoryController extends Controller
             )
         );
 
-        return new ApiResource($agentBalanceHistory);
+       return ApiResource::make($agentBalanceHistory);
     }
 
 
@@ -89,6 +89,6 @@ class AgentBalanceHistoryController extends Controller
     {
 
         $balanceHistories = $this->agentBalanceHistoryService->agentBalanceHistories($agent->id);
-        return new ApiResource($balanceHistories);
+       return ApiResource::make($balanceHistories);
     }
 }

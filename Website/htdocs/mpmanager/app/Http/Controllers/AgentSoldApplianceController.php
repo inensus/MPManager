@@ -32,7 +32,7 @@ class AgentSoldApplianceController extends Controller
         $agent = Agent::find(auth('agent_api')->user()->id);
         $soldAppliances = $this->agentSoldApplianceService->list($agent->id);
 
-        return new ApiResource($soldAppliances);
+       return ApiResource::make($soldAppliances);
     }
 
     public function customerSoldAppliances($customerId, Request $request): ApiResource
@@ -40,7 +40,7 @@ class AgentSoldApplianceController extends Controller
         $agent = Agent::find(auth('agent_api')->user()->id);
         $soldAppliances = $this->agentSoldApplianceService->customerSoldList($customerId, $agent->id);
 
-        return new ApiResource($soldAppliances);
+       return ApiResource::make($soldAppliances);
     }
 
     /**
@@ -62,7 +62,7 @@ class AgentSoldApplianceController extends Controller
             )
         );
 
-        return new ApiResource($appliance);
+       return ApiResource::make($appliance);
     }
 
     public function indexWeb(Agent $agent, Request $request): ApiResource
@@ -70,6 +70,6 @@ class AgentSoldApplianceController extends Controller
 
         $soldAppliances = $this->agentSoldApplianceService->listForWeb($agent->id);
 
-        return new ApiResource($soldAppliances);
+       return ApiResource::make($soldAppliances);
     }
 }

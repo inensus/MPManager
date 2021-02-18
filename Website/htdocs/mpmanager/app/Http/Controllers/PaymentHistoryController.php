@@ -118,7 +118,7 @@ class PaymentHistoryController
             $eldest = new Carbon($lastTransactions[count($lastTransactions) - 1]->created_at);
             $difference = $eldest->diffInDays($newest) . ' days';
         }
-        return new ApiResource(['difference' => $difference, 'lastTransaction' => $lastTransactionDate]);
+       return ApiResource::make(['difference' => $difference, 'lastTransaction' => $lastTransactionDate]);
     }
 
     /**
@@ -161,7 +161,7 @@ class PaymentHistoryController
             }
         }
         $deferredDebt = 0;
-        return new ApiResource(['access_rate' => $ad, 'deferred' => $deferredDebt]);
+       return ApiResource::make(['access_rate' => $ad, 'deferred' => $deferredDebt]);
     }
 
     /**
@@ -190,7 +190,7 @@ class PaymentHistoryController
         foreach ($payments as $p) {
             $result[$p['dato']] = ['date' => $p['dato'], 'amount' => $p['total']];
         }
-        return new ApiResource(array_values($result));
+       return ApiResource::make(array_values($result));
     }
 
     /**

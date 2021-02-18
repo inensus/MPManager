@@ -31,6 +31,6 @@ class AssetRateController extends Controller
         );
         $assetRate->remaining = $request->get('remaining');
         $assetRate->update();
-        return new ApiResource($assetRate);
+       return ApiResource::make($assetRate);
     }
 }

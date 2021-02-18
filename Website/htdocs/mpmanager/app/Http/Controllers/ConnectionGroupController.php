@@ -21,7 +21,7 @@ class ConnectionGroupController
 
     public function index(): ApiResource
     {
-        return new ApiResource($this->connectionGroup->get());
+       return ApiResource::make($this->connectionGroup->get());
     }
 
     public function store(CreateConnectionGroupRequest $request): ApiResource
@@ -29,13 +29,13 @@ class ConnectionGroupController
         $name = $request->input('name');
         $this->connectionGroup->name = $name;
         $this->connectionGroup->save();
-        return new ApiResource($this->connectionGroup);
+       return ApiResource::make($this->connectionGroup);
     }
 
     public function update(ConnectionGroup $connectionGroup): ApiResource
     {
         $connectionGroup->update(request()->only(['name']));
         $connectionGroup->fresh();
-        return new ApiResource($connectionGroup);
+       return ApiResource::make($connectionGroup);
     }
 }

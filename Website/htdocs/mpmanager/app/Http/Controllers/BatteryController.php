@@ -45,7 +45,7 @@ class BatteryController extends Controller
                 Carbon::createFromTimestamp($endDate)->format('Y-m-d H:i:s')
             );
         }
-        return new ApiResource($batteryReadings->get());
+       return ApiResource::make($batteryReadings->get());
     }
 
 
@@ -85,7 +85,7 @@ class BatteryController extends Controller
         }
         $batteryReadings->orderBy('read_out');
         $batteryReadings->latest();
-        return new ApiResource($batteryReadings->get()->reverse()->values());
+       return ApiResource::make($batteryReadings->get()->reverse()->values());
     }
 
     /**
@@ -145,6 +145,6 @@ class BatteryController extends Controller
             );
 
 
-        return new ApiResource($battery);
+       return ApiResource::make($battery);
     }
 }

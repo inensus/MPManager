@@ -33,7 +33,7 @@ class AddressController extends Controller
      */
     public function index(): ApiResource
     {
-        return new ApiResource(
+       return ApiResource::make(
             $this->address::all()
         );
     }
@@ -46,7 +46,7 @@ class AddressController extends Controller
      */
     public function show($id): ApiResource
     {
-        return new ApiResource(
+       return ApiResource::make(
             $this->address->findOrFail($id)
         );
     }
@@ -84,7 +84,7 @@ class AddressController extends Controller
             [
             'updated_at' => date('Y-m-d h:i:s')]
         );
-        return new ApiResource($this->address->with('city')->where('id', $this->address->id)->first());
+       return ApiResource::make($this->address->with('city')->where('id', $this->address->id)->first());
     }
 
     /**
@@ -112,7 +112,7 @@ class AddressController extends Controller
         $this->address->owner()->associate($user);
 
         $this->address->save();
-        return new ApiResource($this->address->with('city')->where('id', $this->address->id)->first());
+       return ApiResource::make($this->address->with('city')->where('id', $this->address->id)->first());
     }
 
     /**
@@ -126,7 +126,7 @@ class AddressController extends Controller
     public function adminAddress(User $user, Request $request)
     {
         $address = $user->addressDetails()->first();
-        return new ApiResource($address);
+       return ApiResource::make($address);
     }
 
     /**
@@ -146,7 +146,7 @@ class AddressController extends Controller
         try {
             $address = $user->address()->firstOrFail();
         } catch (ModelNotFoundException $ex) {
-            return new ApiResource(['no adress found  ']);
+           return ApiResource::make(['no adress found  ']);
         }
         $address->email = $request->get('email') ?? $address->email;
         $address->phone = $request->get('phone') ?? $address->phone;
@@ -154,7 +154,7 @@ class AddressController extends Controller
         $address->city_id = $request->get('city_id');
 
 
-        return new ApiResource($address);
+       return ApiResource::make($address);
     }
 
     /**
@@ -192,6 +192,6 @@ class AddressController extends Controller
             [
             'updated_at' => date('Y-m-d h:i:s')]
         );
-        return new ApiResource($address->with('city')->where('id', $address->id)->first());
+       return ApiResource::make($address->with('city')->where('id', $address->id)->first());
     }
 }

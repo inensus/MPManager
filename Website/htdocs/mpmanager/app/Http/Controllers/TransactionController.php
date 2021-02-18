@@ -64,7 +64,7 @@ class TransactionController extends Controller
     {
         $per_page = \request()->get('per_page') ?? 15;
         $transactions = Transaction::with('originalTransaction')->latest()->paginate($per_page);
-        return new ApiResource($transactions);
+       return ApiResource::make($transactions);
     }
 
     /**
@@ -90,7 +90,7 @@ class TransactionController extends Controller
             'LIKE',
             '%' . $term . '%'
         )->latest()->paginate(15);
-        return new ApiResource($transactions);
+       return ApiResource::make($transactions);
     }
 
     /**
@@ -224,7 +224,7 @@ class TransactionController extends Controller
         }
         $transactions = $search->latest()->paginate($per_page);
 
-        return new ApiResource($transactions);
+       return ApiResource::make($transactions);
     }
 
 
@@ -252,7 +252,7 @@ class TransactionController extends Controller
                     $q->where('status', 1);
                 }
             )->latest()->paginate();
-        return new ApiResource($transactions);
+       return ApiResource::make($transactions);
     }
 
 
@@ -278,7 +278,7 @@ class TransactionController extends Controller
                     $q->where('status', -1);
                 }
             )->latest()->paginate();
-        return new ApiResource($transactions);
+       return ApiResource::make($transactions);
     }
 
 
@@ -333,7 +333,7 @@ class TransactionController extends Controller
      */
     public function show($id): ApiResource
     {
-        return new ApiResource(
+       return ApiResource::make(
             Transaction::with(
                 'token',
                 'originalTransaction',
@@ -810,7 +810,7 @@ class TransactionController extends Controller
         try {
             $transaction = $this->transaction->findOrFail($transactionId);
         } catch (ModelNotFoundException $exception) {
-            return new ApiResource(['data' => ['success' => false]]);
+           return ApiResource::make(['data' => ['success' => false]]);
         }
         try {
             $transactionContainer = $this->container::initialize($transaction, true);
@@ -824,7 +824,7 @@ class TransactionController extends Controller
                 'energy'
             )->first();
         } catch (Exception $e) {
-            return new ApiResource(['data' => ['success' => false, 'message' => $e->getMessage()]]);
+           return ApiResource::make(['data' => ['success' => false, 'message' => $e->getMessage()]]);
         }
 
         $messageSent = event(
@@ -836,7 +836,7 @@ class TransactionController extends Controller
             ]
         );
         if (!$messageSent) {
-            return new ApiResource(
+           return ApiResource::make(
                 [
                     'data' => [
                         'success' => false,
@@ -845,7 +845,7 @@ class TransactionController extends Controller
                 ]
             );
         }
-        return new ApiResource(
+       return ApiResource::make(
             [
                 'data' => [
                     'success' => true,

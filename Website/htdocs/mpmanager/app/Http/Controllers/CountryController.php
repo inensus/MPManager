@@ -10,7 +10,7 @@ class CountryController extends Controller
 {
     public function index(): ApiResource
     {
-        return new ApiResource(
+       return ApiResource::make(
             Country::paginate(
                 config()->get('services.pagination')
             )
@@ -19,7 +19,7 @@ class CountryController extends Controller
 
     public function show(Country $country): ApiResource
     {
-        return new ApiResource(
+       return ApiResource::make(
             $country
         );
     }

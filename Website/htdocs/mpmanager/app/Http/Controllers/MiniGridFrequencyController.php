@@ -32,6 +32,6 @@ class MiniGridFrequencyController extends Controller
             ]
         );
         $frequency->save();
-        return new ApiResource($frequency);
+       return ApiResource::make($frequency);
     }
 }

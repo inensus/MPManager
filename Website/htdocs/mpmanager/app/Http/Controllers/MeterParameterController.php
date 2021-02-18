@@ -49,7 +49,7 @@ class MeterParameterController extends Controller
      */
     public function index(): ApiResource
     {
-        return new ApiResource($this->meterParameter->get());
+       return ApiResource::make($this->meterParameter->get());
     }
 
 
@@ -77,7 +77,7 @@ class MeterParameterController extends Controller
         // changes in_use parameter of the meter
         event('meterparameter.saved', $meterParameter->meter_id);
 
-        return new ApiResource(
+       return ApiResource::make(
             $meterParameter
         );
     }
@@ -98,7 +98,7 @@ class MeterParameterController extends Controller
     public function show(MeterParameter $meterParameter): ApiResource
     {
         $m = MeterParameter::with('owner', 'meter', 'tariff')->find($meterParameter);
-        return new ApiResource($m);
+       return ApiResource::make($m);
     }
 
 
@@ -146,7 +146,7 @@ class MeterParameterController extends Controller
             );
         }
         $parameter->save();
-        return new ApiResource($parameter);
+       return ApiResource::make($parameter);
     }
 
     /**
@@ -159,6 +159,6 @@ class MeterParameterController extends Controller
      */
     public function connectionTypes(Request $request): ApiResource
     {
-        return new ApiResource($this->connectionType->numberOfConnections());
+       return ApiResource::make($this->connectionType->numberOfConnections());
     }
 }

@@ -33,7 +33,7 @@ class AgentAssignedAppliancesController extends Controller
     {
         $agent = Agent::find(auth('agent_api')->user()->id);
         $assignedAppliances = $this->agentAssignedApplianceService->list($agent->id);
-        return new ApiResource($assignedAppliances);
+       return ApiResource::make($assignedAppliances);
     }
 
     /**
@@ -60,11 +60,11 @@ class AgentAssignedAppliancesController extends Controller
             )
         );
 
-        return new ApiResource($appliance);
+       return ApiResource::make($appliance);
     }
 
 
-   
+
 
     /**
      * List for Web interface.
@@ -77,6 +77,6 @@ class AgentAssignedAppliancesController extends Controller
     {
 
         $assignedAppliances = $this->agentAssignedApplianceService->list($agent->id);
-        return new ApiResource($assignedAppliances);
+       return ApiResource::make($assignedAppliances);
     }
 }

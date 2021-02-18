@@ -236,7 +236,7 @@ class Reports
         $this->getCustomerGroupCountPerMonth($endDate);
         $this->getCustomerGroupEnergyUsagePerMonth([$startDate, $endDate]);
 
-        return new ApiResource(
+       return ApiResource::make(
             $this->generateReportForCity(
                 $city->id,
                 $city->name,

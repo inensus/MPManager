@@ -17,6 +17,6 @@ class TransactionProviderController extends Controller
 
     public function index():ApiResource
     {
-        return new ApiResource($this->transactionProviderService->getTransactionProviders());
+       return ApiResource::make($this->transactionProviderService->getTransactionProviders());
     }
 }

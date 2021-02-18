@@ -24,6 +24,6 @@ class GenerationAssetsController extends Controller
 
     public function show($miniGridId): ApiResource
     {
-        return new ApiResource(array_values($this->generationAssetsService->getGenerationAssets($miniGridId)));
+       return ApiResource::make(array_values($this->generationAssetsService->getGenerationAssets($miniGridId)));
     }
 }

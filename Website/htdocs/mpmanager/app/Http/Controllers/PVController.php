@@ -49,7 +49,7 @@ class PVController extends Controller
                 Carbon::createFromTimestamp($endDate)->format('Y-m-d H:i:s')
             );
         }
-        return new ApiResource($pvReadings->get());
+       return ApiResource::make($pvReadings->get());
     }
 
     /**
@@ -133,7 +133,7 @@ class PVController extends Controller
 
             $miniGridPVs[$index]['new_generated_energy_unit'] = 'kWh';
         }
-        return new ApiResource($miniGridPVs);
+       return ApiResource::make($miniGridPVs);
     }
 
 

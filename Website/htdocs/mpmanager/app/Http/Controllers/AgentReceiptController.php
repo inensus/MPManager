@@ -31,7 +31,7 @@ class AgentReceiptController extends Controller
     {
 
         $agentReceipts = $this->agentReceiptService->list($agent->id);
-        return new ApiResource($agentReceipts);
+       return ApiResource::make($agentReceipts);
     }
 
     /**
@@ -45,7 +45,7 @@ class AgentReceiptController extends Controller
     {
         $user = User::find(auth('api')->user()->id);
         $agentReceipts = $this->agentReceiptService->listReceiptsForUser($user->id);
-        return new ApiResource($agentReceipts);
+       return ApiResource::make($agentReceipts);
     }
 
     /**
@@ -58,7 +58,7 @@ class AgentReceiptController extends Controller
     {
 
         $agentReceipts = $this->agentReceiptService->listAllReceipts();
-        return new ApiResource($agentReceipts);
+       return ApiResource::make($agentReceipts);
     }
 
     /**
@@ -82,7 +82,7 @@ class AgentReceiptController extends Controller
             )
         );
 
-        return new ApiResource($appliance);
+       return ApiResource::make($appliance);
     }
 
 

@@ -20,7 +20,7 @@ class MainSettingsController extends Controller
 
     public function index(): ApiResource
     {
-        return new ApiResource(MainSettings::all());
+       return ApiResource::make(MainSettings::all());
     }
 
     public function update(MainSettings $mainSettings): ApiResource
@@ -32,6 +32,6 @@ class MainSettingsController extends Controller
                 ]
             )
         );
-        return new ApiResource($mainSettings->fresh());
+       return ApiResource::make($mainSettings->fresh());
     }
 }

@@ -27,7 +27,7 @@ class MeterTypeController extends Controller
      */
     public function index(): ApiResource
     {
-        return new ApiResource(
+       return ApiResource::make(
             MeterType::paginate(15)
         );
     }
@@ -70,7 +70,7 @@ class MeterTypeController extends Controller
      */
     public function show($id)
     {
-        return new ApiResource(
+       return ApiResource::make(
             MeterType::findOrFail($id)
         );
     }
@@ -93,7 +93,7 @@ class MeterTypeController extends Controller
     {
         $meterType->update($request->only(['online','phase','max_current']));
         $meterType->fresh();
-        return new ApiResource($meterType);
+       return ApiResource::make($meterType);
     }
 
     /**
@@ -109,7 +109,7 @@ class MeterTypeController extends Controller
      */
     public function meterList(Request $request, $id)
     {
-        return new ApiResource(
+       return ApiResource::make(
             MeterType::with('meters')->findOrFail($id)
         );
     }

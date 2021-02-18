@@ -82,7 +82,7 @@ class EnergyController extends Controller
                 ]
             );
         }
-        return new ApiResource(['result' => 'success']);
+       return ApiResource::make(['result' => 'success']);
     }
 
 
@@ -105,6 +105,6 @@ class EnergyController extends Controller
                 Carbon::createFromTimestamp($endDate)->format('Y-m-d H:i:s')
             );
         }
-        return new ApiResource($energyReadings->get());
+       return ApiResource::make($energyReadings->get());
     }
 }

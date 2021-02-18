@@ -26,6 +26,6 @@ class LanguageController extends Controller
                 }
             }
         );
-        return new ApiResource($filteredFiles);
+       return ApiResource::make($filteredFiles);
     }
 }

@@ -67,11 +67,11 @@ class MeterController extends Controller
         $inUse = request('in_use');
 
         if ($inUse !== null) {
-            return new ApiResource(
+           return ApiResource::make(
                 $this->meter::with('meterType', 'meterParameter.tariff')->where('in_use', $inUse)->paginate(15)
             );
         }
-        return new ApiResource(
+       return ApiResource::make(
             $this->meter::with('meterType', 'meterParameter.tariff')->paginate(15)
         );
     }
@@ -129,7 +129,7 @@ class MeterController extends Controller
      */
     public function show($serialNumber): ApiResource
     {
-        return new ApiResource(
+       return ApiResource::make(
             Meter::with(
                 'meterParameter.tariff',
                 'meterParameter.owner',
@@ -171,7 +171,7 @@ class MeterController extends Controller
                 'LIKE',
                 '%' . $term . '%'
             )->paginate(15);
-        return new ApiResource($meters);
+       return ApiResource::make($meters);
     }
 
 
@@ -189,7 +189,7 @@ class MeterController extends Controller
     {
          $meters = $request->all();
 
-         return new ApiResource($this->meterService->updateMeterGeoLocations($meters));
+        return ApiResource::make($this->meterService->updateMeterGeoLocations($meters));
     }
 
     /**
@@ -205,7 +205,7 @@ class MeterController extends Controller
     public function personMeters(Person $person): ApiResource
     {
         $meters = Person::with('meters.tariff', 'meters.meter')->find($person->id);
-        return new ApiResource($meters);
+       return ApiResource::make($meters);
     }
 
     /**
@@ -225,7 +225,7 @@ class MeterController extends Controller
     public function meterGeo(Person $person): ApiResource
     {
         $meters = Person::with('meters.meter', 'meters.geo')->find($person->id);
-        return new ApiResource($meters);
+       return ApiResource::make($meters);
     }
 
     /**
@@ -245,7 +245,7 @@ class MeterController extends Controller
             'meterParameter.geo',
             'meterType'
         )->find($id);
-        return new ApiResource($meterDetails);
+       return ApiResource::make($meterDetails);
     }
 
     /**
@@ -266,7 +266,7 @@ class MeterController extends Controller
         $paymentHistory = new PaymentHistory();
 
 
-        return new ApiResource(
+       return ApiResource::make(
             $paymentHistory::with('transaction', 'paidFor')
                 ->whereHas(
                     'transaction',
@@ -296,7 +296,7 @@ class MeterController extends Controller
     {
         $meter = $this->meter->where('serial_number', $serialNumber)->first();
         $mc = new MeterConsumption();
-        return new ApiResource(
+       return ApiResource::make(
             $mc->where('meter_id', $meter->id)->whereBetween(
                 'reading_date',
                 [$start, $end]
@@ -342,7 +342,7 @@ class MeterController extends Controller
                 ->where('in_use', 1)->get();
         }
 
-        return new ApiResource($meters);
+       return ApiResource::make($meters);
     }
 
     /**
@@ -359,6 +359,6 @@ class MeterController extends Controller
         if ($meter !== null) {
             $meter->delete();
         }
-        return new ApiResource($meter);
+       return ApiResource::make($meter);
     }
 }

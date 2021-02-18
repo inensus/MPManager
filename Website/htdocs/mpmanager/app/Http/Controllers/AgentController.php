@@ -22,30 +22,30 @@ class AgentController extends Controller
     public function index(Request $request): ApiResource
     {
         $users = $this->agentService->list($request->all());
-        return new ApiResource($users);
+       return ApiResource::make($users);
     }
 
     public function show(Agent $agent, Request $request): ApiResource
     {
         $agent = $this->agentService->getAgentDetail($agent);
-        return new ApiResource($agent);
+       return ApiResource::make($agent);
     }
 
     public function store(CreateAgentRequest $request): ApiResource
     {
         $agent = $this->agentService->createFromRequest($request);
-        return new ApiResource($agent);
+       return ApiResource::make($agent);
     }
 
     public function update(Agent $agent, Request $request): ApiResource
     {
         $updatedAgent = $this->agentService->update($agent, $request->all());
-        return new ApiResource($updatedAgent);
+       return ApiResource::make($updatedAgent);
     }
 
     public function destroy(Agent $agent): ApiResource
     {
-        return new ApiResource($this->agentService->deleteAgent($agent));
+       return ApiResource::make($this->agentService->deleteAgent($agent));
     }
 
 
@@ -54,7 +54,7 @@ class AgentController extends Controller
         $term = request('term');
         $paginate = request('paginate') ?? 1;
 
-        return new ApiResource($this->agentService->searchAgent($term, $paginate));
+       return ApiResource::make($this->agentService->searchAgent($term, $paginate));
     }
 
     /**
@@ -90,7 +90,7 @@ class AgentController extends Controller
         $agent = Agent::find(auth('agent_api')->user()->id);
         $this->agentService->setFirebaseToken($agent, $request->input('fire_base_token'));
 
-        return new ApiResource($agent->fresh());
+       return ApiResource::make($agent->fresh());
     }
 
 

@@ -41,7 +41,7 @@ class AssetPersonController extends Controller
 
             ]
         );
-        return new ApiResource($assetPerson);
+       return ApiResource::make($assetPerson);
     }
 
     /**
@@ -56,6 +56,6 @@ class AssetPersonController extends Controller
         $assets = $this->assetPerson::with('assetType', 'rates.logs', 'logs.owner')
             ->where('person_id', $person->id)
             ->get();
-        return new ApiResource($assets);
+       return ApiResource::make($assets);
     }
 }

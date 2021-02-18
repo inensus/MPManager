@@ -32,24 +32,24 @@ class AgentTransactionsController extends Controller
     {
         $agent = request()->attributes->get('user');
         $transactions = $this->agentTransactionService->list($agent->id);
-        return new ApiResource($transactions);
+       return ApiResource::make($transactions);
     }
     public function agentCustomerTransactions($customerId, Request $request): ApiResource
     {
         $agent = request()->attributes->get('user');
         $transactions = $this->agentTransactionService->listByCustomer($agent->id, $customerId);
-        return new ApiResource($transactions);
+       return ApiResource::make($transactions);
     }
     public function show($customerId): ApiResource
     {
         $agent = request()->attributes->get('user');
         $transactions = $this->agentTransactionService->listByCustomer($agent->id, $customerId);
-        return new ApiResource($transactions);
+       return ApiResource::make($transactions);
     }
 
     public function indexWeb(Agent $agent): ApiResource
     {
         $transactions = $this->agentTransactionService->listForWeb($agent->id);
-        return new ApiResource($transactions);
+       return ApiResource::make($transactions);
     }
 }

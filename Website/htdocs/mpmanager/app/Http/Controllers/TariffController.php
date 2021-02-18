@@ -33,7 +33,7 @@ class TariffController extends Controller
      */
     public function index()
     {
-        return new ApiResource(
+       return ApiResource::make(
             MeterTariff::with(
                 [
                     'accessRate',
@@ -65,7 +65,7 @@ class TariffController extends Controller
             ]
         )->where('id', $tariff->id)->first();
 
-        return new ApiResource(
+       return ApiResource::make(
             $meterTariff
         );
     }
@@ -102,19 +102,19 @@ class TariffController extends Controller
             ]
         )->find($newTariff->id);
 
-        return new ApiResource($tariff);
+       return ApiResource::make($tariff);
     }
 
     public function update(MeterTariff $tariff, TariffCreateRequest $request): ApiResource
     {
         $result = $this->meterTariffService->update($tariff, $request);
-        return new ApiResource($result);
+       return ApiResource::make($result);
     }
 
     public function usages(MeterTariff $tariff): ApiResource
     {
         $count = $this->meterTariffService->meterTariffUsageCount($tariff->id);
-        return new ApiResource($count);
+       return ApiResource::make($count);
     }
 
     /**
@@ -127,7 +127,7 @@ class TariffController extends Controller
         $currentId = $tariff->id;
 
         $result = $this->meterTariffService->changeMetersTariff($currentId, $changeId);
-        return new ApiResource($result);
+       return ApiResource::make($result);
     }
 
     public function destroy(MeterTariff $tariff): ?bool

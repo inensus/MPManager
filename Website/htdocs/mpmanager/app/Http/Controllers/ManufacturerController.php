@@ -18,7 +18,7 @@ class ManufacturerController extends Controller
      */
     public function index(): ApiResource
     {
-        return new ApiResource(
+       return ApiResource::make(
             Manufacturer::paginate(15)
         );
     }
@@ -61,7 +61,7 @@ class ManufacturerController extends Controller
      */
     public function show(Manufacturer $manufacturer)
     {
-        return new ApiResource(
+       return ApiResource::make(
             $manufacturer::with('address.city.country')->get()
         );
     }

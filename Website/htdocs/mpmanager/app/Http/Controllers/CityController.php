@@ -42,7 +42,7 @@ class CityController extends Controller
      */
     public function index()
     {
-        return new ApiResource(
+       return ApiResource::make(
             $this->city->get()
         );
     }
@@ -58,11 +58,11 @@ class CityController extends Controller
     {
         $relation = request('relation');
         if ($relation) {
-            return new ApiResource(
+           return ApiResource::make(
                 $this->city::with('location', 'country')->findOrFail($id)
             );
         }
-        return new ApiResource(
+       return ApiResource::make(
             $this->city->findOrFail($id)
         );
     }
@@ -80,7 +80,7 @@ class CityController extends Controller
         $country = Country::where('country_code', 'TR')->first();
         $city->name = request('name');
         $city = $country->cities()->save($city);
-        return new ApiResource($city);
+       return ApiResource::make($city);
     }
 
     /**
@@ -102,6 +102,6 @@ class CityController extends Controller
         $this->city->cluster()->associate($cluster);
         $this->city->save();
 
-        return new ApiResource($this->city);
+       return ApiResource::make($this->city);
     }
 }

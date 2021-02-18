@@ -79,7 +79,7 @@ class SmsController extends Controller
             ->orderBy('id', 'DESC')
             ->groupBy('receiver')
             ->paginate(20);
-        return new ApiResource($list);
+       return ApiResource::make($list);
     }
 
     /**
@@ -243,7 +243,7 @@ class SmsController extends Controller
                             "Namba ya mita uliyoandika siyo sahihi. Tafadhali hakikisha namba yako ya mita.",
                             'demand'
                         );
-                    return new ApiResource(
+                   return ApiResource::make(
                         [
                             'success' => 'false',
                             'message' => 'given serial number was not found in the system'
@@ -267,7 +267,7 @@ class SmsController extends Controller
                     'demand'
                 );
 
-            return new ApiResource($sms);
+           return ApiResource::make($sms);
         }
 
 
@@ -295,7 +295,7 @@ class SmsController extends Controller
         }
 
 
-        return new ApiResource($sms);
+       return ApiResource::make($sms);
     }
 
     public function storeAndSend(SmsRequest $request): ApiResource
@@ -336,7 +336,7 @@ class SmsController extends Controller
                 $message,
                 'manual'
             );
-        return new ApiResource($sms);
+       return ApiResource::make($sms);
     }
 
     /**
@@ -387,13 +387,13 @@ class SmsController extends Controller
 
 
         $smses = $this->sms::whereIn('receiver', $numbers)->orderBy('id', 'ASC')->get();
-        return new ApiResource($smses);
+       return ApiResource::make($smses);
     }
 
     public function byPhone($phone): ApiResource
     {
         $smses = $this->sms->where('receiver', $phone)->get();
-        return new ApiResource($smses);
+       return ApiResource::make($smses);
     }
 
 
@@ -412,6 +412,6 @@ class SmsController extends Controller
             ->orWhere('surname', 'like', '%' . $search . '%')
             ->get();
 
-        return new ApiResource($list);
+       return ApiResource::make($list);
     }
 }

@@ -26,7 +26,7 @@ class AgentCommissionController extends Controller
     public function index(): ApiResource
     {
         $commissions = AgentCommission::query()->paginate(config('settings.paginate'));
-        return new ApiResource($commissions);
+       return ApiResource::make($commissions);
     }
 
 
@@ -39,7 +39,7 @@ class AgentCommissionController extends Controller
     public function store(CreateAgentCommissionRequest $request)
     {
         $commission = $this->agentCommissionService->create();
-        return new ApiResource($commission);
+       return ApiResource::make($commission);
     }
 
 
@@ -54,7 +54,7 @@ class AgentCommissionController extends Controller
     public function update(CreateAgentCommissionRequest $request, AgentCommission $commission): ApiResource
     {
         $updatedAgentCommission = $this->agentCommissionService->update($commission, $request->all());
-        return new ApiResource($updatedAgentCommission);
+       return ApiResource::make($updatedAgentCommission);
     }
 
     /**
@@ -67,6 +67,6 @@ class AgentCommissionController extends Controller
      */
     public function destroy(AgentCommission $commission): ApiResource
     {
-        return new ApiResource($this->agentCommissionService->delete($commission));
+       return ApiResource::make($this->agentCommissionService->delete($commission));
     }
 }

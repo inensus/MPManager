@@ -46,7 +46,7 @@ class ReportController
                 $reports = $this->getAllReports($startDate, $endDate);
                 break;
         }
-        return new ApiResource($reports);
+       return ApiResource::make($reports);
     }
 
 

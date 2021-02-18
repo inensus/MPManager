@@ -38,7 +38,7 @@ class SubConnectionTypeController extends Controller
         } else {
             $connectionTypes = $connectionTypes->get();
         }
-        return new ApiResource($connectionTypes);
+       return ApiResource::make($connectionTypes);
     }
 
     /**
@@ -54,7 +54,7 @@ class SubConnectionTypeController extends Controller
             ->create(
                 $request->only(['name', 'connection_type_id', 'tariff_id'])
             );
-        return new ApiResource($subConnectionType);
+       return ApiResource::make($subConnectionType);
     }
 
     /**
@@ -69,7 +69,7 @@ class SubConnectionTypeController extends Controller
         $subConnectionType->update(request()->only(['name','tariff_id']));
         $subConnectionType->fresh();
         $subConnectionType->load('tariff');
-        return new ApiResource($subConnectionType);
+       return ApiResource::make($subConnectionType);
     }
 
 }

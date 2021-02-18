@@ -38,7 +38,7 @@ class PersonController extends Controller
     public function index(): ApiResource
     {
         $customerType = request('is_customer') ?? 1;
-        return new ApiResource(
+       return ApiResource::make(
             Person::with(
                 [
                 'addresses' => function ($q) {
@@ -63,7 +63,7 @@ class PersonController extends Controller
      */
     public function list()
     {
-        return new ApiResource(
+       return ApiResource::make(
             Person::all()
         );
     }
@@ -86,7 +86,7 @@ class PersonController extends Controller
     public function show(Person $person): ApiResource
     {
         $personData = $this->personService->getDetails((int)$person->id, true);
-        return new ApiResource(
+       return ApiResource::make(
             $personData
         );
     }
@@ -139,7 +139,7 @@ class PersonController extends Controller
         $person->sex = request('sex');
         $person->education = request('education');
         $person->save();
-        return new ApiResource($person);
+       return ApiResource::make($person);
     }
 
     /**
@@ -157,7 +157,7 @@ class PersonController extends Controller
     public function transactions($personId)
     {
         $person = Person::find($personId);
-        return new ApiResource($person->transactions()->with('transaction.token')->latest()->paginate(7));
+       return ApiResource::make($person->transactions()->with('transaction.token')->latest()->paginate(7));
     }
 
     /**
@@ -179,7 +179,7 @@ class PersonController extends Controller
     {
         $term = request('term');
         $paginate = request('paginate') ?? 1;
-        return new ApiResource($this->personService->searchPerson($term, $paginate));
+       return ApiResource::make($this->personService->searchPerson($term, $paginate));
     }
 
     /**
@@ -197,7 +197,7 @@ class PersonController extends Controller
     public function addresses(Person $person): ApiResource
     {
         $addresses = $person->addresses()->with('city', 'geo')->orderBy('is_primary', 'DESC')->paginate(5);
-        return new ApiResource($addresses);
+       return ApiResource::make($addresses);
     }
 
     /**
@@ -215,6 +215,6 @@ class PersonController extends Controller
     public function destroy(Person $person): ApiResource
     {
         $deletedPerson = $person->delete();
-        return new ApiResource($deletedPerson);
+       return ApiResource::make($deletedPerson);
     }
 }

@@ -27,13 +27,13 @@ class AgentCustomerController extends Controller
     public function index(Request $request)
     {
         $agent = Agent::find(auth('agent_api')->user()->id);
-        return new ApiResource($this->agentCustomerService->list($agent));
+       return ApiResource::make($this->agentCustomerService->list($agent));
     }
     public function search(): ApiResource
     {
         $term = request('term');
         $paginate = request('paginate') ?? 1;
         $agent = Agent::find(auth('agent_api')->user()->id);
-        return new ApiResource($this->agentCustomerService->searchAgentsCustomers($term, $paginate, $agent));
+       return ApiResource::make($this->agentCustomerService->searchAgentsCustomers($term, $paginate, $agent));
     }
 }

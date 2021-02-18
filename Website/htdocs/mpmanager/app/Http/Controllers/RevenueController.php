@@ -210,7 +210,7 @@ class RevenueController extends Controller
         }
 
 
-        return new ApiResource($response);
+       return ApiResource::make($response);
     }
 
     private function connectionTypeBaseAnalysis(Request $request): ApiResource
@@ -260,7 +260,7 @@ class RevenueController extends Controller
         }
 
 
-        return new ApiResource($response);
+       return ApiResource::make($response);
     }
 
     /**
@@ -302,7 +302,7 @@ class RevenueController extends Controller
                 = $openedTicketsWithCategory["new_tickets"];
         }
 
-        return new ApiResource(
+       return ApiResource::make(
             $result
         );
     }
@@ -318,7 +318,7 @@ class RevenueController extends Controller
 
         if (!count($cities)) {
             $response = ['data' => null, 'message' => 'There is no city for this MiniGrid'];
-            return new ApiResource($response);
+           return ApiResource::make($response);
         }
 
         //get list of tariffs
@@ -355,7 +355,7 @@ class RevenueController extends Controller
         }
 
 
-        return new ApiResource($response);
+       return ApiResource::make($response);
     }
 
     private function reformatPeriod($period): string
@@ -521,7 +521,7 @@ class RevenueController extends Controller
             }
             $connections[$connectionGroup->name] = $connectionsData[0]['registered_connections'];
         }
-        return new ApiResource(
+       return ApiResource::make(
             [
                 'target' => $targets,
                 'total_connections' => $totalConnections,
@@ -669,7 +669,7 @@ class RevenueController extends Controller
             $miniGrids[$miniGridIndex]['period'] = $p;
             $miniGrids[$miniGridIndex]['totalRevenue'] = $totalRevenue;
         }
-        return new ApiResource($miniGrids);
+       return ApiResource::make($miniGrids);
         //get revenues by cities and summarise it
     }
 
@@ -695,7 +695,7 @@ class RevenueController extends Controller
             }
         )->pluck('transaction_id');
         $revenue = $this->transaction::whereIn('id', $tokens)->sum('amount');
-        return new ApiResource(['revenue' => $revenue]);
+       return ApiResource::make(['revenue' => $revenue]);
     }
 
     /**
@@ -773,7 +773,7 @@ class RevenueController extends Controller
             $clusters[$clusterIndex]['period'] = $p;
             $clusters[$clusterIndex]['totalRevenue'] = $totalRevenue;
         }
-         return new ApiResource($clusters);
+        return ApiResource::make($clusters);
          //get revenues by cities and summarise it
     }
 
@@ -801,7 +801,7 @@ class RevenueController extends Controller
         $cluster->revenue = $this->transactionService->totalClusterTransactions($cluster->id, $dateRange);
         $cluster->population = $this->cityService->getClusteropulation($cluster->id);
 
-        return new ApiResource($cluster);
+       return ApiResource::make($cluster);
     }
 
 
@@ -857,7 +857,7 @@ class RevenueController extends Controller
         }
 
         asort($revenueAnalysis);
-        return new ApiResource($revenueAnalysis);
+       return ApiResource::make($revenueAnalysis);
     }
 
     public function transactionRevenuePerMiniGrid($miniGridId, Request $request): ApiResource
@@ -872,7 +872,7 @@ class RevenueController extends Controller
             $miniGridMeters,
             [$startDate, $endDate]
         );
-        return new ApiResource($revenues);
+       return ApiResource::make($revenues);
     }
 
     public function soldEnergyPerMiniGrid($miniGridId, Request $request): ApiResource
@@ -891,6 +891,6 @@ class RevenueController extends Controller
         if ($soldEnergy) {
             $energy = round($soldEnergy[0]->energy, 3);
         }
-        return new ApiResource(['data' => $energy]);
+       return ApiResource::make(['data' => $energy]);
     }
 }

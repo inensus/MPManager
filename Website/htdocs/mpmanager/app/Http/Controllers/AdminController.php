@@ -48,7 +48,7 @@ class AdminController extends Controller
     public function index(Request $request): ApiResource
     {
         $users = $this->userService->list($request->all());
-        return new ApiResource($users);
+       return ApiResource::make($users);
     }
 
     /**
@@ -65,7 +65,7 @@ class AdminController extends Controller
     {
         $admin = $this->userService->create($request->only(['name', 'password', 'email']));
 
-        return new ApiResource($admin);
+       return ApiResource::make($admin);
     }
 
     /**
@@ -83,7 +83,7 @@ class AdminController extends Controller
     {
         $this->userService->update($user, $request->all());
 
-        return new ApiResource($user->fresh());
+       return ApiResource::make($user->fresh());
     }
 
     /**

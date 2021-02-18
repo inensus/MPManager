@@ -20,7 +20,7 @@ class MapSettingsController extends Controller
 
     public function index(): ApiResource
     {
-        return new ApiResource(MapSettings::all());
+       return ApiResource::make(MapSettings::all());
     }
 
     public function update(MapSettings $mapSettings): ApiResource
@@ -32,6 +32,6 @@ class MapSettingsController extends Controller
                 ]
             )
         );
-        return new ApiResource($mapSettings->fresh());
+       return ApiResource::make($mapSettings->fresh());
     }
 }

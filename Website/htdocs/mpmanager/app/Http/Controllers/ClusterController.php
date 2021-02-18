@@ -82,14 +82,14 @@ class ClusterController
 
         $clusters = $this->clusterService->fetchClusterGeoJson($clusters);
 
-        return new ApiResource($this->clusterService->fetchClusterData($clusters, $dateRange));
+       return ApiResource::make($this->clusterService->fetchClusterData($clusters, $dateRange));
     }
 
     public function show($id): ApiResource
     {
         $cluster = $this->cluster::with('miniGrids.location')
             ->find($id);
-        return new ApiResource($cluster);
+       return ApiResource::make($cluster);
     }
 
     public function showGeo(Cluster $cluster): ApiResource
@@ -97,11 +97,11 @@ class ClusterController
         try {
             $clusterData = Storage::disk('local')->get($cluster->name . '.json');
         } catch (FileNotFoundException $e) {
-            return new ApiResource([]);
+           return ApiResource::make([]);
         }
 
         $cluster['geo'] = json_decode($clusterData);
-        return new ApiResource($cluster);
+       return ApiResource::make($cluster);
     }
 
 
@@ -125,6 +125,6 @@ class ClusterController
         //fire the create geo-json event. It creates a json file with coordinates
         event(new ClusterEvent($this->cluster, $geoType, $geoData));
 
-        return new ApiResource($this->cluster);
+       return ApiResource::make($this->cluster);
     }
 }

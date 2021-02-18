@@ -20,7 +20,7 @@ class TicketSettingsController extends Controller
 
     public function index(): ApiResource
     {
-        return new ApiResource(TicketSettings::all());
+       return ApiResource::make(TicketSettings::all());
     }
 
     public function update(TicketSettings $ticketSettings): ApiResource
@@ -32,6 +32,6 @@ class TicketSettingsController extends Controller
                 ]
             )
         );
-        return new ApiResource($ticketSettings->fresh());
+       return ApiResource::make($ticketSettings->fresh());
     }
 }

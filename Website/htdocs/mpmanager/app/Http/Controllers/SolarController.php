@@ -22,7 +22,7 @@ class SolarController extends Controller
     public function index(): ApiResource
     {
         $solarReadings = $this->solarService->list();
-        return new ApiResource($solarReadings);
+       return ApiResource::make($solarReadings);
     }
 
     public function listByMiniGrid($miniGridId): ApiResource
@@ -30,13 +30,13 @@ class SolarController extends Controller
         echo "miniGridId " . $miniGridId;
         $solarReadings = $this->solarService->lisByMiniGrid($miniGridId);
 
-        return new ApiResource($solarReadings);
+       return ApiResource::make($solarReadings);
     }
 
     public function showByMiniGrid($miniGridId)
     {
         if ($reading = $this->solarService->showByMiniGrid($miniGridId)) {
-            return new ApiResource($reading);
+           return ApiResource::make($reading);
         }
 
         return response()->setStatusCode(404)->json(['data' => 'Nothing found']);
@@ -48,6 +48,6 @@ class SolarController extends Controller
 
         $solar = $this->solarService->create();
 
-        return new ApiResource($solar);
+       return ApiResource::make($solar);
     }
 }

@@ -47,7 +47,7 @@ class TargetController extends Controller
             'target_date',
             'desc'
         )->paginate(15);
-        return new ApiResource($targets);
+       return ApiResource::make($targets);
     }
 
     /**
@@ -60,7 +60,7 @@ class TargetController extends Controller
     public function show($id): ApiResource
     {
         $target = $this->target->with('subTargets', 'city')->find($id);
-        return new ApiResource($target);
+       return ApiResource::make($target);
     }
 
 
@@ -73,7 +73,7 @@ class TargetController extends Controller
         //get all targets in range
         $takenSlots = $this->target::whereBetween('target_date', [$firstDayOfMonth, $lastDayOfMonth])->get();
 
-        return new ApiResource($takenSlots);
+       return ApiResource::make($takenSlots);
     }
 
     public function store(Request $request)

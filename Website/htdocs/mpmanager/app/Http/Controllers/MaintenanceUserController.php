@@ -35,7 +35,7 @@ class MaintenanceUserController extends Controller
     public function index(): ApiResource
     {
         $maintenance_user_list = $this->maintenanceUsers::with('person')->get();
-        return new ApiResource($maintenance_user_list);
+       return ApiResource::make($maintenance_user_list);
     }
 
     /**
