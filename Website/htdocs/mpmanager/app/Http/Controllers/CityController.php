@@ -32,7 +32,7 @@ class CityController extends Controller
     {
         $this->city = $city;
         $this->miniGrid = $miniGrid;
-        $this->cluster=$cluster;
+        $this->cluster = $cluster;
     }
 
     /**

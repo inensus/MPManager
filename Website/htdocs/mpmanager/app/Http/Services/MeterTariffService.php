@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Http\Services;
 
 use App\Http\Requests\TariffCreateRequest;
@@ -18,14 +17,10 @@ use Illuminate\Support\Facades\DB;
 
 class MeterTariffService
 {
-
-
     /**
      * @param MeterTariff $tariff
      * @param TariffCreateRequest $request
      * @return Model|Builder|Builder[]|Collection|null
-     *
-     * @psalm-return Model|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Collection|array<array-key, \Illuminate\Database\Eloquent\Builder>|null
      */
     public function update(MeterTariff $tariff, TariffCreateRequest $request)
     {
@@ -40,8 +35,7 @@ class MeterTariffService
                         'tariff_id' => $tariff->id,
                         'amount' => $accessRate['access_rate_amount'],
                         'period' => $accessRate['access_rate_period'],
-                    ]
-                );
+                    ]);
             }
         } else {
             AccessRate::where('tariff_id', $tariff->id)->delete();
@@ -107,11 +101,11 @@ class MeterTariffService
         }
         $tariff->update(
             [
-            'name'=>$request->input('name'),
-            'factor'=>$request->input('factor'),
-            'currency'=>$request->input('currency'),
-            'price'=>$request->input('price'),
-            'total_price'=>$request->input('price'),
+            'name' => $request->input('name'),
+            'factor' => $request->input('factor'),
+            'currency' => $request->input('currency'),
+            'price' => $request->input('price'),
+            'total_price' => $request->input('price'),
              'updated_at' => date('Y-m-d h:i:s')
             ]
         );

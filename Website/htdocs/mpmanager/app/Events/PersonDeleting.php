@@ -13,7 +13,9 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
 class PersonDeleting
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
 
     private $person;
 

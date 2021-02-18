@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Services;
 
 use App\Models\AgentReceipt;
@@ -15,7 +14,7 @@ class AgentReceiptService implements IAgentRelatedService
     /**
      * @return LengthAwarePaginator
      */
-    public function list($agentId):LengthAwarePaginator
+    public function list($agentId): LengthAwarePaginator
     {
         return AgentReceipt::with(['user', 'agent', 'history'])
             ->whereHas(

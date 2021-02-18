@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: kemal
@@ -112,7 +113,7 @@ class BelongsToMorph extends BelongsTo
         }
         $morphName = Arr::get(array_flip(Relation::morphMap()), $related, $related);
         list($type, $id) = self::getMorphs(Str::snake($name), $type, $id);
-        $instance = new $related;
+        $instance = new $related();
         // Once we have the foreign key names, we'll just create a new Eloquent query
         // for the related models and returns the relationship instance which will
         // actually be responsible for retrieving and hydrating every relations.

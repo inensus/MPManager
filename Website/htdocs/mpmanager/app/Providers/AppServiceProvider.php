@@ -69,8 +69,8 @@ class AppServiceProvider extends ServiceProvider
                 'appliance' => AssetType::class,
                 'agent_receipt' => AgentReceipt::class,
                 'agent_charge' => AgentCharge::class,
-                'meter_tariff'=>MeterTariff::class,
-                'third_party_transaction'=>ThirdPartyTransaction::class
+                'meter_tariff' => MeterTariff::class,
+                'third_party_transaction' => ThirdPartyTransaction::class
             ]
         );
     }

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Services;
 
 use App\Exceptions\NotificationSendFailedException;
@@ -32,7 +31,7 @@ class FirebaseService
             );
             return (string)$request->getBody();
         } catch (NotificationSendFailedException $exception) {
-            Log::critical("Notification could not send  ". $exception);
+            Log::critical("Notification could not send  " . $exception);
             throw  $exception;
         }
     }

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Events;
 
 use App\Models\AssetPerson;
@@ -12,7 +11,9 @@ use Illuminate\Queue\SerializesModels;
 
 class AssetPersonCreated
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
+    use Dispatchable;
+    use InteractsWithSockets;
+    use SerializesModels;
 
     /**
      * @var AssetPerson

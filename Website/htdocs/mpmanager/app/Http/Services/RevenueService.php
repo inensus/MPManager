@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: kemal
@@ -49,9 +50,8 @@ class RevenueService
      * @param null $connectionType
      * @return Collection
      */
-    public function getClustersRevenueByPeriod($clusterId, array $period, $periodType, $connectionType = null): Collection
+    public function clustersRevenueByPeriod($clusterId, array $period, $periodType, $connectionType = null): Collection
     {
-
         if ($periodType === 'weekly' || $periodType === 'weekMonth') {
             return $this->getMeterTransactionsByWeeklyPeriod($clusterId, $period);
         }

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Http\Controllers;
 
 use App\Exceptions\PurchaseNotProcessable;
@@ -61,7 +60,8 @@ class RestrictionController extends Controller
                 return $response->setContent('validation failed')->setStatusCode(409);
             }
         } catch (RequestException $e) {
-            if ($e->getResponse()->getStatusCode() === 400
+            if (
+                $e->getResponse()->getStatusCode() === 400
                 && (string)$e->getResponse()->getBody() === 'Invalid code.'
             ) {
                 $response->setContent('Invalid token');

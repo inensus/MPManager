@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Exceptions\MeterParameter;
 
 use Exception;

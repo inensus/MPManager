@@ -175,7 +175,6 @@ class AgentService implements IUserService
             return $lastReceiptDate->created_at;
         }
         return $agent->created_at;
-
     }
 
     public function getTransactionAverage($agent)

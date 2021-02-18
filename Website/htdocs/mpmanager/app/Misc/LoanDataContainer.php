@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Misc;
 
 use App\Exceptions\MeterParameter\MeterParameterNotFound;
@@ -111,7 +110,7 @@ class LoanDataContainer
      * @throws MeterIsNotInUse
      * @throws MeterIsNotAssignedToCustomer
      */
-    private function getMeterOwner(String $serialNumber)
+    private function getMeterOwner(string $serialNumber)
     {
         try {
             $meter = Meter::with('meterParameter.owner')

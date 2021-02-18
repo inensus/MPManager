@@ -2,13 +2,6 @@
 
 namespace App\Models\Transaction;
 
-/**
- * Class Transaction
- *
- * @package  App
- * @property int id
- */
-
 use App\Helpers\RelationsManager;
 use App\Models\BaseModel;
 use App\Models\Meter\Meter;
@@ -16,7 +9,6 @@ use App\Models\Meter\MeterToken;
 use App\Models\PaymentHistory;
 use App\Models\Sms;
 use App\Relations\BelongsToMorph;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
@@ -38,7 +30,7 @@ class Transaction extends BaseModel
 {
     use RelationsManager;
 
-    public function originalTransaction():morphTo
+    public function originalTransaction(): morphTo
     {
         return $this->morphTo();
     }
@@ -48,7 +40,7 @@ class Transaction extends BaseModel
      *
      * @return BelongsToMorph
      */
-    public function originalVodacom():BelongsToMorph
+    public function originalVodacom(): BelongsToMorph
     {
         return BelongsToMorph::build($this, VodacomTransaction::class, 'originalTransaction');
     }
@@ -59,20 +51,22 @@ class Transaction extends BaseModel
      *
      * @return BelongsToMorph
      */
-    public function originalAirtel():BelongsToMorph
+    public function originalAirtel(): BelongsToMorph
     {
 
         return BelongsToMorph::build($this, AirtelTransaction::class, 'originalTransaction');
     }
-    public function originalAgent():BelongsToMorph
+
+    public function originalAgent(): BelongsToMorph
     {
         return BelongsToMorph::build($this, AgentTransaction::class, 'originalTransaction');
     }
 
-    public function originalThirdParty():BelongsToMorph
+    public function originalThirdParty(): BelongsToMorph
     {
         return BelongsToMorph::build($this, ThirdPartyTransaction::class, 'originalTransaction');
     }
+
     public function token(): HasOne
     {
         return $this->hasOne(MeterToken::class);

@@ -113,7 +113,7 @@ class AgentController extends Controller
                 'average' => $average,
                 'since' => $since,
                 'status_code' => 200
-            ]
+                ]
             ]
         );
     }

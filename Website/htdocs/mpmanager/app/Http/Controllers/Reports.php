@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Http\Controllers;
 
 use App\Exceptions\CustomerGroup\CustomerGroupNotFound;
@@ -30,6 +29,7 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
 use PhpOffice\PhpSpreadsheet\Writer\Exception;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 use function count;
 
 /**
@@ -502,10 +502,11 @@ class Reports
      */
     private function getConnectionGroupColumn(string $connectionGroupName): string
     {
-        if (array_key_exists(
-            $connectionGroupName,
-            $this->connectionTypeCells
-        )
+        if (
+            array_key_exists(
+                $connectionGroupName,
+                $this->connectionTypeCells
+            )
         ) {
             return $this->connectionTypeCells[$connectionGroupName];
         }
@@ -716,7 +717,7 @@ class Reports
 
 
         $writer = new Xlsx($this->spreadsheet);
-        $dirPath = storage_path('./'.$reportType);
+        $dirPath = storage_path('./' . $reportType);
         if (!file_exists($dirPath) && !mkdir($dirPath, 0774, true) && !is_dir($dirPath)) {
             throw new \RuntimeException(sprintf('Directory "%s" was not created', $dirPath));
         }
@@ -795,21 +796,21 @@ class Reports
     {
         return DB::select(
             DB::raw(
-                "select meter_parameters.connection_group_id, meters.serial_number as meter,".
-                " sum(transactions.amount) as revenue, meter_tariffs.price as tariff_price,".
+                "select meter_parameters.connection_group_id, meters.serial_number as meter," .
+                " sum(transactions.amount) as revenue, meter_tariffs.price as tariff_price," .
                 "IFNULL(sum(payment_histories.amount),0) as total
         from transactions
         inner JOIN meters  on transactions.message = meters.serial_number
-        left JOIN  airtel_transactions on transactions.original_transaction_id = airtel_transactions.id ".
+        left JOIN  airtel_transactions on transactions.original_transaction_id = airtel_transactions.id " .
                 "and transactions.original_transaction_type= 'airtel_transaction'
-        left JOIN vodacom_transactions on transactions.original_transaction_id = vodacom_transactions.id ".
+        left JOIN vodacom_transactions on transactions.original_transaction_id = vodacom_transactions.id " .
                 "and transactions.original_transaction_type= 'vodacom_transaction'
-        left JOIN agent_transactions on transactions.original_transaction_id = agent_transactions.id and".
+        left JOIN agent_transactions on transactions.original_transaction_id = agent_transactions.id and" .
                 " transactions.original_transaction_type= 'agent_transaction'
         inner join meter_parameters on meters.id=meter_parameters.meter_id
         inner join meter_tariffs on meter_parameters.tariff_id=meter_tariffs.id
         inner join `payment_histories` on transactions.id = payment_histories.transaction_id
-        where meter_parameters.connection_group_id = $connectionGroupId and ".
+        where meter_parameters.connection_group_id = $connectionGroupId and " .
                 "transactions.created_at  >=  '$dateRange[0]'  and transactions.created_at <=  '$dateRange[1]'
          and (vodacom_transactions . status = 1 or airtel_transactions . status = 1 or agent_transactions . status = 1)
          GROUP by meter_parameters.meter_id"

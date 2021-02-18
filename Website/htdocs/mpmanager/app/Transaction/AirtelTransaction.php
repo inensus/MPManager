@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: kemal
@@ -18,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use SimpleXMLElement;
+
 use function config;
 
 class AirtelTransaction implements ITransactionProvider
@@ -217,11 +219,13 @@ class AirtelTransaction implements ITransactionProvider
      * Prepares the data for either a confirmation- or a cancellation-request
      *
      * @param  $transaction
-     * @param  \App\Models\Transaction\AirtelTransaction $airtelTransaction
+     * @param \App\Models\Transaction\AirtelTransaction $airtelTransaction
      * @return string
      */
-    private function prepareRequest(Transaction $transaction, \App\Models\Transaction\AirtelTransaction $airtelTransaction): string
-    {
+    private function prepareRequest(
+        Transaction $transaction,
+        \App\Models\Transaction\AirtelTransaction $airtelTransaction
+    ): string {
         return '<COMMAND>' .
             '<TYPE>ROLLBACK</TYPE>' .
             '<TXNID>' . $airtelTransaction->trans_id . '</TXNID>' .

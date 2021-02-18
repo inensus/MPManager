@@ -74,18 +74,18 @@ class RoutesGenerator extends Command
 
     private function appendLines(string $packageRoutesTmp, $coreRoutesTmp): void
     {
-       
+
         $lines = file($packageRoutesTmp);
         $tmp = fopen($coreRoutesTmp, 'a+');
-        $counter =1;
+        $counter = 1;
         foreach ($lines as $key => $value) {
-            if ($counter%5===0||$counter%5==1) {
+            if ($counter % 5 === 0 || $counter % 5 == 1) {
                 $newLine = str_pad($value, strlen($value) + 2, ' ', STR_PAD_LEFT);
             } else {
                 $newLine = str_pad($value, strlen($value) + 4, ' ', STR_PAD_LEFT);
             }
             fwrite($tmp, $newLine);
-            $counter ++;
+            $counter++;
         }
         fclose($tmp);
     }

@@ -49,7 +49,7 @@ class MeterController extends Controller
     ) {
         $this->meter = $meter;
         $this->city = $city;
-        $this->meterService=$meterService;
+        $this->meterService = $meterService;
     }
 
     /**
@@ -185,7 +185,7 @@ class MeterController extends Controller
      * @param Request $request
      * @param Meter   $meter
      */
-    public function update(Request $request):ApiResource
+    public function update(Request $request): ApiResource
     {
          $meters = $request->all();
 

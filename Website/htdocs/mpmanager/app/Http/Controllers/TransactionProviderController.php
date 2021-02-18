@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Http\Controllers;
 
 use App\Http\Resources\ApiResource;
@@ -12,10 +11,10 @@ class TransactionProviderController extends Controller
 
     public function __construct(TransactionProviderService $transactionProviderService)
     {
-        $this->transactionProviderService=$transactionProviderService;
+        $this->transactionProviderService = $transactionProviderService;
     }
 
-    public function index():ApiResource
+    public function index(): ApiResource
     {
        return ApiResource::make($this->transactionProviderService->getTransactionProviders());
     }

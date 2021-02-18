@@ -8,6 +8,7 @@ use Closure;
 use Config;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+
 use function in_array;
 
 class Transaction
@@ -37,21 +38,23 @@ class Transaction
     private function determineSender(Request $request): ITransactionProvider
     {
 
-        if (preg_match('/\/vodacom/', $request->url()) && in_array(
-            $request->ip(),
-            Config::get('services.vodacom.ips'),
-            false
-        )
+        if (
+            preg_match('/\/vodacom/', $request->url()) && in_array(
+                $request->ip(),
+                Config::get('services.vodacom.ips'),
+                false
+            )
         ) {
             return resolve('VodacomPaymentProvider');
-        } elseif (preg_match('/\/airtel/', $request->url()) && in_array(
-            $request->ip(),
-            Config::get('services.airtel.ips'),
-            false
-        )
+        } elseif (
+            preg_match('/\/airtel/', $request->url()) && in_array(
+                $request->ip(),
+                Config::get('services.airtel.ips'),
+                false
+            )
         ) {
             return resolve('AirtelPaymentProvider');
-        } elseif (preg_match('/\/agent/', $request->url())&& auth('agent_api')->user()) {
+        } elseif (preg_match('/\/agent/', $request->url()) && auth('agent_api')->user()) {
             return resolve('AgentPaymentProvider');
         } else {
             Log::critical(

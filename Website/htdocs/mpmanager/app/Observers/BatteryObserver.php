@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Observers;
 
 use App\Helpers\PowerConverter;
