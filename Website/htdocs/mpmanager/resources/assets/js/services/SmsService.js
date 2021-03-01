@@ -1,12 +1,17 @@
 import Repository from '../repositories/RepositoryFactory'
-import { ErrorHandler } from '../Helpers/ErrorHander'
-import { Paginator } from '../classes/paginator'
-import { resources } from '../resources'
-import { EventBus } from '../shared/eventbus'
+import {ErrorHandler} from '../Helpers/ErrorHander'
+import {Paginator} from '../classes/paginator'
+import {resources} from '../resources'
+import {EventBus} from '../shared/eventbus'
+import {SmsAutoComplete} from '../entities/SmsAutoComplete'
+
 
 export class SmsService {
-    constructor () {
+    constructor() {
         this.repository = Repository.get('sms')
+        this.connectionGroupRepository = Repository.get('connectionGroups')
+        this.connectionTypeRepository = Repository.get('connectionTypes')
+
         this.sms = {
             id: null,
             number: null,
@@ -17,22 +22,23 @@ export class SmsService {
         }
         this.numberList = []
         this.list = []
-        this.resultList = []
-        this.receiverList = []
+        this.resultList = [] //used
+        this.receiverList = []//used
         this.paginator = new Paginator(resources.sms.list)
+
     }
 
-    search (term) {
+    search(term) {
         this.paginator = new Paginator(resources.sms.search)
-        EventBus.$emit('loadPage', this.paginator, { 'term': term })
+        EventBus.$emit('loadPage', this.paginator, {'term': term})
     }
 
-    showAll () {
+    showAll() {
         this.paginator = new Paginator(resources.sms.list)
         EventBus.$emit('loadPage', this.paginator)
     }
 
-    updateList (smsList) {
+    updateList(smsList) {
         this.numberList = []
         for (let index in smsList) {
             let sms = {
@@ -54,7 +60,7 @@ export class SmsService {
         return this.numberList
     }
 
-    searchSms (text) {
+    searchSms(text) {
 
         if (text.length === 0) {
             return this.numberList
@@ -64,55 +70,33 @@ export class SmsService {
                 (n.owner !== null && n.owner !== undefined && n.owner.name !== undefined && n.owner.surname !== undefined) ||
                 (n.owner.name.toLowerCase().includes(text.toLowerCase()) || n.owner.surname.toLowerCase().includes(text.toLowerCase()))
         })
-
     }
 
-    addReceiver (receiver, stored = true) {
-        let found = false
-        for (let index in this.receiverList) {
-            if (this.receiverList[index].stored !== stored) {
-                continue
-            }
-            if (stored && this.receiverList[index].receiver.id === receiver.id) {
-                found = true
-                break
-            }
-            if (!stored && this.receiverList[index].receiver === receiver) {
-                found = true
-                break
-            }
-            if (!found) {
-                this.receiverList.push({
-                    receiver: receiver,
-                    stored: stored
-                })
-            }
+    addReceiver(receiverToAdd) {
+        const searchForReeciver = this.receiverList.filter(function (receiver) {
+            return (receiverToAdd.stored && receiver.id === receiverToAdd.id) || (!receiverToAdd.stored && receiver.phone === receiverToAdd.phone)
+        })
 
-            return this.receiverList
+        if (searchForReeciver.length === 0) {
+            this.receiverList.push(receiverToAdd)
         }
     }
 
-    removeReceiver (receiver) {
-        for (let index in this.receiverList) {
-            if (receiver.stored !== this.receiverList[index].stored) {
-                continue
-            }
-            if (receiver.stored && receiver.receiver.id === this.receiverList[index].receiver.id) {
-                this.receiverList.splice(index, 1)
-                break
-            } else if (!receiver.stored && receiver === this.receiverList[index]) {
-                this.receiverList.splice(index, 1)
-                break
-            }
-        }
-        return this.receiverList
+    addConnectionGroupReceiver(receiverToAdd) {
+        this.receiverList = [receiverToAdd]
     }
 
-    async getList (personId) {
+    removeReceiver(receiverToRemove) {
+        this.receiverList = this.receiverList.filter(function (receiver) {
+            return receiverToRemove.display !== receiver.display
+        })
+    }
+
+    async getList(personId) {
         try {
-            let response = await this.repository.list('list',personId)
+            let response = await this.repository.list('list', personId)
             if (response.status === 200) {
-                if(personId !== null){
+                if (personId !== null) {
                     return response.data.data
                 }
                 return this.updateList(response.data.data)
@@ -125,7 +109,7 @@ export class SmsService {
 
     }
 
-    async getDetail (phone) {
+    async getDetail(phone) {
         try {
             let response = await this.repository.detail(phone)
             if (response.status === 200) {
@@ -139,7 +123,7 @@ export class SmsService {
         }
     }
 
-    async sendMaintenanceSms (maintenanceData) {
+    async sendMaintenanceSms(maintenanceData) {
         try {
             let sendSmsPM = {
                 'person_id': maintenanceData.assigned,
@@ -161,7 +145,7 @@ export class SmsService {
         }
     }
 
-    async sendToNumber (type, message, phone, senderId) {
+    async sendToNumber(type, message, phone, senderId) {
         let sendSmsPM = {
             'type': type,
             'message': message,
@@ -180,7 +164,7 @@ export class SmsService {
         }
     }
 
-    async sendToPerson (message, personId, senderId) {
+    async sendToPerson(message, personId, senderId) {
         let sendSmsPM = {
             'message': message,
             'person_id': personId,
@@ -198,7 +182,18 @@ export class SmsService {
         }
     }
 
-    async sendBulk (type, miniGrid, receivers, message, senderId) {
+    async sendBulk(type, message, senderId, miniGrid) {
+        let receivers
+        if (type === 'person') {
+            receivers = this.receiverList.map(function (receiver) {
+                return receiver.phone
+            })
+        } else if (type === 'group' || type === 'type') {
+            receivers = this.receiverList
+        } else if (type === 'all') {
+            receivers = []
+        }
+
         let sendSmsPM = {
             'type': type,
             'miniGrid': miniGrid,
@@ -206,11 +201,10 @@ export class SmsService {
             'message': message,
             'senderId': senderId,
         }
+        this.resetLists()
         try {
-            let response = await this.repository.send(sendSmsPM, 'bulk')
-            if (response.status === 200 || response.status === 201) {
-                return response
-            } else {
+            const response = await this.repository.send(sendSmsPM, 'bulk')
+            if (response.status !== 200 || response.status !== 201) {
                 return new ErrorHandler(response.error, 'http', response.status)
             }
         } catch (e) {
@@ -218,49 +212,60 @@ export class SmsService {
         }
     }
 
-    async getGroups () {
+    async connectionGroupList() {
         try {
-            let response = await this.repository.list('groups')
-            if (response.status === 200) {
-
-                this.resultList = response.data.data
-                return this.resultList
-            } else {
-                return new ErrorHandler(response.error, 'http', response.status)
-            }
+            const {data, status} = await this.connectionGroupRepository.list()
+            return status === 200 ?
+                this.fetchGroupsSearchResult(data.data) :
+                new ErrorHandler('Get connection groups ended with ' + status, 'http', status)
         } catch (e) {
             return new ErrorHandler(e, 'http')
         }
     }
 
-    async getTypes () {
+    async connectionTypeList() {
         try {
-            let response = await this.repository.list('types')
-            if (response.status === 200) {
-
-                this.resultList = response.data.data
-                return this.resultList
-            } else {
-                return new ErrorHandler(response.error, 'http', response.status)
-            }
+            const {data, status} = await this.connectionTypeRepository.list()
+            return status === 200 ?
+                this.fetchGroupsSearchResult(data.data) :
+                new ErrorHandler('Get connection groups ended with ' + status, 'http', status)
         } catch (e) {
             return new ErrorHandler(e, 'http')
         }
     }
 
-    async searchPerson (term) {
+    async searchPerson(term) {
         try {
-            let response = await this.repository.search(term)
-            if (response.status === 200) {
-
-                this.resultList = response.data.data
-                return this.resultList
-            } else {
-                return new ErrorHandler(response.error, 'http', response.status)
-            }
+            const {data, status} = await this.repository.search(term)
+            return status === 200 ?
+                this.fetchSearchResult(data.data, term) : new ErrorHandler('Sms resulted with status code ' + status, 'http', status)
         } catch (e) {
             return new ErrorHandler(e, 'http')
         }
     }
 
+    fetchSearchResult(searchedList, term) {
+        this.resultList = searchedList.map(function (person) {
+            return new SmsAutoComplete(person.id, true, person.phone, person.display)
+
+        })
+        // fallback for an unstored number
+        this.resultList.push(
+            new SmsAutoComplete(-1, false, term, `Use ${term}`)
+        )
+    }
+
+    fetchGroupsSearchResult(searchedList) {
+        this.resultList = searchedList.map(function (connectionGroups) {
+            return {
+                id: connectionGroups.id,
+                display: connectionGroups.name
+            }
+        })
+    }
+
+    resetLists() {
+        this.resultList = []
+        this.receiverList = []
+    }
 }
