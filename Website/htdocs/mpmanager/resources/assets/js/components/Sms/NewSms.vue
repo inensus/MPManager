@@ -205,7 +205,7 @@ export default {
                 this.alertNotify('success', this.$tc('phrases.bulksms', 2))
             }
             catch (exception) {
-                this.alertNotify('error', 'SMS service failed with following error' +e.message)
+                this.alertNotify('error', 'SMS service failed with following error' +exception.message)
             }
         },
         alertNotify(type, message) {
