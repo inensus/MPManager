@@ -80,7 +80,7 @@ class AirtelTransaction implements ITransactionProvider
             $this->airtelTransaction->save();
             SmsProcessor::dispatch(
                 $transaction,
-                SmsTypes::ENERGY_CONFIRMATION
+                SmsTypes::TRANSACTION_CONFIRMATION
             )->allOnConnection('redis')->onQueue('sms');
         } else { //send cancellation to airtel gateway server and this will send the final request to airtel
             $requestContent = $this->prepareRequest($this->transaction, $this->airtelTransaction);

@@ -2,6 +2,7 @@
 
 namespace App\Listeners;
 
+use App\Jobs\SmsProcessor;
 use App\Misc\TransactionDataContainer;
 use App\Models\Meter\MeterToken;
 use App\Sms\SmsTypes;
@@ -68,20 +69,16 @@ class TokenListener
         }
 
         //send token via sms
-        $messageSent = event(
-            'sms.send.token',
-            [
-                'sender' => $transactionContainer->transaction->sender,
-                'data' => $transactionContainer->transaction,
-                'trigger' => $transactionContainer->transaction,
-            ]
-        );
 
-        if ($messageSent) {
-            //payment successful
-            event(
-                'payment.successful',
-                [
+        SmsProcessor::dispatch(
+            $transactionContainer->transaction,
+            SmsTypes::TRANSACTION_CONFIRMATION
+        )->allOnConnection('redis')->onQueue(\config('services.queues.sms'));
+
+        //payment successful
+        event(
+            'payment.successful',
+            [
                 'amount' => $transactionContainer->transaction->amount,
                 'paymentService' => 'vodacom', //$tokenData->transaction->owner_type,
                 'paymentType' => 'energy',
@@ -89,9 +86,9 @@ class TokenListener
                 'paidFor' => $this->token,
                 'payer' => $transactionContainer->meterParameter->owner,
                 'transaction' => $transactionContainer->transaction,
-                ]
-            );
-        }
+            ]
+        );
+
     }
 
     public function subscribe(Dispatcher $events): void

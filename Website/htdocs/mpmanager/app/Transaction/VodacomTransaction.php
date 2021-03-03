@@ -108,7 +108,7 @@ class VodacomTransaction implements ITransactionProvider
                 } else {
                     SmsProcessor::dispatch(
                         $transaction,
-                        SmsTypes::ENERGY_CONFIRMATION
+                        SmsTypes::TRANSACTION_CONFIRMATION
                     )->allOnConnection('redis')->onQueue('sms');
                 }
 
