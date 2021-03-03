@@ -8,7 +8,6 @@ use App\Listeners\LogListener;
 use App\Listeners\MeterListener;
 use App\Listeners\PaymentListener;
 use App\Listeners\PaymentPeriodListener;
-use App\Listeners\SmsListener;
 use App\Listeners\SolarDataListener;
 use App\Listeners\TokenListener;
 use App\Listeners\TransactionListener;
@@ -30,7 +29,6 @@ class EventServiceProvider extends ServiceProvider
         AccessRateListener::class,
         MeterListener::class,
         PaymentListener::class,
-        SmsListener::class,
         TokenListener::class,
         TransactionListener::class,
         HistoryListener::class,
