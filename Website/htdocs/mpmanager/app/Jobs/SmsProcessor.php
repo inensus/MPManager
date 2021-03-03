@@ -2,9 +2,13 @@
 
 namespace App\Jobs;
 
-use App\Misc\TransactionDataContainer;
+
+use App\Exceptions\SmsBodyParserNotExtendedException;
+use App\Exceptions\SmsTypeNotFoundException;
 use App\Models\Sms;
-use App\Models\Transaction\Transaction;
+use App\Sms\BodyParsers\SmsBodyParser;
+use App\Sms\Senders\ManualSms;
+use App\Sms\Senders\SmsSender;
 use App\Sms\SmsTypes;
 use Exception;
 use Illuminate\Bus\Queueable;
@@ -13,9 +17,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
-use Webpatser\Uuid\Uuid;
 
-use function config;
 
 class SmsProcessor implements ShouldQueue
 {
@@ -25,17 +27,26 @@ class SmsProcessor implements ShouldQueue
     use SerializesModels;
 
 
-    private $transactionContainer;
+    public $data;
+    public $smsType;
+    private $smsTypes = [
+        SmsTypes::TRANSACTION_CONFIRMATION => 'App\Sms\Senders\TransactionConfirmation',
+        SmsTypes::APPLIANCE_RATE => 'App\Sms\Senders\AssetRateNotification',
+        SmsTypes::OVER_DUE_APPLIANCE_RATE => 'App\Sms\Senders\OverDueAssetRateNotification',
+        SmsTypes::MANUAL_SMS => 'App\Sms\Senders\ManualSms',
+        SmsTypes::RESEND_INFORMATION => 'App\Sms\Senders\ResendInformationNotification'
+    ];
 
     /**
      * Create a new job instance.
      *
-     * @param Transaction $transaction
-     * @param int         $smsType
+     * @param            $data
+     * @param SmsTypes $smsType
      */
-    public function __construct(Transaction $transaction)
+    public function __construct($data, int $smsType)
     {
-        $this->transactionContainer = TransactionDataContainer::initialize($transaction);
+        $this->data = $data;
+        $this->smsType = $smsType;
     }
 
     /**
@@ -45,41 +56,61 @@ class SmsProcessor implements ShouldQueue
      */
     public function handle()
     {
-        $sms = new Sms();
+        $smsType = $this->resolveSmsType();
+        $receiver = $smsType->getReceiver();
         //dont send sms if debug
         if (config('app.debug')) {
-            //store sent sms
-
-            $sms->body = SmsTypes::generateSmsBody($this->transactionContainer->transaction);
-            $sms->receiver = $this->transactionContainer->transaction->sender;
-            $sms->trigger()->associate($this->transactionContainer->transaction);
-            $sms->save();
-            return;
+            if (!($smsType instanceof ManualSms)) {
+                $sms = Sms::query()->make([
+                    'body' => $smsType->body,
+                    'receiver' => $receiver,
+                    'uuid' => "debug"
+                ]);
+                $sms->trigger()->associate($this->data);
+                $sms->save();
+                return;
+            }
         }
-
-
         try {
             //set the uuid for the callback
-            $sms->uuid = (string)Uuid::generate(4);
+            $uuid = $smsType->generateCallback();
             //sends sms or throws exception
-            resolve('SmsProvider')
-                ->sendSms(
-                    $this->transactionContainer->transaction->sender,
-                    SmsTypes::generateSmsBody($this->transactionContainer->transaction),
-                    sprintf(config()->get('services.sms.callback'), $sms->uuid)
-                );
+            $smsType->sendSms();
         } catch (Exception $e) {
             //slack failure
-            Log::critical(
-                'Sms Service failed ' . $this->transactionContainer->transaction->sender,
+            Log::debug(
+                'Sms Service failed ' . $receiver,
                 ['id' => '58365682988725', 'reason' => $e->getMessage()]
             );
             return;
         }
-        $phone = $this->transactionContainer->transaction->sender;
-        $sms->body = SmsTypes::generateSmsBody($this->transactionContainer->transaction);
-        $sms->receiver = strpos($phone, '+') === 0 ? $phone : '+' . $phone;
-        $sms->trigger()->associate($this->transactionContainer->transaction);
-        $sms->save();
+        if (!($smsType instanceof ManualSms)) {
+            $sms = Sms::query()->make([
+                'uuid' => $uuid,
+                'body' => $smsType->body,
+                'receiver' => $receiver
+            ]);
+            $sms->trigger()->associate($this->data);
+            $sms->save();
+        }
     }
+
+    private function resolveSmsType()
+    {
+        if (!array_key_exists($this->smsType, $this->smsTypes)) {
+            throw new  SmsTypeNotFoundException('SmsType could not resolve.');
+        }
+
+        $smsBodyService = resolve('App\Services\SmsBodyService');
+        $reflection = new \ReflectionClass($this->smsTypes[$this->smsType]);
+
+        if (!$reflection->isSubclassOf( SmsSender::class)) {
+
+            throw new  SmsBodyParserNotExtendedException('SmsBodyParser has not extended 5.');
+
+        }
+        return $reflection->newInstanceArgs([$this->data, $smsBodyService]);
+    }
+
+
 }
