@@ -69,13 +69,13 @@ class SubMenuItemsSeeder extends Seeder
                 [
                     'name' => 'Sms List',
                     'url_slug' => '/sms/list',
-                    'parent_id' => '11',
+                    'parent_id' => '10',
 
                 ],
                 [
                     'name' => 'New Sms',
                     'url_slug' => '/sms/newsms',
-                    'parent_id' => '11',
+                    'parent_id' => '10',
 
                 ],
 
