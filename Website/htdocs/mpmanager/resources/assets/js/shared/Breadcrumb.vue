@@ -6,12 +6,12 @@
                 v-for="(breadcrumb, index) in breadcrumbList"
                 :key="index"
                 @click="routeTo(index)"
-                :class="{'linked': !!breadcrumb.link}">
-                <div v-if="breadcrumb.name === ''">
-                   {{ $route.params.id }}
+                :class="{'linked': breadcrumb.type === 'base'}">
+                <div v-if="breadcrumb.type === 'final_target'">
+                    {{ $route.params[breadcrumb.target]}}
                 </div>
                 <div v-else>
-                    <u> {{ translateItem(breadcrumb.name) }}</u>
+                    <u>{{ translateItem(breadcrumb.name) }}</u>
                 </div>
 
             </li>
