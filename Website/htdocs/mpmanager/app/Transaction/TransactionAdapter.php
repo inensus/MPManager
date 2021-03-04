@@ -21,7 +21,7 @@ class TransactionAdapter
      *
      * @return ITransactionProvider
      */
-    public static function getTransaction(ITransactionProvider $transactionProvider): ?ITransactionProvider
+    public static function getTransaction($transactionProvider): ?ITransactionProvider
     {
         if ($transactionProvider instanceof VodacomTransaction) {
             $baseTransaction = resolve('VodacomPaymentProvider');
