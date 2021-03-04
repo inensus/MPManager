@@ -63,41 +63,6 @@ export default {
             EventBus.$emit('widgetContentLoaded',this.subscriber,this.agentTicketService.list.length)
 
         },
-        formatDate(date){
-            let d = new Date(date)
-            return d.toLocaleDateString()
-        },
-        getTimeAgo(date){
-            return moment(date).fromNow()
-
-        },
-        closeTicket(ticket) {
-            ticket.close()
-        },
-        saveComment(ticket) {
-            let comment = {
-                comment: ticket.commentMessage,
-                date: new Date(),
-                fullName: this.$store.getters.admin.name,
-                username: this.$store.getters.admin.email,
-                cardId: ticket.id
-            }
-            ticket.newComment = false
-            ticket.comments.push(comment)
-
-            this.tickets.newComment(comment)
-        },
-        openTicket(index){
-            if(this.showTicket === index){
-                this.showTicket = null
-            }else{
-                this.showTicket = index
-            }
-
-        },
-        showComment (ticket) {
-            Vue.set(ticket, 'newComment', !ticket.newComment)
-        },
     }
 }
 
