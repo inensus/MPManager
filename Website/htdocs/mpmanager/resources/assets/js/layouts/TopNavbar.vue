@@ -3,7 +3,7 @@
     <md-toolbar md-elevation="0" style="background:#424040">
         <div class="md-toolbar-row">
             <div class="md-toolbar-section-start">
-                <bread-crumb></bread-crumb>
+                <breadcrumb/>
             </div>
 
             <div class="md-toolbar-section-end">
