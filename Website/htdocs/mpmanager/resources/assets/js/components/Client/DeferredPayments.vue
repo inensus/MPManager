@@ -7,6 +7,7 @@
             :button="true"
             :title="$tc('phrases.soldAppliances')"
             :button-color="'red'"
+            color="green"
             :subscriber="subscriber"
             @widgetAction="soldNewAsset"
         >

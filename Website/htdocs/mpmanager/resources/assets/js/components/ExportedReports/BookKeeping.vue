@@ -6,7 +6,6 @@
             :paginator="bookKeepingService.paginator"
             :search="false"
             :subscriber="subscriber"
-            color="orange"
         >
           <md-table v-model="list" md-sort="id" md-sort-order="desc">
               <md-table-row>

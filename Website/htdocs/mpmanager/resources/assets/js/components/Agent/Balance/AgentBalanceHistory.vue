@@ -12,6 +12,7 @@
         :subscriber="subscriber"
         :resetKey="resetKey"
         :show_per_page="true"
+        color="green"
     >
 
         <div>
