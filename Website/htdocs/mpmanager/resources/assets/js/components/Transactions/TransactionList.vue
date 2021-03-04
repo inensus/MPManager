@@ -365,11 +365,9 @@ export default {
         },
         async loadAnalytics () {
             this.loading = true
-            this.analyticsPeriod =
-                this.analyticsPeriod === null ? 0 : this.analyticsPeriod
+            this.analyticsPeriod = this.analyticsPeriod === null ? 0 : this.analyticsPeriod
             try {
                 this.analyticsData = await this.transactionService.getAnalytics(this.analyticsPeriod)
-
             } catch (e) {
                 this.alertNotify('error', e.message)
             }
