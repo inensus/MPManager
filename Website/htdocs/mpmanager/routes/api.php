@@ -178,29 +178,51 @@ Route::group(['prefix' => 'pv'], static function () {
 
 // Map Settings
 
-Route::group(['prefix' => 'map-settings'], static function(){
-   Route::get('/','MapSettingsController@index');
-   Route::put('/{mapSettings}', ['uses' => 'MapSettingsController@update', 'middleware' => 'jwt.verify']);
+Route::group(['prefix' => 'map-settings'], static function () {
+    Route::get('/', 'MapSettingsController@index');
+    Route::put('/{mapSettings}', ['uses' => 'MapSettingsController@update', 'middleware' => 'jwt.verify']);
 });
 
 // Ticket Settings
-Route::group(['prefix' => 'ticket-settings'], static function(){
-    Route::get('/','TicketSettingsController@index');
-    Route::put('/{ticketSettings}',['uses' => 'TicketSettingsController@update', 'middleware' => 'jwt.verify']);
+Route::group(['prefix' => 'ticket-settings'], static function () {
+    Route::get('/', 'TicketSettingsController@index');
+    Route::put('/{ticketSettings}', ['uses' => 'TicketSettingsController@update', 'middleware' => 'jwt.verify']);
 });
 
 //Settings
-Route::group(['prefix' => 'settings'], static function(){
-   Route::get('/main','MainSettingsController@index');
-   Route::put('/main/{mainSettings}',['uses' => 'MainSettingsController@update', 'middleware' => 'jwt.verify']);
-   Route::get('/currencyList','CurrencyController@index');
-   Route::get('/countryList','CountryListController@index');
-   Route::get('/languagesList','LanguageController@index');
+Route::group(['prefix' => 'settings'], static function () {
+    Route::get('/main', 'MainSettingsController@index');
+    Route::put('/main/{mainSettings}', ['uses' => 'MainSettingsController@update', 'middleware' => 'jwt.verify']);
+    Route::get('/currencyList', 'CurrencyController@index');
+    Route::get('/countryList', 'CountryListController@index');
+    Route::get('/languagesList', 'LanguageController@index');
 });
-
+//Sms
+Route::group(['prefix' => 'sms-body'], static function () {
+    Route::get('/', 'SmsBodyController@index');
+    Route::put('/', 'SmsBodyController@update');
+});
+Route::group(['prefix' => 'sms-resend-information-key'], static function () {
+    Route::get('/', 'SmsResendInformationKeyController@index');
+    Route::put('/{smsResendInformationKey}', 'SmsResendInformationKeyController@update');
+});
+Route::group(['prefix' => 'sms-appliance-remind-rate'], static function () {
+    Route::get('/', 'SmsApplianceRemindRateController@index');
+    Route::put('/{smsApplianceRemindRate}', 'SmsApplianceRemindRateController@update');
+    Route::post('/', 'SmsApplianceRemindRateController@store');
+});
+Route::group(['prefix' => 'sms-android-setting'], static function () {
+    Route::get('/', 'SmsAndroidSettingController@index');
+    Route::put('/{smsAndroidSetting}', 'SmsAndroidSettingController@update');
+    Route::post('/', 'SmsAndroidSettingController@store');
+    Route::delete('/{smsAndroidSetting}', 'SmsAndroidSettingController@destroy');
+});
+Route::group(['prefix' => 'sms-variable-default-value'], static function () {
+    Route::get('/', 'SmsVariableDefaultValueController@index');
+});
 // Reports
 Route::group(['prefix' => 'reports'], function () {
-    Route::get('/', [ 'uses' => 'ReportController@index', 'middleware' => 'jwt.verify']);
+    Route::get('/', ['uses' => 'ReportController@index', 'middleware' => 'jwt.verify']);
     Route::get('/{id}/download', 'ReportController@download');
 });
 // Revenue
