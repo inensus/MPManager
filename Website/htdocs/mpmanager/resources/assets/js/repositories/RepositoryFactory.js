@@ -1,7 +1,6 @@
 import AgentRepository from './AgentRepository'
 import AgentCommissionRepository from './AgentCommissionRepository'
-import AgentAssignedApplianceRepository
-    from './AgentAssignedApplianceRepository'
+import AgentAssignedApplianceRepository from './AgentAssignedApplianceRepository'
 import AgentBalanceHistoryRepository from './AgentBalanceHistoryRepository'
 import AgentChargeRepository from './AgentChargeRepository'
 import AgentSoldApplianceRepository from './AgentSoldApplianceRepository'
@@ -48,6 +47,11 @@ import CurrencyRepository from './CurrencyRepository'
 import LanguagesRepository from './LanguagesRepository'
 import TicketSettingsRepository from './TicketSettingsRepository'
 import CountriesRepository from './CountriesRepository'
+import SmsBodiesRepository from './SmsBodiesRepository'
+import SmsResendInformationKeyRepository from './SmsResendInformationKeyRepository'
+import SmsApplianceRemindRateRepository from './SmsApplianceRemindRateRepository'
+import SmsAndroidSettingRepository from './SmsAndroidSettingRepository'
+import SmsVariableDefaultValueRepository from './SmsVariableDefaultValueRepository'
 
 const repositories = {
     'address': AddressRepository,
@@ -99,6 +103,11 @@ const repositories = {
     'countryList': CountriesRepository,
     'languagesList': LanguagesRepository,
     'ticketSettings': TicketSettingsRepository,
+    'smsBodies':SmsBodiesRepository,
+    'smsResendInformationKeys':SmsResendInformationKeyRepository,
+    'smsApplianceRemindRates':SmsApplianceRemindRateRepository,
+    'smsAndroidSetting':SmsAndroidSettingRepository,
+    'smsVariableDefaultValue':SmsVariableDefaultValueRepository
 }
 
 export default {
