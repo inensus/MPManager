@@ -7,7 +7,7 @@
 require('./bootstrap')
 import router from './routes'
 import Appp from '../js/Appp'
-import BreadCrumb from './shared/BreadCrumb'
+import Breadcrumb from './shared/Breadcrumb'
 import 'leaflet/dist/leaflet.css'
 import store from './store/store'
 import UserData from './shared/UserData'
