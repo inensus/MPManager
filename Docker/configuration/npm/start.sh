@@ -8,8 +8,7 @@ read_var() {
      echo ${VAR[1]}
 }
 
-NPM_MODE=$(read_var NPM_MODE .env)
-echo "$NPM_MODE"
+NPM_MODE=$(read_var APP_ENV .env)
 
 if [ "$NPM_MODE" == "development" ]; then
   echo "Building  project in development mode"
