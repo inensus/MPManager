@@ -108,10 +108,10 @@
 </template>
 
 <script>
-import BreadCrumb from '../shared/BreadCrumb'
+import Breadcrumb from '../shared/Breadcrumb'
 export default {
     components: {
-        BreadCrumb
+        Breadcrumb
     },
     data () {
         return {
