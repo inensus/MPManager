@@ -673,7 +673,7 @@ export default {
                 this.enableDataStream = this.miniGridData.data_stream === 1 ? true : false
                 this.isLoggerActive = this.enableDataStream
             } catch (e) {
-                this.alertNotify('error', e.message)
+                this.alertNotify('error', 'Error: failed to get MiniGrid list')
             }
         },
         async getTransactionsOverview () {
