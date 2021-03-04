@@ -1,13 +1,13 @@
 <template>
     <div>
-        <md-toolbar :data-color="color" class="md-dense chic" md-elevation="3">
+        <md-toolbar v-if="title !== null" :data-color="color" class="md-dense chic" md-elevation="3">
             <div class="tabs">
                 <slot name="tabbar"></slot>
             </div>
             <md-icon style="color: white;">list</md-icon>
             <div class="md-toolbar-section-start">
 
-                <h4 class="chic-title" v-text="title"></h4>
+                <div class="md-subheading">{{title}}</div>
 
             </div>
             <div class="md-toolbar-section-end">
@@ -33,7 +33,7 @@
                     :class="setButtonColor()"
                     @click="widgetAction"
                     class="md-icon-button md-dense md-raised"
-                    v-if="button"
+                    v-if="buttonText !== null "
                 >
                     <md-tooltip md-direction="top">{{ buttonText }}</md-tooltip>
                     <md-icon>{{ buttonIcon }}</md-icon>
@@ -50,7 +50,7 @@
         </md-toolbar>
 
         <md-card>
-            <md-card-content class="nopadding">
+            <md-card-content :class="{nopadding : title !== null}">
                 <div v-if="showData">
                     <slot></slot>
                 </div>
@@ -60,7 +60,7 @@
                             :md-icon="icon"
                             :md-description="emptyStateDescription"
                             :md-label="getEmptyStateLabel">
-                            <md-button v-if="button" @click="widgetAction" class="md-primary md-raised">
+                            <md-button v-if="button && emptyStateCreateButton" @click="widgetAction" class="md-primary md-raised">
                                 {{getEmptyStateButtonText}}
                             </md-button>
                         </md-empty-state>
@@ -98,6 +98,11 @@ export default {
     components: { Paginate },
 
     props: {
+        emptyStateCreateButton:{
+            type:Boolean,
+            default: true,
+            required: false
+        },
         emptyStateDescription: {
             type: String,
             default: null,
@@ -115,10 +120,17 @@ export default {
             type: Boolean,
             default: false,
         },
-        title: String,
+        title:{
+            type: String,
+            default: null,
+            required: false
+        },
         id: String,
         button: Boolean,
-        buttonText: String,
+        buttonText: {
+            type: String,
+            default:null
+        },
         buttonColor: String,
         paginator: Paginator,
         search: {},
@@ -142,13 +154,12 @@ export default {
     mounted () {
         //listen for a remote trigger for ending the search
         EventBus.$on('search.end', this.cancelSearching)
+        EventBus.$on('hideEmptyStateArea',this.hideEmptyStateArea)
         if (this.subscriber === null || this.subscriber === undefined) {
             return this.showData = true
         } else {
             EventBus.$on('widgetContentLoaded', this.checkDataLength)
         }
-
-
     },
     beforeDestroy () {
         EventBus.$off('search.end', this.cancelSearching)
@@ -160,14 +171,20 @@ export default {
             icon: 'post_add',
             showEmptyState: false,
             showData: false,
-            isActive: false
+            isActive: false,
         }
     },
     methods: {
+        hideEmptyStateArea (subscriber) {
+            if (!this.validateSubscriber(subscriber)) {
+                return
+            }
+            this.showData = true
+            this.showEmptyState = false
+        },
         refreshButtonClicked () {
             this.isActive = true
             this.$emit('refreshButtonClicked')
-
         },
         widgetAction () {
             this.$emit('widgetAction', this.subscriber)
@@ -176,7 +193,6 @@ export default {
             return this.subscriber === subscriber
         },
         checkDataLength (subscriber, dataLength) {
-            console.log(subscriber, dataLength)
             if (!this.validateSubscriber(subscriber)) {
                 return
             }
