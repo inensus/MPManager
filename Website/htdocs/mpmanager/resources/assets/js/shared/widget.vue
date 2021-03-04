@@ -101,12 +101,10 @@ export default {
         emptyStateCreateButton:{
             type:Boolean,
             default: true,
-            required: false
         },
         emptyStateDescription: {
             type: String,
             default: null,
-            required: false
         },
         color: {
             type: String,
@@ -123,7 +121,6 @@ export default {
         title:{
             type: String,
             default: null,
-            required: false
         },
         id: String,
         button: Boolean,
