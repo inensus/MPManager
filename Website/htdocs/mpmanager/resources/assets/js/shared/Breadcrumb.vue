@@ -1,40 +1,93 @@
 <template>
+    <div class="breadcrumb">
 
+        <ul>
+            <li
+                v-for="(breadcrumb, index) in breadcrumbList"
+                :key="index"
+                @click="routeTo(index)"
+                :class="{'linked': !!breadcrumb.link}">
+                <div v-if="breadcrumb.name === ''">
+                   {{ $route.params.id }}
+                </div>
+                <div v-else>
+                    <u> {{ translateItem(breadcrumb.name) }}</u>
+                </div>
 
-    <ol class="breadcrumb">
-        <li style="cursor:pointer;" v-for="(item,index) in items" :key="index" @click="navigateToUrl(item.href)">
-            {{ index }} {{ item.append !== undefined ? item.append : ''}}
-        </li>
-    </ol>
-
-
+            </li>
+        </ul>
+    </div>
 </template>
 
 <script>
-import {EventBus} from './eventbus'
+import { translateItem } from '../Helpers/TranslateItem'
 
 export default {
     name: 'Breadcrumb',
-    data() {
+    data () {
         return {
-            items: {}
+            breadcrumbList: [],
+            prevRoute:null,
+            translateItem: translateItem
         }
     },
-    created() {
-        EventBus.$on('bread', data => {
-
-            this.items = data
-        })
+    mounted () {
+        this.updateList()
+    },
+    watch: {
+        '$route' () {
+            this.updateList()
+        }
     },
     methods: {
-        navigateToUrl(url) {
-            this.$router.push({path: url})
+        routeTo (index) {
+            if (this.breadcrumbList[index].link) {
+                if(window.history.state !== null){
+                    this.$router.back()
+                }else {
+                    this.$router.push(this.breadcrumbList[index].link)
+                }
+            }
+        },
+        updateList () {
+            this.breadcrumbList = this.$route.meta.breadcrumb
         }
     }
-
 }
 </script>
 
 <style scoped>
-
+.breadcrumb {}
+ul {
+    display: flex;
+    justify-content: center;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+ul > li {
+    display: flex;
+    float: left;
+    height: 10px;
+    width: auto;
+    color: white;
+    font-style: italic;
+    font-weight: bold;
+    font-size: 1em;
+    cursor: default;
+    align-items: center;
+}
+ul > li:not(:last-child)::after {
+    content: '/';
+    float: right;
+    font-size: .8em;
+    margin: 0 .5em;
+    color: whitesmoke;
+    cursor: default;
+}
+.linked {
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: bold;
+}
 </style>

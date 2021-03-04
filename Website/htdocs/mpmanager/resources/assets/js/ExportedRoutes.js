@@ -52,7 +52,10 @@ export const exportedRoutes = [
   {
     path: '/people/:id',
     component: require('./components/Client/ClientDetail').default,
-    meta: { layout: 'default' },
+    meta: { layout: 'default' , breadcrumb: [
+            { name: 'Customers', link: '/people' },
+            { name: ''}
+        ] },
   },
   {
     //transaction list
@@ -70,7 +73,10 @@ export const exportedRoutes = [
     //transaction details
     path: '/transactions/:id',
     component: require('./components/Transactions/TransactionDetail').default,
-    meta: { layout: 'default' },
+    meta: { layout: 'default', breadcrumb: [
+            {name: 'Transactions', link: '/transactions' },
+            {name: ''}
+        ]},
   },
   {
     path: '/tickets',
@@ -95,7 +101,9 @@ export const exportedRoutes = [
   {
     path: '/tariffs/:id',
     component: require('./components/Tariff/TariffDetail').default,
-    meta: { layout: 'default' },
+    meta: { layout: 'default' , breadcrumb: [
+            { name: 'Tariffs', link:'/tariffs' },
+            { name: '' }]},
   },
   {
     path: '/meters',
@@ -113,7 +121,10 @@ export const exportedRoutes = [
   {
     path: '/meters/:id',
     component: require('./components/Meter/MeterDetail').default,
-    meta: { layout: 'default' },
+    meta: { layout: 'default', breadcrumb: [
+            { name: 'Meters', link: '/meters' },
+            { name: '' }
+        ] },
 
   },
   {
@@ -140,7 +151,10 @@ export const exportedRoutes = [
     path: '/clusters/:id',
     component: require('./components/ClusterDashboard/ClusterDashboard').default,
     name: 'cluster-detail',
-    meta: { layout: 'default' },
+    meta: { layout: 'default', breadcrumb: [
+            { name: 'Clusters ', link: '/clusters'},
+            { name: ''}
+        ]},
   },
   //targets
   {
@@ -168,7 +182,10 @@ export const exportedRoutes = [
     path: '/connection-types/:id',
     component: require('./components/ConnectionTypes/ConnectionTypeDetail').default,
     name: 'connection-type-detail',
-    meta: { layout: 'default' }
+    meta: { layout: 'default' , breadcrumb: [
+            {name: 'Connection Types', link: '/connection-types'},
+            {name: ''}
+        ]}
   },
   {
     path: '/connection-types/new',
@@ -255,7 +272,10 @@ export const exportedRoutes = [
   {
     path: '/agents/:id',
     component: require('./components/Agent/Agent').default,
-    meta: { layout: 'default' },
+    meta: { layout: 'default', breadcrumb: [
+            {name: 'Agents', link:'/agents'},
+            {name: ''}
+        ] },
   },
   {
     path: '/commissions',
