@@ -38,7 +38,7 @@ router.beforeEach((to, from, next) => {
 const app = new Vue({
     el: '#app',
     components: {
-        BreadCrumb,
+        Breadcrumb,
         UserData,
     },
     data () {
