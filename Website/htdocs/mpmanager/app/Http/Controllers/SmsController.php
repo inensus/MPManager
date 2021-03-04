@@ -12,12 +12,15 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SmsRequest;
 use App\Http\Requests\StoreSmsRequest;
 use App\Http\Resources\ApiResource;
+use App\Jobs\SmsProcessor;
 use App\Models\ConnectionGroup;
 use App\Models\ConnectionType;
 use App\Models\Meter\MeterParameter;
 use App\Models\Person\Person;
 use App\Models\Sms;
 use App\Models\Transaction\Transaction;
+use App\Services\SmsResendInformationKeyService;
+use App\Sms\SmsTypes;
 use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -50,6 +53,8 @@ class SmsController extends Controller
      */
     private $meterParameter;
 
+    private  $smsResendInformationKeyService;
+
     /**
      * SmsController constructor.
      *
@@ -57,19 +62,23 @@ class SmsController extends Controller
      * @param Person $person
      * @param ConnectionGroup $connectionGroup
      * @param ConnectionType $connectionType
+     * @param MeterParameter $meterParameter
+     * @param SmsResendInformationKeyService $smsResendInformationKeyService
      */
     public function __construct(
         Sms $sms,
         Person $person,
         ConnectionGroup $connectionGroup,
         ConnectionType $connectionType,
-        MeterParameter $meterParameter
+        MeterParameter $meterParameter,
+        SmsResendInformationKeyService $smsResendInformationKeyService
     ) {
         $this->sms = $sms;
         $this->person = $person;
         $this->connectionGroup = $connectionGroup;
         $this->connectionType = $connectionType;
         $this->meterParameter = $meterParameter;
+        $this->smsResendInformationKeyService=$smsResendInformationKeyService;
     }
 
     public function index(): ApiResource
@@ -110,13 +119,15 @@ class SmsController extends Controller
                         'sender_id' => $senderId,
                     ]
                 );
+                $data = [
+                    'message' => $message,
+                     'phone'=>$phone
+                ];
 
-                resolve('SmsProvider')
-                    ->sendSms(
-                        $phone,
-                        $message,
-                        'manual'
-                    );
+                SmsProcessor::dispatch(
+                    $data,
+                    SmsTypes::MANUAL_SMS
+                )->allOnConnection('redis')->onQueue(\config('services.queues.sms'));
             }
         } elseif ($type === 'group' || $type === 'type' || $type === 'all') {
             //get connection group meters and owners
@@ -203,13 +214,14 @@ class SmsController extends Controller
                         'sender_id' => $senderId,
                     ]
                 );
-
-                resolve('SmsProvider')
-                    ->sendSms(
-                        $address[0]->phone,
-                        $message,
-                        'manual'
-                    );
+                $data = [
+                    'message' => $message,
+                    'phone'=>$address[0]->phone
+                ];
+                SmsProcessor::dispatch(
+                    $data,
+                    SmsTypes::MANUAL_SMS
+                )->allOnConnection('redis')->onQueue(\config('services.queues.sms'));
             }
         }
     }
@@ -228,22 +240,23 @@ class SmsController extends Controller
             ]
         );
 
-        if (stripos($message, 'luku') === 0) {
+        $resendInformationKey = $this->smsResendInformationKeyService->getResendInformationKeys()->first();
+        if (stripos($message, $resendInformationKey) === 0) {
             //get last generated token
             preg_match('!\d+!', $message, $match);
-
             if (count($match) === 1) {
                 $meterSerial = $match[0];
-                $smsBody = 'Malipo yako ya Mwisho ni ';
                 try {
-                    $t = Transaction::with('paymentHistories')->where('message', $meterSerial)->latest()->firstOrFail();
+                    $transaction = Transaction::with('paymentHistories')->where('message', $meterSerial)->latest()->firstOrFail();
                 } catch (ModelNotFoundException $ex) {
-                    resolve('SmsProvider')
-                        ->sendSms(
-                            $sender,
-                            "Namba ya mita uliyoandika siyo sahihi. Tafadhali hakikisha namba yako ya mita.",
-                            'demand'
-                        );
+                    $data = [
+                        'phone'=>$sender,
+                        'meter'=>$meterSerial
+                    ];
+                    SmsProcessor::dispatch(
+                        $data,
+                        SmsTypes::RESEND_INFORMATION
+                    )->allOnConnection('redis')->onQueue(\config('services.queues.sms'));
                     return new ApiResource(
                         [
                             'success' => 'false',
@@ -251,23 +264,11 @@ class SmsController extends Controller
                         ]
                     );
                 }
-                $smsBody .= ' ' . $t->amount . ' at ' . $t->created_at . ' ';
-
-                foreach ($t->paymentHistories as $paymentHistory) {
-                    $smsBody .= '* ' . $paymentHistory->amount . 'TZS for ' . $paymentHistory->payment_type . ' ';
-                    if (get_class($paymentHistory->paidFor) === 'App\\Models\\Meter\\MeterToken') {
-                        $smsBody .= 'LUKU ya Umeme(' . $paymentHistory->paidFor->token . ') ya ' .
-                            $paymentHistory->paidFor->energy . 'kWH.';
-                    }
-                }
+                SmsProcessor::dispatch(
+                    $transaction,
+                    SmsTypes::RESEND_INFORMATION
+                )->allOnConnection('redis')->onQueue(\config('services.queues.sms'));
             }
-            resolve('SmsProvider')
-                ->sendSms(
-                    $sender,
-                    $smsBody,
-                    'demand'
-                );
-
             return new ApiResource($sms);
         }
 
@@ -331,12 +332,14 @@ class SmsController extends Controller
                 'sender_id' => $senderId,
             ]
         );
-        resolve('SmsProvider')
-            ->sendSms(
-                $phone,
-                $message,
-                'manual'
-            );
+        $data = [
+            'message' => $message,
+            'phone'=>$phone
+        ];
+        SmsProcessor::dispatch(
+            $data,
+            SmsTypes::MANUAL_SMS
+        )->allOnConnection('redis')->onQueue(\config('services.queues.sms'));
         return new ApiResource($sms);
     }
 
@@ -349,13 +352,6 @@ class SmsController extends Controller
      */
     public function update($uuid): void
     {
-        Log::critical(
-            'Sms confirmation failed ',
-            [
-                'uuid' => $uuid,
-                'content' => request()->getContent(),
-            ]
-        );
         try {
             $sms = $this->sms->where('uuid', $uuid)->firstOrFail();
             $sms->status = 1;
