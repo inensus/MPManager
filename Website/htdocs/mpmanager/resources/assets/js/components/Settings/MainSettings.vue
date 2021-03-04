@@ -93,7 +93,9 @@
                 </md-field>
                 <span class="md-error">{{ errors.first('vat_appliance') }}</span>
             </div>
-
+            <div class="md-layout md-alignment-bottom-right">
+                <md-button class="md-primary md-dense md-raised" @click="updateMainSettings">Save</md-button>
+            </div>
 
         </div>
         <md-progress-bar v-if="progress" md-mode="indeterminate"></md-progress-bar>
@@ -174,7 +176,7 @@ export default {
                 }).catch((err) => {
                     console.log(err)
                 })
-
+                this.alertNotify('success', 'Updated Successfully')
             } catch (e) {
                 this.alertNotify('error', e.message)
             }
