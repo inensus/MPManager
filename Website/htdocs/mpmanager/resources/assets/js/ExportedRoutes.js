@@ -53,8 +53,8 @@ export const exportedRoutes = [
     path: '/people/:id',
     component: require('./components/Client/ClientDetail').default,
     meta: { layout: 'default' , breadcrumb: [
-            { name: 'Customers', link: '/people' },
-            { name: ''}
+            { type: 'base', name: 'Customers', link: '/people' },
+            { type: 'final_target', name: 'Customer Details',  target: 'id' }
         ] },
   },
   {
@@ -74,8 +74,8 @@ export const exportedRoutes = [
     path: '/transactions/:id',
     component: require('./components/Transactions/TransactionDetail').default,
     meta: { layout: 'default', breadcrumb: [
-            {name: 'Transactions', link: '/transactions' },
-            {name: ''}
+            { type: 'base', name: 'Transactions', link: '/transactions' },
+            { type: 'final_target', name: 'Transaction Details',  target: 'id' }
         ]},
   },
   {
@@ -102,8 +102,9 @@ export const exportedRoutes = [
     path: '/tariffs/:id',
     component: require('./components/Tariff/TariffDetail').default,
     meta: { layout: 'default' , breadcrumb: [
-            { name: 'Tariffs', link:'/tariffs' },
-            { name: '' }]},
+            { type: 'base', name: 'Tariffs', link: '/tariffs' },
+            { type: 'final_target', name: 'Tariff Details',  target: 'id' }
+        ]},
   },
   {
     path: '/meters',
@@ -122,8 +123,8 @@ export const exportedRoutes = [
     path: '/meters/:id',
     component: require('./components/Meter/MeterDetail').default,
     meta: { layout: 'default', breadcrumb: [
-            { name: 'Meters', link: '/meters' },
-            { name: '' }
+            { type: 'base', name: 'Meters', link: '/meters' },
+            { type: 'final_target', name: 'Meter Details',  target: 'id' }
         ] },
 
   },
@@ -152,8 +153,8 @@ export const exportedRoutes = [
     component: require('./components/ClusterDashboard/ClusterDashboard').default,
     name: 'cluster-detail',
     meta: { layout: 'default', breadcrumb: [
-            { name: 'Clusters ', link: '/clusters'},
-            { name: ''}
+            { type: 'base', name: 'Clusters', link: '/clusters' },
+            { type: 'final_target', name: 'Cluster Details',  target: 'id' }
         ]},
   },
   //targets
@@ -183,8 +184,8 @@ export const exportedRoutes = [
     component: require('./components/ConnectionTypes/ConnectionTypeDetail').default,
     name: 'connection-type-detail',
     meta: { layout: 'default' , breadcrumb: [
-            {name: 'Connection Types', link: '/connection-types'},
-            {name: ''}
+            { type: 'base', name: 'Connection Types', link: '/connection-types' },
+            { type: 'final_target', name: 'Connection Type Details',  target: 'id' }
         ]}
   },
   {
@@ -273,8 +274,8 @@ export const exportedRoutes = [
     path: '/agents/:id',
     component: require('./components/Agent/Agent').default,
     meta: { layout: 'default', breadcrumb: [
-            {name: 'Agents', link:'/agents'},
-            {name: ''}
+            { type: 'base', name: 'Agents', link: '/agents' },
+            { type: 'final_target', name: 'Agent Details',  target: 'id' }
         ] },
   },
   {
