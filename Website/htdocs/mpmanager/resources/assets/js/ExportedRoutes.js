@@ -54,7 +54,7 @@ export const exportedRoutes = [
     component: require('./components/Client/ClientDetail').default,
     meta: { layout: 'default' , breadcrumb: [
             { type: 'base', name: 'Customers', link: '/people' },
-            { type: 'final_target', name: 'Customer Details',  target: 'id' }
+            { type: 'final_target', target: 'id' }
         ] },
   },
   {
@@ -75,7 +75,7 @@ export const exportedRoutes = [
     component: require('./components/Transactions/TransactionDetail').default,
     meta: { layout: 'default', breadcrumb: [
             { type: 'base', name: 'Transactions', link: '/transactions' },
-            { type: 'final_target', name: 'Transaction Details',  target: 'id' }
+            { type: 'final_target', target: 'id' }
         ]},
   },
   {
@@ -103,7 +103,7 @@ export const exportedRoutes = [
     component: require('./components/Tariff/TariffDetail').default,
     meta: { layout: 'default' , breadcrumb: [
             { type: 'base', name: 'Tariffs', link: '/tariffs' },
-            { type: 'final_target', name: 'Tariff Details',  target: 'id' }
+            { type: 'final_target', target: 'id' }
         ]},
   },
   {
@@ -124,7 +124,7 @@ export const exportedRoutes = [
     component: require('./components/Meter/MeterDetail').default,
     meta: { layout: 'default', breadcrumb: [
             { type: 'base', name: 'Meters', link: '/meters' },
-            { type: 'final_target', name: 'Meter Details',  target: 'id' }
+            { type: 'final_target', target: 'id' }
         ] },
 
   },
@@ -154,7 +154,7 @@ export const exportedRoutes = [
     name: 'cluster-detail',
     meta: { layout: 'default', breadcrumb: [
             { type: 'base', name: 'Clusters', link: '/clusters' },
-            { type: 'final_target', name: 'Cluster Details',  target: 'id' }
+            { type: 'final_target', target: 'id' }
         ]},
   },
   //targets
@@ -185,7 +185,7 @@ export const exportedRoutes = [
     name: 'connection-type-detail',
     meta: { layout: 'default' , breadcrumb: [
             { type: 'base', name: 'Connection Types', link: '/connection-types' },
-            { type: 'final_target', name: 'Connection Type Details',  target: 'id' }
+            { type: 'final_target', target: 'id' }
         ]}
   },
   {
@@ -275,7 +275,7 @@ export const exportedRoutes = [
     component: require('./components/Agent/Agent').default,
     meta: { layout: 'default', breadcrumb: [
             { type: 'base', name: 'Agents', link: '/agents' },
-            { type: 'final_target', name: 'Agent Details',  target: 'id' }
+            { type: 'final_target', target: 'id' }
         ] },
   },
   {
