@@ -17,7 +17,7 @@ export class Ticket {
     fromJson (ticketData) {
         let ticket = ticketData.ticket
         let actions = ticketData.actions
-        this.created_at = ticketData.created_at
+        this.created = ticketData.created_at
         this.id = ticket.id
         this.name = ticket.name
         this.description = ticket.desc

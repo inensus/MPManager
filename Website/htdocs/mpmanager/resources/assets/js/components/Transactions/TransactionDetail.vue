@@ -34,8 +34,7 @@
                         class="md-layout-item  md-xlarge-size-50  md-large-size-50 md-medium-size-50  md-small-size-100 md-xsmall-size-100">
                     <div class="transaction-detail-card">
                         <widget
-                                color="red"
-                                title="Details"
+                                :title="$tc('words.detail',2)"
                                 :show-spinner="false">
                             <md-card>
                                 <md-card-content>
@@ -96,7 +95,6 @@
                 <div class="md-layout-item md-size-50">
                     <div class="transaction-detail-card">
                         <widget
-                                color="green"
                                 title="Transaction Processing"
                                 :show-spinner="false">
                             <md-card>
@@ -155,7 +153,6 @@
                 <div class="md-layout-item md-size-50">
                     <div class="transaction-detail-card">
                         <widget
-                                color="red"
                                 title="Outgoing sms"
                                 :show-spinner="false"
                                 v-show="(transaction.original_transaction_type !== 'agent_transaction' && transaction.original_transaction_type !== 'third_party_transaction')"

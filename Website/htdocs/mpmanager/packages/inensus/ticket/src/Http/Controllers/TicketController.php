@@ -170,7 +170,7 @@ class TicketController extends Controller
 
         ];
 
-        $assignedUser = $assignedId ? $this->userService->getByExternId($assignedId)->id : null;
+        $assignedUser = $assignedId;
         $ticket = $this->ticketService->create(
             $creatorId,
             $creatorType,

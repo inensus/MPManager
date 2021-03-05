@@ -3,7 +3,6 @@
         :title="$tc('words.detail',1)"
         :button="true"
         :button-text="$tc('words.delete')"
-        color="red"
         button-icon="delete"
         @widgetAction="confirmDelete">
 

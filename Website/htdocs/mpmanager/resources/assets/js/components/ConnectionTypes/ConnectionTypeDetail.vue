@@ -45,7 +45,7 @@
                    </div>
                     <hr class="hr-d">
                     <div class="md-layout">
-                       <div class="md-layout-item md-subheader">{{ $tc('words.createdAt') }}</div>
+                       <div class="md-layout-item md-subheader">{{ $tc('phrases.createdAt') }}</div>
                        <div class="md-layout-item md-subheader n-font">{{formatReadableDate(connectionType.created_at)}}</div>
                    </div>
                 </div>
