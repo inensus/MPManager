@@ -8,7 +8,7 @@
                 @click="routeTo(index)"
                 :class="{'linked': breadcrumb.type === 'base'}">
                 <div v-if="breadcrumb.type === 'final_target'">
-                    {{ $route.params[breadcrumb.target]}}
+                    {{$tc('words.detail',2)}}: {{ $route.params[breadcrumb.target]}}
                 </div>
                 <div v-else>
                     <u>{{ translateItem(breadcrumb.name) }}</u>
