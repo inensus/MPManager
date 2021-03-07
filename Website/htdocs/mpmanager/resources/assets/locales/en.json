@@ -294,7 +294,7 @@
     "overDueReminderRate": "Over Due Reminder Rate (Day)",
     "reminderRate": "Reminder Rate (Day)",
     "yourMessage": "Your message will seen like that",
-    "thisKeyWillUseIn": "Resend Last Transaction Information Key will use when customers want to get their last transaction information. When the customer wants to get her/his last transaction information, He/She needs to send a sms that includes this key.",
+    "thisKeyWillUseIn": "Resend Last Transaction Information Key is for the customers that want to get their last transaction information. When the customers want to get their last transaction information, they need to send an SMS that starts with this key and go on with the customer meter serial number.",
     "addAdditionalSmsAndroidSetting": "Add Additional Sms Android Setting"
   },
   "words": {
