@@ -83,7 +83,8 @@ export default {
 <style>
     .box {
         border-radius: 5px;
-        padding: 30px;
+        padding: 1.3vw;
+        margin-top: 1vh;
         box-shadow: 0 12px 20px -10px rgba(53, 53, 53, 0.3), 0 4px 20px 0 rgba(0, 0, 0, .12), 0 7px 8px -5px rgb(142, 142, 142)
     }
 
@@ -95,8 +96,8 @@ export default {
     }
 
     .sub-text {
-        font-weight: bold;
-        font-size: 1.6rem;
+        font-weight: 400;
+        font-size: 1.3rem;
     }
 
     .box-icon {

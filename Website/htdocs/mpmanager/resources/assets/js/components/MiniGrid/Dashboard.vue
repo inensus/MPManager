@@ -96,12 +96,25 @@
                 <div class="md-layout-item md-medium-size-100  md-xsmall-size-100 md-size-100">
                     <md-toolbar style="margin-bottom: 3rem;">
 
-                    <span class="md-title" v-if="miniGridData">
-                    {{ $tc('words.miniGrid') }} <strong>{{ miniGridData.name}}</strong>
-                        <md-icon @click="editMiniGrid">plumbing</md-icon>
+                        <md-menu
+                            md-direction="bottom-end"
+                            md-size="big"
+                            :md-offset-x="127" :md-offset-y="-36">
+                             <md-button md-menu-trigger>
+                             <md-icon>keyboard_arrow_down</md-icon>
+                                 {{ $tc('words.miniGrid') }}: {{ miniGridData.name }}
+                        </md-button>
+                            <md-menu-content>
+                            <md-menu-item v-for="(miniGrid ,key)  in miniGrids" :key="key"
+                                @click="setMiniGrid(miniGrid.id)">
+                                <span>{{miniGrid.name}}</span>
+                                <md-icon v-if="miniGrid.data_stream === 1">check</md-icon>
+                            </md-menu-item>
 
-                </span>
-                        <md-switch v-model="enableDataStream" @change="onDataStreamChange($event)" :disabled="switching"
+                        </md-menu-content>
+                    </md-menu>
+
+                <md-switch v-model="enableDataStream" @change="onDataStreamChange($event)" :disabled="switching"
                                    class="data-stream-switch">
                             <span v-if="!enableDataStream">{{ $tc('words.activate') }}  {{ $tc('phrases.dataLogger',0) }} </span>
                             <span v-else> {{ $tc('words.deactivate') }}  {{ $tc('phrases.dataLogger',0) }} </span>
@@ -403,10 +416,14 @@ export default {
         this.initializePeriods()
         this.fillRevenueTrendsOverview()
         this.getBatchData()
+        this.getMiniGridList()
 
         EventBus.$on('closeModal', this.closeModal)
     },
     watch: {
+        $route: function(){
+            this.$router.go()
+        },
         compareData: function () {
             if (this.compareData.length === 0) {
                 return
@@ -509,9 +526,12 @@ export default {
             displayedTargetPercetinles: [0, 5],
             miniGridData: {},
             miniGridId: null,
+            selectedMiniGrid: this.$route.params.id,
+            miniGrids: [],
             activeDateTab: 'tab-monthly',
             startDate: null,
             endDate: null,
+            showSelector: false,
             chartEvents:
           {
               select: () => {
@@ -622,6 +642,17 @@ export default {
         }
     },
     methods: {
+        setMiniGrid(miniGridId){
+            this.$router.replace('/dashboards/mini-grid/' + miniGridId)
+        },
+        async getMiniGridList() {
+            try {
+                this.miniGrids = await this.miniGridService.getMiniGrids()
+            } catch (e) {
+                this.alertNotify('error', 'Error: failed to get MiniGrid list')
+            }
+
+        },
         closeModal () {
             this.ModalVisibility = false
         },
@@ -642,7 +673,7 @@ export default {
                 this.enableDataStream = this.miniGridData.data_stream === 1 ? true : false
                 this.isLoggerActive = this.enableDataStream
             } catch (e) {
-                this.alertNotify('error', e.message)
+                this.alertNotify('error', 'Error: failed to get MiniGrid data')
             }
         },
         async getTransactionsOverview () {

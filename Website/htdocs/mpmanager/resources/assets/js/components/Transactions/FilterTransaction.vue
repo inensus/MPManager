@@ -1,85 +1,91 @@
 <template>
-    <div style="margin: 1vh;">
-        <h2 class="filter-header">{{ $tc('words.filter') }}</h2>
-        <div class="md-layout">
-            <div
-                    class="md-layout-item  md-xlarge-size-100  md-large-size-100 md-medium-size-100  md-small-size-100 md-xsmall-size-100">
-                <md-field>
-                    <md-input
-                            type="text"
-                            placeholder="Meter Serial Number"
-                            v-model="filter.serial_number"
-                            v-on:keyup.enter="submitFilter"
-                    ></md-input>
-                </md-field>
-            </div>
-            <div
-                    class="md-layout-item  md-xlarge-size-100  md-large-size-100 md-medium-size-100  md-small-size-100 md-xsmall-size-100">
-                <md-field>
-                    <md-select v-model="tarrif_" name="tariff" id="tariff" @md-selected="setTariff">
+    <div style="margin: 2vh;">
+        <md-card>
+            <md-card-header>
+                {{ $tc('words.filter') }}
+            </md-card-header>
+            <md-card-content>
+                <div class="md-layout">
+                    <div
+                        class="md-layout-item  md-xlarge-size-100  md-large-size-100 md-medium-size-100  md-small-size-100 md-xsmall-size-100">
+                        <md-field>
+                            <md-input
+                                type="text"
+                                placeholder="Meter Serial Number"
+                                v-model="filter.serial_number"
+                                v-on:keyup.enter="submitFilter"
+                            ></md-input>
+                        </md-field>
+                    </div>
+                    <div
+                        class="md-layout-item  md-xlarge-size-100  md-large-size-100 md-medium-size-100  md-small-size-100 md-xsmall-size-100">
+                        <md-field>
+                            <md-select v-model="tarrif_" name="tariff" id="tariff" @md-selected="setTariff">
 
-                        <md-option v-for="tariff in tariffs" :value="tariff.id" :key="tariff.id">{{tariff.name}}
-                        </md-option>
-                    </md-select>
-                </md-field>
-            </div>
-            <div
-                    class="md-layout-item  md-xlarge-size-100  md-large-size-100 md-medium-size-100  md-small-size-100 md-xsmall-size-100">
-                <md-field>
-                    <md-select name="provider" id="provider"
-                               v-model="selectedProvider"
-                    >
-                        <md-option v-for="(p,i) in transactionProviderService.list" :key="i" :value="p.value">{{p.name}}
-                        </md-option>
+                                <md-option v-for="tariff in tariffs" :value="tariff.id" :key="tariff.id">{{tariff.name}}
+                                </md-option>
+                            </md-select>
+                        </md-field>
+                    </div>
+                    <div
+                        class="md-layout-item  md-xlarge-size-100  md-large-size-100 md-medium-size-100  md-small-size-100 md-xsmall-size-100">
+                        <md-field>
+                            <md-select name="provider" id="provider"
+                                       v-model="selectedProvider"
+                            >
+                                <md-option v-for="(p,i) in transactionProviderService.list" :key="i" :value="p.value">{{p.name}}
+                                </md-option>
 
-                    </md-select>
+                            </md-select>
 
 
-                </md-field>
-            </div>
-            <div
-                    class="md-layout-item  md-xlarge-size-100  md-large-size-100 md-medium-size-100  md-small-size-100 md-xsmall-size-100">
-                <md-field>
-                    <md-select
-                            v-model="transaction_"
-                            name="transaction"
-                            id="transaction"
-                            @md-selected="seTransaction"
-                    >
-                        <md-option value="All Transactions">{{ $tc('phrases.allTransactions') }}</md-option>
-                        <md-option value="Only Approved">{{ $tc('phrases.onlyApproved') }}</md-option>
-                        <md-option value="Only Rejected">{{ $tc('phrases.onlyRejected') }}</md-option>
-                    </md-select>
-                </md-field>
-            </div>
+                        </md-field>
+                    </div>
+                    <div
+                        class="md-layout-item  md-xlarge-size-100  md-large-size-100 md-medium-size-100  md-small-size-100 md-xsmall-size-100">
+                        <md-field>
+                            <md-select
+                                v-model="transaction_"
+                                name="transaction"
+                                id="transaction"
+                                @md-selected="seTransaction"
+                            >
+                                <md-option value="All Transactions">{{ $tc('phrases.allTransactions') }}</md-option>
+                                <md-option value="Only Approved">{{ $tc('phrases.onlyApproved') }}</md-option>
+                                <md-option value="Only Rejected">{{ $tc('phrases.onlyRejected') }}</md-option>
+                            </md-select>
+                        </md-field>
+                    </div>
 
-            <div
-                    class="md-layout-item  md-xlarge-size-100  md-large-size-100 md-medium-size-100  md-small-size-100 md-xsmall-size-100">
-                <md-datepicker
-                        v-model="filterFrom"
-                        md-immediately
-                        :md-model-type="String"
-                >
-                    <label>{{ $tc('phrases.fromDate') }}</label>
-                </md-datepicker>
-            </div>
+                    <div
+                        class="md-layout-item  md-xlarge-size-100  md-large-size-100 md-medium-size-100  md-small-size-100 md-xsmall-size-100">
+                        <md-datepicker
+                            v-model="filterFrom"
+                            md-immediately
+                            :md-model-type="String"
+                        >
+                            <label>{{ $tc('phrases.fromDate') }}</label>
+                        </md-datepicker>
+                    </div>
 
-            <div
-                    class="md-layout-item  md-xlarge-size-100  md-large-size-100 md-medium-size-100  md-small-size-100 md-xsmall-size-100">
-                <md-datepicker
-                        v-model="filterTo"
-                        md-immediately
-                        :md-model-type="String">
-                    <label>{{ $tc('phrases.toDate') }}</label>
-                </md-datepicker>
-            </div>
-        </div>
-
-        <div class="md-layout-item">
-            <md-button class="md-raised md-primary " v-if="!loading" @click="submitFilter">{{ $tc('words.search') }}
-            </md-button>
+                    <div
+                        class="md-layout-item  md-xlarge-size-100  md-large-size-100 md-medium-size-100  md-small-size-100 md-xsmall-size-100">
+                        <md-datepicker
+                            v-model="filterTo"
+                            md-immediately
+                            :md-model-type="String">
+                            <label>{{ $tc('phrases.toDate') }}</label>
+                        </md-datepicker>
+                    </div>
+                </div>
+            </md-card-content>
+            <md-card-actions>
+                <md-button class="md-raised md-primary " v-if="!loading" @click="submitFilter">{{ $tc('words.search') }}
+                </md-button>
+                <md-button class="md-raised md-accent" @click="closeFilter">{{ $tc('words.close') }}</md-button>
+            </md-card-actions>
             <md-progress-bar md-mode="indeterminate" v-if="loading"/>
-        </div>
+        </md-card>
     </div>
 </template>
 
@@ -125,6 +131,7 @@ export default {
     methods: {
         dataLoaded () {
             this.loading = false
+            this.closeFilter()
         },
         async getTariffs () {
             let tariffs = await this.tariffService.getTariffs()
@@ -149,7 +156,9 @@ export default {
         setTariff (tariff) {
             this.filter.tariff = tariff
         },
-
+        closeFilter(){
+            EventBus.$emit('transactionFilterClosed')
+        },
         seTransaction (transaction) {
             switch (transaction) {
             case 'All Transactions':
@@ -190,6 +199,7 @@ export default {
 
             }
             this.$emit('searchSubmit', this.filter)
+
         },
 
         getSearch () {
