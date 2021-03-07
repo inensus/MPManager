@@ -16,6 +16,9 @@ class UpdateSmsTable extends Migration
         Schema::table('sms', function (Blueprint $table) {
             $table->integer('status')->default(0)->change();
             $table->integer('sender_id')->nullable()->change();
+            $table->integer('trigger_id')->nullable()->change();
+            $table->integer('trigger_type')->nullable()->change();
+            $table->integer('uuid')->nullable()->change();
         });
     }
 
