@@ -1,96 +1,61 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Feature;
 
-use App\Jobs\EnergyTransactionProcessor;
-use App\Jobs\ProcessPayment;
-use App\Jobs\SmsLoadBalancer;
-use App\Jobs\SmsProcessor;
-use App\Jobs\TokenProcessor;
-use App\Misc\TransactionDataContainer;
 use App\Models\Address\Address;
 use App\Models\MainSettings;
 use App\Models\Manufacturer;
 use App\Models\Meter\Meter;
 use App\Models\Meter\MeterTariff;
-use App\Models\Meter\MeterToken;
 use App\Models\Meter\MeterType;
-use App\Models\PaymentHistory;
 use App\Models\Person\Person;
 use App\Models\Sms;
 use App\Models\SmsBody;
+use App\Models\SmsResendInformationKey;
 use App\Models\Transaction\Transaction;
 use App\Models\Transaction\VodacomTransaction;
+use App\Models\User;
 
-use App\Sms\SmsTypes;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
+use Tymon\JWTAuth\Facades\JWTAuth;
 
-
-class SmsProcessorTest extends TestCase
+class SendSms extends TestCase
 {
-    /*    ./vendor/bin/phpunit --filter   sms_sending_with_transaction     */
     use RefreshDatabase;
 
+    /*  ./vendor/bin/phpunit ./tests/Feature/SendSms  */
     /** @test */
-    public function token_creation_with_valid_transaction()
+    public function store_and_send()
     {
-        $transaction = $this->initializeData();
-        $transactionContainer = TransactionDataContainer::initialize($transaction);
-        $transactionContainer->chargedEnergy = 1;
-
-        TokenProcessor::dispatchNow(
-            $transactionContainer
-        );
-        $this->assertCount(1, MeterToken::all());
-        $this->assertCount(1, PaymentHistory::all());
-
-    }
-
-    /** @test */
-    public function sms_sending_with_transaction()
-    {
-        Queue::fake();
-        $transaction = $this->initializeData();
-        $transaction->sender = '+905396398161';
-        //create sms-bodies
-        $this->addSmsBodies();
-        config::set('app.debug', false);
-        SmsProcessor::dispatch(
-            $transaction,
-            SmsTypes::TRANSACTION_CONFIRMATION
-        );
-        Queue::assertPushed(SmsProcessor::class);
-
-    }
-
-    /** @test */
-    public function sms_sending_with_resend_information_with_no_transaction()
-    {
-        // Queue::fake();
-        $transaction = $this->initializeData();
-        $transaction->sender = '+905396398161';
-        //create sms-bodies
-        $this->addSmsBodies();
-        config::set('app.debug', false);
-        $data = [
-            'phone'=>'+905396398161',
-            'meter'=>$transaction->message
-        ];
-
-        SmsProcessor::dispatchNow(
-            $data,
-            SmsTypes::RESEND_INFORMATION
-        );
+        $this->withoutExceptionHandling();
+        $person = $this->initializeData();
+        $user = factory(User::class)->create();
+        $data = $this->getData($person, $user);
+        $response = $this->actingAs($user)->post('/api/sms/storeandsend', $data);
+        $response->assertStatus(201);
         $smsCount = Sms::query()->first()->count();
         $this->assertEquals(1, $smsCount);
     }
 
+    /** @test */
+    public function store()
+    {
+        $this->withoutExceptionHandling();
+        $person = $this->initializeData();
 
-    private function addSmsBodies()
+        $user = factory(User::class)->create();
+        $data = [
+            'sender' => $person->addresses[0]->phone,
+            'message' => 'Resend 4700005646'
+        ];
+        $response = $this->actingAs($user)->post('/api/sms', $data);
+        $response->assertStatus(200);
+        $smsCount = Sms::query()->first()->count();
+        $this->assertEquals(1, $smsCount);
+    }
+
+    private function initializeData()
     {
         $bodies = [
             [
@@ -188,12 +153,11 @@ class SmsProcessorTest extends TestCase
                 'title' => $body['title']
             ]);
         }
-        return SmsBody::query()->get();
-    }
 
-    private function initializeData()
-    {
-        //create person
+        //create resend key
+        factory(SmsResendInformationKey::class)->create();
+
+        //create settings
         factory(MainSettings::class)->create();
 
         //create person
@@ -233,21 +197,44 @@ class SmsProcessorTest extends TestCase
         ]);
 
         //associate address with a person
-        $address = Address::query()->make([
+        $address = Address::query()->create([
             'phone' => '+905396398161',
+            'is_primary' => 1,
+            'owner_type' => 'person',
+            'owner_id' => 1,
         ]);
         $address->owner()->associate($p);
 
         //create transaction
         factory(VodacomTransaction::class)->create();
+
         $transaction = factory(Transaction::class)->make();
         $transaction->message = '4700005646';
 
-        $vodacomTransaction = VodacomTransaction::query()->first();
-        $vodacomTransaction->transaction()->save($transaction);
-
-        return $transaction;
+        return $p;
     }
 
+    public function actingAs($user, $driver = null)
+    {
+        $token = JWTAuth::fromUser($user);
+        $this->withHeader('Authorization', "Bearer {$token}");
+        parent::actingAs($user);
 
+        return $this;
+    }
+
+    /**
+     * @param $person
+     * @param $user
+     * @return array
+     */
+    public function getData($person, $user): array
+    {
+        $data = [
+            'person_id' => $person->id,
+            'message' => 'Its a dummy message',
+            'senderId' => $user->id
+        ];
+        return $data;
+    }
 }
