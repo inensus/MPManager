@@ -109,7 +109,7 @@ class VodacomTransaction implements ITransactionProvider
                     SmsProcessor::dispatch(
                         $transaction,
                         SmsTypes::TRANSACTION_CONFIRMATION
-                    )->allOnConnection('redis')->onQueue('sms');
+                    )->allOnConnection('redis')->onQueue(\config('services.queues.sms'));
                 }
 
                 //make response xml object
