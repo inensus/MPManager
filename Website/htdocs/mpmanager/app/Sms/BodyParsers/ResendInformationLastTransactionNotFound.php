@@ -7,13 +7,13 @@ class ResendInformationLastTransactionNotFound extends SmsBodyParser
 {
     protected $variables = ['meter'];
 
-    protected $meterSerial;
-    public function __construct($meterSerial)
+    protected $data;
+    public function __construct($data)
     {
-        $this->meterSerial=$meterSerial;
+        $this->data=$data;
     }
     protected function getVariableValue($variable) {
 
-        return $this->meterSerial;
+        return $this->data['meter'];
     }
 }
