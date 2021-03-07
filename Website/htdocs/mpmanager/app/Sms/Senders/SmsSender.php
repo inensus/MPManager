@@ -57,17 +57,18 @@ abstract class SmsSender
     {
         $smsBody = $this->smsBodyService->getSmsBodyByReference($this->references['header']);
         $className = 'App\\Sms\\BodyParsers\\' . $this->references['header'];
-        $smsObject = new   $className($this->data);
+        $smsObject = new  $className($this->data);
         $this->body .= $smsObject->parseSms($smsBody->body);
-
     }
 
     public function prepareBody()
     {
+
         $smsBody = $this->smsBodyService->getSmsBodyByReference($this->references['body']);
-        $className = 'App\\Sms\\BodyParsers\\' . $this->references['header'];
+        $className = 'App\\Sms\\BodyParsers\\' . $this->references['body'];
         $smsObject = new $className($this->data);
         $this->body .= $smsObject->parseSms($smsBody->body);
+
     }
 
     public function prepareFooter()

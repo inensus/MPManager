@@ -12,7 +12,7 @@ class ResendInformationNotification extends SmsSender
 {
 
     protected $data;
-    protected $body = '';
+    public $body = '';
     protected $references = [
         'header' => 'SmsResendInformationHeader',
         'body' => null,
