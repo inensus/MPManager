@@ -6,8 +6,7 @@ export class SmsVariableDefaultValueService {
     constructor () {
         this.repository = RepositoryFactory.get('smsVariableDefaultValue')
         this.list = []
-        this.shownMessage = ''
-
+        this.shownMessage = 'Your message will seem like..'
     }
 
     fromJson (smsVariableDefaultValues) {
@@ -38,10 +37,14 @@ export class SmsVariableDefaultValueService {
     }
 
     prepareShownMessage (body, list) {
+        this.shownMessage=''
         list.forEach((e) => {
             body = body.replaceAll(e.variable, e.value)
         })
         this.shownMessage = body
+        if (!(body.length)){
+            this.shownMessage= 'Your message will seem like..'
+        }
         return this.shownMessage
     }
 }

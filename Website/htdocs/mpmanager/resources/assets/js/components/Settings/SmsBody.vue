@@ -27,7 +27,6 @@
                     </div>
 
                 </div>
-                <div class="md-layout-item md-size-100"> {{ $tc('phrases.yourMessage')}}</div>
                 <div class="md-layout-item dummy-message-area">
                     {{smsVariableDefaultValueService.shownMessage}}
                 </div>
@@ -60,7 +59,7 @@ export default {
             lastWords: [],
             constantVariables: [],
             regExp: /([^\s]+)+/g,
-            smsVariableDefaultValueService: new SmsVariableDefaultValueService()
+            smsVariableDefaultValueService: new SmsVariableDefaultValueService(),
         }
 
     },
@@ -125,7 +124,7 @@ export default {
 <style scoped>
     .dummy-message-area {
         padding: 20px;
-        background-color: #f5e8e8;
+        background-color: #dfe9f3;
         margin: 10px;
         d-webkit-border-radius: 16px;
         -moz-border-radius: 16px;
