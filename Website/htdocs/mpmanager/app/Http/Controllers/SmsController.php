@@ -230,7 +230,6 @@ class SmsController extends Controller
     {
         $sender = $request->get('sender');
         $message = $request->get('message');
-
         $sms = $this->sms->create(
             [
                 'receiver' => $sender,
@@ -241,7 +240,7 @@ class SmsController extends Controller
         );
 
         $resendInformationKey = $this->smsResendInformationKeyService->getResendInformationKeys()->first();
-        if (stripos($message, $resendInformationKey) === 0) {
+        if (stripos($message, $resendInformationKey->key) === 0) {
             //get last generated token
             preg_match('!\d+!', $message, $match);
             if (count($match) === 1) {
@@ -305,8 +304,6 @@ class SmsController extends Controller
         $personId = $request->get('person_id');
         $message = $request->get('message');
         $senderId = $request->get('senderId');
-
-
         if ($personId !== null) {
             //get person primary phone
             $primaryAddress = $this->person::with('addresses')
@@ -321,9 +318,7 @@ class SmsController extends Controller
         } else {
             $phone = $request->get('phone');
         }
-
         //$phone = str_replace('+', '', $phone);
-
         $sms = $this->sms->create(
             [
                 'receiver' => $phone,
@@ -379,21 +374,15 @@ class SmsController extends Controller
         )
             ->where('id', $person_id)
             ->first();
-
         $numbers = $personAddresses->addresses->toArray();
-
-
         $smses = $this->sms::whereIn('receiver', $numbers)->orderBy('id', 'ASC')->get();
         return new ApiResource($smses);
     }
-
     public function byPhone($phone): ApiResource
     {
         $smses = $this->sms->where('receiver', $phone)->get();
         return new ApiResource($smses);
     }
-
-
     public function search($search): ApiResource
     {
         //search in people
