@@ -2,20 +2,18 @@
 
 namespace App\Sms\BodyParsers;
 
-;
-
-
 use App\Models\PaymentHistory;
 
 class AssetRatePayment extends SmsBodyParser
 {
-    protected $variables = ['appliance_type_name','amount'];
+    protected $variables = ['appliance_type_name', 'amount'];
     protected $paymentHistory;
 
     public function __construct(PaymentHistory $paymentHistory)
     {
         $this->paymentHistory = $paymentHistory;
     }
+
     protected function getVariableValue($variable)
     {
         switch ($variable) {
