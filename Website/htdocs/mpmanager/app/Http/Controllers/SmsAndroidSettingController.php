@@ -29,12 +29,8 @@ class SmsAndroidSettingController extends Controller
 
     public function update(SmsAndroidSetting $smsAndroidSetting, SmsAndroidSettingRequest $request)
     {
-        return new ApiResource($this->smsAndroidSettingService->updateSmsAndroidSetting(
-            $smsAndroidSetting,
-            $request->only(['token', 'key', 'callback'])
-        ));
+        return new ApiResource($this->smsAndroidSettingService->updateSmsAndroidSetting($smsAndroidSetting, $request->only(['token','key','callback'])));
     }
-
     public function destroy(SmsAndroidSetting $smsAndroidSetting): ApiResource
     {
         return new ApiResource($this->smsAndroidSettingService->deleteSmsAndroidSetting($smsAndroidSetting));

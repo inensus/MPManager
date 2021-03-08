@@ -7,11 +7,10 @@ use App\Models\Transaction\Transaction;
 
 class PricingDetails extends SmsBodyParser
 {
-    public $variables = ['amount', 'vat_energy', 'vat_others'];
+    public $variables = ['amount','vat_energy','vat_others'];
     protected $transaction;
     private $vatEnergy = 0;
     private $vatOtherStaffs = 0;
-
     public function __construct(Transaction $transaction)
     {
         $this->transaction = $transaction;
@@ -39,15 +38,14 @@ class PricingDetails extends SmsBodyParser
         $mainSettings = MainSettings::query()->first();
         $totalEnergyAmount = 0;
         $otherStaffsAmount = 0;
-        $this->transaction->paymentHistories()->get()
-            ->each(function ($payment) use ($totalEnergyAmount, $otherStaffsAmount) {
-                if (!$payment->payment_type === 'energy') {
-                    $otherStaffsAmount += $payment->amount;
-                    return true;
-                }
-                $totalEnergyAmount += $payment->amount;
+        $this->transaction->paymentHistories()->get()->each(function ($payment) use ($totalEnergyAmount, $otherStaffsAmount) {
+            if (!$payment->payment_type === 'energy') {
+                $otherStaffsAmount +=  $payment->amount;
                 return true;
-            });
+            }
+            $totalEnergyAmount += $payment->amount;
+            return  true;
+        });
         $this->vatEnergy = $totalEnergyAmount * $mainSettings->vat_energy / 100;
         $this->vatOtherStaffs = $otherStaffsAmount * $mainSettings->vat_appliance / 100;
     }

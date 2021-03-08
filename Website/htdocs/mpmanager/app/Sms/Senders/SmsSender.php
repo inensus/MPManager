@@ -32,10 +32,7 @@ abstract class SmsSender
     public function sendSms()
     {
         if (config('app.debug')) {
-            Log::debug(
-                'Send sms on debug is not allowed in debug mode',
-                ['number' => $this->receiver, 'message' => $this->body]
-            );
+            Log::debug('Send sms on debug is not allowed in debug mode', ['number' => $this->receiver, 'message' => $this->body]);
             return;
         }
         if (!($this->data instanceof Transaction) && !($this->data instanceof AssetRate)) {
@@ -45,7 +42,7 @@ abstract class SmsSender
                 return;
             }
         }
-        //add sms to sms_gateway
+       //add sms to sms_gateway
         resolve('SmsProvider')
             ->sendSms(
                 $this->receiver,
@@ -96,8 +93,7 @@ abstract class SmsSender
             $this->receiver = strpos(
                 $this->data->assetPerson->person->addresses->first()->phone,
                 '+'
-            ) === 0 ? $this->data->assetPerson->person->addresses
-                ->first()->phone : '+' . $this->data->assetPerson->person->addresses->first()->phone;
+            ) === 0 ? $this->data->assetPerson->person->addresses->first()->phone : '+' . $this->data->assetPerson->person->addresses->first()->phone;
         } else {
             $this->receiver = strpos(
                 $this->data['phone'],

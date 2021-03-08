@@ -122,7 +122,7 @@ class SmsController extends Controller
                 );
                 $data = [
                     'message' => $message,
-                    'phone' => $phone
+                     'phone' => $phone
                 ];
 
                 SmsProcessor::dispatch(
@@ -247,8 +247,7 @@ class SmsController extends Controller
             if (count($match) === 1) {
                 $meterSerial = $match[0];
                 try {
-                    $transaction = Transaction::with('paymentHistories')->where('message', $meterSerial)
-                        ->latest()->firstOrFail();
+                    $transaction = Transaction::with('paymentHistories')->where('message', $meterSerial)->latest()->firstOrFail();
                 } catch (ModelNotFoundException $ex) {
                     $data = [
                         'phone' => $sender,
@@ -380,13 +379,11 @@ class SmsController extends Controller
         $smses = $this->sms::whereIn('receiver', $numbers)->orderBy('id', 'ASC')->get();
         return new ApiResource($smses);
     }
-
     public function byPhone($phone): ApiResource
     {
         $smses = $this->sms->where('receiver', $phone)->get();
         return new ApiResource($smses);
     }
-
     public function search($search)
     {
         //search in people
@@ -402,6 +399,6 @@ class SmsController extends Controller
             ->orWhere('surname', 'like', '%' . $search . '%')
             ->get();
 
-        return SmsSearchResultResource::collection($list);
+        return  SmsSearchResultResource::collection($list);
     }
 }

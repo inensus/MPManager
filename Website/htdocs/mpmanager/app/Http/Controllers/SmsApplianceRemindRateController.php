@@ -27,12 +27,8 @@ class SmsApplianceRemindRateController extends Controller
     {
         return new ApiResource($this->smsApplianceRemindService->createApplianceRemindRate($request->all()));
     }
-
     public function update(SmsApplianceRemindRate $smsApplianceRemindRate, Request $request): ApiResource
     {
-        return new ApiResource($this->smsApplianceRemindService->updateApplianceRemindRate(
-            $smsApplianceRemindRate,
-            $request->all()
-        ));
+        return new ApiResource($this->smsApplianceRemindService->updateApplianceRemindRate($smsApplianceRemindRate, $request->all()));
     }
 }
