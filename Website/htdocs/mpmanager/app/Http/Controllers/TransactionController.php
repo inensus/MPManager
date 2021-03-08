@@ -804,5 +804,4 @@ class TransactionController extends Controller
 
         return $comparisionPeriod;
     }
-
 }

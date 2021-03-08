@@ -54,7 +54,7 @@ class SmsController extends Controller
      */
     private $meterParameter;
 
-    private  $smsResendInformationKeyService;
+    private $smsResendInformationKeyService;
 
     /**
      * SmsController constructor.
@@ -79,7 +79,7 @@ class SmsController extends Controller
         $this->connectionGroup = $connectionGroup;
         $this->connectionType = $connectionType;
         $this->meterParameter = $meterParameter;
-        $this->smsResendInformationKeyService=$smsResendInformationKeyService;
+        $this->smsResendInformationKeyService = $smsResendInformationKeyService;
     }
 
     public function index(): ApiResource
@@ -122,7 +122,7 @@ class SmsController extends Controller
                 );
                 $data = [
                     'message' => $message,
-                     'phone'=>$phone
+                     'phone' => $phone
                 ];
 
                 SmsProcessor::dispatch(
@@ -217,7 +217,7 @@ class SmsController extends Controller
                 );
                 $data = [
                     'message' => $message,
-                    'phone'=>$address[0]->phone
+                    'phone' => $address[0]->phone
                 ];
                 SmsProcessor::dispatch(
                     $data,
@@ -250,8 +250,8 @@ class SmsController extends Controller
                     $transaction = Transaction::with('paymentHistories')->where('message', $meterSerial)->latest()->firstOrFail();
                 } catch (ModelNotFoundException $ex) {
                     $data = [
-                        'phone'=>$sender,
-                        'meter'=>$meterSerial
+                        'phone' => $sender,
+                        'meter' => $meterSerial
                     ];
                     SmsProcessor::dispatch(
                         $data,
@@ -330,7 +330,7 @@ class SmsController extends Controller
         );
         $data = [
             'message' => $message,
-            'phone'=>$phone
+            'phone' => $phone
         ];
         SmsProcessor::dispatch(
             $data,

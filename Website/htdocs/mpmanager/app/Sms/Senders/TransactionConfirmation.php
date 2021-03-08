@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Sms\Senders;
 
 use App\Models\Transaction\Transaction;
@@ -12,7 +11,7 @@ class TransactionConfirmation extends SmsSender
     public $body = '';
     protected $references = [
         'header' => 'SmsTransactionHeader',
-        'body'=>null,
+        'body' => null,
         'footer' => 'SmsTransactionFooter'
     ];
     public const ENERGY_CONFIRMATION = 'energy';
@@ -44,7 +43,7 @@ class TransactionConfirmation extends SmsSender
     private function prepareBodyByClassReference($reference, $payload)
     {
         $smsBody = $this->smsBodyService->getSmsBodyByReference($reference);
-        $className = 'App\\Sms\\BodyParsers\\'.$reference;
+        $className = 'App\\Sms\\BodyParsers\\' . $reference;
         $smsObject = new $className($payload);
 
         $this->body .= $smsObject->parseSms($smsBody->body);

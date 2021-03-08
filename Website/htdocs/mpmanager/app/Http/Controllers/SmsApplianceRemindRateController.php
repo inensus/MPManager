@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Http\Controllers;
-
 
 use App\Http\Requests\SmsApplianceRemindRateRequest;
 use App\Http\Resources\ApiResource;
@@ -31,7 +29,6 @@ class SmsApplianceRemindRateController extends Controller
     }
     public function update(SmsApplianceRemindRate $smsApplianceRemindRate, Request $request): ApiResource
     {
-        return new ApiResource($this->smsApplianceRemindService->updateApplianceRemindRate($smsApplianceRemindRate,$request->all()));
+        return new ApiResource($this->smsApplianceRemindService->updateApplianceRemindRate($smsApplianceRemindRate, $request->all()));
     }
-
 }

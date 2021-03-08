@@ -67,20 +67,21 @@ class AssetRateChecker extends Command
         $smsApplianceRemindRates->each(function ($smsApplianceRemindRate) {
             try {
                 $overDueRates = $this->assetRate::with(['assetPerson.assetType', 'assetPerson.person.addresses'])
-                    ->whereDate('due_date', '>=',
-                        Carbon::parse('due_date')->addDays($smsApplianceRemindRate->overdue_remind_rate))
+                    ->whereDate(
+                        'due_date',
+                        '>=',
+                        Carbon::parse('due_date')->addDays($smsApplianceRemindRate->overdue_remind_rate)
+                    )
                     ->where('remaining', '>', 0)
                     ->where('remind', 0)
                     ->get();
-            }catch (ModelNotFoundException $exception){
-                Log::error('OverDue AssetRate not found', ['message'=>$exception->getMessage()]);
+            } catch (ModelNotFoundException $exception) {
+                Log::error('OverDue AssetRate not found', ['message' => $exception->getMessage()]);
             }
 
             echo "\n" . count($overDueRates) . ' overdue rates found' . "\n";
-            $this->sendReminders($overDueRates,SmsTypes::OVER_DUE_APPLIANCE_RATE);
-
+            $this->sendReminders($overDueRates, SmsTypes::OVER_DUE_APPLIANCE_RATE);
         });
-
     }
 
     private function remindUpComingRates(): void
@@ -89,10 +90,10 @@ class AssetRateChecker extends Command
         $smsApplianceRemindRates->each(function ($smsApplianceRemindRate) {
             $remindDay = Carbon::now()->subDays($smsApplianceRemindRate->remind_rate)->format('Y-m-d');
             try {
-            $dueAssetRates = $this->assetRate::with([
+                $dueAssetRates = $this->assetRate::with([
                 'assetPerson.assetType.smsReminderRate',
                 'assetPerson.person.addresses'
-            ])
+                ])
                 ->whereDate('due_date', '>=', $remindDay)
                 ->where('remaining', '>', 0)
                 ->whereHas(
@@ -102,11 +103,11 @@ class AssetRateChecker extends Command
                     }
                 )
                 ->get();
-            }catch (ModelNotFoundException $exception){
-                Log::error('Due AssetRate not found', ['message'=>$exception->getMessage()]);
+            } catch (ModelNotFoundException $exception) {
+                Log::error('Due AssetRate not found', ['message' => $exception->getMessage()]);
             }
              echo "\n" . count($dueAssetRates) . ' upcoming rates found' . "\n";
-             $this->sendReminders($dueAssetRates,SmsTypes::APPLIANCE_RATE);
+             $this->sendReminders($dueAssetRates, SmsTypes::APPLIANCE_RATE);
         });
     }
 
@@ -120,7 +121,7 @@ class AssetRateChecker extends Command
 
     private function sendReminders($dueAssetRates, $smsType)
     {
-        $dueAssetRates->each(function ($dueAssetRate) use ($smsType){
+        $dueAssetRates->each(function ($dueAssetRate) use ($smsType) {
             $this->sendReminderSms($dueAssetRate);
             if ($smsType === SmsTypes::OVER_DUE_APPLIANCE_RATE) {
                 $dueAssetRate->remind = 1;
