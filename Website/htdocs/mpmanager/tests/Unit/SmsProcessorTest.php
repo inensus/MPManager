@@ -38,15 +38,15 @@ class SmsProcessorTest extends TestCase
     /** @test */
     public function token_creation_with_valid_transaction()
     {
-        Queue::fake();
         $transaction = $this->initializeData();
         $transactionContainer = TransactionDataContainer::initialize($transaction);
         $transactionContainer->chargedEnergy = 1;
 
-        TokenProcessor::dispatch(
+        TokenProcessor::dispatchNow(
             $transactionContainer
         );
-        Queue::assertPushed(TokenProcessor::class);
+        $this->assertCount(1, MeterToken::all());
+        $this->assertCount(1, PaymentHistory::all());
 
     }
 
@@ -70,7 +70,7 @@ class SmsProcessorTest extends TestCase
     /** @test */
     public function sms_sending_with_resend_information_with_no_transaction()
     {
-        Queue::fake();
+        // Queue::fake();
         $transaction = $this->initializeData();
         $transaction->sender = '+905396398161';
         //create sms-bodies
@@ -81,11 +81,12 @@ class SmsProcessorTest extends TestCase
             'meter'=>$transaction->message
         ];
 
-        SmsProcessor::dispatch(
+        SmsProcessor::dispatchNow(
             $data,
             SmsTypes::RESEND_INFORMATION
         );
-        Queue::assertPushed(SmsProcessor::class);
+        $smsCount = Sms::query()->first()->count();
+        $this->assertEquals(1, $smsCount);
     }
 
 
