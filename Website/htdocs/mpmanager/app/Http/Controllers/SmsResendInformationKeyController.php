@@ -25,6 +25,9 @@ class SmsResendInformationKeyController extends Controller
 
     public function update(SmsResendInformationKey $smsResendInformationKey, Request $request): ApiResource
     {
-        return new ApiResource($this->smsResendInformationKeyService->updateResendInformationKey($smsResendInformationKey, $request->all()));
+        return new ApiResource($this->smsResendInformationKeyService->updateResendInformationKey(
+            $smsResendInformationKey,
+            $request->all()
+        ));
     }
 }
