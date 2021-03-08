@@ -21,6 +21,7 @@
                         <ticket-item
                             :allow-comment="true"
                             :ticket-list="ticketService.openedList"
+                            :table-heads="tableHeads"
                         ></ticket-item>
                     </widget>
 
@@ -34,6 +35,7 @@
                         <ticket-item
                             :allow-comment="true"
                             :ticket-list="ticketService.closedList"
+                            :table-heads="tableHeads"
                         ></ticket-item>
                     </widget>
 
@@ -48,7 +50,7 @@
 
 <script>
 import Widget from '../../shared/widget'
-import TicketItem from './TicketItem'
+import TicketItem from '../../shared/TicketItem'
 import { EventBus } from '../../shared/eventbus'
 import Filtering from './Filtering'
 import { resources } from '../../resources'
@@ -64,6 +66,7 @@ export default {
             ticketService: new TicketService(),
             loading: true,
             filterTicket: false,
+            tableHeads:[this.$tc('words.subject'), this.$tc('words.category'), this.$tc('words.date')],
             resetKey: 0,
             subscriber: {
                 opened: 'ticketListOpened',

@@ -2,7 +2,8 @@
 
     <widget :id="'revenue-types'"
             :title="$tc('phrases.revenueAnalysis')"
-            :subscriber="subscriber">
+            :subscriber="subscriber"
+            color="green">
 
         <md-table>
             <md-table-row>

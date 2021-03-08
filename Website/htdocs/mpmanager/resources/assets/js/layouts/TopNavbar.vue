@@ -2,6 +2,9 @@
 
     <md-toolbar md-elevation="0" style="background:#424040">
         <div class="md-toolbar-row">
+            <div class="md-toolbar-section-start">
+                <breadcrumb/>
+            </div>
 
             <div class="md-toolbar-section-end">
                 <div>
@@ -11,14 +14,14 @@
                         class="menu-item">
                         <md-button  class=" md-dense nav-button md-raised" md-menu-trigger>
                             <md-tooltip md-direction="bottom">{{$tc('words.location',2)}}</md-tooltip>
-                             <md-icon style="color:white">add_location_alt</md-icon>
+                             <md-icon class="c-white">add_location_alt</md-icon>
                             <small>Locations</small>
                         </md-button>
                         <md-menu-content>
                             <md-menu-item disabled>
                                 <span>{{$tc('words.location',2)}}</span>
                                 <md-icon>add_location_alt</md-icon>
-                                </md-menu-item>
+                            </md-menu-item>
                             <md-menu-item @click="replaceRoute('/locations/add-cluster')">
                                           {{$tc('menu.subMenu.Add Cluster')}}
                             </md-menu-item>
@@ -34,31 +37,9 @@
                         class="menu-item"
                         md-direction="bottom-end"
                         md-size="big">
-                        <md-button class="nav-button md-raised md-dense " md-menu-trigger>
-                            <md-tooltip md-direction="bottom">{{$tc('words.profile')}}</md-tooltip>
-                            <md-icon style="color:white">person</md-icon>
-                            <small>Profile</small>
-                        </md-button>
-                        <md-menu-content>
-                            <md-menu-item disabled="">
-                                <span>{{$tc('words.profile')}}</span>
-                                <md-icon>person</md-icon>
-                                </md-menu-item>
-                            <md-menu-item  @click="replaceRoute('/profile')">
-                                    {{$tc('words.profile')}}
-                            </md-menu-item>
-                            <md-menu-item @click="replaceRoute('/profile/management')">
-                                    {{$tc('phrases.userManagement')}}
-                            </md-menu-item>
-                        </md-menu-content>
-                    </md-menu>
-                    <md-menu
-                        class="menu-item"
-                        md-direction="bottom-end"
-                        md-size="big">
                         <md-button class=" md-dense nav-button md-raised" md-menu-trigger>
                             <md-tooltip md-direction="bottom">Settings</md-tooltip>
-                            <md-icon style="color:white">settings</md-icon>
+                            <md-icon class="c-white">settings</md-icon>
                             <small>Settings</small>
                         </md-button>
                         <md-menu-content>
@@ -78,13 +59,37 @@
                             </md-menu-item>
                         </md-menu-content>
                     </md-menu>
-                    <md-menu class="menu-item">
-                        <md-button class="md-dense md-raised md-accent md-icon-button" @click="logout()">
-                            <md-tooltip md-direction="bottom">Log Out</md-tooltip>
-                            <md-icon style="color:white">exit_to_app</md-icon>
-
+                    <md-menu
+                        class="menu-item"
+                        md-direction="bottom-end"
+                        md-size="big">
+                        <md-button class="nav-button md-raised md-dense " md-menu-trigger>
+                            <md-icon class="c-white">person</md-icon>
+                            <small>{{ adminName }}</small>
+                            <md-icon class="c-white">keyboard_arrow_down</md-icon>
                         </md-button>
+                        <md-menu-content>
+                            <div class="author-card">
+                                <div class="md-layout">
+                                    <md-icon class="md-size-2x">account_circle</md-icon>
+                                </div>
+                                <div class="md-layout md-alignment-center">
+                                    {{ adminName }}
+                                </div>
+                                <hr>
+                            </div>
+                            <md-menu-item  @click="replaceRoute('/profile')">
+                                {{$tc('words.profile')}}
+                            </md-menu-item>
+                            <md-menu-item @click="replaceRoute('/profile/management')">
+                                {{$tc('phrases.userManagement')}}
+                            </md-menu-item>
+                            <md-menu-item @click="logout()">
+                                Log Out
+                            </md-menu-item>
+                        </md-menu-content>
                     </md-menu>
+
 
                     <md-button
                         class="md-just-icon md-simple md-toolbar-toggle"
@@ -103,7 +108,11 @@
 </template>
 
 <script>
+import Breadcrumb from '../shared/Breadcrumb'
 export default {
+    components: {
+        Breadcrumb
+    },
     data () {
         return {
             open: false,
@@ -128,6 +137,11 @@ export default {
             this.$router.replace(route)
         }
 
+    },
+    computed: {
+        adminName () {
+            return this.$store.getters['auth/getAuthenticateUser'].name
+        },
     }
 
 }
@@ -141,6 +155,18 @@ export default {
 }
 .menu-item{
     padding-right: 1vh
+}
+.author-card{
+    min-width: 30%!important;
+    text-align: center;
+    color: #3d3d3d;
+    font-size: 1rem;
+    font-weight: 300;
+    padding: 1vh;
+    margin-top: 0;
+}
+.c-white{
+    color: white;
 }
 
 </style>

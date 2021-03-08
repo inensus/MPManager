@@ -3,9 +3,7 @@
         <md-table>
             <md-table-row>
                 <md-table-head></md-table-head>
-                <md-table-head >{{ $tc('words.subject') }}</md-table-head>
-                <md-table-head >{{ $tc('words.category') }}</md-table-head>
-                <md-table-head >{{ $tc('words.date') }}</md-table-head>
+                <md-table-head v-for="head in tableHeads" :key="head"> {{ head }}</md-table-head>
             </md-table-row>
             <template v-for="(ticket,index) in ticketList" >
                 <md-table-row @click="openTicket(index)"  :key="'tic'+index">
@@ -13,43 +11,39 @@
                     <md-table-cell >{{ticket.name}}</md-table-cell>
                     <md-table-cell v-if="ticket.category">{{ticket.category.label_name}}</md-table-cell>
                     <md-table-cell v-else>-</md-table-cell>
+                    <md-table-cell v-if="!allowLock">
+                        <span  :class="[!ticket.closed  ? 'open-ticket': 'closed-ticket']">
+                            {{!ticket.closed  ? "Open" : "Closed"}}</span>
+                    </md-table-cell>
                     <md-table-cell >{{formatDate(ticket.created)}}</md-table-cell>
                 </md-table-row>
                 <md-table-row v-if="showTicket === index" :key="index">
-                    <md-table-cell colspan="4">
+                    <md-table-cell :colspan="tableHeads.length + 1">
                         <hr :class="[!ticket.closed ? 'open-ticket-hr' : 'close-ticket-hr']">
-
-
                         <div class="ticket-desc">
                             <div class="md-layout md-gutter md-size-100 " >
 
                                 <div class="md-layout-item md-size-100">
                                     <span class="md-subheader">{{ $tc('phrases.ticketDetails') }}</span>
-
                                 </div>
-
 
                             </div>
                             <div class="md-layout md-gutter md-size-100" >
                                 <div class="md-layout-item md-size-70">
-
                                     <span v-if="ticket.assignedTo" >
                                        <b> {{ $tc('phrases.assignTo',2) }}: {{ticket.assignedTo.user_name}}</b>
                                     </span>
-                                    <span v-else>
-                                         <b> {{ $tc('phrases.assignTo',2) }}: - </b>
-                                    </span>
                                 </div>
 
-                                <div class="md-layout-item md-size-30" @click="lockTicket(ticket)"
-                                     style=" cursor: pointer;" v-if="!ticket.closed">
+                                <div class="md-layout-item md-size-30"  @click="lockTicket(ticket)"
+                                     style=" cursor: pointer;" v-if="!ticket.closed && allowLock">
                                     <md-icon style="float:right !important; color: #9a0325">lock</md-icon>
                                 </div>
                             </div>
 
                             <div class="md-layout-item md-size-100 t-text-area">
                                 <md-icon>person</md-icon>
-                                {{ticket.owner.name}} {{ticket.owner.surname}} :
+                                <span v-if="ticket.owner !== undefined && ticket.owner !== null">{{ticket.owner.name}} {{ticket.owner.surname}} :</span>
                                 <p class="t-text" v-text="ticket.description"></p>
                             </div>
                             <div class="md-layout-item md-size-100" style="min-height:25px;">
@@ -104,10 +98,10 @@
 </template>
 
 <script>
-import { TicketCommentService } from '../../services/TicketCommentService'
-import { EventBus } from '../../shared/eventbus'
-import { SmsService } from '../../services/SmsService'
-import { TicketService } from '../../services/TicketService'
+import { TicketCommentService } from '../services/TicketCommentService'
+import { EventBus } from './eventbus'
+import { SmsService } from '../services/SmsService'
+import { TicketService } from '../services/TicketService'
 import moment from 'moment'
 
 export default {
@@ -116,7 +110,12 @@ export default {
 
         ticket: String,
         allowComment: Boolean,
-        ticketList: Array
+        ticketList: Array,
+        tableHeads: Array,
+        allowLock: {
+            type: Boolean,
+            default: true
+        }
     },
     data () {
         return {
@@ -128,6 +127,9 @@ export default {
             showTicket: null,
             senderId: this.$store.getters['auth/authenticationService'].authenticateUser.id,
         }
+    },
+    mounted () {
+        console.log(this.ticketList)
     },
     methods: {
         getTimeAgo (date) {
@@ -143,8 +145,6 @@ export default {
             } else {
                 this.showTicket = index
             }
-
-
         },
         navigateToOwner (id) {
             this.$router.push({ path: '/people/' + id })
@@ -284,6 +284,16 @@ export default {
     .expand-ticket{
         padding-right: 5px!important;
         max-width: 10%!important;
+    }
+    .closed-ticket {
+        background-color: #9d0006;
+        color: white;
+        padding: 10px;
+    }
+    .open-ticket{
+        background-color: #0aa66e;
+        padding: 10px;
+        color: white;
     }
 
 </style>

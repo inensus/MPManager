@@ -3,6 +3,9 @@
         :title="$tc('phrases.smsHistory') + ' (' + smses.length + ')' "
         color="green"
         :subscriber="subscriber"
+        :button="true"
+        :empty-state-create-button="true"
+        @widgetAction = "hideEmptyStateArea"
     >
         <div>
             <md-content class="md-scrollbar chat-body chat-body-scroll" ref="chat" id="chat-body">
@@ -14,7 +17,7 @@
                             :class="sms.direction === 0 ? 'incomming' : ''">
                         <md-icon v-if="sms.direction !== 0">textsms</md-icon>
                         <md-icon v-else>mark_email_unread</md-icon>
-                       
+
                         <div class="md-list-item-text md-size-100">
                             <div class="md-layout">
                                 <div class="md-layout-item md-gutter md-size-100">
@@ -94,6 +97,9 @@ export default {
         }
     },
     methods: {
+        hideEmptyStateArea(){
+            EventBus.$emit('hideEmptyStateArea', this.subscriber)
+        },
         getTimeAgo (date) {
             return moment(date).fromNow()
 
@@ -105,7 +111,7 @@ export default {
         getSmsList () {
             this.smsService.getList(this.personId).then(response => {
                 this.smses = response
-                EventBus.$emit('widgetContentLoaded', this.subscriber, this.smses.length)
+                EventBus.$emit('widgetContentLoaded', this.subscriber,this.smses.length)
                 if (this.smses.length){
                     this.scrollDown()
                 }

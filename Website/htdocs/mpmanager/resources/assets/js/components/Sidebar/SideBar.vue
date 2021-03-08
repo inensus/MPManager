@@ -16,29 +16,6 @@
 
         </div>
 
-        <div class="ramaining-content" style="display: inline-flex">
-            <div class="md-layout md-gutter md-alignment-center-left p-15">
-                <div class="md-layout-item md-size-40">
-                    <md-icon class="md-size-2x c-white">account_box</md-icon>
-                </div>
-
-                <div class="md-layout">
-                    <div class="md-layout-item md-size-100 c-white">
-                        <span class="admin-text">{{adminName}}</span>
-                    </div>
-
-                    <div class="md-layout-item md-size-100 c-gray">
-                        <small>
-                            <md-icon>access_alarm</md-icon>
-                        </small>
-                        <small>{{remaining}}</small>
-                    </div>
-                </div>
-
-
-            </div>
-
-        </div>
         <div class="sidebar-wrapper">
             <slot name="content"></slot>
             <md-list class="no-bg p-15" md-expand-single>
@@ -49,7 +26,7 @@
                     <md-list-item :md-expand="menu.sub_menu_items.length !== 0">
                         <!-- add icon if icon is defined -->
                         <md-icon v-if="menu.md_icon !== ''" class="c-white icon-box">{{menu.md_icon}}</md-icon>
-                        <span class="md-list-item-text c-white">{{translateMenuItem(menu.name)}}</span>
+                        <span class="md-list-item-text c-white">{{translateItem(menu.name)}}</span>
                         <md-list slot="md-expand" v-if="menu.sub_menu_items.length !== 0" class="no-bg">
                             <md-list-item v-for="(sub,index) in menu.sub_menu_items"
                                           :key="index"
@@ -73,6 +50,7 @@
 </template>
 <script>
 import menu from './menu.json'
+import { translateItem } from '../../Helpers/TranslateItem.js'
 
 export default {
     name: 'SideBar',
@@ -80,7 +58,8 @@ export default {
         return {
             show_extender: false,
             admin: null,
-            menus: menu
+            menus: menu,
+            translateItem: translateItem
         }
     },
 
@@ -143,11 +122,6 @@ export default {
         adminName () {
             return this.$store.getters['auth/getAuthenticateUser'].name
         },
-        remaining () {
-            let remaining_time = this.$store.getters['auth/getAuthenticateUser'].remaining_time
-            let remaining_seconds = (remaining_time % 60).toString()
-            return Math.floor(remaining_time / 60).toString() + ':' + ('0' + remaining_seconds).slice(-2)
-        },
         sidebarStyle () {
             return {
 
@@ -184,6 +158,16 @@ export default {
     .brand-column {
         text-align: center;
         padding-left: 2rem !important
+    }
+    @media screen and (min-width: 991px) {
+        .brand-column {
+            dtext-align: center;
+            padding-left: 1rem !important
+        }
+    }
+    .md-list-item-text{
+        font-size: 0.8rem!important;
+        font-weight: 400!important;
     }
 
     @media screen and (min-width: 991px) {
@@ -230,7 +214,7 @@ export default {
     }
 
     .icon-box {
-        margin-right: 15px;
+        margin-right: 10px!important;
         width: 25px !important;
         height: 25px !important;
 
@@ -244,10 +228,6 @@ export default {
         color: gray;
     }
 
-    .admin-text {
-        font-size: 1.2rem;
-    }
-
     .app-style {
         width: calc(100% / 12 * 2);
         position: fixed;
@@ -259,12 +239,8 @@ export default {
     }
 
     .p-15 {
-        padding: 15px;
+        padding: 10px;
     }
 
-    .ramaining-content {
-        display: inline-flex;
-        padding-left: 0.7rem;
-    }
 </style>
 

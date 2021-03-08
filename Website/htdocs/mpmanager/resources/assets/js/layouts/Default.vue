@@ -90,6 +90,30 @@ export default {
 
     @media screen and (min-width: 991px) {
         .sidebar {
+            width: 8%;
+            min-width: 200px;
+
+        }
+
+        .main-panel {
+            width: 92%;
+            max-width: calc(100% - 200px);
+        }
+    }
+    @media screen and (min-width: 1370px) {
+        .sidebar {
+            width: 10%;
+            min-width: 230px;
+
+        }
+
+        .main-panel {
+            width: 90%;
+            max-width: calc(100% - 230px);
+        }
+    }
+    @media screen and (min-width: 1800px) {
+        .sidebar {
             width: 15%;
             min-width: 260px;
 

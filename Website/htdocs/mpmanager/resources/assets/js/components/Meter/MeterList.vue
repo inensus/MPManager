@@ -69,7 +69,6 @@ export default {
     },
 
     mounted () {
-        EventBus.$emit('bread', this.bcd)
         EventBus.$on('pageLoaded', this.reloadList)
         EventBus.$on('searching', this.searching)
         EventBus.$on('end_searching', this.endSearching)
