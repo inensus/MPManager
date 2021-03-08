@@ -43,7 +43,7 @@ class SmsProcessorTest extends TestCase
         $transactionContainer = TransactionDataContainer::initialize($transaction);
         $transactionContainer->chargedEnergy = 1;
 
-        TokenProcessor::dispatchNow(
+        TokenProcessor::dispatch(
             $transactionContainer
         );
         Queue::assertPushed(TokenProcessor::class);
