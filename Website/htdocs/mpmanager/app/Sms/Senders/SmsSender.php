@@ -1,11 +1,8 @@
 <?php
 
-
 namespace App\Sms\Senders;
 
-
 use App\Exceptions\MissingSmsReferencesException;
-use App\Jobs\SmsLoadBalancer;
 use App\Models\AssetRate;
 use App\Models\Transaction\Transaction;
 use App\Services\SmsBodyService;
@@ -34,17 +31,20 @@ abstract class SmsSender
     public function sendSms()
     {
         if (config('app.debug')) {
-            Log::debug('Send sms on debug is not allowed in debug mode', ['number' => $this->receiver, 'message' => $this->body]);
+            Log::debug(
+                'Send sms on debug is not allowed in debug mode',
+                ['number' => $this->receiver, 'message' => $this->body]
+            );
             return;
         }
-       if (!($this->data instanceof Transaction) && !($this->data instanceof AssetRate)) {
+        if (!($this->data instanceof Transaction) && !($this->data instanceof AssetRate)) {
             $nullSmsBodies = $this->smsBodyService->getNullBodies();
             if (count($nullSmsBodies)) {
                 Log::debug('Send sms rejected, some of sms bodies are null', ['Sms Bodies' => $nullSmsBodies]);
                 return;
             }
         }
-       //add sms to sms_gateway
+        //add sms to sms_gateway
         resolve('SmsProvider')
             ->sendSms(
                 $this->receiver,
@@ -68,7 +68,6 @@ abstract class SmsSender
         $className = 'App\\Sms\\BodyParsers\\' . $this->references['body'];
         $smsObject = new $className($this->data);
         $this->body .= $smsObject->parseSms($smsBody->body);
-
     }
 
     public function prepareFooter()
@@ -79,24 +78,32 @@ abstract class SmsSender
 
     private function validateReferences()
     {
-        if (!array_key_exists('header', $this->references) ||
+        if (
+            !array_key_exists('header', $this->references) ||
             !array_key_exists('body', $this->references) ||
-            !array_key_exists('footer', $this->references)) {
+            !array_key_exists('footer', $this->references)
+        ) {
             throw  new MissingSmsReferencesException('header, body & footer keys must be defined in references array');
         }
-
     }
 
     public function getReceiver()
     {
         if ($this->data instanceof Transaction) {
-            $this->receiver = strpos($this->data->sender, '+') === 0 ? $this->data->sender : '+' . $this->data->sender;;
+            $this->receiver = strpos($this->data->sender, '+') === 0 ? $this->data->sender : '+' . $this->data->sender;
+            ;
         } elseif ($this->data instanceof AssetRate) {
-            $this->receiver = strpos($this->data->assetPerson->person->addresses->first()->phone,
-                '+') === 0 ? $this->data->assetPerson->person->addresses->first()->phone : '+' . $this->data->assetPerson->person->addresses->first()->phone;;
+            $this->receiver = strpos(
+                $this->data->assetPerson->person->addresses->first()->phone,
+                '+'
+            ) === 0 ? $this->data->assetPerson->person->addresses->first()->phone
+                : '+' . $this->data->assetPerson->person->addresses->first()->phone;
+            ;
         } else {
-            $this->receiver = strpos($this->data['phone'],
-                '+') === 0 ? $this->data['phone'] : '+' . $this->data['phone'];
+            $this->receiver = strpos(
+                $this->data['phone'],
+                '+'
+            ) === 0 ? $this->data['phone'] : '+' . $this->data['phone'];
         }
         return $this->receiver;
     }

@@ -2,7 +2,6 @@
 
 namespace App\Jobs;
 
-
 use App\Exceptions\SmsBodyParserNotExtendedException;
 use App\Exceptions\SmsTypeNotFoundException;
 use App\Models\Sms;
@@ -17,7 +16,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
-
 
 class SmsProcessor implements ShouldQueue
 {
@@ -104,13 +102,9 @@ class SmsProcessor implements ShouldQueue
         $smsBodyService = resolve('App\Services\SmsBodyService');
         $reflection = new \ReflectionClass($this->smsTypes[$this->smsType]);
 
-        if (!$reflection->isSubclassOf( SmsSender::class)) {
-
+        if (!$reflection->isSubclassOf(SmsSender::class)) {
             throw new  SmsBodyParserNotExtendedException('SmsBodyParser has not extended 5.');
-
         }
         return $reflection->newInstanceArgs([$this->data, $smsBodyService]);
     }
-
-
 }

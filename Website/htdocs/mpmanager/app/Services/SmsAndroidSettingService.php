@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Services;
-
 
 use App\Models\SmsAndroidSetting;
 
@@ -32,9 +30,9 @@ class SmsAndroidSettingService
     {
 
         $smsAndroidSetting->update([
-            'callback'=>$smsAndroidSettingData['callback'],
-            'token'=>$smsAndroidSettingData['token'],
-            'key'=>$smsAndroidSettingData['key']
+            'callback' => $smsAndroidSettingData['callback'],
+            'token' => $smsAndroidSettingData['token'],
+            'key' => $smsAndroidSettingData['key']
         ]);
         return $this->smsAndroidSetting->newQuery()->get();
     }

@@ -1,9 +1,6 @@
 <?php
 
-
 namespace App\Sms\Senders;
-
-
 
 class OverDueAssetRateNotification extends SmsSender
 {

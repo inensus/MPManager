@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Sms\BodyParsers;
-
 
 use App\Models\AssetRate;
 
@@ -12,15 +10,16 @@ class SmsReminderHeader extends SmsBodyParser
     protected $reminderData;
     public function __construct(AssetRate $reminderData)
     {
-        $this->reminderData=$reminderData;
+        $this->reminderData = $reminderData;
     }
-    protected function getVariableValue($variable) {
+    protected function getVariableValue($variable)
+    {
         $person =   $this->reminderData->assetPerson->person;
-        switch($variable) {
-            case 'name' :
+        switch ($variable) {
+            case 'name':
                 $variable = $person->name;
                 break;
-            case 'surname' :
+            case 'surname':
                 $variable = $person->surname;
                 break;
         }

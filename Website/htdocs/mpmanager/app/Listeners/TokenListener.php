@@ -88,7 +88,6 @@ class TokenListener
                 'transaction' => $transactionContainer->transaction,
             ]
         );
-
     }
 
     public function subscribe(Dispatcher $events): void

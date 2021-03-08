@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Services;
-
 
 use App\Models\AssetType;
 use App\Models\SmsApplianceRemindRate;

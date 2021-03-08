@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Http\Controllers;
-
 
 use App\Http\Resources\ApiResource;
 use App\Models\SmsResendInformationKey;
@@ -25,8 +23,11 @@ class SmsResendInformationKeyController extends Controller
         return new ApiResource($this->smsResendInformationKeyService->getResendInformationKeys());
     }
 
-    public function update(SmsResendInformationKey $smsResendInformationKey,Request $request):ApiResource
+    public function update(SmsResendInformationKey $smsResendInformationKey, Request $request): ApiResource
     {
-        return new ApiResource($this->smsResendInformationKeyService->updateResendInformationKey($smsResendInformationKey,$request->all()));
+        return new ApiResource($this->smsResendInformationKeyService->updateResendInformationKey(
+            $smsResendInformationKey,
+            $request->all()
+        ));
     }
 }

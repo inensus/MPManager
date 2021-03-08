@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Sms\Senders;
-
 
 use App\Sms\BodyParsers\ResendInformation;
 use App\Sms\BodyParsers\ResendInformationLastTransactionNotFound;
@@ -32,7 +30,5 @@ class ResendInformationNotification extends SmsSender
             $smsObject = new ResendInformationLastTransactionNotFound($this->data);
             $this->body .= $smsObject->parseSms($smsBody->body);
         }
-
-
     }
 }

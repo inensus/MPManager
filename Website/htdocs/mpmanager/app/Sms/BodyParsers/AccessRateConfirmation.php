@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Sms\BodyParsers;
-
 
 use App\Models\PaymentHistory;
 
@@ -14,11 +12,12 @@ class AccessRateConfirmation extends SmsBodyParser
 
     public function __construct(PaymentHistory $paymentHistory)
     {
-        $this->paymentHistory=$paymentHistory;
+        $this->paymentHistory = $paymentHistory;
     }
-    protected function getVariableValue($variable) {
-        switch($variable) {
-            case 'amount' :
+    protected function getVariableValue($variable)
+    {
+        switch ($variable) {
+            case 'amount':
                 $variable = $this->paymentHistory->amount;
                 break;
         }
