@@ -13,7 +13,6 @@ use App\Http\Requests\SmsRequest;
 use App\Http\Requests\StoreSmsRequest;
 use App\Http\Resources\ApiResource;
 use App\Jobs\SmsProcessor;
-use App\Http\Resources\SmsSearchResultResource;
 use App\Models\ConnectionGroup;
 use App\Models\ConnectionType;
 use App\Models\Meter\MeterParameter;
@@ -384,8 +383,7 @@ class SmsController extends Controller
         $smses = $this->sms->where('receiver', $phone)->get();
         return new ApiResource($smses);
     }
-
-    public function search($search)
+    public function search($search): ApiResource
     {
         //search in people
         $list = $this->person::with('addresses')
@@ -400,6 +398,6 @@ class SmsController extends Controller
             ->orWhere('surname', 'like', '%' . $search . '%')
             ->get();
 
-        return  SmsSearchResultResource::collection($list);
+        return new ApiResource($list);
     }
 }
