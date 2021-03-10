@@ -181,7 +181,6 @@ export default {
         async saveTicket () {
             try {
                 this.loading = true
-                console.log(this.maintenanceData)
                 await this.ticketService.createMaintenanceTicket(this.maintenanceData)
                 await this.smsService.sendMaintenanceSms(this.maintenanceData)
                 this.alertNotify('success', this.$tc('phrases.newMaintenanceRequest',2))

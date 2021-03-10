@@ -6,7 +6,7 @@
             :paginator="paginator"
             :search="false"
             :subscriber="subscriber"
-            :color="'red'"
+
         >
                 <md-table v-model="list" md-sort="id" md-sort-order="desc">
                     <md-table-row>

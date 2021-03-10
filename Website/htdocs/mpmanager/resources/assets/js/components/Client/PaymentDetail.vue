@@ -5,7 +5,6 @@
         >
             <div slot="tabbar">
                 <md-field>
-                    <label class="period-style">{{ $tc('words.period') }}</label>
                     <md-select class="period-style md-has-value" name="period" id="period" v-model="period"
                                @md-selected="getFlow">
                         <md-option value="D">{{ $tc('words.day',2) }}</md-option>

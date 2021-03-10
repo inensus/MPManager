@@ -7,7 +7,6 @@
 require('./bootstrap')
 import router from './routes'
 import Appp from '../js/Appp'
-import Breadcrumb from './shared/Breadcrumb'
 import 'leaflet/dist/leaflet.css'
 import store from './store/store'
 import UserData from './shared/UserData'
@@ -38,8 +37,7 @@ router.beforeEach((to, from, next) => {
 const app = new Vue({
     el: '#app',
     components: {
-        Breadcrumb,
-        UserData,
+        UserData
     },
     data () {
         return {
