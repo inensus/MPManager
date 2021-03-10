@@ -91,14 +91,12 @@ abstract class SmsSender
     {
         if ($this->data instanceof Transaction) {
             $this->receiver = strpos($this->data->sender, '+') === 0 ? $this->data->sender : '+' . $this->data->sender;
-            ;
         } elseif ($this->data instanceof AssetRate) {
             $this->receiver = strpos(
                 $this->data->assetPerson->person->addresses->first()->phone,
                 '+'
             ) === 0 ? $this->data->assetPerson->person->addresses->first()->phone
                 : '+' . $this->data->assetPerson->person->addresses->first()->phone;
-            ;
         } else {
             $this->receiver = strpos(
                 $this->data['phone'],

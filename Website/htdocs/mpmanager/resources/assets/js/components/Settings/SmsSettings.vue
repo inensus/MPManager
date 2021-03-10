@@ -86,6 +86,9 @@ export default {
             isValid: false
         }
     },
+    created () {
+        this.getSmsVariableDefaultValues()
+    },
     mounted () {
         this.getSmsBodies()
         this.getSmsResendInformationKey()
@@ -93,7 +96,6 @@ export default {
         EventBus.$on('smsAndroidSettingAdded', this.addAdditionalAndroidSetting)
         EventBus.$on('smsAndroidSettingRemoved', this.removeAdditionalAndroidSetting)
         EventBus.$on('smsAndroidSettingSaved', this.saveAdditionalAndroidSetting)
-        this.getSmsVariableDefaultValues()
     },
     methods: {
         async getSmsVariableDefaultValues () {

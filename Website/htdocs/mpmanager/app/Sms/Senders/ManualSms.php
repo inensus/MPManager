@@ -14,14 +14,14 @@ class ManualSms extends SmsSender
 
     public function prepareHeader()
     {
-        $this->body = '';
+        $this->body .= '';
     }
     public function prepareBody()
     {
-        $this->body = $this->data['message'];
+        $this->body .= $this->data['message'];
     }
     public function prepareFooter()
     {
-        $this->body = '';
+        $this->body .= '';
     }
 }

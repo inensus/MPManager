@@ -295,7 +295,8 @@
     "reminderRate": "Reminder Rate (Day)",
     "yourMessage": "Your message will seen like that",
     "thisKeyWillUseIn": "Resend Last Transaction Information Key is for the customers that want to get their last transaction information. When the customers want to get their last transaction information, they need to send an SMS that starts with this key and go on with the customer meter serial number.",
-    "addAdditionalSmsAndroidSetting": "Add Additional Sms Android Setting"
+    "addAdditionalSmsAndroidSetting": "Add Additional Sms Android Setting",
+    "Low Balance Limit Notify":"Low Balance Limit Notify"
   },
   "words": {
     "access": "Access",

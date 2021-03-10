@@ -17,6 +17,7 @@ use App\Models\Transaction\VodacomTransaction;
 use App\Models\User;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -28,6 +29,7 @@ class SendSms extends TestCase
     /** @test */
     public function store_and_send()
     {
+        Queue::fake();
         $this->withoutExceptionHandling();
         $person = $this->initializeData();
         $user = factory(User::class)->create();
@@ -41,6 +43,7 @@ class SendSms extends TestCase
     /** @test */
     public function store()
     {
+        Queue::fake();
         $this->withoutExceptionHandling();
         $person = $this->initializeData();
 

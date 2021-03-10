@@ -70,6 +70,7 @@ export default {
         EventBus.$on('checkValidate', async () => {
             this.smsBody.validation = await this.$validator.validateAll()
         })
+        this.prepareShownMessage()
     },
     methods: {
         selectVariable (tag) {
