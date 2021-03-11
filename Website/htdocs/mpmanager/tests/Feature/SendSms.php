@@ -201,7 +201,7 @@ class SendSms extends TestCase
 
         //associate address with a person
         $address = Address::query()->create([
-            'phone' => '+905396398161',
+            'phone' => '+905494322161',
             'is_primary' => 1,
             'owner_type' => 'person',
             'owner_id' => 1,

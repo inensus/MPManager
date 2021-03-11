@@ -54,7 +54,7 @@ class SmsProcessorTest extends TestCase
     {
         Queue::fake();
         $transaction = $this->initializeData();
-        $transaction->sender = '+905396398161';
+        $transaction->sender = '905494322161';
         //create sms-bodies
         $this->addSmsBodies();
         config::set('app.debug', false);
@@ -71,12 +71,12 @@ class SmsProcessorTest extends TestCase
     {
         Queue::fake();
         $transaction = $this->initializeData();
-        $transaction->sender = '+905396398161';
+        $transaction->sender = '905494322161';
         //create sms-bodies
         $this->addSmsBodies();
         config::set('app.debug', false);
         $data = [
-            'phone' => '+905396398161',
+            'phone' => '905494322161',
             'meter' => $transaction->message
         ];
         SmsProcessor::dispatch(
@@ -231,7 +231,7 @@ class SmsProcessorTest extends TestCase
 
         //associate address with a person
         $address = Address::query()->make([
-            'phone' => '+905396398161',
+            'phone' => '905494322161',
         ]);
         $address->owner()->associate($p);
 
