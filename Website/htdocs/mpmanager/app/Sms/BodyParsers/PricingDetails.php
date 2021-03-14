@@ -37,18 +37,9 @@ class PricingDetails extends SmsBodyParser
     private function calculateTaxes()
     {
         $mainSettings = MainSettings::query()->first();
-        $totalEnergyAmount = 0;
-        $otherStaffsAmount = 0;
-        $this->transaction->paymentHistories()->get()
-            ->each(function ($payment) use ($totalEnergyAmount, $otherStaffsAmount) {
-                if (!$payment->payment_type === 'energy') {
-                    $otherStaffsAmount += $payment->amount;
-                    return true;
-                }
-                $totalEnergyAmount += $payment->amount;
-                return true;
-            });
-        $this->vatEnergy = $totalEnergyAmount * $mainSettings->vat_energy / 100;
-        $this->vatOtherStaffs = $otherStaffsAmount * $mainSettings->vat_appliance / 100;
+        $energy = $this->transaction->paymentHistories->where('payment_type', 'energy')->sum('amount');
+        $other =  $this->transaction->paymentHistories->where('payment_type', '!=', 'energy')->sum('amount');
+        $this->vatEnergy = $energy * $mainSettings->vat_energy / 100;
+        $this->vatOtherStaffs = $other * $mainSettings->vat_appliance / 100;
     }
 }
