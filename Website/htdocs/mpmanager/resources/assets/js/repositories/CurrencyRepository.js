@@ -1,4 +1,4 @@
-const resource = '/api/settings/currencyList'
+const resource = '/api/settings/currency-list'
 import Client from './Client/AxiosClient'
 
 export default {
