@@ -2,9 +2,12 @@
 
 namespace App\Sms\Senders;
 
+use App\Exceptions\MissingSmsReferencesException;
 use App\Sms\BodyParsers\ResendInformation;
 use App\Sms\BodyParsers\ResendInformationLastTransactionNotFound;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 class ResendInformationNotification extends SmsSender
 {
@@ -13,22 +16,46 @@ class ResendInformationNotification extends SmsSender
     public $body = '';
     protected $references = [
         'header' => 'SmsResendInformationHeader',
-        'body' => null,
-        'footer' => 'SmsResendInformationFooter'
+        'footer' => 'SmsResendInformationFooter',
+        'body' => 'ResendInformation',
     ];
-
     public function prepareBody()
     {
         if (!is_array($this->data)) {
-            $smsBody = $this->smsBodyService->getSmsBodyByReference('ResendInformation');
+            try {
+                $smsBody = $this->smsBodyService->getSmsBodyByReference('ResendInformation');
+            } catch (ModelNotFoundException $exception) {
+                $exception = new MissingSmsReferencesException('ResendInformation SMS body 
+                record not found in database');
+                Log::error('SMS Body preparing failed.', ['message : ' => $exception->getMessage()]);
+                return;
+            }
+
             $this->data->paymentHistories()->each(function ($payment) use ($smsBody) {
                 $smsObject = new ResendInformation($payment);
-                $this->body .= $smsObject->parseSms($smsBody->body);
+                try {
+                    $this->body .= $smsObject->parseSms($smsBody->body);
+                } catch (\Exception $exception) {
+                    Log::error('SMS Body parsing failed.', ['message : ' => $exception->getMessage()]);
+                    return;
+                }
             });
         } else {
-            $smsBody = $this->smsBodyService->getSmsBodyByReference('ResendInformationLastTransactionNotFound');
+            try {
+                $smsBody = $this->smsBodyService->getSmsBodyByReference('ResendInformationLastTransactionNotFound');
+            } catch (ModelNotFoundException $exception) {
+                $exception = new MissingSmsReferencesException('ResendInformation SMS body 
+                record not found in database');
+                Log::error('SMS Body preparing failed.', ['message : ' => $exception->getMessage()]);
+                return;
+            }
             $smsObject = new ResendInformationLastTransactionNotFound($this->data);
-            $this->body .= $smsObject->parseSms($smsBody->body);
+            try {
+                $this->body .= $smsObject->parseSms($smsBody->body);
+            } catch (\Exception $exception) {
+                Log::error('SMS Body parsing failed.', ['message : ' => $exception->getMessage()]);
+                return;
+            }
         }
     }
 }

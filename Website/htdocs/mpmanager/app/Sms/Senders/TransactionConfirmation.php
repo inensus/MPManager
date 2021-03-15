@@ -2,8 +2,9 @@
 
 namespace App\Sms\Senders;
 
-use App\Models\Transaction\Transaction;
-use App\Services\SmsBodyService;
+use App\Exceptions\MissingSmsReferencesException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Log;
 
 class TransactionConfirmation extends SmsSender
 {
@@ -11,8 +12,8 @@ class TransactionConfirmation extends SmsSender
     public $body = '';
     protected $references = [
         'header' => 'SmsTransactionHeader',
-        'body' => null,
-        'footer' => 'SmsTransactionFooter'
+        'footer' => 'SmsTransactionFooter',
+        'body' => ''
     ];
     public const ENERGY_CONFIRMATION = 'energy';
     public const ACCESS_RATE_PAYMENT = 'access rate';
@@ -33,7 +34,6 @@ class TransactionConfirmation extends SmsSender
                     break;
             }
         });
-
         $this->preparePricingDetails();
     }
     public function preparePricingDetails()
@@ -42,10 +42,20 @@ class TransactionConfirmation extends SmsSender
     }
     private function prepareBodyByClassReference($reference, $payload)
     {
-        $smsBody = $this->smsBodyService->getSmsBodyByReference($reference);
-        $className = 'App\\Sms\\BodyParsers\\' . $reference;
+        try {
+            $smsBody = $this->smsBodyService->getSmsBodyByReference($reference);
+        } catch (ModelNotFoundException $exception) {
+            $exception =  new MissingSmsReferencesException($reference . ' SMS body record not found in database');
+            Log::error('SMS Body preparing failed.', ['message : ' => $exception->getMessage()]);
+            return;
+        }
+        $className = $this->parserSubPath . $reference;
         $smsObject = new $className($payload);
-
-        $this->body .= $smsObject->parseSms($smsBody->body);
+        try {
+            $this->body .= $smsObject->parseSms($smsBody->body);
+        } catch (\Exception $exception) {
+            Log::error('SMS Body parsing failed.', ['message : ' => $exception->getMessage()]);
+            return;
+        }
     }
 }
