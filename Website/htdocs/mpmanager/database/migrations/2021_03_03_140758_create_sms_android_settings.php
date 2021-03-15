@@ -16,8 +16,8 @@ class CreateSmsAndroidSettings extends Migration
         Schema::create('sms_android_settings', function (Blueprint $table) {
             $table->increments('id');
             $table->string('url')->default('https://fcm.googleapis.com/fcm/send');
-            $table->string('token');
-            $table->string('key');
+            $table->string('token')->nullable();
+            $table->string('key')->nullable();
             $table->string('callback')->default('https://mpmanager.local/api/sms/%s/confirm');
             $table->timestamps();
         });
