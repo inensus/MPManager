@@ -2,9 +2,7 @@
 
 namespace Tests\Unit;
 
-use App\Jobs\EnergyTransactionProcessor;
-use App\Jobs\ProcessPayment;
-use App\Jobs\SmsLoadBalancer;
+
 use App\Jobs\SmsProcessor;
 use App\Jobs\TokenProcessor;
 use App\Misc\TransactionDataContainer;
@@ -13,15 +11,14 @@ use App\Models\MainSettings;
 use App\Models\Manufacturer;
 use App\Models\Meter\Meter;
 use App\Models\Meter\MeterTariff;
-use App\Models\Meter\MeterToken;
 use App\Models\Meter\MeterType;
-use App\Models\PaymentHistory;
+
 use App\Models\Person\Person;
-use App\Models\Sms;
 use App\Models\SmsBody;
 use App\Models\Transaction\Transaction;
 use App\Models\Transaction\VodacomTransaction;
 
+use App\Sms\Senders\SmsConfigs;
 use App\Sms\SmsTypes;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -57,13 +54,12 @@ class SmsProcessorTest extends TestCase
         $transaction->sender = '905494322161';
         //create sms-bodies
         $this->addSmsBodies();
-        config::set('app.debug', false);
         SmsProcessor::dispatch(
             $transaction,
-            SmsTypes::TRANSACTION_CONFIRMATION
+            SmsTypes::TRANSACTION_CONFIRMATION,
+            SmsConfigs::class
         );
         Queue::assertPushed(SmsProcessor::class);
-
     }
 
     /** @test */
@@ -74,18 +70,18 @@ class SmsProcessorTest extends TestCase
         $transaction->sender = '905494322161';
         //create sms-bodies
         $this->addSmsBodies();
-        config::set('app.debug', false);
+
         $data = [
             'phone' => '905494322161',
             'meter' => $transaction->message
         ];
         SmsProcessor::dispatch(
             $data,
-            SmsTypes::RESEND_INFORMATION
+            SmsTypes::RESEND_INFORMATION,
+            SmsConfigs::class
         );
         Queue::assertPushed(SmsProcessor::class);
     }
-
 
     private function addSmsBodies()
     {
@@ -245,6 +241,5 @@ class SmsProcessorTest extends TestCase
 
         return $transaction;
     }
-
 
 }

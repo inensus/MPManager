@@ -46,7 +46,6 @@ class SendSms extends TestCase
         Queue::fake();
         $this->withoutExceptionHandling();
         $person = $this->initializeData();
-
         $user = factory(User::class)->create();
         $data = [
             'sender' => $person->addresses[0]->phone,
@@ -55,7 +54,7 @@ class SendSms extends TestCase
         $response = $this->actingAs($user)->post('/api/sms', $data);
         $response->assertStatus(200);
         $smsCount = Sms::query()->first()->count();
-        $this->assertEquals(1, $smsCount);
+        $this->assertEquals(2, $smsCount);
     }
 
     private function initializeData()
