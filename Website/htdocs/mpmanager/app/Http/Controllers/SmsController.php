@@ -21,6 +21,7 @@ use App\Models\Person\Person;
 use App\Models\Sms;
 use App\Models\Transaction\Transaction;
 use App\Services\SmsResendInformationKeyService;
+use App\Sms\Senders\SmsConfigs;
 use App\Sms\SmsTypes;
 use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -84,7 +85,6 @@ class SmsController extends Controller
 
     public function index(): ApiResource
     {
-
         $list = $this->sms
             ::with('address.owner')
             ->orderBy('id', 'DESC')
@@ -98,7 +98,6 @@ class SmsController extends Controller
      */
     public function storeBulk(Request $request)
     {
-
         $type = $request->get('type');
         $receivers = $request->get('receivers');
         $message = $request->get('message');
@@ -107,7 +106,6 @@ class SmsController extends Controller
         if ($type === null) {
             return;
         }
-
         if ($type === 'person') {
             foreach ($receivers as $receiver) {
                 $phone = $receiver;
@@ -124,11 +122,7 @@ class SmsController extends Controller
                     'message' => $message,
                     'phone' => $phone
                 ];
-
-                SmsProcessor::dispatch(
-                    $data,
-                    SmsTypes::MANUAL_SMS
-                )->allOnConnection('redis')->onQueue(\config('services.queues.sms'));
+                $this->sendSms($data, SmsTypes::MANUAL_SMS);
             }
         } elseif ($type === 'group' || $type === 'type' || $type === 'all') {
             //get connection group meters and owners
@@ -207,7 +201,7 @@ class SmsController extends Controller
                 if ($address === null) {
                     continue;
                 }
-                $this->sms->create(
+                $this->sms->newQuery()->create(
                     [
                         'receiver' => $address[0]->phone,
                         'body' => $message,
@@ -219,16 +213,14 @@ class SmsController extends Controller
                     'message' => $message,
                     'phone' => $address[0]->phone
                 ];
-                SmsProcessor::dispatch(
-                    $data,
-                    SmsTypes::MANUAL_SMS
-                )->allOnConnection('redis')->onQueue(\config('services.queues.sms'));
+                $this->sendSms($data, SmsTypes::MANUAL_SMS);
             }
         }
     }
 
     public function store(StoreSmsRequest $request): ApiResource
     {
+
         $sender = $request->get('sender');
         $message = $request->get('message');
         $sms = $this->sms->create(
@@ -239,7 +231,6 @@ class SmsController extends Controller
                 'sender_id' => null,
             ]
         );
-
         $resendInformationKey = $this->smsResendInformationKeyService->getResendInformationKeys()->first();
         if (stripos($message, $resendInformationKey->key) === 0) {
             //get last generated token
@@ -254,10 +245,7 @@ class SmsController extends Controller
                         'phone' => $sender,
                         'meter' => $meterSerial
                     ];
-                    SmsProcessor::dispatch(
-                        $data,
-                        SmsTypes::RESEND_INFORMATION
-                    )->allOnConnection('redis')->onQueue(\config('services.queues.sms'));
+                    $this->sendSms($data, SmsTypes::RESEND_INFORMATION);
                     return new ApiResource(
                         [
                             'success' => 'false',
@@ -265,15 +253,10 @@ class SmsController extends Controller
                         ]
                     );
                 }
-                SmsProcessor::dispatch(
-                    $transaction,
-                    SmsTypes::RESEND_INFORMATION
-                )->allOnConnection('redis')->onQueue(\config('services.queues.sms'));
+                $this->sendSms($transaction, SmsTypes::RESEND_INFORMATION);
             }
             return new ApiResource($sms);
         }
-
-
         // store a comment if the sender is an maintenance guy  and responds with sms to an open ticket.
         $person = $this->person::with(
             [
@@ -296,8 +279,6 @@ class SmsController extends Controller
             $cS = new CommentService(new Comments(new Api(new Client())));
             $cS->createComment($person->tickets[0]->ticket_id, 'Sms Comment' . $message);
         }
-
-
         return new ApiResource($sms);
     }
 
@@ -333,10 +314,7 @@ class SmsController extends Controller
             'message' => $message,
             'phone' => $phone
         ];
-        SmsProcessor::dispatch(
-            $data,
-            SmsTypes::MANUAL_SMS
-        )->allOnConnection('redis')->onQueue(\config('services.queues.sms'));
+        $this->sendSms($data, SmsTypes::MANUAL_SMS);
         return new ApiResource($sms);
     }
 
@@ -403,5 +381,14 @@ class SmsController extends Controller
             ->get();
 
         return  SmsSearchResultResource::collection($list);
+    }
+
+    private function sendSms($data, $smsType)
+    {
+        SmsProcessor::dispatch(
+            $data,
+            $smsType,
+            SmsConfigs::class
+        )->allOnConnection('redis')->onQueue(\config('services.queues.sms'));
     }
 }

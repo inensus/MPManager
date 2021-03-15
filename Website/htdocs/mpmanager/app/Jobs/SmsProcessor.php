@@ -5,10 +5,8 @@ namespace App\Jobs;
 use App\Exceptions\SmsBodyParserNotExtendedException;
 use App\Exceptions\SmsTypeNotFoundException;
 use App\Models\Sms;
-use App\Sms\BodyParsers\SmsBodyParser;
 use App\Sms\Senders\ManualSms;
 use App\Sms\Senders\SmsSender;
-use App\Sms\SmsTypes;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -24,27 +22,22 @@ class SmsProcessor implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-
     public $data;
     public $smsType;
-    private $smsTypes = [
-        SmsTypes::TRANSACTION_CONFIRMATION => 'App\Sms\Senders\TransactionConfirmation',
-        SmsTypes::APPLIANCE_RATE => 'App\Sms\Senders\AssetRateNotification',
-        SmsTypes::OVER_DUE_APPLIANCE_RATE => 'App\Sms\Senders\OverDueAssetRateNotification',
-        SmsTypes::MANUAL_SMS => 'App\Sms\Senders\ManualSms',
-        SmsTypes::RESEND_INFORMATION => 'App\Sms\Senders\ResendInformationNotification'
-    ];
+    private $smsConfigs;
 
     /**
      * Create a new job instance.
      *
-     * @param            $data
-     * @param SmsTypes $smsType
+     * @param     $data
+     * @param int $smsType
+     * @param $smsConfigs
      */
-    public function __construct($data, int $smsType)
+    public function __construct($data, int $smsType, $smsConfigs)
     {
         $this->data = $data;
         $this->smsType = $smsType;
+        $this->smsConfigs = $smsConfigs;
     }
 
     /**
@@ -54,7 +47,15 @@ class SmsProcessor implements ShouldQueue
      */
     public function handle()
     {
-        $smsType = $this->resolveSmsType();
+        try {
+            $smsType = $this->resolveSmsType();
+        } catch (SmsTypeNotFoundException $exception) {
+            Log::critical('Sms send failed.', ['message : ' => $exception->getMessage()]);
+            return;
+        } catch (SmsBodyParserNotExtendedException $exception) {
+            Log::critical('Sms send failed.', ['message : ' => $exception->getMessage()]);
+            return;
+        }
         $receiver = $smsType->getReceiver();
         //dont send sms if debug
         if (config('app.debug')) {
@@ -76,7 +77,7 @@ class SmsProcessor implements ShouldQueue
             $smsType->sendSms();
         } catch (Exception $e) {
             //slack failure
-            Log::debug(
+            Log::critical(
                 'Sms Service failed ' . $receiver,
                 ['id' => '58365682988725', 'reason' => $e->getMessage()]
             );
@@ -92,19 +93,17 @@ class SmsProcessor implements ShouldQueue
             $sms->save();
         }
     }
-
     private function resolveSmsType()
     {
-        if (!array_key_exists($this->smsType, $this->smsTypes)) {
+        $configs = resolve($this->smsConfigs);
+        if (!array_key_exists($this->smsType, $configs->smsTypes)) {
             throw new  SmsTypeNotFoundException('SmsType could not resolve.');
         }
-
-        $smsBodyService = resolve('App\Services\SmsBodyService');
-        $reflection = new \ReflectionClass($this->smsTypes[$this->smsType]);
-
+        $smsBodyService = resolve($configs->servicePath);
+        $reflection = new \ReflectionClass($configs->smsTypes[$this->smsType]);
         if (!$reflection->isSubclassOf(SmsSender::class)) {
-            throw new  SmsBodyParserNotExtendedException('SmsBodyParser has not extended 5.');
+            throw new  SmsBodyParserNotExtendedException('SmsBodyParser has not extended.');
         }
-        return $reflection->newInstanceArgs([$this->data, $smsBodyService]);
+        return $reflection->newInstanceArgs([$this->data,$smsBodyService,$configs->bodyParsersPath]);
     }
 }

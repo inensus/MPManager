@@ -6,12 +6,11 @@ use App\Jobs\SmsProcessor;
 use App\Models\AssetRate;
 use App\Models\User;
 use App\Services\SmsApplianceRemindRateService;
+use App\Sms\Senders\SmsConfigs;
 use App\Sms\SmsTypes;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Console\Command;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Facades\Log;
 use Inensus\Ticket\Models\Label;
 use Inensus\Ticket\Services\BoardService;
 use Inensus\Ticket\Services\CardService;
@@ -65,7 +64,6 @@ class AssetRateChecker extends Command
     {
         $smsApplianceRemindRates = $this->getApplianceRemindRates();
         $smsApplianceRemindRates->each(function ($smsApplianceRemindRate) {
-            try {
                 $overDueRates = $this->assetRate::with(['assetPerson.assetType', 'assetPerson.person.addresses'])
                     ->whereDate(
                         'due_date',
@@ -75,10 +73,6 @@ class AssetRateChecker extends Command
                     ->where('remaining', '>', 0)
                     ->where('remind', 0)
                     ->get();
-            } catch (ModelNotFoundException $exception) {
-                Log::error('OverDue AssetRate not found', ['message' => $exception->getMessage()]);
-            }
-
             echo "\n" . count($overDueRates) . ' overdue rates found' . "\n";
             $this->sendReminders($overDueRates, SmsTypes::OVER_DUE_APPLIANCE_RATE);
         });
@@ -89,7 +83,6 @@ class AssetRateChecker extends Command
         $smsApplianceRemindRates = $this->getApplianceRemindRates();
         $smsApplianceRemindRates->each(function ($smsApplianceRemindRate) {
             $remindDay = Carbon::now()->subDays($smsApplianceRemindRate->remind_rate)->format('Y-m-d');
-            try {
                 $dueAssetRates = $this->assetRate::with([
                 'assetPerson.assetType.smsReminderRate',
                 'assetPerson.person.addresses'
@@ -103,9 +96,6 @@ class AssetRateChecker extends Command
                     }
                 )
                 ->get();
-            } catch (ModelNotFoundException $exception) {
-                Log::error('Due AssetRate not found', ['message' => $exception->getMessage()]);
-            }
              echo "\n" . count($dueAssetRates) . ' upcoming rates found' . "\n";
              $this->sendReminders($dueAssetRates, SmsTypes::APPLIANCE_RATE);
         });
@@ -115,7 +105,8 @@ class AssetRateChecker extends Command
     {
         SmsProcessor::dispatch(
             $assetRate,
-            SmsTypes::APPLIANCE_RATE
+            SmsTypes::APPLIANCE_RATE,
+            SmsConfigs::class
         )->allOnConnection('redis')->onQueue(\config('services.queues.sms'));
     }
 

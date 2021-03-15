@@ -5,6 +5,7 @@ namespace App\Listeners;
 use App\Jobs\SmsProcessor;
 use App\Misc\TransactionDataContainer;
 use App\Models\Meter\MeterToken;
+use App\Sms\Senders\SmsConfigs;
 use App\Sms\SmsTypes;
 use Exception;
 use Illuminate\Events\Dispatcher;
@@ -72,7 +73,8 @@ class TokenListener
 
         SmsProcessor::dispatch(
             $transactionContainer->transaction,
-            SmsTypes::TRANSACTION_CONFIRMATION
+            SmsTypes::TRANSACTION_CONFIRMATION,
+            SmsConfigs::class
         )->allOnConnection('redis')->onQueue(\config('services.queues.sms'));
 
         //payment successful
