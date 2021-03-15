@@ -5,7 +5,7 @@ namespace App\Sms\Senders;
 use App\Exceptions\MissingSmsReferencesException;
 use App\Models\AssetRate;
 use App\Models\Transaction\Transaction;
-use App\Services\SmsBodyService;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Log;
 use Webpatser\Uuid\Uuid;
 
@@ -14,22 +14,21 @@ abstract class SmsSender
     protected $smsBodyService;
     protected $data;
     protected $references;
-    protected $body = '';
+    public $body = '';
     protected $receiver;
     protected $callback;
+    protected $parserSubPath;
 
-    public function __construct($data, SmsBodyService $smsBodyService)
+    public function __construct($data, $smsBodyService, $parserSubPath)
     {
         $this->smsBodyService = $smsBodyService;
         $this->data = $data;
-        $this->validateReferences();
-        $this->prepareHeader();
-        $this->prepareBody();
-        $this->prepareFooter();
+        $this->parserSubPath = $parserSubPath;
     }
 
     public function sendSms()
     {
+        $this->validateReferences();
         if (config('app.debug')) {
             Log::debug(
                 'Send sms on debug is not allowed in debug mode',
@@ -40,7 +39,7 @@ abstract class SmsSender
         if (!($this->data instanceof Transaction) && !($this->data instanceof AssetRate)) {
             $nullSmsBodies = $this->smsBodyService->getNullBodies();
             if (count($nullSmsBodies)) {
-                Log::debug('Send sms rejected, some of sms bodies are null', ['Sms Bodies' => $nullSmsBodies]);
+                Log::critical('Send sms rejected, some of sms bodies are null', ['Sms Bodies' => $nullSmsBodies]);
                 return;
             }
         }
@@ -52,38 +51,85 @@ abstract class SmsSender
                 $this->callback
             );
     }
-
     public function prepareHeader()
     {
-        $smsBody = $this->smsBodyService->getSmsBodyByReference($this->references['header']);
-        $className = 'App\\Sms\\BodyParsers\\' . $this->references['header'];
+        try {
+            $smsBody = $this->getSmsBody('header');
+        } catch (MissingSmsReferencesException $exception) {
+            Log::error('SMS Header preparing failed.', ['message : ' => $exception->getMessage()]);
+            return;
+        }
+        $className = $this->parserSubPath . $this->references['header'];
         $smsObject = new  $className($this->data);
-        $this->body .= $smsObject->parseSms($smsBody->body);
+        try {
+            $this->body .= $smsObject->parseSms($smsBody->body);
+        } catch (\Exception $exception) {
+            Log::error('SMS Header parsing failed.', ['message : ' => $exception->getMessage()]);
+            return;
+        }
     }
 
     public function prepareBody()
     {
-
-        $smsBody = $this->smsBodyService->getSmsBodyByReference($this->references['body']);
-        $className = 'App\\Sms\\BodyParsers\\' . $this->references['body'];
-        $smsObject = new $className($this->data);
-        $this->body .= $smsObject->parseSms($smsBody->body);
+        try {
+            $smsBody = $this->getSmsBody('body');
+        } catch (MissingSmsReferencesException $exception) {
+            Log::error('SMS Body preparing failed.', ['message : ' => $exception->getMessage()]);
+            return;
+        }
+        $className = $this->parserSubPath . $this->references['body'];
+        $smsObject = new  $className($this->data);
+        try {
+            $this->body .= $smsObject->parseSms($smsBody->body);
+        } catch (\Exception $exception) {
+            Log::error('SMS Body parsing failed.', ['message : ' => $exception->getMessage()]);
+            return;
+        }
     }
 
     public function prepareFooter()
     {
-        $smsBody = $this->smsBodyService->getSmsBodyByReference($this->references['footer']);
-        $this->body .= $smsBody->body;
+        try {
+            $smsBody = $this->getSmsBody('footer');
+            $this->body .= $smsBody->body;
+        } catch (MissingSmsReferencesException $exception) {
+            Log::error('SMS Footer preparing failed.', ['message : ' => $exception->getMessage()]);
+            return;
+        }
+    }
+
+    private function getSmsBody($reference)
+    {
+        try {
+            $smsBody = $this->smsBodyService->getSmsBodyByReference($this->references[$reference]);
+        } catch (ModelNotFoundException $e) {
+            throw new MissingSmsReferencesException($reference . ' SMS body record not found in database');
+        }
+        return $smsBody;
     }
 
     private function validateReferences()
     {
-        if (
-            !array_key_exists('header', $this->references) ||
-            !array_key_exists('body', $this->references) ||
-            !array_key_exists('footer', $this->references)
-        ) {
-            throw  new MissingSmsReferencesException('header, body & footer keys must be defined in references array');
+        if (array_key_exists('header', $this->references)) {
+            try {
+                $this->prepareHeader();
+            } catch (MissingSmsReferencesException $exception) {
+                Log::critical($exception->getMessage());
+            }
+        }
+        if (array_key_exists('body', $this->references)) {
+            try {
+                $this->prepareBody();
+            } catch (MissingSmsReferencesException $exception) {
+                Log::critical($exception->getMessage());
+            }
+        }
+        if (array_key_exists('footer', $this->references)) {
+            try {
+                $this->prepareFooter();
+            } catch (MissingSmsReferencesException $exception) {
+                Log::critical($exception->getMessage());
+            }
         }
     }
 
@@ -97,6 +143,11 @@ abstract class SmsSender
                 '+'
             ) === 0 ? $this->data->assetPerson->person->addresses->first()->phone
                 : '+' . $this->data->assetPerson->person->addresses->first()->phone;
+        } elseif (!is_array($this->data) && $this->data->mpmPerson) {
+            $this->receiver = strpos(
+                $this->data->mpmPerson->addresses[0]->phone,
+                '+'
+            ) === 0 ? $this->data->mpmPerson->addresses[0]->phone : '+' . $this->data->mpmPerson->addresses[0]->phone;
         } else {
             $this->receiver = strpos(
                 $this->data['phone'],
