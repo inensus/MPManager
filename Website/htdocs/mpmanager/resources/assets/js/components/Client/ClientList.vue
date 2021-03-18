@@ -95,11 +95,11 @@ export default {
     },
 
     methods: {
-        reloadList (subscriber, data) {
+        async reloadList (subscriber, data) {
             if (subscriber !== this.subscriber){
                 return
             }
-            this.people.updateList(data)
+            await this.people.updateList(data)
             EventBus.$emit('widgetContentLoaded',this.subscriber, this.people.list.length)
         },
         searching (subscriber, searchTerm) {
