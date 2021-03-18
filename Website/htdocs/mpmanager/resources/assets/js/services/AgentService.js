@@ -30,7 +30,7 @@ export class AgentService {
             commissionTypeId: null,
 
         }
-        this.paginator = new Paginator(resources.agents.list)
+        this.paginator = new Paginator(resources.agents.search)
     }
 
     fromJson (data) {
@@ -76,13 +76,8 @@ export class AgentService {
     }
 
     search (term) {
-        this.paginator = new Paginator(resources.agents.search)
-        EventBus.$emit('loadPage', this.paginator, { 'term': term })
-    }
-
-    showAll () {
-        this.paginator = new Paginator(resources.agents.list)
-        EventBus.$emit('loadPage', this.paginator)
+        console.log(term)
+        EventBus.$emit('loadPage', this.paginator, term)
     }
 
     async createAgent () {

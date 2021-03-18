@@ -55,7 +55,11 @@ export default {
             agentService: new AgentService(),
             searchTerm: '',
             headers: [this.$tc('words.id'), this.$tc('words.name'), this.$tc('words.email'), this.$tc('words.miniGrid'), this.$tc('words.balance')],
-            tableName: 'Agent'
+            tableName: 'Agent',
+            params:{
+                page:1,
+                per_page:15,
+            }
         }
     },
 
@@ -92,16 +96,25 @@ export default {
         detail (id) {
             this.$router.push({ path: '/agents/' + id })
         },
-        searching (searchTerm) {
-            this.agentService.search(searchTerm)
+        searching (subscriber, searchTerm) {
+            if (subscriber !== this.subscriber){
+                return
+            }
+            this.searchTerm = this.params.search = searchTerm
+            this.pushRoute()
         },
         endSearching () {
-            this.agentService.showAll()
+            delete this.params.search
+            this.pushRoute()
         },
-        clearSearch () {
-            this.searchTerm = ''
+        pushRoute(){
+            this.$router.push({ query: Object.assign(this.params ) }).catch(error => {
+                if (error.name !== 'NavigationDuplicated') {
+                    throw error
+                }
+            })
+            this.agentService.search(this.params)
         },
-
         alertNotify (type, message) {
             this.$notify({
                 group: 'notify',

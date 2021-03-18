@@ -51,7 +51,7 @@ class AgentController extends Controller
 
     public function search(): ApiResource
     {
-        $term = request('term');
+        $term = request('search');
         $paginate = request('paginate') ?? 1;
 
         return new ApiResource($this->agentService->searchAgent($term, $paginate));
