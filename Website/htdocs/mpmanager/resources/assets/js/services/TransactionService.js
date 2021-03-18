@@ -19,7 +19,7 @@ export class TransactionService {
             lastUpdate: null,
             status: null,
         }
-        this.paginator = new Paginator(resources.transactions.list.all)
+        this.paginator = new Paginator(resources.transactions.searchAdvanced)
         this.analyticsData = null
         this.transactionJson = null
     }
@@ -91,8 +91,7 @@ export class TransactionService {
     }
 
     searchAdvanced (data) {
-        this.paginator = new Paginator(resources.transactions.searchAdvanced)
-        EventBus.$emit('loadPage', this.paginator, data)
+        EventBus.$emit('loadPage', this.paginator, data )
     }
 
     updateList (transactionList) {

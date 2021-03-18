@@ -291,7 +291,6 @@ export default {
         }
     },
     mounted () {
-        this.checkRouteChanges()
         this.loadAnalytics()
         this.getPeriod()
         EventBus.$on('pageLoaded', this.reloadList)
@@ -304,21 +303,6 @@ export default {
 
     },
     methods: {
-        checkRouteChanges(){
-            let isFiltering = false
-            let queryParams = this.$route.query
-            if (Object.keys(queryParams).length > 0) {
-                for (let k of Object.keys(queryParams)) {
-                    if (k !== 'page' && k !== 'per_page') {
-                        isFiltering = true
-                    }
-                }
-            }
-            if (isFiltering) {
-                this.getFilterTransactions(queryParams)
-            }
-
-        },
         closeFilter(){
             this.showFilter = false
         },
@@ -340,10 +324,11 @@ export default {
             for (let [k, v] of Object.entries(data)) {
                 params[k] = v
             }
+            params['page'] = 1
             this.$router.push({ query: Object.assign(params) })
+            this.getFilterTransactions(params)
         },
         getFilterTransactions (data) {
-            this.filterProgress = true
             this.transactionService.searchAdvanced(data)
         },
         reloadList (sub, data) {
@@ -355,13 +340,6 @@ export default {
         },
         transactionDetail (id) {
             this.$router.push({ path: '/transactions/' + id })
-        },
-        async getTransactions () {
-            try {
-                await this.transactionService.getTransactions()
-            } catch (e) {
-                this.alertNotify('error', e.message)
-            }
         },
         async loadAnalytics () {
             this.loading = true
@@ -408,15 +386,7 @@ export default {
             })
         },
     }
-    ,
 
-    watch: {
-        //for query param filtering
-        $route () {
-            this.checkRouteChanges()
-
-        }
-    }
 }
 
 </script>
