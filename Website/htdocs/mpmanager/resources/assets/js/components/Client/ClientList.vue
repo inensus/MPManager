@@ -20,7 +20,7 @@
                         <md-table-head>{{ $tc('words.phone') }}</md-table-head>
                         <md-table-head>{{ $tc('words.city') }}</md-table-head>
                         <md-table-head>{{ $tc('words.meter') }}</md-table-head>
-                        <md-table-head>{{ $tc('phrase.lastUpdate') }}</md-table-head>
+                        <md-table-head>{{ $tc('phrases.lastUpdate') }}</md-table-head>
                     </md-table-row>
 
 
@@ -58,7 +58,6 @@ import { EventBus } from '../../shared/eventbus'
 import Widget from '../../shared/widget'
 import { People } from '../../classes/people'
 import moment from 'moment'
-const debounce = require('debounce')
 
 export default {
     name: 'ClientList',
@@ -69,32 +68,21 @@ export default {
             people: new People(),
             clientList: null,
             tmpClientList: null,
-            paginator: new Paginator(resources.person.list),
+            paginator: new Paginator(resources.person.search),
             searchTerm: '',
             currentFrom: 0,
             currentTo: 0,
             total: 0,
             currentPage: 0,
             totalPages: 0,
+            params:{
+                page:1,
+                per_page:15
+            }
         }
     },
 
-    watch: {
-        searchTerm: debounce(function () {
-            if (this.searchTerm.length > 0) {
-                this.doSearch(this.searchTerm)
-            } else {
-                this.showAllEntries()
-
-            }
-
-        }, 1000),
-
-    },
-
     mounted () {
-
-        this.getClientList()
         EventBus.$on('pageLoaded', this.reloadList)
         EventBus.$on('searching', this.searching)
         EventBus.$on('end_searching', this.endSearching)
@@ -114,11 +102,16 @@ export default {
             this.people.updateList(data)
             EventBus.$emit('widgetContentLoaded',this.subscriber, this.people.list.length)
         },
-        searching (searchTerm) {
-            this.people.search(searchTerm)
+        searching (subscriber, searchTerm) {
+            if (subscriber !== this.subscriber){
+                return
+            }
+            this.searchTerm = this.params.search = searchTerm
+            this.pushRoute()
         },
         endSearching () {
-            this.people.showAll()
+            delete this.params.search
+            this.pushRoute()
         },
 
         detail (id) {
@@ -127,14 +120,14 @@ export default {
         dateForHumans (date) {
             return moment(date, 'YYYY-MM-DD HH:mm:ss').fromNow()
         },
-
-        getClientList (pageNumber = 1) {
-
-            this.paginator.loadPage(pageNumber, this.searching ? { 'term': this.searchTerm } : {}).then(response => {
-                this.tmpClientList = this.clientList = response.data
+        pushRoute(){
+            this.$router.push({ query: Object.assign(this.params ) }).catch(error => {
+                if (error.name !== 'NavigationDuplicated') {
+                    throw error
+                }
             })
+            this.people.search(this.params)
         },
-
         meterList (meters) {
             let stringified = ''
             for (let i = 0; i < meters.length; i++) {
@@ -147,30 +140,7 @@ export default {
                 }
             }
             return stringified
-        },
-
-        doSearch (searchTerm) {
-            this.searching = true
-
-            this.paginator = new Paginator(resources.person.search)
-
-            this.paginator.loadPage(1, { 'term': searchTerm })
-                .then(response => {
-                    this.clientList = response.data
-                })
-
-        },
-        showAllEntries () {
-            this.searchTerm = ''
-            this.paginator = new Paginator(resources.person.list)
-            this.searching = false
-            this.currentPage = 0
-            this.getClientList()
-
-        },
-        clearSearch () {
-            this.searchTerm = ''
-        },
+        }
 
     }
 

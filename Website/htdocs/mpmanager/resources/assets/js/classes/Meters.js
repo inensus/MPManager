@@ -26,7 +26,7 @@ export class Meters {
     constructor () {
         this.list = []
         this.manufacturerList = []
-        this.paginator = new Paginator(resources.meters.list)
+        this.paginator = new Paginator(resources.meters.search)
         this.manufacturers = new Manufacturers()
     }
 
@@ -34,9 +34,9 @@ export class Meters {
         this.list.add(meter)
     }
 
-    search (term) {
+    search (data) {
         this.paginator = new Paginator(resources.meters.search)
-        EventBus.$emit('loadPage', this.paginator, {'term': term})
+        EventBus.$emit('loadPage', this.paginator, data)
     }
 
     showAll () {

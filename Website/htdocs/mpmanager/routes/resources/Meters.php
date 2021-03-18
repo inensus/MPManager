@@ -8,11 +8,10 @@
 
 /* Meter */
 Route::group(['prefix' => 'meters', ], function () {
-    Route::get('/', 'MeterController@index');
     Route::get('/{id}', 'MeterController@show');
     Route::post('/', 'MeterController@store');
     Route::put('/', 'MeterController@update');
-    Route::get('/search', 'MeterController@Search');
+    Route::get('/', 'MeterController@search');
     Route::delete('/{ownerId}', 'MeterController@destroy');
     Route::get('{serialNumber}/revenue', 'RevenueController@meterRevenue');
 

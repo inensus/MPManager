@@ -64,6 +64,10 @@ export default {
             meters: new Meters(),
             manufacturers: new Manufacturers(),
             subscriber: 'meterList',
+            params:{
+                page:1,
+                per_page:15
+            }
 
         }
     },
@@ -84,6 +88,7 @@ export default {
                 return
             }
             await this.meters.updateList(data)
+            console.log(this.meters.list.length)
             EventBus.$emit('widgetContentLoaded',this.subscriber,this.meters.list.length)
         },
         confirmDelete (meter) {
@@ -148,14 +153,27 @@ export default {
                 })
             })
         },
-        searching (searchTerm) {
-            this.meters.search(searchTerm)
+        searching (subscriber, searchTerm) {
+            if (subscriber !== this.subscriber){
+                return
+            }
+            this.searchTerm = this.params.search = searchTerm
+            this.pushRoute()
         },
         endSearching () {
-            this.meters.showAll()
+            delete this.params.search
+            this.pushRoute()
         },
         meterDetail (serialNumber) {
             this.$router.push({ path: '/meters/' + serialNumber })
+        },
+        pushRoute(){
+            this.$router.push({ query: Object.assign(this.params ) }).catch(error => {
+                if (error.name !== 'NavigationDuplicated') {
+                    throw error
+                }
+            })
+            this.meters.search(this.params)
         }
     }
 }

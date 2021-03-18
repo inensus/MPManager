@@ -6,22 +6,15 @@ import { Person } from './person'
 export class People {
     constructor () {
         this.list = []
-        this.paginator = new Paginator(resources.person.list)
-    }
-
-    search (term) {
         this.paginator = new Paginator(resources.person.search)
-        EventBus.$emit('loadPage', this.paginator, {'term': term})
     }
 
-    showAll () {
-        this.paginator = new Paginator(resources.person.list)
-        EventBus.$emit('loadPage', this.paginator)
+    search (data) {
+        EventBus.$emit('loadPage', this.paginator, data)
     }
 
     async updateList (data) {
         this.list = []
-
         for (let m in data) {
             let person = new Person().fromJson(data[m])
             person.meters = data[m].meters

@@ -101,8 +101,7 @@ export let resources = {
 
     },
     meters: {
-        'list': '/api/meters',
-        'search': '/api/meters/search',
+        'search': '/api/meters/',
         'getMeters': '/api/meters/',
         'delete': '/api/meters/',
         'revenue': '/api/meters/',

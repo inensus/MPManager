@@ -155,9 +155,9 @@ class MeterController extends Controller
      *
      * @responseFile responses/meters/meters.search.json
      */
-    public function search()
+    public function search(): ApiResource
     {
-        $term = request('term');
+        $term = Request('search');
 
         $meters = $this->meter::with('meterType', 'meterParameter.tariff')
             ->whereHas(

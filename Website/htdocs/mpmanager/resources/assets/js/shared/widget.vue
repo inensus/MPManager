@@ -17,13 +17,15 @@
 
                             <md-field>
 
-                                <label style="color: white!important;">{{$tc('words.search')}} ..</label>
-                                <md-input style="color: white!important;" v-model="searchTerm"></md-input>
+                                <label class="chic-icon">{{$tc('words.search')}} ..</label>
+                                <label v-if="searching" class="chic-icon">{{ $tc('phrases.searchResultFor') }}: </label>
+                                <md-input class="chic-icon" v-model="searchTerm"></md-input>
                                 <div v-if="searching">
-                                <span style="margin-right: 15px;">{{ $tc('phrases.searchResultFor') }}: <u>{{searchTerm}}</u>
-                                    <md-icon @click="showAllEntries" class="pointer">cancel</md-icon></span>
+                                  <md-button class="pointer md-icon-button" @click="showAllEntries">
+                                       <md-icon class="chic-icon">cancel</md-icon>
+                                  </md-button>
                                 </div>
-                                <md-icon style="color: white;">search</md-icon>
+                                <md-icon v-if="!searching" style="color: white;">search</md-icon>
                             </md-field>
                         </div>
                     </div>
@@ -150,6 +152,7 @@ export default {
 
     mounted () {
         //listen for a remote trigger for ending the search
+        this.setSearchTerm()
         EventBus.$on('search.end', this.cancelSearching)
         EventBus.$on('hideEmptyStateArea',this.hideEmptyStateArea)
         if (this.subscriber === null || this.subscriber === undefined) {
@@ -172,6 +175,11 @@ export default {
         }
     },
     methods: {
+        setSearchTerm(){
+            if(this.$route.query.search){
+                this.doSearch(this.$route.query.search)
+            }
+        },
         hideEmptyStateArea (subscriber) {
             if (!this.validateSubscriber(subscriber)) {
                 return
@@ -208,8 +216,12 @@ export default {
             alert('default button click')
         },
         doSearch (data) {
-            this.searching = true
-            EventBus.$emit('searching', data)
+            if(this.$route.query.search !== this.searchTerm){
+                this.searching = true
+                this.searchTerm = data
+                EventBus.$emit('searching', this.subscriber, data)
+            }
+
         },
         showAllEntries () {
             this.searching = false
@@ -259,7 +271,7 @@ export default {
             if (this.searching && this.searchTerm.length == 0) {
                 this.showAllEntries()
             }
-        }, 1000)
+        }, 2000)
     }
 }
 </script>

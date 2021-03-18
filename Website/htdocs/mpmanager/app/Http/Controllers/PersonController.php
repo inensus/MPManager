@@ -177,7 +177,7 @@ class PersonController extends Controller
      */
     public function search()
     {
-        $term = request('term');
+        $term = request('search');
         $paginate = request('paginate') ?? 1;
         return new ApiResource($this->personService->searchPerson($term, $paginate));
     }
