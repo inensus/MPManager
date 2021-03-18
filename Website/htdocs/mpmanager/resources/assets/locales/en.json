@@ -193,7 +193,7 @@
         "openTicket": "Open Ticket",
         "originatorConversationId": "Originator Conversation Id",
         "outgoingSms": "Outgoing sms",
-        "paginateLabels": "Showing {from} to {to} of {total} entries",
+        "paginateLabels": "{from} to {to} of {total} entries",
         "paidFor": "Paid For",
         "passwordProtected": "Password Protected Zone | Please enter the password to access this area",
         "paymentDistribution": "Payment Distribution",
