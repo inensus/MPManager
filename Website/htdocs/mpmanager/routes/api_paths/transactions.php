@@ -18,4 +18,4 @@ Route::get('transaction-providers/', 'TransactionProviderController@index');
 
 
 Route::get('transactions/advanced', 'TransactionController@searchAdvanced');
-Route::get('transactions/{id}/resent/{number?}', 'TransactionController@resendTransactionSms');
+
