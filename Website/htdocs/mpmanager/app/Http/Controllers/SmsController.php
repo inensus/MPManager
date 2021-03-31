@@ -12,25 +12,21 @@ namespace App\Http\Controllers;
 use App\Http\Requests\SmsRequest;
 use App\Http\Requests\StoreSmsRequest;
 use App\Http\Resources\ApiResource;
-use App\Jobs\SmsProcessor;
 use App\Http\Resources\SmsSearchResultResource;
 use App\Models\ConnectionGroup;
 use App\Models\ConnectionType;
 use App\Models\Meter\MeterParameter;
 use App\Models\Person\Person;
 use App\Models\Sms;
-use App\Models\Transaction\Transaction;
 use App\Services\SmsResendInformationKeyService;
+use App\Services\SmsService;
 use App\Sms\Senders\SmsConfigs;
 use App\Sms\SmsTypes;
-use GuzzleHttp\Client;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Inensus\Ticket\Services\CommentService;
-use Inensus\Ticket\Trello\Api;
-use Inensus\Ticket\Trello\Comments;
 
 class SmsController extends Controller
 {
@@ -55,7 +51,10 @@ class SmsController extends Controller
      */
     private $meterParameter;
 
-    private $smsResendInformationKeyService;
+
+    private $smsService;
+
+    private $commentService;
 
     /**
      * SmsController constructor.
@@ -66,6 +65,8 @@ class SmsController extends Controller
      * @param ConnectionType $connectionType
      * @param MeterParameter $meterParameter
      * @param SmsResendInformationKeyService $smsResendInformationKeyService
+     * @param SmsService $smsService
+     * @param CommentService $commentService
      */
     public function __construct(
         Sms $sms,
@@ -73,14 +74,17 @@ class SmsController extends Controller
         ConnectionGroup $connectionGroup,
         ConnectionType $connectionType,
         MeterParameter $meterParameter,
-        SmsResendInformationKeyService $smsResendInformationKeyService
+        SmsResendInformationKeyService $smsResendInformationKeyService,
+        SmsService $smsService,
+        CommentService $commentService
     ) {
         $this->sms = $sms;
         $this->person = $person;
         $this->connectionGroup = $connectionGroup;
         $this->connectionType = $connectionType;
         $this->meterParameter = $meterParameter;
-        $this->smsResendInformationKeyService = $smsResendInformationKeyService;
+        $this->smsService = $smsService;
+        $this->commentService = $commentService;
     }
 
     public function index(): ApiResource
@@ -109,20 +113,18 @@ class SmsController extends Controller
         if ($type === 'person') {
             foreach ($receivers as $receiver) {
                 $phone = $receiver;
-
-                $this->sms->create(
-                    [
-                        'receiver' => $phone,
-                        'body' => $message,
-                        'direction' => 1,
-                        'sender_id' => $senderId,
-                    ]
-                );
+                $smsData = [
+                    'receiver' => $phone,
+                    'body' => $message,
+                    'direction' => 1,
+                    'sender_id' => $senderId,
+                ];
+                $this->smsService->createSms($smsData);
                 $data = [
                     'message' => $message,
                     'phone' => $phone
                 ];
-                $this->sendSms($data, SmsTypes::MANUAL_SMS);
+                $this->smsService->sendSms($data, SmsTypes::MANUAL_SMS,SmsConfigs::class);
             }
         } elseif ($type === 'group' || $type === 'type' || $type === 'all') {
             //get connection group meters and owners
@@ -213,71 +215,30 @@ class SmsController extends Controller
                     'message' => $message,
                     'phone' => $address[0]->phone
                 ];
-                $this->sendSms($data, SmsTypes::MANUAL_SMS);
+                $this->smsService->sendSms($data, SmsTypes::MANUAL_SMS,SmsConfigs::class);
             }
         }
     }
 
     public function store(StoreSmsRequest $request): ApiResource
     {
-
         $sender = $request->get('sender');
         $message = $request->get('message');
-        $sms = $this->sms->create(
-            [
-                'receiver' => $sender,
-                'body' => $message,
-                'direction' => 0,
-                'sender_id' => null,
-            ]
-        );
-        $resendInformationKey = $this->smsResendInformationKeyService->getResendInformationKeys()->first();
-        if (stripos($message, $resendInformationKey->key) === 0) {
-            //get last generated token
-            preg_match('!\d+!', $message, $match);
-            if (count($match) === 1) {
-                $meterSerial = $match[0];
-                try {
-                    $transaction = Transaction::with('paymentHistories')
-                        ->where('message', $meterSerial)->latest()->firstOrFail();
-                } catch (ModelNotFoundException $ex) {
-                    $data = [
-                        'phone' => $sender,
-                        'meter' => $meterSerial
-                    ];
-                    $this->sendSms($data, SmsTypes::RESEND_INFORMATION);
-                    return new ApiResource(
-                        [
-                            'success' => 'false',
-                            'message' => 'given serial number was not found in the system'
-                        ]
-                    );
-                }
-                $this->sendSms($transaction, SmsTypes::RESEND_INFORMATION);
-            }
-            return new ApiResource($sms);
-        }
-        // store a comment if the sender is an maintenance guy  and responds with sms to an open ticket.
-        $person = $this->person::with(
-            [
-                'addresses',
-                'tickets' => static function ($q) {
-                    $q->where('status', 0)->latest()->limit(1);
-                },
-            ]
-        )
-            ->whereHas(
-                'addresses',
-                static function ($q) use ($sender) {
-                    $q->where('phone', $sender);
-                }
-            )
-            ->where('is_customer', 0)
-            ->first();
+        $smsData = [
+            'receiver' => $sender,
+            'body' => $message,
+            'direction' => 0,
+            'sender_id' => null,
+        ];
+        $sms = $this->smsService->createSms($smsData);
 
-        if ($person && !$person->tickets->isEmpty()) {
-            $cS = new CommentService(new Comments(new Api(new Client())));
-            $cS->createComment($person->tickets[0]->ticket_id, 'Sms Comment' . $message);
+        switch ($this->smsService->checkMessageType($message)) {
+            case $this->smsService::FEEDBACK:
+                event('sms.stored', [$sender, $message]);
+                break;
+            case $this->smsService::TICKET:
+                $this->commentService->storeComment($sender, $message);
+                break;
         }
         return new ApiResource($sms);
     }
@@ -301,20 +262,19 @@ class SmsController extends Controller
         } else {
             $phone = $request->get('phone');
         }
-        //$phone = str_replace('+', '', $phone);
-        $sms = $this->sms->create(
-            [
-                'receiver' => $phone,
-                'body' => $message,
-                'direction' => 1,
-                'sender_id' => $senderId,
-            ]
-        );
+
+       $smsData = [
+            'receiver' => $phone,
+            'body' => $message,
+            'direction' => 1,
+            'sender_id' => $senderId,
+        ];
+        $sms = $this->smsService->createSms($smsData);
         $data = [
             'message' => $message,
             'phone' => $phone
         ];
-        $this->sendSms($data, SmsTypes::MANUAL_SMS);
+        $this->smsService->sendSms($data, SmsTypes::MANUAL_SMS,SmsConfigs::class);
         return new ApiResource($sms);
     }
 
@@ -380,15 +340,7 @@ class SmsController extends Controller
             ->orWhere('surname', 'like', '%' . $search . '%')
             ->get();
 
-        return  SmsSearchResultResource::collection($list);
+        return SmsSearchResultResource::collection($list);
     }
 
-    private function sendSms($data, $smsType)
-    {
-        SmsProcessor::dispatch(
-            $data,
-            $smsType,
-            SmsConfigs::class
-        )->allOnConnection('redis')->onQueue(\config('services.queues.sms'));
-    }
 }
