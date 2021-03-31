@@ -3,14 +3,16 @@
         <md-tabs>
             <md-tab @click="tab='confirmation'" id="tab-confirmation" md-label="Transaction Confirmation">
                 <div v-for="(smsBody,index) in smsBodiesService.confirmationList" :key="index">
-                    <sms-body :sms-variable-default-values="smsVariableDefaultValueService.list" :sms-body="smsBody"/>
+                    <sms-body ref="smsBody_confirmation_ref"
+                              :sms-variable-default-values="smsVariableDefaultValueService.list" :sms-body="smsBody"/>
                 </div>
 
             </md-tab>
             <md-tab @click="tab='reminder'" id="tab-reminder" md-label="Reminder">
                 <sms-appliance-remind-rate/>
                 <div v-for="(smsBody,index) in smsBodiesService.reminderList" :key="index">
-                    <sms-body :sms-variable-default-values="smsVariableDefaultValueService.list" :sms-body="smsBody"/>
+                    <sms-body ref="smsBody_reminder_ref"
+                              :sms-variable-default-values="smsVariableDefaultValueService.list" :sms-body="smsBody"/>
                 </div>
             </md-tab>
             <md-tab @click="tab='resend-information'" id="tab-resend-information" md-label="Resend Last Transaction">
@@ -33,7 +35,8 @@
                     </div>
                     <div class="md-layout-item md-size-100">
                         <div v-for="(smsBody,index) in smsBodiesService.resendInformationList" :key="index">
-                            <sms-body :sms-variable-default-values="smsVariableDefaultValueService.list"
+                            <sms-body ref="smsBody_resend_ref"
+                                      :sms-variable-default-values="smsVariableDefaultValueService.list"
                                       :sms-body="smsBody"/>
                         </div>
                     </div>
@@ -45,7 +48,8 @@
             </md-tab>
         </md-tabs>
         <div class="md-layout md-alignment-bottom-right">
-            <md-button class="md-primary md-dense md-raised" @click="updateSmsBodies" v-show="tab!== 'android-gateway'">
+            <md-button class="md-primary md-dense md-raised" @click="updateSmsBodies()"
+                       v-show="tab!== 'android-gateway'">
                 Save
             </md-button>
         </div>
@@ -127,8 +131,10 @@ export default {
             }
         },
         async updateSmsBodies () {
-            EventBus.$emit('checkValidate')
+
             if (this.tab === 'confirmation') {
+                let refs = this.$refs.smsBody_confirmation_ref
+                await this.validateSmsBodies(refs)
                 if (!this.smsBodiesService.confirmationList.filter((x) => !x.validation).length) {
                     try {
                         await this.smsBodiesService.updateSmsBodies(this.tab)
@@ -138,6 +144,8 @@ export default {
                     }
                 }
             } else if (this.tab === 'reminder') {
+                let refs = this.$refs.smsBody_reminder_ref
+                await this.validateSmsBodies(refs)
                 if (!this.smsBodiesService.reminderList.filter((x) => !x.validation).length) {
                     try {
                         await this.smsBodiesService.updateSmsBodies(this.tab)
@@ -147,6 +155,8 @@ export default {
                     }
                 }
             } else {
+                let refs = this.$refs.smsBody_resend_ref
+                await this.validateSmsBodies(refs)
                 if (!this.smsBodiesService.resendInformationList.filter((x) => !x.validation).length) {
                     try {
                         await this.smsResendInformationKeyService.updateResendInformationKey()
@@ -185,6 +195,11 @@ export default {
                 return new ErrorHandler(errorMessage, 'http')
             }
 
+        },
+        async validateSmsBodies (refs) {
+            for (const ref of refs) {
+                await ref.validateBody()
+            }
         },
         alertNotify (type, message) {
             this.$notify({
