@@ -34,7 +34,8 @@
       "Sites": "Sites",
       "Meters": "Meters",
       "Agents": "Agents",
-      "Settings": "Settings"
+      "Settings": "Settings",
+      "Sales Accounts": "Sales Accounts"
     },
     "Targets": "Targets",
     "Tariffs": "Tariffs",
@@ -297,7 +298,10 @@
     "yourMessage": "Your message will seen like that",
     "thisKeyWillUseIn": "Resend Last Transaction Information Key is for the customers that want to get their last transaction information. When the customers want to get their last transaction information, they need to send an SMS that starts with this key and go on with the customer meter serial number.",
     "addAdditionalSmsAndroidSetting": "Add Additional Sms Android Setting",
-    "Low Balance Limit Notify":"Low Balance Limit Notify"
+    "Low Balance Limit Notify": "Low Balance Limit Notify",
+    "Meter Reset Feedback": "Meter Reset Feedback",
+    "Meter Reset Failed Feedback": "Meter Reset Failed Feedback",
+    "Balance Feedback": "Balance Feedback"
   },
   "words": {
     "access": "Access",
