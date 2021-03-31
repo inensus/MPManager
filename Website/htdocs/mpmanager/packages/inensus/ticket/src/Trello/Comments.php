@@ -23,7 +23,7 @@ class Comments
 
     public function newComment($cardId, $comment)
     {
-        $this->api->request('cards', $cardId . '/actions/comments', $this->api::POST, ['text' => $comment]);
+       return $this->api->request('cards', $cardId . '/actions/comments', $this->api::POST, ['text' => $comment]);
     }
 
 }
