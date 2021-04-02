@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Listeners;
-
 
 use App\Models\Transaction\Transaction;
 use App\Services\SmsResendInformationKeyService;
@@ -21,16 +19,16 @@ class SmsListener
         SmsResendInformationKeyService $smsResendInformationKeyService,
         Transaction $transaction,
         SmsService $smsService
-    ){
+    ) {
         $this->smsResendInformationKeyService = $smsResendInformationKeyService;
-        $this->transaction=$transaction;
-        $this->smsService=$smsService;
-   }
+        $this->transaction = $transaction;
+        $this->smsService = $smsService;
+    }
 
     public function onSmsStored($sender, $message)
     {
         $resendInformationKey = $this->smsResendInformationKeyService->getResendInformationKeys()->first();
-        if (!$resendInformationKey){
+        if (!$resendInformationKey) {
             return;
         }
         $resend = strpos(strtolower($message), strtolower($resendInformationKey));
@@ -42,13 +40,13 @@ class SmsListener
         try {
             $transaction = $this->transaction->newQuery()->with('paymentHistories')
                 ->where('message', $meterSerial)->latest()->firstOrFail();
-               $this->smsService->sendSms($transaction, SmsTypes::RESEND_INFORMATION,SmsConfigs::class);
+               $this->smsService->sendSms($transaction, SmsTypes::RESEND_INFORMATION, SmsConfigs::class);
         } catch (ModelNotFoundException $ex) {
             $data = [
                 'phone' => $sender,
                 'meter' => $meterSerial
             ];
-            $this->smsService->sendSms($data, SmsTypes::RESEND_INFORMATION,SmsConfigs::class);
+            $this->smsService->sendSms($data, SmsTypes::RESEND_INFORMATION, SmsConfigs::class);
         }
     }
     public function subscribe(Dispatcher $events)

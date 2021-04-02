@@ -1,14 +1,11 @@
 <?php
 
-
 namespace App\Services;
-
 
 use App\Jobs\SmsProcessor;
 use App\Models\Sms;
 use App\Models\Transaction\Transaction;
 use App\Sms\Senders\SmsConfigs;
-
 
 class SmsService
 {
@@ -41,14 +38,14 @@ class SmsService
     public function createSms($smsData)
     {
         return $this->sms->newQuery()->create($smsData);
-   }
+    }
 
-    public function sendSms($data, $smsType,$SmsConfigClass)
+    public function sendSms($data, $smsType, $SmsConfigClass)
     {
          SmsProcessor::dispatch(
-            $data,
-            $smsType,
-            $SmsConfigClass
-        )->allOnConnection('redis')->onQueue(\config('services.queues.sms'));
+             $data,
+             $smsType,
+             $SmsConfigClass
+         )->allOnConnection('redis')->onQueue(\config('services.queues.sms'));
     }
 }

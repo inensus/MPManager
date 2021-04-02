@@ -91,7 +91,7 @@ abstract class SmsSender
     {
         try {
             $smsBody = $this->getSmsBody('footer');
-            $this->body .= ' '.$smsBody->body;
+            $this->body .= ' ' . $smsBody->body;
         } catch (MissingSmsReferencesException $exception) {
             Log::error('SMS Footer preparing failed.', ['message : ' => $exception->getMessage()]);
             return;

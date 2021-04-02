@@ -124,7 +124,7 @@ class SmsController extends Controller
                     'message' => $message,
                     'phone' => $phone
                 ];
-                $this->smsService->sendSms($data, SmsTypes::MANUAL_SMS,SmsConfigs::class);
+                $this->smsService->sendSms($data, SmsTypes::MANUAL_SMS, SmsConfigs::class);
             }
         } elseif ($type === 'group' || $type === 'type' || $type === 'all') {
             //get connection group meters and owners
@@ -215,7 +215,7 @@ class SmsController extends Controller
                     'message' => $message,
                     'phone' => $address[0]->phone
                 ];
-                $this->smsService->sendSms($data, SmsTypes::MANUAL_SMS,SmsConfigs::class);
+                $this->smsService->sendSms($data, SmsTypes::MANUAL_SMS, SmsConfigs::class);
             }
         }
     }
@@ -263,7 +263,7 @@ class SmsController extends Controller
             $phone = $request->get('phone');
         }
 
-       $smsData = [
+        $smsData = [
             'receiver' => $phone,
             'body' => $message,
             'direction' => 1,
@@ -274,7 +274,7 @@ class SmsController extends Controller
             'message' => $message,
             'phone' => $phone
         ];
-        $this->smsService->sendSms($data, SmsTypes::MANUAL_SMS,SmsConfigs::class);
+        $this->smsService->sendSms($data, SmsTypes::MANUAL_SMS, SmsConfigs::class);
         return new ApiResource($sms);
     }
 
@@ -342,5 +342,4 @@ class SmsController extends Controller
 
         return SmsSearchResultResource::collection($list);
     }
-
 }
