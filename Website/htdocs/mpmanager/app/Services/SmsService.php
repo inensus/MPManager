@@ -9,8 +9,8 @@ use App\Sms\Senders\SmsConfigs;
 
 class SmsService
 {
-    const TICKET = 1;
-    const FEEDBACK = 2;
+    public const TICKET = 1;
+    public const FEEDBACK = 2;
 
     private $sms;
     private $transaction;
