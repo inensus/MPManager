@@ -14,6 +14,7 @@ use App\Jobs\SmsProcessor;
 use App\Lib\ITransactionProvider;
 use App\Models\Transaction\Transaction;
 use App\Models\Transaction\TransactionConflicts;
+use App\Sms\Senders\SmsConfigs;
 use App\Sms\SmsTypes;
 use Exception;
 use GuzzleHttp\Client;
@@ -108,8 +109,9 @@ class VodacomTransaction implements ITransactionProvider
                 } else {
                     SmsProcessor::dispatch(
                         $transaction,
-                        SmsTypes::ENERGY_CONFIRMATION
-                    )->allOnConnection('redis')->onQueue('sms');
+                        SmsTypes::TRANSACTION_CONFIRMATION,
+                        SmsConfigs::class
+                    )->allOnConnection('redis')->onQueue(\config('services.queues.sms'));
                 }
 
                 //make response xml object

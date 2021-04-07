@@ -21,5 +21,8 @@ class DatabaseSeeder extends Seeder
         $this->call(MainSettingsSeeder::class);
         $this->call(MapSettingsSeeder::class);
         $this->call(TicketSettingsSeeder::class);
+        $this->call(SmsBodiesSeeder::class);
+        $this->call(SmsRecendInformationKeySeeder::class);
+        $this->call(SmsVariableDefaultValuesSeeder::class);
     }
 }

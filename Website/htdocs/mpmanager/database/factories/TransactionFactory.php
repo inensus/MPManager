@@ -42,6 +42,7 @@ $factory->define(MeterTariff::class, function(Faker $faker){
         'price' => $faker->numberBetween(100000,150000),
         'currency' => 'TZS',
         'factor' => $faker->numberBetween(0,5),
+        'total_price' => 100000,
     ];
 });
 $factory->define(AccessRate::class, function(Faker $faker){

@@ -34,7 +34,10 @@
             </md-field>
             <span class="md-error">{{ errors.first('api_url') }}</span>
         </div>
-
+        <div class="md-layout md-alignment-bottom-right">
+            <md-button class="md-primary md-dense md-raised" @click="updateTicketSettings">Save</md-button>
+        </div>
+        <md-progress-bar v-if="progress" md-mode="indeterminate"></md-progress-bar>
     </div>
 </template>
 
@@ -52,6 +55,7 @@ export default {
     data () {
         return {
             ticketSettingsService: new TicketSettingsService(),
+            progress: false,
         }
     },
     mounted () {
@@ -60,9 +64,9 @@ export default {
     methods: {
         fetchTicketSettings () {
             this.ticketSettingsService.ticketSettings = this.ticketSettings
-
         },
         async updateTicketSettings () {
+            this.progress = true
             let validator = await this.$validator.validateAll()
             if (!validator) {
                 return
@@ -74,9 +78,11 @@ export default {
                 }).catch((err) => {
                     console.log(err)
                 })
+                this.alertNotify('success', 'Updated Successfully')
             } catch (e) {
                 this.alertNotify('error', e.message)
             }
+            this.progress = false
         },
         alertNotify (type, message) {
             this.$notify({

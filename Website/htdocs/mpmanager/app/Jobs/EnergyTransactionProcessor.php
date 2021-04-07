@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Misc\TransactionDataContainer;
 use App\Models\Transaction\Transaction;
 use App\PaymentHandler\AccessRate;
+use App\Sms\Senders\SmsConfigs;
 use App\Sms\SmsTypes;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -96,7 +97,8 @@ class EnergyTransactionProcessor implements ShouldQueue
             event('transaction.successful', [$transactionData->transaction]);
             SmsProcessor::dispatch(
                 $transactionData->transaction,
-                SmsTypes::ACCESS_RATE_PAYMENT
+                SmsTypes::TRANSACTION_CONFIRMATION,
+                SmsConfigs::class
             )->allOnConnection('redis')->onQueue(\config('services.queues.sms'));
         }
     }

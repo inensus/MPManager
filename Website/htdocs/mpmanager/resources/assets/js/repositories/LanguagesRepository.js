@@ -1,4 +1,4 @@
-const resource = '/api/settings/languagesList'
+const resource = '/api/settings/languages-list'
 import Client from './Client/AxiosClient'
 
 export default {

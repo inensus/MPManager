@@ -83,19 +83,19 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
 
-        $this->app->singleton(
-            'CalinApi',
-            static function ($app) {
-                return new CalinApi(new Client());
-            }
-        );
-        $this->app->singleton(
+        $this->app->bind(
             'CalinSmartApi',
             static function ($app) {
-                return new CalinSmartApi(new Client());
+                $client = new Client();
+                $transaction = new Transaction();
+                return new CalinSmartApi($client, $transaction);
             }
         );
-
+        $this->app->bind('CalinApi', function () {
+            $client = new Client();
+            $transaction = new Transaction();
+            return new CalinApi($client, $transaction);
+        });
 
         $this->app->singleton(
             'MailProvider',

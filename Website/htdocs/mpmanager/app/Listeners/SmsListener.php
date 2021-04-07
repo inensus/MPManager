@@ -2,66 +2,55 @@
 
 namespace App\Listeners;
 
-use App\Misc\TransactionDataContainer;
-use App\Models\Sms;
+use App\Models\Transaction\Transaction;
+use App\Services\SmsResendInformationKeyService;
+use App\Services\SmsService;
+use App\Sms\Senders\SmsConfigs;
 use App\Sms\SmsTypes;
-use Exception;
-use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Events\Dispatcher;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\Facades\Log;
-
-use function config;
 
 class SmsListener
 {
-
-    /**
-     * @param string                   $number
-     * @param int                      $type
-     * @param TransactionDataContainer $data
-     * @param $trigger
-     *
-     * @return bool
-     */
-    public function sendSms($number, $data, $trigger): bool
-    {
-        if (config('app.debug')) {
-            //store sent sms
-            $sms = new Sms();
-            $sms->body = SmsTypes::generateSmsBody($data);
-            $sms->receiver = $number;
-            $sms->trigger()->associate($trigger);
-            $sms->save();
-            Log::debug(
-                'Debug Sms Sent',
-                ['number' => $number, 'body' => $sms->body, 'id' => 'ht47ehrfdjkgh378hfdjkldkddms']
-            );
-            return true;
-        }
-        try {
-            //sends sms or throws exception
-            resolve('SmsProvider')->sendSms($number, SmsTypes::generateSmsBody($data), '');
-        } catch (Exception $e) {
-            //slack failure
-            Log::critical(
-                'Sms Service failed ' . $number,
-                ['id' => '58365682988725', 'reason' => $e->getMessage()]
-            );
-            return false;
-        }
-        //store sent sms
-        $sms = new Sms();
-        $sms->body = SmsTypes::generateSmsBody($data);
-        $sms->receiver = $number;
-        $sms->trigger()->associate($trigger);
-        $sms->save();
-        return true;
+    private $smsResendInformationKeyService;
+    private $transaction;
+    private $smsService;
+    public function __construct(
+        SmsResendInformationKeyService $smsResendInformationKeyService,
+        Transaction $transaction,
+        SmsService $smsService
+    ) {
+        $this->smsResendInformationKeyService = $smsResendInformationKeyService;
+        $this->transaction = $transaction;
+        $this->smsService = $smsService;
     }
 
-    public function subscribe(Dispatcher $events): void
+    public function onSmsStored($sender, $message)
     {
-        $events->listen('sms.send.token', '\App\Listeners\SmsListener@sendSms');
-        $events->listen('sms.send', '\App\Listeners\SmsListener@sendSms');
+        $resendInformationKey = $this->smsResendInformationKeyService->getResendInformationKeys()->first();
+        if (!$resendInformationKey) {
+            return;
+        }
+        $resend = strpos(strtolower($message), strtolower($resendInformationKey));
+        if (!$resend) {
+            return ;
+        }
+        $wordsInMessage = explode(" ", $message);
+        $meterSerial = end($wordsInMessage);
+        try {
+            $transaction = $this->transaction->newQuery()->with('paymentHistories')
+                ->where('message', $meterSerial)->latest()->firstOrFail();
+               $this->smsService->sendSms($transaction, SmsTypes::RESEND_INFORMATION, SmsConfigs::class);
+        } catch (ModelNotFoundException $ex) {
+            $data = [
+                'phone' => $sender,
+                'meter' => $meterSerial
+            ];
+            $this->smsService->sendSms($data, SmsTypes::RESEND_INFORMATION, SmsConfigs::class);
+        }
+    }
+    public function subscribe(Dispatcher $events)
+    {
+        $events->listen('sms.stored', 'App\Listeners\SmsListener@onSmsStored');
     }
 }

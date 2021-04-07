@@ -23,7 +23,7 @@ class TicketService
         $this->tickets = $tickets;
     }
 
-    public function create($creatorId, $creatorType,$ownerId, $ownerType, $category, $assignedId, array $data)
+    public function create($creatorId, $creatorType,$ownerId, $ownerType, $category, $assignedId, array $data = [])
     {
         $ticket = $this->tickets->createTicket($data);
         return $this->saveTicket($ticket, $ownerType, $ownerId, $creatorId, $category, $assignedId,$creatorType);

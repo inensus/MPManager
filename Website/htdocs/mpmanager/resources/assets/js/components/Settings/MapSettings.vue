@@ -71,6 +71,9 @@
                     :zoom="Number(mapSettingsService.mapSettings.zoom)"
             />
         </div>
+        <div class="md-layout md-alignment-bottom-right">
+            <md-button class="md-primary md-dense md-raised" @click="updateMapSettings">Save</md-button>
+        </div>
         <md-progress-bar v-if="progress" md-mode="indeterminate"></md-progress-bar>
 
     </div>
@@ -105,22 +108,22 @@ export default {
         this.$refs.map.map._onResize()
     },
     created () {
-        EventBus.$on('mapEvent',this.setMapLatLng)
-        EventBus.$on('mapZoom',this.setMapZoom)
+        EventBus.$on('mapEvent', this.setMapLatLng)
+        EventBus.$on('mapZoom', this.setMapZoom)
     },
     methods: {
-        setMapLatLng(latlng){
+        setMapLatLng (latlng) {
             this.mapSettingsService.mapSettings.latitude = latlng.lat
             this.mapSettingsService.mapSettings.longitude = latlng.lng
         },
-        setMapZoom(zoom){
+        setMapZoom (zoom) {
             this.mapSettingsService.mapSettings.zoom = zoom
         },
         async setCenterPoints () {
             let validator = await this.$validator.validateAll()
             if (!validator) {
                 return
-            }else{
+            } else {
                 this.mutatingCenter = [this.mapSettingsService.mapSettings.latitude, this.mapSettingsService.mapSettings.longitude]
             }
         },
@@ -138,12 +141,13 @@ export default {
                 }).catch((err) => {
                     console.log(err)
                 })
+                this.alertNotify('success', 'Updated Successfully')
             } catch (e) {
                 this.alertNotify('error', e.message)
             }
             this.progress = false
         },
-        getLatLng(){
+        getLatLng () {
             this.$refs.map.getLatLng()
         },
         fetchMapSettings () {
