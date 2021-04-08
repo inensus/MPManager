@@ -9,12 +9,12 @@ use Illuminate\Database\Eloquent\Collection;
 
 class MenuItemsService
 {
-    private  $menuItems;
-    private  $subMenuItems;
-    public function __construct(MenuItems $menuItems,SubMenuItems $subMenuItems)
+    private $menuItems;
+    private $subMenuItems;
+    public function __construct(MenuItems $menuItems, SubMenuItems $subMenuItems)
     {
         $this->menuItems = $menuItems;
-        $this->subMenuItems=$subMenuItems;
+        $this->subMenuItems = $subMenuItems;
     }
 
     /**
@@ -30,15 +30,16 @@ class MenuItemsService
     public function createMenuItems($menuItem, $subMenuItems): void
     {
         $lastOrder = $this->menuItems->newQuery()->latest()->first();
-        $menuItem = $this->menuItems->newQuery()->firstOrCreate(['name'=> $menuItem['name']],[
+        $menuItem = $this->menuItems->newQuery()->firstOrCreate(['name' => $menuItem['name']], [
             'name' => $menuItem['name'],
             'url_slug' => $menuItem['url_slug'],
             'md_icon' => $menuItem['md_icon'],
-            'menu_order' => $lastOrder ? $lastOrder->menu_order + 1:1,
+            'menu_order' => $lastOrder ? $lastOrder->menu_order + 1 : 1,
         ]);
 
         foreach ($subMenuItems as $key => $value) {
-           $this->subMenuItems->newQuery()->firstOrCreate(['url_slug'=>$value['url_slug']],
+            $this->subMenuItems->newQuery()->firstOrCreate(
+                ['url_slug' => $value['url_slug']],
                 [
                 'name' => $value['name'],
                 'url_slug' => $value['url_slug'],
