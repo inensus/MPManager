@@ -231,13 +231,17 @@ export default {
                 this.alertNotify('warn', this.$tc('phrases.newTargetNotify',1))
                 return
             }
+            try {
+                await this.targets.store(this.targetValidUntil, this.targetAssignType, this.targetAssignId,
+                    this.connectionTypes.list)
+                this.$swal('Success', this.$tc('phrases.newTargetNotify',2), 'success')
+                this.$router.push({ path: '/targets' })
+            }catch (e) {
+                this.alertNotify('error', e.message)
+            }
 
-
-            this.targets.store(this.targetValidUntil, this.targetAssignType, this.targetAssignId,
-                this.connectionTypes.list
-            )
             //success message
-            this.$swal('Success', this.$tc('phrases.newTargetNotify',2), 'success')
+
         },
         addCustomers (newConnections, connections) {
             return parseInt(newConnections) + parseInt(connections)
@@ -257,7 +261,8 @@ export default {
                 this.targetDestinations = response.data.data
                 this.dataIsLoading = false // hide progress bar
             })
-        }
+        },
+
     }
 }
 </script>

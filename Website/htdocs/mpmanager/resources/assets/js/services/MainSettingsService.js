@@ -47,7 +47,7 @@ export class MainSettingsService {
     async update () {
         try {
             let mainSettingsPm = {
-                id: this.mainSettings.id,
+                id: 1,
                 site_title: this.mainSettings.siteTitle,
                 company_name: this.mainSettings.companyName,
                 currency: this.mainSettings.currency,
@@ -59,7 +59,7 @@ export class MainSettingsService {
             let response = await this.repository.update(mainSettingsPm.id,
                 mainSettingsPm)
             if (response.status === 200) {
-                this.fromJson(response.data.data)
+                this.fromJson(response.data.data[0])
                 return this.mainSettings
             } else {
                 return new ErrorHandler(response.error, 'http', response.status)

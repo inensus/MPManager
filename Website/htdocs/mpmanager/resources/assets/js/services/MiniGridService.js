@@ -17,7 +17,6 @@ export class MiniGridService {
         try {
 
             let response = await this.repository.list()
-
             if (response.status === 200 || response.status === 201) {
                 this.miniGrids = response.data.data
 
@@ -44,7 +43,7 @@ export class MiniGridService {
             let response = await this.repository.create(miniGridPM)
 
             if (response.status === 201 || response.status === 200) {
-                return response
+                return response.data.data
             } else {
                 return new ErrorHandler(response.error, 'http', response.status)
             }
@@ -165,7 +164,7 @@ export class MiniGridService {
         }
     }
 
-    async getTSoldEnergy(miniGridId,startDate,endDate){
+    async getSoldEnergy(miniGridId,startDate,endDate){
         try {
             let period={
                 startDate:  startDate,

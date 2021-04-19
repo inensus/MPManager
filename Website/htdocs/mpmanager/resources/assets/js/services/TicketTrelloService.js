@@ -64,7 +64,6 @@ export class TicketTrelloService {
     }
 
     async getTicketDetail (ticketData) {
-
         try {
 
             let response = await this.repository.detail(ticketData.ticket_id)

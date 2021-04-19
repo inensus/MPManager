@@ -18,7 +18,6 @@ export class TicketService {
     }
 
     async updateList (data, type) {
-
         if (type === 'ticketListOpened')
             this.openedList = []
         else
@@ -76,7 +75,7 @@ export class TicketService {
         try {
             let response = await this.repository.create(maintenanceDataPM)
             if (response.status === 200 || response.status === 201) {
-                return response
+                return response.data.data
             } else {
                 return new ErrorHandler(response.error, 'http', response.status)
             }
