@@ -228,92 +228,12 @@ export default {
         financialDataChart (type, summary = false) {
             let data = []
             if (type === 'column') {
-                return this.columnChartData()
+                return this.clusterService.columnChartData(summary,type = 'miniGrid')
             } else if (type === 'line') {
-                return this.lineChartData(summary)
+                return this.clusterService.lineChartData(summary)
             }
             return data
         },
-        /**
-             * Generates data array for line chart
-             */
-        lineChartData (summary) {
-            let data = []
-            data.push(['Period'])
-
-            let miniGridsCount = this.financialData.length
-            if (miniGridsCount === 0) {
-                return
-            }
-
-            data[0] = data[0].concat(this.financialData.map(f => {return f.name}))
-            if (summary) {
-                data[0].push('Total')
-            }
-            let periods = this.financialData[0].period
-            for (let p in periods) {
-
-                data.push(this.getPeriodicData(miniGridsCount, p, summary))
-            }
-            return data
-        },
-        /**
-             * Generates data array for column and donut chart
-             */
-
-
-        columnChartData (summary) {
-            let data = []
-            let summaryRevenue = 0
-            data.push([this.$tc('words.miniGrid'), this.$tc('words.revenue')])
-            for (let i in this.financialData) {
-                let cD = this.financialData[i]
-                if (summary) {
-                    summaryRevenue += cD.totalRevenue
-                }
-                data.push([cD.name, cD.totalRevenue])
-            }
-            if (summary) {
-                data.push(['Sum', summaryRevenue])
-            }
-            return data
-        },
-
-        /**
-             * Inserts the cluster names to the given data array and returns it
-             * @param count
-             * @param data
-             */
-        insertCityNames
-        (count, data) {
-            for (let i = 0; i < count; i++) {
-                data.push(this.financialData.cities[i].name)
-            }
-            return data
-        },
-        /**
-             *
-             * @param count the length of clusters
-             * @param periodName current selected Period
-             * @returns array
-             */
-        getPeriodicData (count, periodName, summary) {
-            let data = []
-            let sum = 0
-            data.push(periodName)
-            for (let i = 0; i < count; i++) {
-                if (summary) {
-                    sum += this.financialData[i].period[periodName].revenue
-                }
-                data.push(this.financialData[i].period[periodName].revenue)
-                //data.push(this.financialData[i].period[periodName].revenue)
-            }
-            if (summary) {
-                data.push(sum)
-            }
-            return data
-        },
-
         dateSelectedFrom (date) {
             this.setDate(date, 'from')
         },

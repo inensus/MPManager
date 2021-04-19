@@ -4,7 +4,7 @@
         <div class="col-sm-12">
             <GChart
                     type="ColumnChart"
-                    :data="trendChartData.base"
+                    :data="clusterService.trendChartData.base"
                     :options="chartOptions"
                     :resizeDebounce="500"
             />
@@ -14,7 +14,7 @@
         <div class="col-sm-12">
             <GChart
                     type="LineChart"
-                    :data="trendChartData.overview"
+                    :data="clusterService.trendChartData.overview"
                     :options="chartOptions"
                     :resizeDebounce="500"
             />
@@ -24,6 +24,7 @@
 
 <script>
 import Widget from '../../shared/widget'
+import { ClusterService } from '../../services/ClusterService'
 
 export default {
     name: 'RevenueTrends',
@@ -34,14 +35,13 @@ export default {
             required: true,
         }
     },
-    mounted () {
-        this.getTrends(this.clusterId)
+    created () {
+        this.getTrends()
     },
     data () {
         return {
-            clusterTrends: null,
+            clusterService : new ClusterService(),
             period: {},
-            trendChartData: {base: null, overview: null},
             chartOptions: {
                 chart: {
                     legend: {
@@ -80,33 +80,21 @@ export default {
         }
     },
     methods: {
-        fillTrends () {
-            let trendKeys = (Object.keys(this.clusterTrends))
-            this.trendChartData.base = [(Object.keys(this.clusterTrends))]
-            this.trendChartData.base[0].unshift('Date')
-            for (let i in this.clusterTrends[trendKeys[0]]) { // iterate over periods
-                let tmpData = []
-                for (let j in trendKeys) { //iterate over connection names
-                    tmpData.push(
-                        this.clusterTrends[trendKeys[j]][i]
-                    )
-                }
-                tmpData.unshift(i)
-                this.trendChartData.base.push(tmpData)
+        async getTrends () {
+            try {
+                await this.clusterService.getClusterTrends(this.clusterId, this.period.from, this.period.to)
+            }catch (e) {
+                this.alertNotify('error', e.message)
             }
         },
-        getTrends () {
-            axios.post(resources.clusters.revenue.trends + this.clusterId + '/revenue/analysis',
-                {
-                    'period': 'monthly',
-                    'startDate': this.period.from,
-                    'endDate': this.period.to
-                })
-                .then((response) => {
-                    this.clusterTrends = response.data.data
-                    this.fillTrends()
-                })
-        }
+        alertNotify (type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message
+            })
+        },
 
     },
 }
