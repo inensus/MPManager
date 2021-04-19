@@ -203,7 +203,7 @@ export default {
                     const miniGrid = await this.miniGridService.createMiniGrid(this.miniGridName, this.clusterId, this.miniGridLatLng)
                     this.alertNotify('success', this.$tc('phrases.newMiniGrid',2))
                     this.loading = false
-                    await this.$router.replace('/dashboards/mini-grid/' + miniGrid.data.data.id)
+                    await this.$router.replace('/dashboards/mini-grid/' + miniGrid.id)
                 } catch (e) {
                     this.loading = false
                     this.alertNotify('error', e.message)
