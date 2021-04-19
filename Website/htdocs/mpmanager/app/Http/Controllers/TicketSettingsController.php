@@ -25,13 +25,18 @@ class TicketSettingsController extends Controller
 
     public function update(TicketSettings $ticketSettings): ApiResource
     {
-        $ticketSettings->update(
-            request()->only(
-                [
-                'name', 'api_token', 'api_url', 'api_key'
-                ]
-            )
+        $ticketSettings = TicketSettings::updateOrCreate(
+            [
+              'id'=>request('id')
+            ],
+            [
+                'name'=>request('name'),
+                'api_token'=>request('api_token'),
+                'api_url'=>request('api_url'),
+                'api_key'=>request('api_key')
+            ]
         );
+
         return new ApiResource($ticketSettings->fresh());
     }
 }
