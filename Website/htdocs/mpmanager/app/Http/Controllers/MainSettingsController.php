@@ -26,17 +26,18 @@ class MainSettingsController extends Controller
     public function update(MainSettings $mainSettings): ApiResource
     {
         $mainSettings = MainSettings::updateOrCreate(
-        [
-            'id' => request('id')
-        ],
-        [   'site_title' => request('site_title'),
-            'company_name' => request('company_name'),
-            'currency' => request('currency'),
-            'country' => request('country'),
-            'language' => request('language'),
-            'vat_energy'=> request('vat_energy'),
-            'vat_appliance'=>request('vat_appliance')
-        ]);
+            [
+                'id' => request('id')
+            ],
+            [   'site_title' => request('site_title'),
+                'company_name' => request('company_name'),
+                'currency' => request('currency'),
+                'country' => request('country'),
+                'language' => request('language'),
+                'vat_energy'=> request('vat_energy'),
+                'vat_appliance' => request('vat_appliance')
+            ]
+        );
         return new ApiResource([$mainSettings->fresh()]);
     }
 }

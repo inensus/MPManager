@@ -27,13 +27,13 @@ class TicketSettingsController extends Controller
     {
         $ticketSettings = TicketSettings::updateOrCreate(
             [
-              'id'=>request('id')
+              'id' => request('id')
             ],
             [
-                'name'=>request('name'),
-                'api_token'=>request('api_token'),
-                'api_url'=>request('api_url'),
-                'api_key'=>request('api_key')
+                'name' => request('name'),
+                'api_token' => request('api_token'),
+                'api_url' => request('api_url'),
+                'api_key' => request('api_key')
             ]
         );
 

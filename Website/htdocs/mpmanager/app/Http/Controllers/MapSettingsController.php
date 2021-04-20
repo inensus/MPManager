@@ -27,12 +27,12 @@ class MapSettingsController extends Controller
     {
         $mapSettings = MapSettings::updateOrCreate(
             [
-              'id'=>request('id')
+              'id' => request('id')
             ],
             [
-                'zoom'=>request('zoom'),
-                'latitude'=>request('latitude'),
-                'longitude'=>request('longitude')
+                'zoom' => request('zoom'),
+                'latitude' => request('latitude'),
+                'longitude' => request('longitude')
             ]
         );
         return new ApiResource([$mapSettings->fresh()]);
