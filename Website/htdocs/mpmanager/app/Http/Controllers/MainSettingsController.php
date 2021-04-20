@@ -34,7 +34,7 @@ class MainSettingsController extends Controller
                 'currency' => request('currency'),
                 'country' => request('country'),
                 'language' => request('language'),
-                'vat_energy'=> request('vat_energy'),
+                'vat_energy' => request('vat_energy'),
                 'vat_appliance' => request('vat_appliance')
             ]
         );
