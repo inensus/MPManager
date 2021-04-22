@@ -79,7 +79,14 @@ export class TransactionService {
 
             if (response.status === 200 || response.status === 201) {
                 this.transactionJson = response.data.data
-
+                if(this.transactionJson.payment_histories.length === 0){
+                    this.transactionJson.payment_histories.push({
+                        personName: '---',
+                        paymentHistory: false,
+                    })
+                }else{
+                    this.transactionJson.payment_histories[0].paymentHistory =  true
+                }
                 return this.transactionJson
             } else {
                 return new ErrorHandler(response.error, 'http', response.status)

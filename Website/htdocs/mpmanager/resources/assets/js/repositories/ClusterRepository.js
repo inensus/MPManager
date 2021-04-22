@@ -23,5 +23,8 @@ export default {
     getAllRevenues (terms) {
         return Client.get(`${resource}/revenue/${terms}`)
     },
+    getClusterTrends (clusterId, terms){
+        return Client.get(`${resource}/${clusterId}/revenue/analysis/${terms}`)
+    }
 
 }

@@ -52,6 +52,9 @@ import SmsResendInformationKeyRepository from './SmsResendInformationKeyReposito
 import SmsApplianceRemindRateRepository from './SmsApplianceRemindRateRepository'
 import SmsAndroidSettingRepository from './SmsAndroidSettingRepository'
 import SmsVariableDefaultValueRepository from './SmsVariableDefaultValueRepository'
+import PaymentHistoryRepository from './PaymentHistoryRepository'
+import BatchRevenueRepository from './BatchRevenueRepository'
+import TargetRepository from './TargetRepository'
 
 const repositories = {
     'address': AddressRepository,
@@ -107,7 +110,10 @@ const repositories = {
     'smsResendInformationKeys':SmsResendInformationKeyRepository,
     'smsApplianceRemindRates':SmsApplianceRemindRateRepository,
     'smsAndroidSetting':SmsAndroidSettingRepository,
-    'smsVariableDefaultValue':SmsVariableDefaultValueRepository
+    'smsVariableDefaultValue':SmsVariableDefaultValueRepository,
+    'target': TargetRepository,
+    'batchRevenue': BatchRevenueRepository,
+    'paymentHistory': PaymentHistoryRepository
 }
 
 export default {

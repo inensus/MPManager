@@ -59,23 +59,29 @@
                                     <hr class="hr-d">
                                     <div class="md-layout">
                                         <div class="md-layout-item md-subheader">{{ $tc('words.meter') }}</div>
-                                        <div class="md-layout-item md-subheader n-font">
+                                        <div class="md-layout-item md-subheader n-font" v-if="transaction.payment_histories[0].paymentHistory">
                                             <router-link
                                                     :to="{path: '/meters/' + transaction.message}"
                                                     class="nav-link"
                                             >{{transaction.message}}
                                             </router-link>
                                         </div>
+                                        <div class="md-layout-item md-subheader n-font" v-else>
+                                            {{transaction.message}}
+                                        </div>
                                     </div>
                                     <hr class="hr-d">
                                     <div class="md-layout">
                                         <div class="md-layout-item md-subheader">{{ $tc('words.customer') }}</div>
-                                        <div class="md-layout-item md-subheader n-font">
+                                        <div class="md-layout-item md-subheader n-font" v-if="transaction.payment_histories[0].paymentHistory">
                                             <router-link
                                                     :to="{path: '/people/' + personId}"
                                                     class="nav-link"
                                             >{{personName}}
                                             </router-link>
+                                        </div>
+                                        <div class="md-layout-item md-subheader n-font" v-else>
+                                            {{transaction.payment_histories[0].personName}}
                                         </div>
                                     </div>
                                     <hr class="hr-d">
@@ -117,7 +123,7 @@
                                                 <payment-history-chart :paymentdata="transaction.payment_histories"/>
                                             </div>
                                             <div class="md-layout-item md-size-45">
-                                                <md-table v-if="transaction.payment_histories.length>0">
+                                                <md-table v-if="transaction.payment_histories[0].paymentHistory">
                                                     <md-table-row>
                                                         <md-table-head>{{ $tc('phrases.paidFor') }}</md-table-head>
                                                         <md-table-head>{{ $tc('words.amount') }}</md-table-head>
@@ -225,7 +231,8 @@ export default {
             transactionId: null,
             transaction: null,
             personName: null,
-            personId: null
+            personId: null,
+            showCustomer: true
         }
     },
     computed: {
@@ -238,7 +245,7 @@ export default {
 
             try {
                 this.transaction = await this.transactionService.getTransaction(id)
-                if (this.transaction.payment_histories.length > 0) {
+                if (this.transaction.payment_histories[0].paymentHistory === true) {
                     await this.getRelatedPerson(this.transaction.payment_histories[0].payer_id)
                 }
             } catch (e) {
@@ -250,11 +257,13 @@ export default {
             try {
                 let person = await this.personService.getPerson(personId)
                 this.personName =
-            person.name + ' ' + person.surname
+                        person.name + ' ' + person.surname
                 this.personId = person.id
             } catch (e) {
                 this.alertNotify('error', e.message)
             }
+
+
 
         },
         alertNotify (type, message) {

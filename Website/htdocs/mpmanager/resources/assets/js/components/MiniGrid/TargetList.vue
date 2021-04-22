@@ -80,6 +80,7 @@ import { BatchRevenue } from '../../classes/revenue/batch'
 import moment from 'moment'
 import { currency } from '../../mixins/currency'
 import { EventBus } from '../../shared/eventbus'
+import { BatchRevenueService } from '../../services/BatchRevenueService'
 
 export default {
     name: 'TargetList',
@@ -106,6 +107,7 @@ export default {
     data () {
         return {
             //bach revenue controller instance
+            batchRevenueService: new BatchRevenueService(),
             batchRevenues: new BatchRevenue(),
             comparedRevenues: new BatchRevenue(),
             datesSet: 0, //when 2 fire batchData
@@ -156,61 +158,34 @@ export default {
         },
     },
     methods: {
-        getBatchData () {
+        async getBatchData () {
             this.expanded = true
             this.targets = []
-            //if(this.highlighted.from)
-            if (Object.keys(this.base).length > 0) { //base data is there
-                this.revenueData(
-                    moment(this.base.from).format('YYYY-MM-DD'),
-                    moment(this.base.to).format('YYYY-MM-DD'),
-                    this.batchRevenues
-                )
-                    .then((response) => {
-                        this.batchRevenues.revenueList = response
-                        this.batchRevenues.revenueList.averages = this.calculateAverages(this.batchRevenues.revenueList)
-                        this.$emit('baseDataAvailable', this.batchRevenues)
-                        if (Object.keys(this.compared).length === 0) this.totals()
-
-                        //this.donutData = this.initializeCharts(['Connection Name', 'Revenue'])
-                        if (Object.keys(this.compared).length > 0) { //compare data is also available.
-                            this.revenueData(
-                                moment(this.compared.from).format('YYYY-MM-DD'),
-                                moment(this.compared.to).format('YYYY-MM-DD'),
-                                this.comparedRevenues
-                            )
-                                .then((response) => {
-                                    this.comparedRevenues.revenueList = response
-                                    this.comparedRevenues.revenueList.averages = this.calculateAverages(this.comparedRevenues.revenueList)
-                                    this.totals()
-                                    EventBus.$emit('widgetContentLoaded',this.subscriber,this.batchRevenues.revenueList)
-
-                                })
-                        }
-                    })
-            }
-
-        },
-        calculateAverages (list) {
-            let data = {}
-            for (let connection in list.target.targets) {
-                let result = '-'
-                if (list.revenue[connection] > 0) {
-                    result = parseInt(list.revenue[connection]) / list.total_connections[connection]
+            if (Object.keys(this.base).length > 0) {
+                let startDate = moment(this.base.from).format('YYYY-MM-DD')
+                let endDate = moment(this.base.to).format('YYYY-MM-DD')
+                try {
+                    this.batchRevenues = await this.batchRevenueService.getRevenueForPeriod(this.targetId, this.targetType,startDate, endDate)
+                    this.$emit('baseDataAvailable', this.batchRevenues)
+                    if (Object.keys(this.compared).length === 0) this.totals()
+                }catch (e) {
+                    this.alertNotify('error', e.message)
                 }
-                data[connection] = result
             }
-            return data
-        },
-        revenueData (from, to, batchRevenues) {
-            return batchRevenues.revenueForPeriod(
-                this.targetId,
-                this.targetType,
-                from,
-                to,
-            ).then((data) => {
-                return data
-            })
+            if (Object.keys(this.compared).length > 0) { //compare data is also available.
+                let startDate = moment(this.compared.from).format('YYYY-MM-DD')
+                let endDate = moment(this.compared.to).format('YYYY-MM-DD')
+                try{
+                    this.comparedRevenues = await this.batchRevenueService.getRevenueForPeriod(this.targetId, this.targetType, startDate, endDate)
+                    this.totals()
+                }catch (e){
+                    this.alertNotify('error', e.message)
+                }
+
+            }
+            EventBus.$emit('widgetContentLoaded',this.subscriber,this.batchRevenues.revenueList)
+            EventBus.$emit('batchRevenuesLoaded', this.batchRevenues)
+
         },
         totals () {
             let newConnections = 0
@@ -269,7 +244,16 @@ export default {
 
             this.$emit('complete', totalConnections)
 
-        }
+        },
+        alertNotify (type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message,
+                speed: 0
+            })
+        },
     }
 }
 </script>

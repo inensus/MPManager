@@ -3,7 +3,8 @@
         "browser": true,
         "es2021": true,
         "amd": true,
-        "jquery": true
+        "jquery": true,
+        "jest": true
     },
     "globals": {
         "resources": false,

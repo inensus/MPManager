@@ -50,9 +50,8 @@ export class MapSettingsService {
             }
             let response = await this.repository.update(mapSettingsPm.id, mapSettingsPm)
             if (response.status === 200) {
-                this.fromJson(response.data.data)
+                this.fromJson(response.data.data[0])
                 return this.mapSettings
-
             } else {
                 return new ErrorHandler(response.error, 'http', response.status)
             }

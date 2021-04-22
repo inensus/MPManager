@@ -59,7 +59,7 @@ export class MainSettingsService {
             let response = await this.repository.update(mainSettingsPm.id,
                 mainSettingsPm)
             if (response.status === 200) {
-                this.fromJson(response.data.data)
+                this.fromJson(response.data.data[0])
                 return this.mainSettings
             } else {
                 return new ErrorHandler(response.error, 'http', response.status)

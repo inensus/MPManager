@@ -40,7 +40,7 @@ export class CityService {
             let response = await this.repository.create(city_PM)
             if (response.status === 200 || response.status === 201) {
                 this.city = response.data.data
-                return response
+                return this.city
             } else {
                 return new ErrorHandler(response.error, 'http', response.status)
             }
