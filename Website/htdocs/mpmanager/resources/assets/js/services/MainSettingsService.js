@@ -47,7 +47,7 @@ export class MainSettingsService {
     async update () {
         try {
             let mainSettingsPm = {
-                id: 1,
+                id: this.mainSettings.id,
                 site_title: this.mainSettings.siteTitle,
                 company_name: this.mainSettings.companyName,
                 currency: this.mainSettings.currency,
