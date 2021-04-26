@@ -71,7 +71,7 @@
                         <md-menu-content>
                             <div class="author-card">
                                 <div class="md-layout">
-                                    <md-icon class="md-size-2x">account_circle</md-icon>
+                                    <md-icon>account_circle</md-icon>
                                 </div>
                                 <div class="md-layout md-alignment-center">
                                     {{ adminName }}
@@ -89,16 +89,6 @@
                             </md-menu-item>
                         </md-menu-content>
                     </md-menu>
-
-
-                    <md-button
-                        class="md-just-icon md-simple md-toolbar-toggle"
-                        :class="{ toggled: $sidebar.showSidebar }"
-                        @click="toggleSidebar"
-                        style="vertical-align: bottom !important;"
-                    >
-                        <md-icon>format_align_justify</md-icon>
-                    </md-button>
                 </div>
 
 
@@ -129,9 +119,6 @@ export default {
         },
         toggle () {
             this.toggleCard = !this.toggleCard
-        },
-        toggleSidebar () {
-            this.$sidebar.displaySidebar(!this.$sidebar.showSidebar)
         },
         replaceRoute(route){
             this.$router.replace(route)
