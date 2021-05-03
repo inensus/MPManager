@@ -44,10 +44,36 @@ const app = new Vue({
             mainSettingsService: new MainSettingsService(),
             mapSettingService: new MapSettingsService(),
             ticketSettingsService: new TicketSettingsService(),
+            resolution:{
+                width: window.innerWidth,
+                height:window.innerHeight,
+                isMobile: false
+            }
         }
     },
     mounted () {
+        this.handleResize()
+        window.addEventListener('resize', this.handleResize)
         this.$el.addEventListener('click', this.onHtmlClick)
+    },
+    beforeDestroy () {
+        window.removeEventListener('resize', this.handleResize)
+    },
+    methods:{
+        handleResize(){
+            this.resolution.width = window.innerWidth
+            this.resolution.height = window.innerHeight
+            if(this.resolution.width <= 960){
+                this.resolution.isMobile = true
+            }else{
+                this.resolution.isMobile = false
+            }
+            this.$store.dispatch('resolution/setResolution', this.resolution).then(() => {
+            }).catch((err) => {
+                console.log(err)
+            })
+        }
+
     },
     router: router,
     store: store,
