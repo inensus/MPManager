@@ -3,7 +3,13 @@
         <widget :title="$tc('phrases.newSms')" color="red">
             <md-card class="md-size-80">
                 <md-card-header>
-                    <md-tabs>
+                    <md-list class="mobile-tabs">
+                        <md-list-item @click="tab='person'">{{$tc('words.people')}}</md-list-item>
+                        <md-list-item @click="tab='group'">{{$tc('phrases.connectionGroup')}}</md-list-item>
+                        <md-list-item @click="tab='type'">{{$tc('phrases.connectionType')}}</md-list-item>
+                        <md-list-item @click="tab='all'">{{$tc('phrases.wholeVillage')}}</md-list-item>
+                    </md-list>
+                    <md-tabs class="tabs">
                         <md-tab
                             role="presentation"
                             :class="tab==='person' ? 'active' :''"
@@ -302,5 +308,15 @@ export default {
 .modal-leave-active .modal-container {
     -webkit-transform: scale(1.1);
     transform: scale(1.1);
+}
+@media screen and (max-width: 600px){
+    .tabs{
+        display: none;
+    }
+}
+@media screen and (min-width: 601px){
+    .mobile-tabs{
+        display: none;
+    }
 }
 </style>
