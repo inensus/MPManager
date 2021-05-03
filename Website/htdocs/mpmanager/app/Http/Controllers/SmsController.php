@@ -92,6 +92,7 @@ class SmsController extends Controller
         $list = $this->sms
             ::with('address.owner')
             ->orderBy('id', 'DESC')
+            ->select('receiver', DB::raw('count(*) as total'))
             ->groupBy('receiver')
             ->paginate(20);
         return new ApiResource($list);
