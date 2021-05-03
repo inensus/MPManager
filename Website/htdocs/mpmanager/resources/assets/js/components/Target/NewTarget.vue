@@ -61,78 +61,146 @@
                     </div>
                 </div>
 
-                <h3>{{ $tc('phrases.targetsForConnectionTypes') }}</h3>
+                <div class="new-target" v-if="!isMobile">
+                    <h3>{{ $tc('phrases.targetsForConnectionTypes') }}</h3>
+                    <md-table>
+                        <md-table-row v-for="(connection) in connectionTypes.list" :key="connection.id">
+                            <md-table-cell> {{connection.name}}</md-table-cell>
+                            <md-table-cell>
+                                <md-field>
+                                    <label>{{ $tc('phrases.newConnection',2) }}</label>
+                                    <md-input type="number"
+                                              class="form-control full-width"
+                                              v-model="connection.target.newConnection"
+                                    />
+                                </md-field>
+                            </md-table-cell>
+
+                            <md-table-cell>
+                                <md-field>
+                                    <label>{{ $tc('phrases.connectedPower') }}</label>
+                                    <md-input type="number"
+                                              class="form-control full-width"
+                                              v-model="connection.target.connectedPower"
+                                    />
+                                </md-field>
+                            </md-table-cell>
+
+                            <md-table-cell>
+                                <md-field>
+                                    <label>{{ $tc('words.energy') }}(kWh) / {{ $tc('words.month') }}</label>
+                                    <md-input type="number"
+                                              class="form-control full-width"
+                                              v-model="connection.target.energyPerMonth"/>
+                                </md-field>
+                            </md-table-cell>
+
+                            <md-table-cell>
+                                <md-field>
+                                    <label>{{ $tc('words.revenue') }} / {{ $tc('words.month') }}</label>
+                                    <md-input type="number"
+                                              class="form-control full-width"
+                                              v-model="connection.target.totalRevenue"/>
+                                </md-field>
+                            </md-table-cell>
+
+                            <md-table-cell>
+                                <md-field>
+                                    <label>{{ $tc('phrases.avgRevenue') }} / {{ $tc('words.month') }}</label>
+                                    <md-input type="text"
+                                              class="form-control full-width"
+                                              v-model="connection.target.averageRevenuePerMonth"/>
+                                </md-field>
+                            </md-table-cell>
+
+                            <md-table-cell>
+                                {{addCustomers(connection.target.newConnection ,
+                                numberOfCustomers.findConnectionCustomers(connection.id))
+                                }}
+                            </md-table-cell>
+                        </md-table-row>
+
+                        <md-table-row>
+                            <md-table-cell>{{ $tc('words.total') }}</md-table-cell>
+                            <md-table-cell>{{total['newConnection']}}</md-table-cell>
+                            <md-table-cell>{{total['connectedPower']}}</md-table-cell>
+                            <md-table-cell>{{total['energyPerMonth']}}</md-table-cell>
+                            <md-table-cell>{{readable(total['totalRevenue'])}}</md-table-cell>
+                            <md-table-cell>{{readable(total['totalRevenue']/total['totalCustomers']+total['newConnection'])
+                                }}
+                            </md-table-cell>
+                            <md-table-cell>{{readable(total['totalCustomers']+total['newConnection'])}}</md-table-cell>
+                        </md-table-row>
+                    </md-table>
+                </div>
+
+                <div class="page-container" v-if="isMobile">
+                    <md-app md-mode="fixed" v-for="(connection) in connectionTypes.list" :key="connection.id" >
+                        <md-app-toolbar>
+                            <span class="md-subheading">{{connection.name}}</span>
+                        </md-app-toolbar>
+                        <md-app-content>
+                            <div class="md-layout-item md-size-100">
+                                <md-field>
+                                    <label>{{ $tc('phrases.newConnection',2) }}</label>
+                                    <md-input type="number"
+                                              class="form-control full-width"
+                                              v-model="connection.target.newConnection"
+                                    />
+                                </md-field>
+                            </div>
+
+                            <div class="md-layout-item md-size-100">
+                                <md-field>
+                                    <label>{{ $tc('phrases.connectedPower') }}</label>
+                                    <md-input type="number"
+                                              class="form-control full-width"
+                                              v-model="connection.target.connectedPower"
+                                    />
+                                </md-field>
+                            </div>
+                            <div class="md-layout-item md-size-100">
+                                <md-field>
+                                    <label>{{ $tc('words.energy') }}(kWh) / {{ $tc('words.month') }}</label>
+                                    <md-input type="number"
+                                              class="form-control full-width"
+                                              v-model="connection.target.energyPerMonth"/>
+                                </md-field>
+                            </div>
+                            <div class="md-layout-item md-size-100">
+                                <md-field>
+                                    <label>{{ $tc('words.revenue') }} / {{ $tc('words.month') }}</label>
+                                    <md-input type="number"
+                                              class="form-control full-width"
+                                              v-model="connection.target.totalRevenue"/>
+                                </md-field>
+                            </div>
+                            <div class="md-layout-item md-size-100">
+                                <md-field>
+                                    <label>{{ $tc('phrases.avgRevenue') }} / {{ $tc('words.month') }}</label>
+                                    <md-input type="text"
+                                              class="form-control full-width"
+                                              v-model="connection.target.averageRevenuePerMonth"/>
+                                </md-field>
+                            </div>
+                            <div class="md-layout-item md-size-100">
+                                = {{addCustomers(connection.target.newConnection ,
+                                numberOfCustomers.findConnectionCustomers(connection.id))
+                                }} (New + Registered)
+                            </div>
 
 
-                <md-table>
-                    <md-table-row v-for="(connection) in connectionTypes.list" :key="connection.id">
-                        <md-table-cell> {{connection.name}}</md-table-cell>
-                        <md-table-cell>
-                            <md-field>
-                                <label>{{ $tc('phrases.newConnection',2) }}</label>
-                                <md-input type="number"
-                                          class="form-control full-width"
-                                          v-model="connection.target.newConnection"
-                                />
-                            </md-field>
-                        </md-table-cell>
+                        </md-app-content>
 
-                        <md-table-cell>
-                            <md-field>
-                                <label>{{ $tc('phrases.connectedPower') }}</label>
-                                <md-input type="number"
-                                          class="form-control full-width"
-                                          v-model="connection.target.connectedPower"
-                                />
-                            </md-field>
-                        </md-table-cell>
+                    </md-app>
+                    <div class="md-subheading" style="float: right; right: 0;">
+                        Total = {{readable(total['totalCustomers']+total['newConnection'])}}
+                    </div>
+                </div>
 
-                        <md-table-cell>
-                            <md-field>
-                                <label>{{ $tc('words.energy') }}(kWh) / {{ $tc('words.month') }}</label>
-                                <md-input type="number"
-                                          class="form-control full-width"
-                                          v-model="connection.target.energyPerMonth"/>
-                            </md-field>
-                        </md-table-cell>
 
-                        <md-table-cell>
-                            <md-field>
-                                <label>{{ $tc('words.revenue') }} / {{ $tc('words.month') }}</label>
-                                <md-input type="number"
-                                          class="form-control full-width"
-                                          v-model="connection.target.totalRevenue"/>
-                            </md-field>
-                        </md-table-cell>
 
-                        <md-table-cell>
-                            <md-field>
-                                <label>{{ $tc('phrases.avgRevenue') }} / {{ $tc('words.month') }}</label>
-                                <md-input type="text"
-                                          class="form-control full-width"
-                                          v-model="connection.target.averageRevenuePerMonth"/>
-                            </md-field>
-                        </md-table-cell>
 
-                        <md-table-cell>
-                            {{addCustomers(connection.target.newConnection ,
-                            numberOfCustomers.findConnectionCustomers(connection.id))
-                            }}
-                        </md-table-cell>
-                    </md-table-row>
-
-                    <md-table-row>
-                        <md-table-cell>{{ $tc('words.total') }}</md-table-cell>
-                        <md-table-cell>{{total['newConnection']}}</md-table-cell>
-                        <md-table-cell>{{total['connectedPower']}}</md-table-cell>
-                        <md-table-cell>{{total['energyPerMonth']}}</md-table-cell>
-                        <md-table-cell>{{readable(total['totalRevenue'])}}</md-table-cell>
-                        <md-table-cell>{{readable(total['totalRevenue']/total['totalCustomers']+total['newConnection'])
-                            }}
-                        </md-table-cell>
-                        <md-table-cell>{{readable(total['totalCustomers']+total['newConnection'])}}</md-table-cell>
-                    </md-table-row>
-                </md-table>
 
 
             </md-card-content>
@@ -211,6 +279,7 @@ export default {
             numberOfCustomers: new NumberOfCustomers(),
             targets: new Targets(),
             targetValidUntil: new Date(),
+            isMobile: this.$store.getters['resolution/setDevice']
         }
     },
     methods: {
@@ -267,7 +336,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scopeds>
 
 
     .full-width {
@@ -282,4 +351,26 @@ export default {
         border-right: 1px dashed;
         padding-right: 10px;
     }
+
+    .row-head{
+        position: -webkit-sticky;
+        position: sticky;
+        top: 0!important;
+        z-index: 1;
+        background-color:#ffffcc;
+    }
+
+    @media screen and (min-width: 951px) {
+        .new-target-mobile{
+            display: none;
+        }
+
+    }
+
+    @media screen and (max-width: 950px) {
+        .new-target{
+            display: none;
+        }
+    }
+
 </style>
