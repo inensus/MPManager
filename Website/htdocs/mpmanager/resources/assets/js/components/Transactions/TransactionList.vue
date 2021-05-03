@@ -2,8 +2,8 @@
     <div>
         <div :class="{ 'box-margin' : showBoxes }">
             <md-toolbar class="md-dense">
-                <div class="md-toolbar-section-start">
-                    <div class="md-layout md-size-40">
+                <div class="md-toolbar-section-start md-small-size-100">
+                    <div class="md-layout md-size-40 md-small-size-100">
                         <md-field class="period-area">
                             <label for="period">{{ $tc('words.period') }}</label>
                             <md-select v-model="period" name="period" id="period" @md-selected="getPeriod">
@@ -14,7 +14,7 @@
                             </md-select>
                         </md-field>
                     </div>
-                    <div class="md-layout md-gutter md-size-60" v-if="!showBoxes">
+                    <div class="md-layout md-gutter md-size-60 md-small-size-100 summary" v-if="!showBoxes">
                         <div class="md-layout-item">
                             <div class="md-layout">
                                 <span>{{ analyticsData.current.confirmed }}</span>
@@ -55,7 +55,7 @@
 
 
                 </div>
-                <div class="md-toolbar-section-end">
+                <div class="md-toolbar-section-end md-small-size-100 summary">
                     <md-button class="md-dense md-button-icon" @click="showBoxes = !showBoxes">
                         {{ showBoxes ? $tc('words.collapse') : $tc('words.expand') }}
                         <md-icon>{{ showBoxes ? 'keyboard_arrow_down' : 'keyboard_arrow_left' }}</md-icon>
@@ -66,7 +66,7 @@
 
         <div class="md-layout md-gutter" v-if="showBoxes">
             <div v-if="analyticsData"
-                 class="md-layout-item md-xlarge-size-25 md-large-size-25 md-medium-size-50 md-small-size-100 md-xsmall-size-100 ">
+                 class="md-layout-item md-size-25 md-small-size-50 ">
                 <box
                     :center-text="true"
                     :color="[ '#26c6da','#00acc1']"
@@ -80,7 +80,7 @@
                 />
             </div>
             <div v-if="analyticsData"
-                 class="md-layout-item md-xlarge-size-25 md-large-size-25 md-medium-size-50 md-small-size-100 md-xsmall-size-100 ">
+                 class="md-layout-item md-size-25 md-small-size-50  ">
                 <box
                     :center-text="true"
                     :color="[ '#6eaa44','#578839']"
@@ -94,7 +94,7 @@
                 />
             </div>
             <div v-if="analyticsData"
-                 class="md-layout-item md-xlarge-size-25 md-large-size-25 md-medium-size-50 md-small-size-100 md-xsmall-size-100 ">
+                 class="md-layout-item md-size-25 md-small-size-50  ">
                 <box
                     :center-text="true"
                     :color="[ '#ef5350','#e53935']"
@@ -108,7 +108,7 @@
                 />
             </div>
             <div v-if="analyticsData"
-                 class="md-layout-item md-xlarge-size-25 md-large-size-25 md-medium-size-50 md-small-size-100 md-xsmall-size-100 ">
+                 class="md-layout-item md-size-25 md-small-size-50  ">
                 <box
 
                     :center-text="true"
@@ -125,7 +125,7 @@
             </div>
 
             <div
-                class="md-layout-item  md-xlarge-size-100  md-large-size-100 md-medium-size-100 md-small-size-100  md-xsmall-size-100"
+                class="md-layout-item  md-size-25 md-small-size-50 "
                 v-if="analyticsData === null && loading ===false">
                 <h5>{{$tc('phrases.transactionNotify')}}</h5>
             </div>
@@ -495,6 +495,14 @@ span{
     min-width: 300px;
     margin-right: 1vw;
 }
+
+@media screen and (max-width: 991px) {
+    .summary {
+        display: none;
+    }
+}
+
+
 
 </style>
 

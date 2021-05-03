@@ -10,7 +10,7 @@
             <md-card>
                 <md-card-content>
                     <div class="md-layout md-gutter md-size-100">
-                        <div class="md-layout-item md-size-40">
+                        <div class="md-layout-item md-size-40 md-small-size-100">
                             <md-field :class="{'md-invalid': errors.has($tc('phrases.maxCurrent'))}">
                                 <label>{{ $tc('phrases.maxCurrent') }}</label>
                                 <md-input v-model="meterType.max_current"
@@ -21,7 +21,7 @@
                                 <span class="md-suffix">Amper</span>
                             </md-field>
                         </div>
-                        <div class="md-layout-item md-size-40">
+                        <div class="md-layout-item md-size-40 md-small-size-100">
                             <md-field :class="{'md-invalid': errors.has($tc('words.phase'))}">
                                 <label>{{ $tc('words.phase') }}</label>
                                 <md-input v-model="meterType.phase"
@@ -31,13 +31,13 @@
                                 <span class="md-error">{{ errors.first($tc('words.phase')) }}</span>
                             </md-field>
                         </div>
-                        <div class="md-layout-item md-size-10">
+                        <div class="md-layout-item md-size-10 md-small-size-50">
                             <span class="md-subheader">
                                 <md-checkbox v-model="online" class="md-primary">{{ $tc('words.online') }}</md-checkbox>
                             </span>
 
                         </div>
-                        <div class="md-layout-item md-size-10">
+                        <div class="md-layout-item md-size-10 md-small-size-50">
                             <md-button class="md-primary md-dense md-raised" @click="saveMeterType">{{ $tc('words.save') }}</md-button>
                         </div>
                     </div>

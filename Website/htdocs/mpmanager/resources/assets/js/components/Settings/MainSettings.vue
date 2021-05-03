@@ -2,7 +2,7 @@
     <div>
         <h2>Main Settings</h2>
         <div class="md-layout md-gutter">
-            <div class="md-layout-item md-size-50">
+            <div class="md-layout-item md-size-50 md-small-size-100">
                 <md-field :class="{'md-invalid': errors.has($tc('words.title'))}">
                     <label>{{ $tc('words.title') }}</label>
                     <md-input :name="$tc('words.title')"
@@ -14,7 +14,7 @@
                     <span class="md-error">{{ errors.first($tc('words.title')) }}</span>
                 </md-field>
             </div>
-            <div class="md-layout-item md-size-50">
+            <div class="md-layout-item md-size-50 md-small-size-100">
                 <md-field :class="{'md-invalid': errors.has('Company Name')}">
                     <label>Company Name</label>
                     <md-input name="Company Name"
@@ -27,7 +27,7 @@
             </div>
         </div>
         <div class="md-layout md-gutter">
-            <div class="md-layout-item md-size-30">
+            <div class="md-layout-item md-size-30 md-small-size-100">
                 <md-field>
                     <label for="currency">{{ $tc('words.currency') }}</label>
                     <md-select name="currency" id="currency" v-model="mainSettingsService.mainSettings.currency">
@@ -40,7 +40,7 @@
                     </md-select>
                 </md-field>
             </div>
-            <div class="md-layout-item md-size-40">
+            <div class="md-layout-item md-size-40 md-small-size-100">
                 <md-field>
                     <label for="country">Country</label>
                     <md-select name="country" id="country" v-model="mainSettingsService.mainSettings.country" md-dense>
@@ -51,7 +51,7 @@
                     </md-select>
                 </md-field>
             </div>
-            <div class="md-layout-item md-size-30">
+            <div class="md-layout-item md-size-30 md-small-size-100">
                 <md-field>
                     <label for="language">Language</label>
                     <md-select name="language" id="language" v-model="mainSettingsService.mainSettings.language"
@@ -65,7 +65,7 @@
             </div>
         </div>
         <div class="md-layout md-gutter">
-            <div class="md-layout-item md-size-50">
+            <div class="md-layout-item md-size-50 md-small-size-100">
                 <md-field :class="{'md-invalid': errors.has('vat_energy')}">
                     <label for="vat_energy">VAT Energy</label>
                     <md-input
@@ -79,7 +79,7 @@
                 </md-field>
                 <span class="md-error">{{ errors.first('vat_energy') }}</span>
             </div>
-            <div class="md-layout-item md-size-50">
+            <div class="md-layout-item md-size-50 md-small-size-100">
                 <md-field :class="{'md-invalid': errors.has('vat_appliance')}">
                     <label for="vat_appliance">VAT Appliance</label>
                     <md-input

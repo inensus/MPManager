@@ -11,7 +11,7 @@
                         <div class="md-layout-item md-large-size-100 md-medium-size-100 md-small-size-100">
                             <form class="md-layout md-gutter">
                                 <!--name-->
-                                <div class="md-layout-item md-large-size-50 md-medium-size-50 md-small-size-50 ">
+                                <div class="md-layout-item md-size-50 md-small-size-100 ">
                                     <md-field :class="{'md-invalid': errors.has($tc('words.name'))}"
                                     >
                                         <label for="name">  {{ $tc('words.name') }}</label>
@@ -26,7 +26,7 @@
                                 </div>
 
                                 <!--surname-->
-                                <div class="md-layout-item md-large-size-50 md-medium-size-50 md-small-size-50 ">
+                                <div class="md-layout-item md-size-50 md-small-size-100 ">
                                     <md-field :class="{'md-invalid': errors.has($tc('words.surname'))}"
                                     >
                                         <label for="surname">  {{ $tc('words.surname') }}</label>
@@ -41,7 +41,7 @@
                                 </div>
 
                                 <!--minigrid-->
-                                <div class="md-layout-item md-large-size-50 md-medium-size-50 md-small-size-50 ">
+                                <div class="md-layout-item md-size-50 md-small-size-100 ">
                                     <md-field :class="{'md-invalid': errors.has($tc('words.miniGrid'))}">
                                         <label>  {{ $tc('words.miniGrid') }}</label>
                                         <md-select
@@ -62,7 +62,7 @@
                                 </div>
 
                                 <!--phone-->
-                                <div class="md-layout-item md-large-size-50 md-medium-size-50 md-small-size-50">
+                                <div class="md-layout-item md-size-50 md-small-size-100">
                                     <md-field :class="{'md-invalid': errors.has($tc('words.phone'))}">
                                         <label for="phone">  {{ $tc('words.phone') }}</label>
 
@@ -79,7 +79,7 @@
                                 </div>
 
                                 <!--email-->
-                                <div class="md-layout-item md-large-size-50 md-medium-size-50 md-small-size-50 ">
+                                <div class="md-layout-item md-size-50 md-small-size-100 ">
                                     <md-field :class="{'md-invalid': errors.has($tc('words.email'))}"
                                     >
                                         <label for="email">  {{ $tc('words.email') }}</label>
@@ -94,7 +94,7 @@
                                 </div>
 
 
-                                <div class="md-layout-item md-large-size-50 md-medium-size-50 md-small-size-50 ">
+                                <div class="md-layout-item md-size-50 md-small-size-100 ">
 
 
                                     <md-datepicker name="birthDate" id="birthDate" md-immediately
@@ -105,7 +105,7 @@
 
 
                                 </div>
-                                <div class="md-layout-item md-large-size-50 md-medium-size-50 md-small-size-50 ">
+                                <div class="md-layout-item md-size-50 md-small-size-100 ">
                                     <md-field :class="{'md-invalid': errors.has($tc('words.gender'))}"
                                     >
 
@@ -123,7 +123,7 @@
 
                                     </md-field>
                                 </div>
-                                <div class="md-layout-item md-large-size-50 md-medium-size-50 md-small-size-50 ">
+                                <div class="md-layout-item md-size-50 md-small-size-100">
                                     <md-field :class="{'md-invalid': errors.has($tc('phrases.commissionType'))}"
                                     >
 
@@ -140,7 +140,7 @@
                                     </md-field>
                                 </div>
                                 <!--password-->
-                                <div class="md-layout-item md-large-size-50 md-medium-size-50 md-small-size-50 ">
+                                <div class="md-layout-item md-size-50 md-small-size-100 ">
                                     <md-field :class="{'md-invalid': errors.has($tc('words.password'))}"
                                     >
                                         <label for="email">{{ $tc('words.password') }}</label>
@@ -157,7 +157,7 @@
                                 </div>
 
                                 <!--confirmPassword-->
-                                <div class="md-layout-item md-large-size-50 md-medium-size-50 md-small-size-50 ">
+                                <div class="md-layout-item md-size-50 md-small-size-100 ">
                                     <md-field :class="{'md-invalid': errors.has($tc('phrases.confirmPassword'))}"
                                     >
                                         <label for="email">{{ $tc('phrases.confirmPassword') }}</label>
