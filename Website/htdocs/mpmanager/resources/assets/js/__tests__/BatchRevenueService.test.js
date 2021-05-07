@@ -28,6 +28,18 @@ describe('BatchRevenueService #initializeDonutCharts',()=>{
             expect(item).toEqual(donutChartData[index+1][0])
             expect(data[item]).toEqual((donutChartData[index+1][1]))
         })
-
+    })
+})
+describe('BatchRevenueService #initializeColumnChart',()=>{
+    it('should get initialized batch revenue data for revenue target per customer type', async ()=> {
+        const batchRevenueData = await batchRevenueService.getRevenueForPeriod()
+        const columnData = await batchRevenueService.initializeColumnChart(batchRevenueData)
+        const targets = batchRevenueData.revenueList.target.targets
+        Object.keys(targets).forEach(function (item,index){
+            expect(item).toEqual(columnData[index+1][0])
+            expect(columnData[index+1][1]).not.toBeUndefined()
+            expect(columnData[index+1][1]).not.toBeNull()
+            expect(columnData[index+1][1]).not.toBeNaN()
+        })
     })
 })
