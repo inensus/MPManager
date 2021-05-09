@@ -155,8 +155,12 @@ export default {
             headers: [],
             tableName: 'SMS',
             loading: false,
-            isMobile: this.$store.getters['resolution/setDevice'],
             windowWidth: 0,
+        }
+    },
+    computed:{
+        isMobile(){
+            return this.$store.getters['resolution/setDevice']
         }
     },
     methods: {

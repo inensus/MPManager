@@ -230,6 +230,9 @@ export default {
     components: {Widget },
     mixins: [currency],
     computed: {
+        isMobile(){
+            return this.$store.getters['resolution/setDevice']
+        },
         total: {
             cache: false,
             deep: true,
@@ -279,7 +282,6 @@ export default {
             numberOfCustomers: new NumberOfCustomers(),
             targets: new Targets(),
             targetValidUntil: new Date(),
-            isMobile: this.$store.getters['resolution/setDevice']
         }
     },
     methods: {
@@ -358,19 +360,6 @@ export default {
         top: 0!important;
         z-index: 1;
         background-color:#ffffcc;
-    }
-
-    @media screen and (min-width: 951px) {
-        .new-target-mobile{
-            display: none;
-        }
-
-    }
-
-    @media screen and (max-width: 950px) {
-        .new-target{
-            display: none;
-        }
     }
 
 </style>
