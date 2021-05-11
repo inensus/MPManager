@@ -2,7 +2,7 @@
 
     <!-- book keeping  reports-->
     <div class="md-layout md-gutter">
-        <div class="md-layout-item md-size-50">
+        <div class="md-layout-item md-size-50 md-small-size-100">
             <BookKeeping/>
             <!-- monthly reports-->
             <Reports :id="'weekly-report'"
@@ -13,7 +13,7 @@
             />
 
         </div>
-        <div class="md-layout-item md-size-50">
+        <div class="md-layout-item md-size-50 md-small-size-100">
 
             <Reports :id="'monthly-report'"
                      :title="$tc('phrases.monthlyReports')"

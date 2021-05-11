@@ -10,9 +10,9 @@
             <md-card-content>
                 <div class="md-layout md-gutter">
                     <!--Tariff-->
-                    <div class="md-layout-item  md-xlarge-size-100 md-large-size-100 md-medium-size-100 md-small-size-100">
+                    <div class="md-layout-item md-size-100">
                         <form class="md-layout md-gutter" data-vv-scope="Tariff-Form">
-                            <div class="md-layout-item  md-xlarge-size-100 md-large-size-50 md-medium-size-50 md-small-size-50 ">
+                            <div class="md-layout-item  md-size-50 md-small-size-100">
                                 <md-field :class="{'md-invalid': errors.has('Tariff-Form.' + $tc('words.name') )}"
                                 >
                                     <label for="tariff_name">{{ $tc('words.name') }}</label>
@@ -25,7 +25,7 @@
                                     <span class="md-error">{{ errors.first('Tariff-Form.' + $tc('words.name')) }}</span>
                                 </md-field>
                             </div>
-                            <div class="md-layout-item md-xlarge-size-50 md-large-size-50 md-medium-size-50 md-small-size-50 ">
+                            <div class="md-layout-item md-size-50 md-small-size-100">
                                 <md-field :class="{'md-invalid': errors.has('Tariff-Form.' + $tc('words.price'))}">
                                     <label for="kwh_price">{{$tc('phrases.newTariffLabels',1)}}</label>
                                     <md-input id="kwh_price"
@@ -43,7 +43,7 @@
                     </div>
 
                    <!--Access-Rate-->
-                    <div class="md-layout-item md-xlarge-size-100 md-large-size-100 md-medium-size-100 md-small-size-100"
+                    <div class="md-layout-item md-size-100"
                          v-if="hasAccessRate">
                         <form class="md-layout md-gutter" data-vv-scope="Access-Rate-Form">
 
@@ -59,7 +59,7 @@
                                         class="md-error">{{ errors.first('Access-Rate-Form.' + $tc('phrases.accessRatePrice')) }}</span>
                                 </md-field>
                             </div>
-                            <div class="md-layout-item md-xlarge-size-50 md-large-size-50 md-medium-size-50 md-small-size-50 ">
+                            <div class="md-layout-item md-size-100">
                                 <md-field
                                     :class="{'md-invalid': errors.has('Access-Rate-Form.' + $tc('phrases.accessRatePeriodInDays'))}">
                                     <label for="ar_period">{{ $tc('phrases.accessRatePeriodInDays')}}</label>
@@ -76,23 +76,23 @@
 
 
                     </div>
-                    <div class="md-layout-item md-xlarge-size-100 md-large-size-100 md-medium-size-100 md-small-size-100">
+                    <div class="md-layout-item md-size-100">
                         <md-checkbox v-model="hasAccessRate" @change="accessRateChange($event)">{{ $tc('phrases.enableAccessRate') }}?</md-checkbox>
                     </div>
 
 
                    <!--Additional-Components-->
-                    <div class="md-layout-item  md-xlarge-size-100 md-large-size-100 md-medium-size-100 md-small-size-100">
+                    <div class="md-layout-item md-size-100">
 
                         <md-button role="button" class="md-raised md-secondary" @click="addComponent('component')">
                             <md-icon>add</md-icon>
                             {{$tc('phrases.addAdditionalCostComponent') }}
                         </md-button>
                     </div>
-                    <div class="md-layout-item md-xlarge-size-100 md-large-size-100 md-medium-size-100 md-small-size-100"
+                    <div class="md-layout-item md-size-100"
                          v-for="(component,index) in tariffService.tariff.components" :key="'component'+index">
                         <form class="md-layout md-gutter" data-vv-scope="Component-Form">
-                            <div class="md-layout-item md-xlarge-size-45 md-large-size-45 md-medium-size-45 md-small-size-45">
+                            <div class="md-layout-item md-size-45 md-small-size-100">
 
                                 <md-field :class="{'md-invalid': errors.has('Component-Form.' + $tc('words.name'))}">
                                     <label for="name">{{ $tc('words.name') }}</label>
@@ -105,7 +105,7 @@
                                     <span class="md-error">{{ errors.first('Component-Form.' + $tc('words.name')) }}</span>
                                 </md-field>
                             </div>
-                            <div class="md-layout-item md-xlarge-size-45 md-large-size-45 md-medium-size-45 md-small-size-45">
+                            <div class="md-layout-item md-size-45 md-small-size-90">
 
                                 <md-field :class="{'md-invalid': errors.has('Component-Form.' + $tc('phrases.componentPrice'))}">
                                     <label for="price">{{ $tc('phrases.componentPrice') }}</label>
@@ -118,7 +118,7 @@
                                     <span class="md-error">{{ errors.first('Component-Form.' + $tc('phrases.componentPrice')) }}</span>
                                 </md-field>
                             </div>
-                            <div class="md-layout-item md-xlarge-size-10 md-large-size-10 md-medium-size-10 md-small-size-10"
+                            <div class="md-layout-item md-size-10"
                                  @click="removeComponent('component',component.id)">
 
                                 <md-icon style="margin-top: 1.5rem;color: #ff0000;">cancel
@@ -129,7 +129,7 @@
                     </div>
 
                     <!--TOUS-->
-                    <div class="md-layout-item  md-xlarge-size-100 md-large-size-100 md-medium-size-100 md-small-size-100">
+                    <div class="md-layout-item  md-size-100">
                         <md-button role="button" :disabled="tariffService.conflicts.length>0" class="md-raised md-secondary" @click="addComponent('usage')">
                             <md-icon>add</md-icon>
                             {{$tc('phrases.addTou')}}
@@ -139,10 +139,10 @@
                             {{$tc('phrases.newTariffLabels',2)}}
                         </div>
                     </div>
-                    <div class="md-layout-item md-xlarge-size-100 md-large-size-100 md-medium-size-100 md-small-size-100"
+                    <div class="md-layout-item md-size-100"
                          v-for="(tou,index) in tariffService.tariff.tous" :key="'tou'+index">
                         <form class="md-layout md-gutter" data-vv-scope="Tou-Form">
-                            <div class="md-layout-item md-xlarge-size-20 md-large-size-20 md-medium-size-20 md-small-size-20">
+                            <div class="md-layout-item md-size-20 md-small-size-100">
 
                                 <md-field :class="{'md-invalid': errors.has('Tou-Form.start'+tou.id)}">
                                     <label for="name">{{ $tc('words.start') }}</label>
@@ -155,7 +155,7 @@
                                     <span class="md-error">{{ errors.first('Tou-Form.start'+tou.id) }}</span>
                                 </md-field>
                             </div>
-                            <div class="md-layout-item md-xlarge-size-20 md-large-size-20 md-medium-size-20 md-small-size-20">
+                            <div class="md-layout-item md-size-20 md-small-size-100">
 
                                 <md-field :class="{'md-invalid': errors.has('Tou-Form.end'+tou.id)}">
                                     <label for="end">{{ $tc('words.end') }}</label>
@@ -168,7 +168,7 @@
                                     <span class="md-error">{{ errors.first('Tou-Form.end'+tou.id) }}</span>
                                 </md-field>
                             </div>
-                            <div class="md-layout-item md-xlarge-size-20 md-large-size-20 md-medium-size-20 md-small-size-20">
+                            <div class="md-layout-item md-size-20 md-small-size-100">
 
                                 <md-field :class="{'md-invalid': errors.has('Tou-Form.' + $tc('words.value'))}">
                                     <label for="value">{{ $tc('words.value') }} </label>
@@ -184,7 +184,7 @@
                                     <span class="md-error">{{ errors.first('Tou-Form.' + $tc('words.value')) }}</span>
                                 </md-field>
                             </div>
-                            <div class="md-layout-item md-xlarge-size-15 md-large-size-15 md-medium-size-15 md-small-size-15">
+                            <div class="md-layout-item md-size-15 md-small-size-90">
                                 <md-field >
                                     <label for="value">{{ $tc('words.cost') }} </label>
                                     <md-input
@@ -195,7 +195,7 @@
 
                                 </md-field>
                             </div>
-                            <div class="md-layout-item md-xlarge-size-5 md-large-size-5 md-medium-size-5 md-small-size-5"
+                            <div class="md-layout-item md-size-5 md-small-size-10"
                                  @click="removeComponent('usage',tou.id)">
 
                                 <md-icon style="margin-top: 1.5rem;color: red;">cancel
@@ -206,20 +206,20 @@
                     </div>
 
                     <!--Social-Tariffs-->
-                    <div class="md-layout-item  md-xlarge-size-100 md-large-size-100 md-medium-size-100 md-small-size-100">
+                    <div class="md-layout-item md-size-100">
                         <a @click="showSocialOptions()" v-if="!tariffService.socialOptions" class="show-tariff-link">{{$tc('phrases.socialTariffOptions',1)}}</a>
                         <a @click="showSocialOptions()" v-else class="show-tariff-link">{{$tc('phrases.socialTariffOptions',2)}}</a>
                     </div>
-                    <div class="md-layout-item  md-xlarge-size-100 md-large-size-100 md-medium-size-100 md-small-size-100"
+                    <div class="md-layout-item md-size-100"
                          v-if="socialOptions">
                         <form class="md-layout md-gutter" data-vv-scope="Social-Form">
-                            <div class="md-layout-item md-xlarge-size-30 md-large-size-30 md-medium-size-30 md-small-size-30 ">
+                            <div class="md-layout-item md-size-30 md-small-size-50 ">
 
                                 <h3>{{$tc('phrases.socialTariffLabels')}}</h3>
 
 
                             </div>
-                            <div class="md-layout-item md-xlarge-size-20 md-large-size-20 md-medium-size-20 md-small-size-20 ">
+                            <div class="md-layout-item md-size-20 md-small-size-50 ">
                                 <md-field :class="{'md-invalid': errors.has('Social-Form.' + $tc('phrases.socialTariffLabels'))}">
 
                                     <md-input id="daily_allowance"
@@ -236,15 +236,15 @@
                                 </md-field>
 
                             </div>
-                            <div class="md-layout-item md-xlarge-size-50 md-large-size-50 md-medium-size-50 md-small-size-50 "></div>
+                            <div class="md-layout-item md-size-50 md-small-size-100"></div>
 
-                            <div class="md-layout-item md-xlarge-size-30 md-large-size-30 md-medium-size-30 md-small-size-30 "
+                            <div class="md-layout-item md-size-30 md-small-size-50"
                             >
 
                                 <h3>{{$tc('phrases.socialTariff',0)}}</h3>
 
                             </div>
-                            <div class="md-layout-item md-xlarge-size-20 md-large-size-20 md-medium-size-20 md-small-size-20 "
+                            <div class="md-layout-item md-size-20 md-small-size-50"
                             >
                                 <md-field :class="{'md-invalid': errors.has('Social-Form.' + $tc('phrases.socialTariff',1))}">
                                     <label for="social_price">{{$tc('phrases.socialTariff',1)}} </label>
@@ -260,16 +260,16 @@
                                     <span class="md-suffix">{{ $store.getters['settings/getMainSettings'].currency }}</span>
                                 </md-field>
                             </div>
-                            <div class="md-layout-item md-xlarge-size-50 md-large-size-50 md-medium-size-50 md-small-size-50 "></div>
+                            <div class="md-layout-item md-size-50 md-small-size-100"></div>
 
-                            <div class="md-layout-item md-xlarge-size-50 md-large-size-30 md-medium-size-30 md-small-size-30 "
+                            <div class="md-layout-item md-size-30 md-small-size-50"
                             >
 
                                 <h3>{{$tc('phrases.socialTariff',2)}}</h3>
 
 
                             </div>
-                            <div class="md-layout-item md-xlarge-size-20 md-large-size-20 md-medium-size-20 md-small-size-20 "
+                            <div class="md-layout-item md-size-20 md-small-size-50"
                             >
                                 <md-field :class="{'md-invalid': errors.has('Social-Form.' + $tc('phrases.socialTariff',2))}">
 
@@ -286,16 +286,16 @@
                                     <span class="md-suffix">Wh.</span>
                                 </md-field>
                             </div>
-                            <div class="md-layout-item md-xlarge-size-50 md-large-size-50 md-medium-size-50 md-small-size-50 "></div>
+                            <div class="md-layout-item md-size-50 md-small-size-100"></div>
 
-                            <div class="md-layout-item md-xlarge-size-30 md-large-size-30 md-medium-size-30 md-small-size-30"
+                            <div class="md-layout-item md-size-30 md-small-size-50"
                             >
 
                                 <h3>{{ $tc('phrases.socialTariffLabels',2) }}</h3>
 
 
                             </div>
-                            <div class="md-layout-item md-xlarge-size-20 md-large-size-20 md-medium-size-20 md-small-size-20 "
+                            <div class="md-layout-item md-size-20 md-small-size-50"
                             >
                                 <md-field :class="{'md-invalid': errors.has('Social-Form.' + $tc('phrases.socialTariffLabels',2))}">
 
@@ -312,7 +312,7 @@
                                     <span class="md-suffix">Wh.</span>
                                 </md-field>
                             </div>
-                            <div class="md-layout-item md-xlarge-size-50 md-large-size-50 md-medium-size-50 md-small-size-50 "></div>
+                            <div class="md-layout-item md-size-50 md-small-size-100"></div>
                         </form>
 
                     </div>

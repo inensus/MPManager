@@ -10,7 +10,7 @@
                     <md-card>
                         <md-card-content>
                             <div class="md-layout md-gutter">
-                                <div class="md-layout-item md-size-50">
+                                <div class="md-layout-item md-size-50 md-small-size-100">
                                     <md-field :class="{'md-invalid': errors.has($tc('words.name'))}">
                                         <label for="name">{{ $tc('words.name') }}</label>
 
@@ -21,7 +21,7 @@
                                         <span class="md-error">{{ errors.first($tc('words.name')) }}</span>
                                     </md-field>
                                 </div>
-                                <div class="md-layout-item md-size-50">
+                                <div class="md-layout-item md-size-50 md-small-size-100">
                                     <md-field :class="{'md-invalid': errors.has($tc('words.surname'))}">
                                         <label for="surname">{{ $tc('words.surname') }}</label>
 
@@ -34,7 +34,7 @@
                                     </md-field>
                                 </div>
 
-                                <div class="md-layout-item md-size-50">
+                                <div class="md-layout-item md-size-50 md-small-size-100">
                                     <md-field :class="{'md-invalid': errors.has($tc('words.miniGrid'))}">
                                         <label for="mini-grids" class="control-label">{{ $tc('words.miniGrid') }}</label>
 
@@ -51,7 +51,7 @@
                                         <span class="md-error">{{ errors.first($tc('words.miniGrid')) }}</span>
                                     </md-field>
                                 </div>
-                                <div class="md-layout-item md-size-50">
+                                <div class="md-layout-item md-size-50 md-small-size-100">
                                     <md-field :class="{'md-invalid': errors.has($tc('words.phone'))}">
                                         <label for="phone">{{ $tc('words.phone') }}</label>
 
@@ -66,7 +66,7 @@
                                         <span class="md-error">{{ errors.first($tc('words.phone')) }}</span>
                                     </md-field>
                                 </div>
-                                <div class="md-layout-item md-size-50">
+                                <div class="md-layout-item md-size-50 md-small-size-100">
                                     <md-field :class="{'md-invalid': errors.has($tc('words.city'))}">
                                         <label >{{ $tc('phrases.livingIn') }}</label>
 

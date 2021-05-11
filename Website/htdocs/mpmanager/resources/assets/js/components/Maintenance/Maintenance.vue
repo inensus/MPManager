@@ -26,7 +26,7 @@
                                     <span class="md-error">{{ errors.first($tc('phrases.jobTitle')) }}</span>
                                 </md-field>
                             </div>
-                            <div class="md-layout-item md-size-50">
+                            <div class="md-layout-item md-size-50 md-small-size-100">
                                 <md-field :class="{'md-invalid': errors.has($tc('words.employee'))}">
                                     <label for="employee">{{$tc('phrases.assignTo')}}</label>
                                     <md-select id="employee"
@@ -48,7 +48,7 @@
                                     <span class="md-error">{{ errors.first($tc('words.employee')) }}</span>
                                 </md-field>
                             </div>
-                            <div class="md-layout-item md-size-50">
+                            <div class="md-layout-item md-size-50 md-small-size-100">
                                 <md-field :class="{'md-invalid': errors.has($tc('words.category'))}">
                                     <label for="category">{{$tc('words.category')}}</label>
                                     <md-select id="category"
@@ -65,7 +65,7 @@
 
                                 </md-field>
                             </div>
-                            <div class="md-layout-item md-size-50">
+                            <div class="md-layout-item md-size-50 md-small-size-100">
                                 <md-field :class="{'md-invalid': errors.has($tc('words.amount'))}">
                                     <label for="amount">{{$tc('words.amount')}}</label>
                                     <span class="md-prefix">$</span>
@@ -75,7 +75,7 @@
                                     <span class="md-error">{{ errors.first($tc('words.amount')) }}</span>
                                 </md-field>
                             </div>
-                            <div class="md-layout-item md-size-50">
+                            <div class="md-layout-item md-size-50 md-small-size-100">
                                 <div>
                                     <md-datepicker v-model="selectedDue" :name="$tc('words.date')" v-validate="'required'"
                                                    md-immediately>

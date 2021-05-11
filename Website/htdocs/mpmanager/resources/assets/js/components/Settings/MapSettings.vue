@@ -3,9 +3,9 @@
         <h2>Map Settings</h2>
 
         <div class="md-layout md-gutter md-size-100">
-            <div class="md-layout-item md-layout md-gutter md-size-25">
+            <div class="md-layout-item md-layout md-gutter md-size-25 md-small-size-100">
                 <md-subheader>Set Map Default Zoom:</md-subheader>
-                <div class="md-layout-item">
+                <div class="md-layout-item md-size-100">
                     <md-field :class="{'md-invalid': errors.has('Zoom')}">
                         <label for="Zoom">Default Zoom</label>
                         <md-input
@@ -23,10 +23,10 @@
                 </div>
             </div>
 
-            <div class="md-layout-item md-layout md-size-75" style="border-left: #3C3C3C solid 1px">
+            <div class="md-layout-item md-layout md-size-75 md-small-size-100" style="border-left: #3C3C3C solid 1px">
                 <md-subheader>Set Map Starting Points</md-subheader>
                 <div class="md-layout-item md-layout md-gutter md-size-100">
-                    <div class="md-layout-item md-size-45">
+                    <div class="md-layout-item md-size-45 md-small-size-100">
                         <md-field :class="{'md-invalid': errors.has($tc('words.latitude'))}">
                             <label for="latitude">{{ $tc('words.latitude') }}</label>
                             <md-input
@@ -42,7 +42,7 @@
 
                         </md-field>
                     </div>
-                    <div class="md-layout-item md-size-45">
+                    <div class="md-layout-item md-size-45 md-small-size-100">
                         <md-field :class="{'md-invalid': errors.has($tc('words.longitude'))}">
                             <label for="longitude">{{ $tc('words.longitude') }}</label>
                             <md-input

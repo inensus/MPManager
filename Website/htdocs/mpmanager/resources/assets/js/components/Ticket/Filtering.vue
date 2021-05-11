@@ -1,7 +1,7 @@
 <template>
 
     <div class="md-layout md-gutter md-size-100" style="padding: 0.4rem; margin: auto;">
-        <div class="md-layout-item md-size-42">
+        <div class="md-layout-item md-size-42 md-small-size-100">
             <md-field>
                 <md-select
 
@@ -21,7 +21,7 @@
             </md-field>
         </div>
 
-        <div class="md-layout-item md-size-42">
+        <div class="md-layout-item md-size-42 md-small-size-100">
             <md-field class="md-layout-item">
                 <md-select @md-selected="setPerson" id="assigned_to" name="assigned_to"
                            :placeholder="$tc('phrases.assignTo',2)">
@@ -37,7 +37,7 @@
         </div>
 
 
-        <div class="md-layout-item md-size-16">
+        <div class="md-layout-item md-size-16 md-small-size-100">
             <md-button @click="filterTickets" class="md-raised md-primary">{{ $tc('words.filter') }}</md-button>
             <md-button class="md-raised md-accent" @click=closeFilter()>{{ $tc('words.close') }}</md-button>
         </div>

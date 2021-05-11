@@ -7,7 +7,7 @@
             <md-card>
                 <md-card-content>
                     <div class="md-layout md-gutter md-size-100">
-                        <div class="md-layout-item md-size-70">
+                        <div class="md-layout-item md-size-70 md-small-size-100">
                             <md-field :class="{'md-invalid': errors.has($tc('words.name'))}">
                                 <label for="miniGrid_name">{{$tc('words.name')}}</label>
                                 <md-input
@@ -19,7 +19,7 @@
                             </md-field>
 
                         </div>
-                        <div class="md-layout-item md-size-30">
+                        <div class="md-layout-item md-size-30 md-small-size-100">
                             <md-field :class="{'md-invalid': errors.has($tc('words.cluster'))}">
                                 <label for="clusterName">{{$tc('words.cluster')}}</label>
                                 <md-select
@@ -38,12 +38,12 @@
                         </div>
                     </div>
                     <div class="md-layout md-gutter md-size-100">
-                        <div class="md-layout md-gutter md-size-60" style="padding-left: 1.5rem !important;">
+                        <div class="md-layout md-gutter md-size-60 md-small-size-100" style="padding-left: 1.5rem !important;">
                             <form class="md-layout md-gutter" @submit.prevent="validatePoints"
                                    style="padding-left: 1.5rem !important;"
                             >
 
-                                <div class="md-layout-item md-size-30">
+                                <div class="md-layout-item md-size-30 md-small-size-100">
                                     <md-field :class="{'md-invalid': errors.has($tc('words.latitude'))}">
                                         <label for="latitude">{{$tc('words.latitude')}}</label>
                                         <md-input
@@ -56,7 +56,7 @@
                                         <span class="md-error">{{errors.first($tc('words.latitude'))}}</span>
                                     </md-field>
                                 </div>
-                                <div class="md-layout-item md-size-30">
+                                <div class="md-layout-item md-size-30 md-small-size-100">
                                     <md-field :class="{'md-invalid': errors.has($tc('words.longitude'))}">
                                         <label for="longitude">{{$tc('words.longitude')}}</label>
                                         <md-input
@@ -78,12 +78,12 @@
 
                         </div>
 
-                        <div class="md-layout-item md-size-40">
+                        <div class="md-layout-item md-size-40 md-small-size-100">
                             <md-button class="md-primary save-button" @click="saveMiniGrid()">{{$tc('words.save')}}</md-button>
 
                         </div>
                     </div>
-                    <div class="md-layout-item md-large-size-100 md-medium-size-100 md-small-size-100 map-area">
+                    <div class="md-layout-item md-size-100 map-area">
                         <Map
                             :geoData="geoData"
                             :clusterName="clusterName"

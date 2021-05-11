@@ -8,7 +8,7 @@
             <md-card>
                 <md-card-content>
             <div class="md-layout md-gutter">
-                <div class="md-layout-item md-size-50">
+                <div class="md-layout-item md-size-50 md-small-size-100">
                    <div class="md-layout">
                        <div class="md-layout-item md-subheader">{{ $tc('words.id') }}</div>
                        <div class="md-layout-item md-subheader n-font">{{subConnectionType.connection_type_id}}</div>
@@ -49,7 +49,7 @@
                        <div class="md-layout-item md-subheader n-font">{{formatReadableDate(connectionType.created_at)}}</div>
                    </div>
                 </div>
-                <div class="md-layout-item md-size-50">
+                <div class="md-layout-item md-size-50 md-small-size-100">
                     <div class="md-layout">
                         <div class="md-layout-item md-subheader">{{ $tc('words.meter',2) }}</div>
                         <div class="md-layout-item md-subheader n-font">{{connectionType.meter_parameters_count}}</div>
@@ -75,7 +75,7 @@
 
                 <md-card-content>
                     <div class="md-layout md-gutter">
-                        <div class="md-layout-item md-size-50">
+                        <div class="md-layout-item md-size-50 md-small-size-100">
                             <md-field :class="{'md-invalid': errors.has($tc('words.name'))}">
                                 <label for="name">{{$tc('words.name')}}</label>
                                 <md-input
@@ -88,7 +88,7 @@
                             </md-field>
 
                         </div>
-                        <div class="md-layout-item md-size-50">
+                        <div class="md-layout-item md-size-50 md-small-size-100">
                             <md-field :class="{'md-invalid': errors.has($tc('words.tariff'))}">
                                 <label for="tariff">{{$tc('words.tariff')}}</label>
                                 <md-select v-model="subConnectionType.tariff_id" v-validate="'required'" :name="$tc('words.tariff')" id="tariff">

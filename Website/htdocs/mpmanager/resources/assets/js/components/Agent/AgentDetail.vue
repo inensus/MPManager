@@ -12,16 +12,16 @@
 
 
                     <div
-                        class="md-layout-item md-large-size-25 md-medium-size-25 md-small-size-25 md-xsmall-size-25">
+                        class="md-layout-item md-size-25">
                         <md-icon class="md-size-3x">account_circle</md-icon>
                     </div>
                     <div
-                        class="md-layout-item md-large-size-25 md-medium-size-25 md-small-size-25 md-xsmall-size-25">
+                        class="md-layout-item md-size-25">
                         <h3>
                             {{ agent.name}} {{agent.surname}}</h3>
                     </div>
                     <div
-                        class="md-layout-item md-large-size-25 md-medium-size-25 md-small-size-25 md-xsmall-size-25">
+                        class="md-layout-item md-size-25">
                         <h3>
                             <md-icon>account_balance_wallet</md-icon>
                             {{ $tc('words.balance') }}:
@@ -29,7 +29,7 @@
                         </h3>
                     </div>
                     <div
-                        class="md-layout-item md-large-size-25 md-medium-size-25 md-small-size-25 md-xsmall-size-25">
+                        class="md-layout-item md-size-25">
                         <md-button @click="editAgent=true" class="md-icon-button" style="float: right">
                             <md-icon>create</md-icon>
                         </md-button>
@@ -40,7 +40,7 @@
                     </div>
 
                     <div
-                        class="md-layout-item md-large-size-25 md-medium-size-25 md-small-size-25 detail-card-second-row">
+                        class="md-layout-item md-size-25 md-small-size-50 detail-card-second-row">
 
                         <label>
                             <md-icon>wc</md-icon>
@@ -48,14 +48,14 @@
                         <span>{{agent.gender}}</span>
                     </div>
                     <div
-                        class="md-layout-item md-large-size-25 md-medium-size-25 md-small-size-25 detail-card-second-row ">
+                        class="md-layout-item md-size-25 md-small-size-50 detail-card-second-row ">
                         <label>
                             <md-icon>phone</md-icon>
                             {{ $tc('words.phone') }}:</label>
                         <span>{{agent.phone}}</span>
                     </div>
                     <div
-                        class="md-layout-item md-large-size-25 md-medium-size-25 md-small-size-25 detail-card-second-row">
+                        class="md-layout-item md-size-25 md-small-size-50 detail-card-second-row">
                         <label>
                             <md-icon>cake</md-icon>
                             {{ $tc('words.birthday') }}:</label>
@@ -64,7 +64,7 @@
 
                     </div>
                     <div
-                        class="md-layout-item md-large-size-25 md-medium-size-25 md-small-size-25 detail-card-second-row">
+                        class="md-layout-item md-size-25 md-small-size-50 detail-card-second-row">
                         <label>
                             <md-icon>tag</md-icon>
                             {{ $tc('words.type') }}</label>

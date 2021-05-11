@@ -98,7 +98,7 @@
                 </div>
             </div>
             <div class="md-layout md-gutter">
-                <div class="md-layout-item md-size-50">
+                <div class="md-layout-item md-size-50 md-small-size-100">
                     <div class="transaction-detail-card">
                         <widget
                                 title="Transaction Processing"
@@ -156,7 +156,7 @@
                         </widget>
                     </div>
                 </div>
-                <div class="md-layout-item md-size-50">
+                <div class="md-layout-item md-size-50 md-small-size-100">
                     <div class="transaction-detail-card">
                         <widget
                                 title="Outgoing sms"

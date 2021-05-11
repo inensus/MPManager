@@ -2,13 +2,13 @@
     <section id="widget-grid" v-if="isLoaded">
         <div class="md-layout md-gutter">
 
-            <div class="md-layout-item md-size-55">
+            <div class="md-layout-item md-size-55 md-small-size-100">
 
                 <client-personal-data :person="person"/>
                 <addresses :person-id="person.id" v-if="person!==null"/>
                 <sms-history :person-id="personId" person-name="System"/>
             </div>
-            <div class="md-layout-item md-size-45">
+            <div class="md-layout-item md-size-45 md-small-size-100">
                 <payment-flow/>
                 <payment-detail/>
             </div>
@@ -18,7 +18,7 @@
             </div>
 
 
-            <div class="md-layout-item md-size-50">
+            <div class="md-layout-item md-size-50 md-small-size-100">
                 <div class="client-detail-card">
                     <deferred-payments :person-id="person.id" v-if="person!==null"/>
                 </div>
@@ -26,7 +26,7 @@
                     <ticket/>
                 </div>
             </div>
-            <div class="md-layout-item md-size-50">
+            <div class="md-layout-item md-size-50 md-small-size-100">
                 <div class="client-detail-card">
                     <client-meter-list :meterList="meters"/>
                 </div>

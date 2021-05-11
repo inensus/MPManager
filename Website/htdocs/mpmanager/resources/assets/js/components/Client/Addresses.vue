@@ -23,7 +23,7 @@
             </md-table>
 
         </widget>
-        <md-dialog class="address-edit-container" :md-active.sync="modalVisibility">
+        <md-dialog class="address-edit-container md-size-100" :md-active.sync="modalVisibility">
             <md-dialog-title v-if="editFlag">{{ $tc('phrases.updateAddress') }}</md-dialog-title>
             <md-dialog-title v-if="!editFlag">{{ $tc('phrases.newAddress') }}</md-dialog-title>
             <md-dialog-content class="md-scrollbar">
@@ -243,8 +243,11 @@ export default {
 }
 </script>
 
-<style lang="css" scoped>
+<style lang="css" >
 .address-edit-container {
     padding: 1rem;
+}
+.md-dialog-container{
+    min-width: 240px!important;
 }
 </style>
