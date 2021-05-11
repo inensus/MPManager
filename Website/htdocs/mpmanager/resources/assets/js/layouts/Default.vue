@@ -3,7 +3,8 @@
         <div class="wrapper" :class="{ 'nav-open': $sidebar.showSidebar }">
             <side-bar/>
             <div class="main-panel">
-                <top-navbar></top-navbar>
+                <top-navbar class="top-nav-bar"></top-navbar>
+                <mobile-top-navbar class="mobile-top-nav-bar"></mobile-top-navbar>
                 <div class="content">
                     <slot/>
                 </div>
@@ -36,13 +37,15 @@ import FooterBar from '../layouts/FooterBar.vue'
 import { EventBus } from '../shared/eventbus'
 import TopNavbar from './TopNavbar.vue'
 import SideBar from '../components/Sidebar/SideBar'
+import MobileTopNavbar from './MobileTopNavbar'
 
 export default {
     name: 'default',
     components: {
         TopNavbar,
         FooterBar,
-        SideBar
+        SideBar,
+        MobileTopNavbar
     },
     mounted () {
         //register the time extender
@@ -88,7 +91,7 @@ export default {
         padding: 1rem;
     }
 
-    @media screen and (min-width: 991px) {
+    @media screen and (min-width: 992px) {
         .sidebar {
             width: 8%;
             min-width: 200px;
@@ -123,6 +126,19 @@ export default {
             width: 85%;
             max-width: calc(100% - 260px);
         }
+    }
+
+    @media screen and (max-width: 991px){
+        .top-nav-bar{
+            display: none;
+        }
+
+    }
+    @media screen and (min-width: 992px){
+        .mobile-top-nav-bar{
+            display: none;
+        }
+
     }
 
 

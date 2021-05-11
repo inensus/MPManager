@@ -127,7 +127,7 @@
             .main-panel,
             .wrapper-full-page,
             .navbar-fixed > div{
-                @include transform-translate-x(260px);
+                @include transform-translate-x(-220px);
             }
         }
 
@@ -137,14 +137,14 @@
 
       .wrapper .sidebar,
       .wrapper .off-canvas-sidebar{
-            left: 0;
-            right: auto;
-            @include transform-translate-x(-260px);
+            right: 0;
+            left: auto;
+            @include transform-translate-x(220px);
         }
 
         #bodyClick{
-            left: 260px;
-            right: auto;
+            right: 220px;
+            left: auto;
         }
     }
 
@@ -161,7 +161,7 @@
         overflow-x: hidden;
     }
     .navbar .container{
-         left: 0;
+         right: 0;
           width: 100%;
          @include transition (0.33s, cubic-bezier(0.685, 0.0473, 0.346, 1));
          position: relative;
@@ -184,9 +184,9 @@
         display: block;
         top: 0;
         height: 100vh;
-        width: 260px;
-        right: 0;
-        left: auto;
+        width: 220px;
+        left: 0;
+        right: auto;
         z-index: 1032;
         visibility: visible;
         background-color: #9A9A9A;
@@ -196,7 +196,7 @@
         padding-right: 0px;
         padding-left: 0;
 
-        @include transform-translate-x(260px);
+        @include transform-translate-x(-220px);
         @include transition (0.33s, cubic-bezier(0.685, 0.0473, 0.346, 1));
         > ul {
             position: relative;
@@ -260,8 +260,8 @@
         left: -250px;
     }
     .nav-open .main-panel{
-        left: 0;
-        @include transform-translate-x(-260px);
+        right: 0;
+        @include transform-translate-x(220px);
     }
 
     .nav-open .sidebar{
@@ -281,7 +281,7 @@
         position: absolute;
         opacity: 0;
         top: 0;
-        left: auto;
+        right: auto;
 
         content: "";
         z-index: 9999;
@@ -437,7 +437,7 @@
         opacity: 0;
         top: 0;
         left: auto;
-        right: 260px;
+        right: 220px;
         content: "";
         z-index: 9999;
         overflow-x: hidden;
