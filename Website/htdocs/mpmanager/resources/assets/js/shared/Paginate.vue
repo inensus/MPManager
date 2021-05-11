@@ -1,107 +1,50 @@
 <template>
-    <div v-if="paginator" class="md-layout md-gutter md-size-100 paginate-area" justify="around">
-        <div class="md-layout-item md-size-33" width="4of12">
-            <div
-                    class="col-xs-12 hidden-xs"
-                    :class="show_per_page === true ? 'col-sm-4 col-lg-5':'col-sm-6 col-lg-6'"
-            >
-                <div
-                        class="dataTables_info"
-                        id="datatable_col_reorder_info2"
-                        role="status"
-                        aria-live="polite"
-                >
-                    {{$tc('phrases.paginateLabels',1,{from: paginator.from, to: paginator.to, total:
-                    paginator.totalEntries})}}
-
-                </div>
-            </div>
+    <div v-if="paginator && paginator.totalPage > 1" class="md-layout md-gutter md-size-100 pagination-area">
+        <div class="md-layout-item md-size-25 pagination-entry">
+            {{$tc('phrases.paginateLabels',1,{from: paginator.from, to: paginator.to, total:
+            paginator.totalEntries})}}
         </div>
+        <div class="md-layout-item md-size-20 pagination-per-page" v-if="show_per_page">
 
-        <div class="md-layout-item md-size-33" width="4of12">
-            <div class="col-sm-2 col-lg-1 col-xs-6" v-if="show_per_page===true">
-                <div
-                        style="float:right"
-                        class="dataTables_info"
-                        id="datatable_col_reorder_info"
-                        role="status"
-                        aria-live="polite"
-                >
-                    {{ $tc('phrases.perPage') }}
-                    <select name="per_page" id="per_page" @change="defaultItemsPerPage">
-                        <option value="15">15</option>
-                        <option value="25">25</option>
-                        <option value="30">30</option>
-                        <option value="50">50</option>
-                        <option value="100">100</option>
-                        <option value="200">200</option>
-                        <option value="300">300</option>
-                    </select>
-                </div>
-            </div>
+
         </div>
+        <div class="md-layout-item" :class="{ 'md-size-70' : !show_per_page, 'md-size-50' : show_per_page}">
+            <div class="md-layout pagination">
+                <span v-if="show_per_page">{{ $tc('phrases.perPage') }}:</span>
+                <select v-if="show_per_page" name="per_page" id="per_page" @change="defaultItemsPerPage">
+                    <option value="15">15</option>
+                    <option value="25">25</option>
+                    <option value="30">30</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="200">200</option>
+                    <option value="300">300</option>
+                </select>
+                <input type="number" v-model="goPage" v-if="paginator.totalPage >= 5">
+                <button @click="changePage(goPage)" v-if="paginator.totalPage >= 5"> Go </button>
+                <a href="javascript:void(0)"
+                   :class="{disabled : paginator.currentPage === 1 }"
+                   @click="changePage(1)">
+                    <md-icon :class="{disabled : paginator.currentPage === 1 }">first_page</md-icon>
+                </a>
+                <a href="javascript:void(0)"
+                   :class="{disabled : paginator.currentPage === 1 }"
+                   @click="changePage(--paginator.currentPage)">
+                    <md-icon :class="{disabled : paginator.currentPage === 1 }">chevron_left</md-icon>
+                </a>
+                <span>{{ paginator.currentPage }} of {{ formatTotalPages(paginator.totalPage) }}</span>
+                <a href="javascript:void(0)"
+                   :class="{disabled : paginator.currentPage === paginator.totalPage }"
+                   @click="changePage(++paginator.currentPage)">
+                    <md-icon :class="{disabled : paginator.currentPage === paginator.totalPage }">chevron_right</md-icon>
+                </a>
+                <a href="javascript:void(0)"
+                   :class="{disabled : paginator.currentPage === paginator.totalPage }"
+                   @click="changePage(paginator.totalPage)">
+                    <md-icon :class="{disabled : paginator.currentPage === paginator.totalPage }">last_page</md-icon>
+                </a>
 
-        <div class="md-layout-item md-size-33" width="4of12">
-            <div class="col-sm-6 col-xs-12">
-                <div
-                        class="dataTables_paginate paging_simple_numbers"
-                        id="datatable_col_reorder_paginate"
-                >
-                    <ul class="pagination pagination-sm">
-                        <li
-                                :class="paginator.currentPage>1 ? 'paginate_button previous' :' paginate_button previous-disabled'"
-                                id="datatable_col_reorder_previous"
-                        >
-                            <a
-                                    v-if="!loading"
-                                    href="javascript:void(0);"
-                                    aria-controls="datatable_col_reorder"
-                                    data-dt-idx="0"
-                                    tabindex="0"
-                                    @click="loadPage(--paginator.currentPage)"
-                            >{{ $tc('words.previous') }}</a>
-                            <a href="javascript:void(0);" disabled="disabled" v-else>{{ $tc('words.previous') }}</a>
-                        </li>
-                        <template v-for="(page, index) in paginator.totalPage">
-                            <li
-                                    :key="index"
-                                    :class="page===paginator.currentPage?' active':''"
-                                    v-if="paginator.currentPage - index <4 && paginator.currentPage - index  > 0 "
-                            >
 
-                                <a
-                                        v-if="(index < paginator.currentPage+2) && index > paginator.currentPage-4"
-                                        href="javascript:void(0);"
-                                        @click="loadPage(page)"
-                                >{{page}}</a>
-
-                                <a v-else-if="index === (2+ paginator.currentPage)">...</a>
-                                <a
-                                        v-else-if="(index > Math.abs(paginator.totalPage -3)) "
-                                        href="javascript:void(0);"
-                                        @click="loadPage(page)"
-                                >{{page}}</a>
-
-                            </li>
-                        </template>
-
-                        <li
-                                :class="(paginator.currentPage < paginator.totalPage ? 'paginate_button next':'paginate_button next-disabled')"
-                                id="datatable_col_reorder_next"
-                        >
-                            <a
-                                    v-if="!loading"
-                                    href="javascript:void(0);"
-                                    aria-controls="datatable_col_reorder"
-                                    data-dt-idx="8"
-                                    tabindex="0"
-                                    @click="loadPage(++paginator.currentPage)"
-                            >{{ $tc('words.next') }}</a>
-                            <a href="javascript:void(0);" v-else>{{ $tc('words.next') }}</a>
-                        </li>
-                    </ul>
-                    <!-- <span v-if="loading">Loading new page</span> -->
-                </div>
             </div>
         </div>
     </div>
@@ -110,7 +53,6 @@
 <script>
 import { Paginator } from '../classes/paginator'
 import { EventBus } from './eventbus'
-
 export default {
     name: 'Paginate',
     props: {
@@ -134,20 +76,48 @@ export default {
             paginator: this.paginatorReference,
             term: {},
             threeDots: false,
-            perPage: 15
+            perPage: 15,
+            goPage: null,
         }
     },
     mounted () {
         //load the first page
         let pageNumber = this.$route.query.page
+        this.term = this.$route.query
         this.loadPage(pageNumber)
         EventBus.$on('loadPage', this.eventLoadPage)
     },
     destroyed () {
         this.paginator = null
-
+    },
+    watch:{
+        $route(){
+            this.loadPage(this.currentPage)
+        }
     },
     methods: {
+        changePage(pageNumber){
+            if(this.goPage !== pageNumber ) this.goPage = pageNumber
+            if(!isNaN(pageNumber)){
+                if(pageNumber > this.paginator.totalPage){
+                    this.alertNotify('error', 'Page Number is bigger than Total Pages Count')
+                    return
+                }
+                this.currentPage = pageNumber
+                this.$router.push({
+                    query: Object.assign({}, this.term, {
+                        page: pageNumber,
+                        per_page: this.paginator.perPage
+                    })
+                }).catch(error => {
+                    if (error.name !== 'NavigationDuplicated') {
+                        throw error
+                    }
+                })
+            }else{
+                this.alertNotify('error', 'Page is not a Number')
+            }
+        },
         eventLoadPage (paginator, term = {}) {
             this.term = term
             this.paginator = paginator
@@ -155,10 +125,8 @@ export default {
         },
         defaultItemsPerPage (data) {
             this.paginator.perPage = data.target.value
-
             this.loadPage(this.paginator.currentPage)
         },
-
         defaultCallback (data = null) {
             console.log('default callback with', data)
         },
@@ -166,217 +134,69 @@ export default {
             if (this.loading) {
                 return
             }
+            if(this.goPage !== pageNumber) this.goPage = pageNumber
             this.loading = true
-
             this.paginator.loadPage(pageNumber, this.term).then(response => {
-                if (pageNumber) {
-                    this.$router.push({
-                        query: Object.assign({}, this.$route.query, {
-                            page: pageNumber,
-                            per_page: this.paginator.perPage
-                        })
-
-                    }).catch(error => {
-                        if (error.name !== 'NavigationDuplicated') {
-                            throw error
-                        }
-                    })
-                }
-
                 this.loading = false
                 EventBus.$emit('pageLoaded', this.subscriber, response.data)
             })
-        }
-    },
-    computed: {
-        _callBack: function () {
-            if (this.callback === undefined) return this.defaultCallback
-            return this.callback
-        }
+        },
+        formatTotalPages(pageNumber){
+            return pageNumber.toLocaleString()
+        },
+        alertNotify (type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message,
+                speed: 0
+            })
+        },
     }
 }
 </script>
 
-<style scoped lang="scss">
-    .paginate-area {
-        width: 100% !important;
-    }
-
-    .pagination {
-        color: #ac2925;
-        list-style: none;
-        display: flex;
-
-        li {
-            list-style: none;
-            display: inline-flex;
-            padding: 5px;
-            margin: 1px;
-            background-color: #f7f7f7;
-        }
-
-        .active {
-            background-color: #dddddd;
-        }
-    }
-
-    .dataTables_info {
-        padding-top: 9px;
-        font-size: 13px;
-        font-weight: 700;
-        font-style: italic;
-        color: #969696;
-    }
-
-    .dataTables_paginate {
-        float: right;
-        margin: 0;
-    }
-
-    .dataTables_paginate ul.pagination {
-        margin: 2px 0;
-        white-space: nowrap;
-    }
-
-    .dataTables_paginate {
-        float: right;
-        margin: 0;
-    }
-
-    .pagination {
-        display: inline-flex;
-        padding-left: 0;
-        margin: 18px 0;
-        border-radius: 2px;
-    }
-
-    .pagination > li {
-        display: inline;
-    }
-
-    .pagination > li > a,
-    .pagination > li > span {
-        position: relative;
-        float: left;
-        padding: 6px 12px;
-        line-height: 1.42857143;
-        text-decoration: none;
-        color: #3276b1;
-        background-color: #fff;
-        border: 1px solid #ddd;
-        margin-left: -1px;
-    }
-
-    .pagination > li:first-child > a,
-    .pagination > li:first-child > span {
-        margin-left: 0;
-        border-bottom-left-radius: 2px;
-        border-top-left-radius: 2px;
-    }
-
-    .pagination > li:last-child > a,
-    .pagination > li:last-child > span {
-        border-bottom-right-radius: 2px;
-        border-top-right-radius: 2px;
-    }
-
-    .pagination > li > a:focus,
-    .pagination > li > a:hover,
-    .pagination > li > span:focus,
-    .pagination > li > span:hover {
-        z-index: 2;
-        color: #214e75;
-        background-color: #eee;
-        border-color: #ddd;
-    }
-
-    .pagination > .active > a,
-    .pagination > .active > a:focus,
-    .pagination > .active > a:hover,
-    .pagination > .active > span,
-    .pagination > .active > span:focus,
-    .pagination > .active > span:hover {
-        z-index: 3;
-        color: #fff;
-        background-color: #3276b1;
-        border-color: #3276b1;
-        cursor: default;
-    }
-
-    .pagination > .disabled > a,
-    .pagination > .disabled > a:focus,
-    .pagination > .disabled > a:hover,
-    .pagination > .disabled > span,
-    .pagination > .disabled > span:focus,
-    .pagination > .disabled > span:hover {
-        color: #999;
-        background-color: #fff;
-        border-color: #ddd;
-        cursor: not-allowed;
-    }
-
-    .pagination-lg > li > a,
-    .pagination-lg > li > span {
-        padding: 10px 16px;
-        font-size: 17px;
-        line-height: 1.33;
-    }
-
-    .pagination-lg > li:first-child > a,
-    .pagination-lg > li:first-child > span {
-        border-bottom-left-radius: 3px;
-        border-top-left-radius: 3px;
-    }
-
-    .pagination-lg > li:last-child > a,
-    .pagination-lg > li:last-child > span {
-        border-bottom-right-radius: 3px;
-        border-top-right-radius: 3px;
-    }
-
-    .pagination-sm > li > a,
-    .pagination-sm > li > span {
-        padding: 5px 10px;
-        font-size: 12px;
-        line-height: 1.5;
-    }
-
-    .pagination-sm > li:first-child > a,
-    .pagination-sm > li:first-child > span {
-        border-bottom-left-radius: 2px;
-        border-top-left-radius: 2px;
-    }
-
-    .pagination-sm > li:last-child > a,
-    .pagination-sm > li:last-child > span {
-        border-bottom-right-radius: 2px;
-        border-top-right-radius: 2px;
-    }
-
-    .pagination.pagination-alt > li > a {
-        box-shadow: none;
-        -moz-box-shadow: none;
-        -webkit-box-shadow: none;
-        border: none;
-        margin-left: -1px;
-    }
-
-    .pagination.pagination-alt > li:first-child > a {
-        padding-left: 0;
-    }
-
-    .pagination > li > a,
-    .pagination > li > span {
-        box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.05);
-        -moz-box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.05);
-        -webkit-box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.05);
-    }
-
-    .previous-disabled {
-        pointer-events: none;
-    }
-
-    .next-disabled {
-        pointer-events: none;
-    }
+<style scoped >
+.pagination-area{
+    width: 100%;
+    margin: 0;
+    position: absolute;
+}
+.pagination-entry{
+    font-style: italic;
+    margin: 8px;
+}
+.pagination-per-page{
+    font-style: italic;
+    margin: 8px;
+    right: 0!important;
+    float: right;
+}
+.pagination {
+    display: inline-block;
+    margin-top: 2px;
+    right: 0!important;
+    float: right;
+}
+.pagination a, span ,input[type=number], button, select{
+    max-width: 90px;
+    color: black!important;
+    float: left;
+    padding: 1px 10px;
+    text-decoration: none;
+    transition: background-color .3s;
+    margin: 8px 2px;
+    height: 25px;
+}
+.pagination input[type=number]:focus {
+    border: 2px solid #555;
+}
+.pagination a:hover {
+    background-color: #ddd;
+    color: #2f0d0b!important;}
+.pagination .disabled{
+    pointer-events: none;
+    color: #ccc !important;
+}
 </style>
