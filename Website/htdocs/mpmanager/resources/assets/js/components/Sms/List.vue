@@ -160,7 +160,7 @@ export default {
     },
     computed:{
         isMobile(){
-            return this.$store.getters['resolution/setDevice']
+            return this.$store.getters['resolution/getDevice']
         }
     },
     methods: {

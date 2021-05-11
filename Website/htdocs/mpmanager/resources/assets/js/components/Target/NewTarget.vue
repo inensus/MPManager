@@ -231,7 +231,7 @@ export default {
     mixins: [currency],
     computed: {
         isMobile(){
-            return this.$store.getters['resolution/setDevice']
+            return this.$store.getters['resolution/getDevice']
         },
         total: {
             cache: false,

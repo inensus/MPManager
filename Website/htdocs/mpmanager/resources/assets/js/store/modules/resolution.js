@@ -22,7 +22,7 @@ export const actions = {
 }
 
 export const getters = {
-    setDevice: state => {
+    getDevice: state => {
         return state.resolution.isMobile
     }
 }
