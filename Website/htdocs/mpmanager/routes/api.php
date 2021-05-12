@@ -180,6 +180,7 @@ Route::group(['prefix' => 'pv'], static function () {
 
 Route::group(['prefix' => 'map-settings'], static function () {
     Route::get('/', 'MapSettingsController@index');
+    Route::get('/key/{key}', 'MapSettingsController@checkBingApiKey');
     Route::put('/{mapSettings}', ['uses' => 'MapSettingsController@update', 'middleware' => 'jwt.verify']);
 });
 
