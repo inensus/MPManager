@@ -3,7 +3,6 @@
 namespace App\Models\Person;
 
 use App\Events\PersonDeleting;
-use App\Events\PersonEvent;
 use App\Models\Address\Address;
 use App\Models\Address\HasAddressesInterface;
 use App\Models\Agent;
@@ -41,6 +40,10 @@ class Person extends BaseModel implements HasAddressesInterface, RoleInterface
     use SoftDeletes;
 
     protected $guarded = [];
+
+    protected $casts = [
+        'additional_json' => 'array'
+    ];
 
     protected $dispatchesEvents = [
         'deleting' => PersonDeleting::class,
