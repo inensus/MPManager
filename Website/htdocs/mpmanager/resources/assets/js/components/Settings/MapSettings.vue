@@ -3,30 +3,50 @@
         <h2>Map Settings</h2>
 
         <div class="md-layout md-gutter md-size-100">
-            <div class="md-layout-item md-layout md-gutter md-size-25">
-                <md-subheader>Set Map Default Zoom:</md-subheader>
-                <div class="md-layout-item">
-                    <md-field :class="{'md-invalid': errors.has('Zoom')}">
-                        <label for="Zoom">Default Zoom</label>
-                        <md-input
+            <div class="md-layout-item md-layout md-gutter md-size-100">
+                <div class="md-layout-item md-size-25 md-small-size-50">
+                        <md-field :class="{'md-invalid': errors.has('Zoom')}">
+                            <label for="Zoom">Default Zoom</label>
+                            <md-input
                                 type="number"
                                 id="Zoom"
                                 name="Zoom"
                                 maxLength="1"
                                 v-model="mapSettingsService.mapSettings.zoom"
                                 v-validate="'integer|between:0,9'"
-                        >
-                        </md-input>
-                        <span class="md-error">{{ errors.first('Zoom')}}</span>
-                    </md-field>
+                            >
+                            </md-input>
+                            <span class="md-error">{{ errors.first('Zoom')}}</span>
+                        </md-field>
 
                 </div>
+                <div class="md-layout-item md-size-25 md-small-size-50">
+                    <md-field>
+                        <label for="provider">Default Provider</label>
+                        <md-select v-model="mapSettingsService.mapSettings.provider" name="provider" id="provider" >
+                            <md-option v-for="provider in mapProvider" :key="provider" :value="provider">{{provider}}</md-option>
+                        </md-select>
+
+                    </md-field>
+                </div>
+                <div class="md-layout-item md-size-50 md-small-size-100" v-if="bingMaps">
+                    <md-field :class="{'md-invalid': errors.has('Bing Api Key')}">
+                        <label for="apiKey" class="bing-api-key">Bing Map Api Key (Click <b><a href="https://www.bingmapsportal.com/" target="_blank">here</a></b> to get api key.)</label>
+                        <md-input
+                        id="apiKey"
+                        name="Bing Api Key"
+                        v-model="mapSettingsService.mapSettings.bingMapApiKey"
+                        v-validate="'required|min:3'"></md-input>
+                        <span class="md-error">{{ errors.first('Bing Api Key')}}</span>
+                    </md-field>
+                </div>
+
             </div>
 
-            <div class="md-layout-item md-layout md-size-75" style="border-left: #3C3C3C solid 1px">
+            <div class="md-layout-item md-layout md-size-100">
                 <md-subheader>Set Map Starting Points</md-subheader>
                 <div class="md-layout-item md-layout md-gutter md-size-100">
-                    <div class="md-layout-item md-size-45">
+                    <div class="md-layout-item md-size-35 md-small-size-50">
                         <md-field :class="{'md-invalid': errors.has($tc('words.latitude'))}">
                             <label for="latitude">{{ $tc('words.latitude') }}</label>
                             <md-input
@@ -42,7 +62,7 @@
 
                         </md-field>
                     </div>
-                    <div class="md-layout-item md-size-45">
+                    <div class="md-layout-item md-size-35 md-small-size-50">
                         <md-field :class="{'md-invalid': errors.has($tc('words.longitude'))}">
                             <label for="longitude">{{ $tc('words.longitude') }}</label>
                             <md-input
@@ -68,7 +88,8 @@
                     :center="center"
                     ref="map"
                     :mutating-center="mutatingCenter"
-                    :zoom="Number(mapSettingsService.mapSettings.zoom)"
+                    :zoom="zoom"
+                    :key="mapKey"
             />
         </div>
         <div class="md-layout md-alignment-bottom-right">
@@ -96,20 +117,36 @@ export default {
             type: Object
         }
     },
+    computed:{
+        zoom(){
+            return Number(this.mapSettingsService.mapSettings.zoom)
+        },
+        bingMaps(){
+            if(this.mapSettingsService.mapSettings.provider === 'Bing Maps'){
+                return true
+            }else{
+                return false
+            }
+        }
+    },
     data () {
         return {
             progress: false,
             mapSettingsService: new MapSettingsService(),
-            mutatingCenter: []
+            mutatingCenter: [],
+            mapKey: 1,
+            mapProvider:[
+                'Bing Maps',
+                'Open Street Map']
         }
     },
     mounted () {
-        this.fetchMapSettings()
         this.$refs.map.map._onResize()
     },
     created () {
         EventBus.$on('mapEvent', this.setMapLatLng)
         EventBus.$on('mapZoom', this.setMapZoom)
+        this.fetchMapSettings()
     },
     methods: {
         setMapLatLng (latlng) {
@@ -131,13 +168,20 @@ export default {
             this.progress = true
             let validator = await this.$validator.validateAll()
             if (!validator) {
-
+                this.progress = false
                 return
+            }
+            if(this.bingMaps){
+                if(await this.mapSettingsService.checkBingMapApiKey()){
+                    this.alertNotify('error', 'Bing Map Api Key is wrong, please check again')
+                    this.progress = false
+                    return
+                }
             }
             try {
                 await this.mapSettingsService.update()
                 this.$store.dispatch('settings/setMapSettings', this.mapSettingsService.mapSettings).then(() => {
-
+                    this.mapKey += 1
                 }).catch((err) => {
                     console.log(err)
                 })
@@ -149,6 +193,7 @@ export default {
         },
         getLatLng () {
             this.$refs.map.getLatLng()
+            this.setCenterPoints()
         },
         fetchMapSettings () {
             this.mapSettingsService.mapSettings = this.mapSettings
@@ -168,5 +213,8 @@ export default {
 </script>
 
 <style scoped>
-
+.bing-api-key.a{
+    color: black;
+    font-weight: bolder;
+}
 </style>
