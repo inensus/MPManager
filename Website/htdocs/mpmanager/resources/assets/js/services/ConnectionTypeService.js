@@ -1,10 +1,10 @@
 import RepositoryFactory from '../repositories/RepositoryFactory'
-import {ErrorHandler} from '../Helpers/ErrorHander'
-import {Paginator} from '../classes/paginator'
-import {resources} from '../resources'
+import { ErrorHandler } from '../Helpers/ErrorHander'
+import { Paginator } from '../classes/paginator'
+import { resources } from '../resources'
 
 export class ConnectionTypeService {
-    constructor() {
+    constructor () {
         this.repository = RepositoryFactory.get('connectionTypes')
         this.connectionTypes = []
         this.target = {
@@ -22,7 +22,7 @@ export class ConnectionTypeService {
         this.paginator = new Paginator(resources.connections.store)
     }
 
-    updateList(data) {
+    updateList (data) {
         this.connectionTypes = []
 
         for (let a in data) {
@@ -38,21 +38,22 @@ export class ConnectionTypeService {
         }
 
     }
-    async updateConnectionType(connectionType){
+
+    async updateConnectionType (connectionType) {
         try {
             let response = await this.repository.update(connectionType)
-            if(response.status === 200 || response.status === 201){
+            if (response.status === 200 || response.status === 201) {
                 return connectionType
-            }else{
+            } else {
                 return new ErrorHandler(response.error, 'http', response.status)
             }
-        }catch (e) {
+        } catch (e) {
             let erorMessage = e.response.data.data.message
             return new ErrorHandler(erorMessage, 'http')
         }
     }
 
-    async getConnectionTypes() {
+    async getConnectionTypes () {
         try {
             let response = await this.repository.list()
 
@@ -68,7 +69,7 @@ export class ConnectionTypeService {
         }
     }
 
-    async getConnectionTypeDetail(connectionTypeId){
+    async getConnectionTypeDetail (connectionTypeId) {
         try {
             let response = await this.repository.show(connectionTypeId)
 
@@ -84,13 +85,14 @@ export class ConnectionTypeService {
         }
     }
 
-    async createConnectionType(name) {
+    async createConnectionType () {
         try {
             let connectionType_PM = {
-                name: name
+                name: this.connectionType.name
             }
             let response = await this.repository.create(connectionType_PM)
             if (response.status === 200 || response.status === 201) {
+                this.resetConnectionType()
                 return response.data.data
             } else {
                 return new ErrorHandler(response.error, 'http', response.status)
@@ -98,6 +100,14 @@ export class ConnectionTypeService {
         } catch (e) {
             let erorMessage = e.response.data.data.message
             return new ErrorHandler(erorMessage, 'http')
+        }
+    }
+
+    resetConnectionType () {
+        this.connectionType = {
+            id: null,
+            name: null,
+            target: this.target
         }
     }
 }

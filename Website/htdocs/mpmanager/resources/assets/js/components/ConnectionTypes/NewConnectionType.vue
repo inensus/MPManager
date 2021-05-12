@@ -1,30 +1,30 @@
 <template>
     <widget
-        v-if="showAdd"
-        :id="'new-connection-type'"
-        :title="$tc('phrases.newConnectionType')"
-        color="red"
-        >
-
-
+            :hidden="!showAdd"
+            :id="'new-connection-type'"
+            :title="$tc('phrases.newConnectionType')"
+            color="red"
+    >
         <md-card>
-
             <md-card-content>
-                <div class="md-layout md-gutter">
-                    <div class="md-layout-item">
-                        <md-field :class="{'md-invalid': errors.has($tc('words.name'))}">
-                            <label for="name">{{ $tc('words.name') }}</label>
-                            <md-input
-                                id="name"
-                                :name="$tc('words.name')"
-                                v-model="connectionType.name"
-                                v-validate="'required|min:3'"
-                            />
-                            <span class="md-error">{{ errors.first($tc('words.name')) }}</span>
-                        </md-field>
+                <form ref="connectionTypeForm">
+                    <div class="md-layout md-gutter">
+                        <div class="md-layout-item">
+                            <md-field :class="{'md-invalid': errors.has($tc('words.name'))}">
+                                <label for="name">{{ $tc('words.name') }}</label>
+                                <md-input
+                                        id="name"
+                                        :name="$tc('words.name')"
+                                        v-model="connectionTypeService.connectionType.name"
+                                        v-validate="'required|min:3'"
+                                />
+                                <span class="md-error">{{ errors.first($tc('words.name')) }}</span>
+                            </md-field>
 
+                        </div>
                     </div>
-                </div>
+                </form>
+
             </md-card-content>
 
             <md-card-actions>
@@ -40,27 +40,24 @@
 
 <script>
 import Widget from '../../shared/widget'
-import {ConnectionTypeService} from '../../services/ConnectionTypeService'
-import {EventBus} from '../../shared/eventbus'
+import { ConnectionTypeService } from '../../services/ConnectionTypeService'
+import { EventBus } from '../../shared/eventbus'
 
 export default {
     name: 'NewConnectionType',
-    components: {Widget},
-    data() {
+    components: { Widget },
+    data () {
         return {
             connectionTypeService: new ConnectionTypeService(),
-            connectionType: null,
+
             showAdd: false,
         }
     },
-    created() {
-        this.connectionType = this.connectionTypeService.connectionType
-    },
-    mounted() {
+    mounted () {
         EventBus.$on('showNewConnectionType', this.show)
     },
     methods: {
-        async store() {
+        async store () {
             let validator = await this.$validator.validateAll()
             if (!validator) {
 
@@ -68,22 +65,22 @@ export default {
             }
             this.hide()
             try {
-
-                await this.connectionTypeService.createConnectionType(this.connectionType.name)
-                this.alertNotify('success', this.$tc('phrases.newConnectionType',2))
+                await this.connectionTypeService.createConnectionType()
+                this.alertNotify('success', this.$tc('phrases.newConnectionType', 2))
+                this.$refs['connectionTypeForm'].reset()
                 EventBus.$emit('connectionTypeAdded', this.connectionType)
             } catch (e) {
                 this.alertNotify('error', e.message)
             }
 
         },
-        hide() {
+        hide () {
             this.showAdd = false
         },
-        show() {
+        show () {
             this.showAdd = true
         },
-        alertNotify(type, message) {
+        alertNotify (type, message) {
             this.$notify({
                 group: 'notify',
                 type: type,
@@ -91,6 +88,14 @@ export default {
                 text: message
             })
         },
+    },
+    watch: {
+        showAdd (value) {
+            if (value) {
+                this.errors.clear()
+            }
+
+        }
     }
 }
 </script>
