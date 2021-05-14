@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Http\Resources\ApiResource;
 use App\Models\MapSettings;
 use App\Http\Services\BingMapApiService;
@@ -40,6 +41,7 @@ class MapSettingsController extends Controller
         );
         return new ApiResource([$mapSettings->fresh()]);
     }
+
     public function checkBingApiKey(): ApiResource
     {
         $key = \request('key');

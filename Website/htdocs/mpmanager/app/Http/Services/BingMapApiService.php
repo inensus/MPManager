@@ -13,11 +13,17 @@ class BingMapApiService
     public function checkBingApiKey($key)
     {
         $client = new Client();
+
         try{
-            $response = $client->get($this->url.$key);
+
+            $response = $client->get($this->url . $key);
+
             return json_decode((string)$response->getBody(), true);
+
         }catch (GuzzleException $e){
+
             return json_decode((string)$e->getMessage(), true);
+
         }
 
     }
