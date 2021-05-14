@@ -3,8 +3,6 @@
 
 namespace App\Http\Services;
 
-
-use App\Exceptions\InvalidBingApiKeyException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 
