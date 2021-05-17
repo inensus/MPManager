@@ -148,25 +148,26 @@
                     <energy-chart-box :mini-grid-id="miniGridId"/>
                 </div>
 
+                <div class="md-layout-item md-layout md-gutter md-size-100">
+                    <div class="md-layout-item md-medium-size-100 md-size-33" style="min-height: 500px">
+                        <revenue-per-customer-type
+                            ref="donut"
+                            :batch-revenues="batchRevenues"
+                        ></revenue-per-customer-type>
 
-                <div class="md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-33" style="min-height: 500px">
-                    <revenue-per-customer-type
-                        ref="donut"
-                        :batch-revenues="batchRevenues"
-                    ></revenue-per-customer-type>
+                    </div>
+                    <div class="md-layout-item md-medium-size-100 md-size-66" style="min-height: 500px">
+                        <revenue-target-per-customer-type
+                            ref="targetChart"
+                        ></revenue-target-per-customer-type>
 
+                    </div>
                 </div>
-                <div class="md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-66" style="min-height: 500px">
-                    <revenue-target-per-customer-type
-                    ref="targetChart"
-                    ></revenue-target-per-customer-type>
 
-                </div>
-
-                <div class="md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-100">
+                <div class="md-layout-item md-size-100">
                     <mini-grid-map :mini-grid-id="miniGridId"/>
                 </div>
-                <div class="md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-100">
+                <div class="md-layout-item md-size-100">
                     <target-list
                         ref="target"
                         :target-id="miniGridId"
