@@ -9,7 +9,7 @@
                 <md-card-content>
                     <div class="md-layout md-gutter">
                         <div class="md-layout-item md-large-size-100 md-medium-size-100 md-small-size-100">
-                            <form class="md-layout md-gutter">
+                            <form class="md-layout md-gutter" ref="agentForm">
                                 <!--name-->
                                 <div class="md-layout-item md-size-50 md-small-size-100 ">
                                     <md-field :class="{'md-invalid': errors.has($tc('words.name'))}"
@@ -18,7 +18,7 @@
                                         <md-input
                                             id="name"
                                             :name="$tc('words.name')"
-                                            v-model="newAgent.name"
+                                            v-model="agentService.agent.name"
                                             v-validate="'required|min:3'"
                                         />
                                         <span class="md-error">{{ errors.first($tc('words.name')) }}</span>
@@ -33,7 +33,7 @@
                                         <md-input
                                             id="surname"
                                             :name="$tc('words.surname')"
-                                            v-model="newAgent.surname"
+                                            v-model="agentService.agent.surname"
                                             v-validate="'required|min:3'"
                                         />
                                         <span class="md-error">{{ errors.first($tc('words.surname')) }}</span>
@@ -45,7 +45,7 @@
                                     <md-field :class="{'md-invalid': errors.has($tc('words.miniGrid'))}">
                                         <label>  {{ $tc('words.miniGrid') }}</label>
                                         <md-select
-                                            v-model="newAgent.miniGridId"
+                                            v-model="agentService.agent.miniGridId"
                                             :name="$tc('words.miniGrid')"
                                             id="miniGridName"
                                             v-validate="'required'"
@@ -71,7 +71,7 @@
                                             id="phone"
                                             :name="$tc('words.phone')"
                                             v-validate="'required'"
-                                            v-model="newAgent.phone"
+                                            v-model="agentService.agent.phone"
                                             placeholder="(+___ _+9___ ____)"
                                         />
                                         <span class="md-error">{{ errors.first($tc('words.phone')) }}</span>
@@ -86,7 +86,7 @@
                                         <md-input
                                             id="email"
                                             :name="$tc('words.email')"
-                                            v-model="newAgent.email"
+                                            v-model="agentService.agent.email"
                                             v-validate="'required|min:3'"
                                         />
                                         <span class="md-error">{{ errors.first($tc('words.email')) }}</span>
@@ -98,7 +98,7 @@
 
 
                                     <md-datepicker name="birthDate" id="birthDate" md-immediately
-                                                   v-model="newAgent.birthday"
+                                                   v-model="agentService.agent.birthday"
                                     >
                                         <label for="birth-date">  {{ $tc('words.birthday') }} :</label>
                                     </md-datepicker>
@@ -111,9 +111,9 @@
 
 
                                         <label for="gender">  {{ $tc('words.gender') }} :</label>
-                                        <md-select :name="$tc('words.gender')" id="gender" v-model="newAgent.gender"
+                                        <md-select :name="$tc('words.gender')" id="gender" v-model="agentService.agent.gender"
                                                    v-validate="'required'">
-                                            <md-option disabled v-if="newAgent.gender==null">--   {{ $tc('words.select') }} --
+                                            <md-option disabled v-if="agentService.agent.gender==null">--   {{ $tc('words.select') }} --
                                             </md-option>
                                             <md-option value="male">  {{ $tc('words.male') }}</md-option>
                                             <md-option value=" female">  {{ $tc('words.female') }}</md-option>
@@ -129,7 +129,7 @@
 
                                         <label for="commission">  {{ $tc('phrases.commissionType') }}:</label>
                                         <md-select :name="$tc('phrases.commissionType')" id="commission" v-validate="'required'"
-                                                   v-model="newAgent.commissionTypeId">
+                                                   v-model="agentService.agent.commissionTypeId">
                                             <md-option v-for="(commission) in agentCommissions"
                                                        :value="commission.id" :key="commission.id">{{commission.name}}
                                             </md-option>
@@ -147,7 +147,7 @@
                                         <md-input
                                             id="password"
                                             :name="$tc('words.password')"
-                                            v-model="newAgent.password"
+                                            v-model="agentService.agent.password"
                                             v-validate="'required|min:3|max:15'"
                                             ref="passwordRef"
                                             type="password"
@@ -216,7 +216,6 @@ export default {
             countryService: new CountryService(),
             agentCommissionService: new AgentCommissionService(),
             agentCommissions: [],
-            newAgent: {},
             users: [],
             selectedUser: null,
             selectedMiniGridId: '',
@@ -234,8 +233,6 @@ export default {
         this.getMiniGrids()
         this.getCountries()
         this.getAgentCommissions()
-        this.newAgent = this.agentService.agent
-
     },
     methods: {
         async getMiniGrids () {
@@ -273,7 +270,6 @@ export default {
         async saveAgent () {
 
             let validator = await this.$validator.validateAll()
-
             if (validator) {
                 this.loading = true
                 try {
@@ -285,6 +281,8 @@ export default {
                     this.loading = false
                     this.alertNotify('error', e.message)
                 }
+                this.$refs['agentForm'].reset()
+                this.confirmPassword=null
             }
 
         },

@@ -52,6 +52,8 @@ export class AssetService {
                 this.asset.name = response.data.data.name
                 this.asset.updated_at = response.data.data.updated_at
                 EventBus.$emit('assetTypeAdded', this.asset)
+                this.resetAsset()
+
             } else {
                 return new ErrorHandler(response.error, 'http', response.status)
             }
@@ -68,7 +70,7 @@ export class AssetService {
             if (response.status === 200 || response.status === 201) {
                 return response
             } else {
-                return    new ErrorHandler(response.error, 'http', response.status)
+                return new ErrorHandler(response.error, 'http', response.status)
             }
 
         } catch (e) {
@@ -93,11 +95,12 @@ export class AssetService {
         }
 
     }
-    async getAssets(){
+
+    async getAssets () {
         try {
             let response = await this.repository.list()
             if (response.status === 200 || response.status === 201) {
-                this.list=response.data.data
+                this.list = response.data.data
                 return this.list
             } else {
                 new ErrorHandler(response.error, 'http', response.status)
@@ -109,5 +112,15 @@ export class AssetService {
         }
     }
 
+    resetAsset () {
+        this.asset = {
+            id: null,
+            name: null,
+            updated_at: null,
+            edit: false,
+            asset_type_name: null,
+            price: null
+        }
+    }
 
 }
