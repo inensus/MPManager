@@ -48,4 +48,5 @@ class MapSettingsController extends Controller
         return new ApiResource($this->bingMapApiService->checkBingApiKey($key));
 
     }
+
 }
