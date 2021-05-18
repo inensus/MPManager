@@ -14,12 +14,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int $id
  * @property string $name
  * @property int manager_id
+ * @property json geo_data
  * @property string $updated_at
  * @property string $created_at
  */
 class Cluster extends Model
 {
     protected $guarded = [];
+    protected $casts = [
+        'geo_data' => 'array'
+    ];
     /**
      * A cluster has a cluster-manager who is responsible for the cluster.
      *
