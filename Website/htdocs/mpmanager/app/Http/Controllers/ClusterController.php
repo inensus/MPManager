@@ -17,7 +17,6 @@ use App\Http\Services\MeterService;
 use App\Http\Services\TransactionService;
 use App\Models\Cluster;
 
-
 class ClusterController
 {
     /**
@@ -90,7 +89,7 @@ class ClusterController
 
     public function showGeo($id): ApiResource
     {
-        $cluster = Cluster::select('geo_data')->where('id',$id)->first();
+        $cluster = Cluster::select('geo_data')->where('id', $id)->first();
 
         return new ApiResource($cluster['geo_data']);
     }
