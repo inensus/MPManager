@@ -9,7 +9,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\ClusterEvent;
 use App\Http\Requests\ClusterRequest;
 use App\Http\Resources\ApiResource;
 use App\Http\Services\CityService;
@@ -17,10 +16,7 @@ use App\Http\Services\ClusterService;
 use App\Http\Services\MeterService;
 use App\Http\Services\TransactionService;
 use App\Models\Cluster;
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
-use Illuminate\Support\Facades\Storage;
 
-use function json_decode;
 
 class ClusterController
 {
@@ -82,8 +78,6 @@ class ClusterController
         }
         $clusters = $this->clusterService->getClusterList();
 
-        $clusters = $this->clusterService->fetchClusterGeoJson($clusters);
-
         return new ApiResource($this->clusterService->fetchClusterData($clusters, $dateRange));
     }
 
@@ -94,16 +88,11 @@ class ClusterController
         return new ApiResource($cluster);
     }
 
-    public function showGeo(Cluster $cluster): ApiResource
+    public function showGeo($id): ApiResource
     {
-        try {
-            $clusterData = Storage::disk('local')->get($cluster->name . '.json');
-        } catch (FileNotFoundException $e) {
-            return new ApiResource([]);
-        }
+        $cluster = Cluster::select('geo_data')->where('id',$id)->first();
 
-        $cluster['geo'] = json_decode($clusterData);
-        return new ApiResource($cluster);
+        return new ApiResource($cluster['geo_data']);
     }
 
 
@@ -122,10 +111,8 @@ class ClusterController
         //save cluster
         $this->cluster->name = $name;
         $this->cluster->manager_id = $managerId;
+        $this->cluster->geo_data = $geoData;
         $this->cluster->save();
-
-        //fire the create geo-json event. It creates a json file with coordinates
-        event(new ClusterEvent($this->cluster, $geoType, $geoData));
 
         return new ApiResource($this->cluster);
     }

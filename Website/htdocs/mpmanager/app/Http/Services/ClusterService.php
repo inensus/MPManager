@@ -77,19 +77,6 @@ class ClusterService
         return Cluster::query()->with('miniGrids')->find($clusterId);
     }
 
-    public function fetchClusterGeoJson($clusters)
-    {
-        foreach ($clusters as $index => $cluster) {
-            try {
-                $clusterData = Storage::disk('local')->get($cluster->name . '.json');
-            } catch (FileNotFoundException $e) {
-                continue;
-            }
-            $clusters[$index]['geo'] = [json_decode($clusterData, true)];
-        }
-        return $clusters;
-    }
-
     /**
      * @param (\Illuminate\Http\Request|array|string)[] $range
      * @param array $range
