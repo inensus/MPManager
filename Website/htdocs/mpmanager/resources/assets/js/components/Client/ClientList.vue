@@ -15,12 +15,12 @@
 
                 <md-table md-card style="margin-left: 0">
                     <md-table-row>
-                        <md-table-head  md-numeric>{{ $tc('words.id') }}</md-table-head>
+                        <md-table-head>{{ $tc('words.id') }}</md-table-head>
                         <md-table-head>{{ $tc('words.name') }}</md-table-head>
                         <md-table-head>{{ $tc('words.phone') }}</md-table-head>
                         <md-table-head>{{ $tc('words.city') }}</md-table-head>
                         <md-table-head>{{ $tc('words.meter') }}</md-table-head>
-                        <md-table-head>{{ $tc('phrase.lastUpdate') }}</md-table-head>
+                        <md-table-head>{{ $tc('phrases.lastUpdate') }}</md-table-head>
                     </md-table-row>
 
 
