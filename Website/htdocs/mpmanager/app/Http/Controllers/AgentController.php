@@ -19,15 +19,15 @@ class AgentController extends Controller
         $this->agentService = $agentService;
     }
 
-    public function index(Request $request): ApiResource
+    public function index(): ApiResource
     {
-        $users = $this->agentService->list($request->all());
+        $users = $this->agentService->list();
         return new ApiResource($users);
     }
 
     public function show(Agent $agent, Request $request): ApiResource
     {
-        $agent = $this->agentService->getAgentDetail($agent);
+        $agent = $this->agentService->get($agent->id);
         return new ApiResource($agent);
     }
 
