@@ -1,10 +1,8 @@
 <?php
 
-
 namespace App\Exceptions;
 
-
-class UserAddressNorFoundException  extends \Exception
+class UserAddressNorFoundException extends \Exception
 {
 
 }

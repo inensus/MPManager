@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-
 interface IUserService
 {
     public function create(array $userData);
