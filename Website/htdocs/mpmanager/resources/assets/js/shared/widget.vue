@@ -82,6 +82,7 @@
                 :subscriber="subscriber"
                 v-if="paginator"
                 :key="resetKey"
+                :simple_pagination="simple_pagination"
             ></paginate>
         </md-toolbar>
     </div>
@@ -146,6 +147,10 @@ export default {
         resetKey: {
             default: 0
         },
+        simple_pagination: {
+            type:Boolean,
+            default: false
+        }
     },
 
     mounted () {

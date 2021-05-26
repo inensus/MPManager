@@ -1,17 +1,13 @@
 <template>
     <div v-if="paginator && paginator.totalPage > 1" class="md-layout md-gutter md-size-100 pagination-area">
-        <div class="md-layout-item md-size-25 pagination-entry">
+        <div class="md-layout-item md-size-25 pagination-entry" v-if="simplePagination">
             {{$tc('phrases.paginateLabels',1,{from: paginator.from, to: paginator.to, total:
             paginator.totalEntries})}}
         </div>
-        <div class="md-layout-item md-size-20 pagination-per-page" v-if="show_per_page">
-
-
-        </div>
-        <div class="md-layout-item" :class="{ 'md-size-70' : !show_per_page, 'md-size-50' : show_per_page}">
+        <div class="md-layout-item md-gutter" :class="{  'md-size-70' : simplePagination}">
             <div class="md-layout pagination">
-                <span v-if="show_per_page">{{ $tc('phrases.perPage') }}:</span>
-                <select v-if="show_per_page" name="per_page" id="per_page" @change="defaultItemsPerPage">
+                <span v-if="simplePagination">{{ $tc('phrases.perPage') }}:</span>
+                <select v-if="simplePagination" name="per_page" id="per_page" @change="defaultItemsPerPage">
                     <option value="15">15</option>
                     <option value="25">25</option>
                     <option value="30">30</option>
@@ -20,8 +16,9 @@
                     <option value="200">200</option>
                     <option value="300">300</option>
                 </select>
-                <input type="number" v-model="goPage" v-if="paginator.totalPage >= 5">
-                <button @click="changePage(goPage)" v-if="paginator.totalPage >= 5"> Go </button>
+                <input type="number" v-model="goPage" @change="changePage(goPage)" v-if="paginator.totalPage >= 5 && simplePagination ">
+                <button @click="changePage(goPage)" v-if="paginator.totalPage >= 5 && simplePagination "> Go </button>
+
                 <a href="javascript:void(0)"
                    :class="{disabled : paginator.currentPage === 1 }"
                    @click="changePage(1)">
@@ -60,6 +57,10 @@ export default {
         callback: {},
         subscriber: String,
         route_name: String,
+        simple_pagination:{
+            type:Boolean,
+            default:false
+        },
         show_per_page: {
             type: Boolean,
             default: false
@@ -93,6 +94,17 @@ export default {
     watch:{
         $route(){
             this.loadPage(this.currentPage)
+        }
+    },
+    computed:{
+        simplePagination(){
+            if(this.simple_pagination){
+                return false
+            }else if(this.show_per_page){
+                return true
+            }else{
+                return true
+            }
         }
     },
     methods: {
