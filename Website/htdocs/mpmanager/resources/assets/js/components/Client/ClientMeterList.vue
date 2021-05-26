@@ -5,6 +5,7 @@
             :title="$tc('words.meter',2)"
             color="green"
             :subscriber="subscriber"
+            :simple_pagination="true"
         >
             <div class="md-layout md-gutter">
                 <div class="md-layout-item md-medium-size-100 md-large-size-100 md-small-size-100">

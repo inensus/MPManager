@@ -6,6 +6,7 @@
             :paginator="paginator"
             :search="false"
             :subscriber="subscriber"
+            :simple_pagination="true"
 
         >
                 <md-table v-model="list" md-sort="id" md-sort-order="desc">

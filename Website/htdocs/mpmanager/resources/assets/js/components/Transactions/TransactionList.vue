@@ -144,7 +144,6 @@
                     :search="false"
                     :subscriber="subscriber"
                     :route_name="'/transactions'"
-                    :show_per_page="true"
                     color="green"
                     :button="true"
                     :empty-state-create-button="false"

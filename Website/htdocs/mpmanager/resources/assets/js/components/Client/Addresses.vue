@@ -9,6 +9,7 @@
             @widgetAction="addNewAddress"
             :paginator="addresses.paginator"
             :subscriber="subscriber"
+            :simple_pagination="true"
         >
             <md-table style="width:100%" v-model="addresses.list" md-card md-fixed-header>
                 <md-table-row @click="editAddress(item, index)" slot="md-table-row" slot-scope="{ item, index }">

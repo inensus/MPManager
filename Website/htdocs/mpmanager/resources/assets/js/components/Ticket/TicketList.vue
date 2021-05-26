@@ -17,7 +17,8 @@
                             :subscriber="subscriber.opened"
                             :paginator="ticketService.openedPaginator"
                             :resetKey="resetKey"
-                            color="green">
+                            color="green"
+                            :simple_pagination="true">
                         <ticket-item
                             :allow-comment="true"
                             :ticket-list="ticketService.openedList"
@@ -31,7 +32,8 @@
                             :subscriber="subscriber.closed"
                             :paginator="ticketService.closedPaginator"
                             :resetKey="resetKey"
-                            color="red">
+                            color="red"
+                            :simple_pagination="true">
                         <ticket-item
                             :allow-comment="true"
                             :ticket-list="ticketService.closedList"

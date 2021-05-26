@@ -4,6 +4,7 @@
         :title="$tc('phrases.agentTicket',1)"
         :paginator="agentTicketService.paginator"
         color="green"
+        :simple_pagination="true"
     >
         <ticket-item
             :allow-comment="true"

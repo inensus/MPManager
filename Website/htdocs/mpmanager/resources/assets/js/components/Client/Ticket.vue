@@ -9,6 +9,7 @@
             :button-text="$tc('phrases.newTicket')"
             @widgetAction="openModal"
             :resetKey="resetKey"
+            :simple_pagination="true"
         >
             <ticket-item
                 :allow-lock="false"

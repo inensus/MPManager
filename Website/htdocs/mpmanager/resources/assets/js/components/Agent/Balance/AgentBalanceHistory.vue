@@ -13,6 +13,7 @@
         :resetKey="resetKey"
         :show_per_page="true"
         color="green"
+        :simple_pagination="true"
     >
 
         <div>

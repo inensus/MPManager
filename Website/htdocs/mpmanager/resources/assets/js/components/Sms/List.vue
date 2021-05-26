@@ -5,6 +5,7 @@
                 <widget
                     :subscriber="subscriber"
                     :paginator="smsService.paginator"
+                    :simple_pagination="true"
                 >
                     <div class="sticky">
                         <md-field>
