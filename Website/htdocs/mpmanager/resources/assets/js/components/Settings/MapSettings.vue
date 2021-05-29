@@ -1,7 +1,6 @@
 <template>
     <div>
         <h2>Map Settings</h2>
-
         <div class="md-layout md-gutter md-size-100">
             <div class="md-layout-item md-layout md-gutter md-size-100">
                 <div class="md-layout-item md-size-25 md-small-size-50">
@@ -18,7 +17,6 @@
                             </md-input>
                             <span class="md-error">{{ errors.first('Zoom')}}</span>
                         </md-field>
-
                 </div>
                 <div class="md-layout-item md-size-25 md-small-size-50">
                     <md-field>
@@ -29,20 +27,20 @@
 
                     </md-field>
                 </div>
-                <div class="md-layout-item md-size-50 md-small-size-100" v-if="bingMaps">
+                <div class="md-layout-item md-size-50 md-small-size-100" v-if="bingMapsProviderSelected">
                     <md-field :class="{'md-invalid': errors.has('Bing Api Key')}">
-                        <label for="apiKey" class="bing-api-key">Bing Map Api Key (Click <b><a href="https://www.bingmapsportal.com/" target="_blank">here</a></b> to get api key.)</label>
+                        <label for="apiKey" class="bing-api-key">Bing Map Api Key (Click <b><a
+                            href="https://www.bingmapsportal.com/" target="_blank">here</a></b> to get api key.)</label>
                         <md-input
-                        id="apiKey"
-                        name="Bing Api Key"
-                        v-model="mapSettingsService.mapSettings.bingMapApiKey"
-                        v-validate="'required|min:3'"></md-input>
-                        <span class="md-error">{{ errors.first('Bing Api Key')}}</span>
+                            id="apiKey"
+                            name="Bing Api Key"
+                            v-model="mapSettingsService.mapSettings.bingMapApiKey"
+                            v-validate="'required|min:3'"></md-input>
+                        <span class="md-error">{{ errors.first('Bing Api Key') }}</span>
                     </md-field>
                 </div>
 
             </div>
-
             <div class="md-layout-item md-layout md-size-100">
                 <md-subheader>Set Map Starting Points</md-subheader>
                 <div class="md-layout-item md-layout md-gutter md-size-100">
@@ -78,25 +76,21 @@
                         </md-field>
                     </div>
                 </div>
-
             </div>
-
-
         </div>
-        <div class="md-layout md-size-100" @click="getLatLng">
+        <div class="md-layout md-size-100" @click="getLatLon">
             <Map
-                    :center="center"
-                    ref="map"
-                    :mutating-center="mutatingCenter"
-                    :zoom="zoom"
-                    :key="mapKey"
+                :center="center"
+                ref="map"
+                :mutating-center="mutatingCenter"
+                :zoom="zoom"
+                :key="mapKey"
             />
         </div>
         <div class="md-layout md-alignment-bottom-right">
             <md-button class="md-primary md-dense md-raised" @click="updateMapSettings">Save</md-button>
         </div>
         <md-progress-bar v-if="progress" md-mode="indeterminate"></md-progress-bar>
-
     </div>
 
 </template>
@@ -114,20 +108,16 @@ export default {
             type: Array,
         },
         mapSettings: {
-            type: Object
-        }
+            type: Object,
+        },
     },
-    computed:{
-        zoom(){
+    computed: {
+        zoom () {
             return Number(this.mapSettingsService.mapSettings.zoom)
         },
-        bingMaps(){
-            if(this.mapSettingsService.mapSettings.provider === 'Bing Maps'){
-                return true
-            }else{
-                return false
-            }
-        }
+        bingMapsProviderSelected () {
+            return this.mapSettingsService.mapSettings.provider === 'Bing Maps'
+        },
     },
     data () {
         return {
@@ -144,56 +134,52 @@ export default {
         this.$refs.map.map._onResize()
     },
     created () {
-        EventBus.$on('mapEvent', this.setMapLatLng)
+        EventBus.$on('mapEvent', this.setMapLatLon)
         EventBus.$on('mapZoom', this.setMapZoom)
         this.fetchMapSettings()
     },
     methods: {
-        setMapLatLng (latlng) {
-            this.mapSettingsService.mapSettings.latitude = latlng.lat
-            this.mapSettingsService.mapSettings.longitude = latlng.lng
+        setMapLatLon (latLon) {
+            this.mapSettingsService.mapSettings.latitude = latLon.lat
+            this.mapSettingsService.mapSettings.longitude = latLon.lng
         },
         setMapZoom (zoom) {
             this.mapSettingsService.mapSettings.zoom = zoom
         },
-        async setCenterPoints () {
-            let validator = await this.$validator.validateAll()
-            if (!validator) {
-                return
-            } else {
-                this.mutatingCenter = [this.mapSettingsService.mapSettings.latitude, this.mapSettingsService.mapSettings.longitude]
-            }
-        },
+
         async updateMapSettings () {
-            this.progress = true
-            let validator = await this.$validator.validateAll()
+            this.showLoadingIndicator()
+            const validator = await this.$validator.validateAll()
             if (!validator) {
-                this.progress = false
+                this.hideLoadingIndicator()
                 return
             }
-            if(this.bingMaps){
-                if(await this.mapSettingsService.checkBingMapApiKey()){
-                    this.alertNotify('error', 'Bing Map Api Key is wrong, please check again')
-                    this.progress = false
-                    return
-                }
+
+            if (this.bingMapsProviderSelected && !(await this.mapSettingsService.checkBingMapApiKey())) {
+                this.alertNotify('error', 'Bing Map Api Key is wrong, please check again')
+                this.hideLoadingIndicator()
+                return
             }
             try {
                 await this.mapSettingsService.update()
-                this.$store.dispatch('settings/setMapSettings', this.mapSettingsService.mapSettings).then(() => {
-                    this.mapKey += 1
-                }).catch((err) => {
-                    console.log(err)
-                })
-                this.alertNotify('success', 'Updated Successfully')
+                this.updateMapSettingsStore()
+                this.reRenderMap()
             } catch (e) {
-                this.alertNotify('error', e.message)
+                this.alertNotify('error', 'Map settings update failed')
             }
-            this.progress = false
+            this.hideLoadingIndicator()
         },
-        getLatLng () {
+        getLatLon () {
             this.$refs.map.getLatLng()
             this.setCenterPoints()
+        },
+        async setCenterPoints () {
+            let validator = await this.$validator.validateAll()
+            if (validator) {
+                this.mutatingCenter = [
+                    this.mapSettingsService.mapSettings.latitude,
+                    this.mapSettingsService.mapSettings.longitude]
+            }
         },
         fetchMapSettings () {
             this.mapSettingsService.mapSettings = this.mapSettings
@@ -203,8 +189,26 @@ export default {
                 group: 'notify',
                 type: type,
                 title: type + ' !',
-                text: message
+                text: message,
             })
+        },
+
+        updateMapSettingsStore () {
+            this.$store.dispatch('settings/setMapSettings', this.mapSettingsService.mapSettings).then(() => {
+                this.alertNotify('success', 'Updated Successfully')
+            }).catch((err) => {
+                this.alertNotify('error', 'Map settings update failed')
+            })
+        },
+
+        showLoadingIndicator () {
+            this.progress = true
+        },
+        hideLoadingIndicator () {
+            this.progress = false
+        },
+        reRenderMap () {
+            this.mapKey++
         },
 
     },
