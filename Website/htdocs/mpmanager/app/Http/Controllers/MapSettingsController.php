@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Exceptions\BingApiUnauthorized;
 use App\Exceptions\InvalidBingApiKeyException;
 use App\Http\Resources\ApiResource;
 use App\Http\Services\BingMapApiService;
@@ -10,6 +9,7 @@ use App\Models\MapSettings;
 
 class MapSettingsController extends Controller
 {
+
     private $bingMapApiService;
 
     public function __construct(BingMapApiService $bingMapApiService)
@@ -47,5 +47,4 @@ class MapSettingsController extends Controller
         }
         return ApiResource::make(['authentication' => $apiAuthentication]);
     }
-
 }

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Http\Services;
 
 use App\Exceptions\InvalidBingApiKeyException;
@@ -9,6 +8,7 @@ use GuzzleHttp\Exception\GuzzleException;
 
 class BingMapApiService
 {
+
     private $httpClient;
 
     public function __construct(Client $httpClient)
@@ -32,7 +32,6 @@ class BingMapApiService
 
     private function isRequestAuthenticated($body): bool
     {
-
         try {
             $jsonBody = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
             $authenticated = $jsonBody['statusDescription'] === "OK";
