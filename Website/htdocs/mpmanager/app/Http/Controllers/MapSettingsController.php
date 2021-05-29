@@ -2,21 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\BingApiUnauthorized;
+use App\Exceptions\InvalidBingApiKeyException;
 use App\Http\Resources\ApiResource;
-use App\Models\MapSettings;
 use App\Http\Services\BingMapApiService;
+use App\Models\MapSettings;
 
 class MapSettingsController extends Controller
 {
-    /**
-     * @MapSettings
-     */
+    private $bingMapApiService;
 
-    private $mapSettings;
-
-    public function __construct(MapSettings $mapSettings, BingMapApiService $bingMapApiService)
+    public function __construct(BingMapApiService $bingMapApiService)
     {
-        $this->mapSettings = $mapSettings;
         $this->bingMapApiService = $bingMapApiService;
     }
 
@@ -25,28 +22,30 @@ class MapSettingsController extends Controller
         return new ApiResource(MapSettings::all());
     }
 
-    public function update(MapSettings $mapSettings): ApiResource
+    public function update($id): ApiResource
     {
-        $mapSettings = MapSettings::updateOrCreate(
-            [
-              'id' => request('id')
-            ],
-            [
-                'zoom' => request('zoom'),
-                'latitude' => request('latitude'),
-                'longitude' => request('longitude'),
-                'provider' => request('provider'),
-                'bingMapApiKey' => request('bingMapApiKey')
-            ]
-        );
+        $mapSettings = MapSettings::query()
+            ->updateOrCreate(
+                ['id' => $id],
+                [
+                    'zoom' => request('zoom'),
+                    'latitude' => request('latitude'),
+                    'longitude' => request('longitude'),
+                    'provider' => request('provider'),
+                    'bingMapApiKey' => request('bingMapApiKey')
+                ]
+            );
         return new ApiResource([$mapSettings->fresh()]);
     }
 
-    public function checkBingApiKey(): ApiResource
+    public function checkBingApiKey($key): ApiResource
     {
-        $key = \request('key');
-        return new ApiResource($this->bingMapApiService->checkBingApiKey($key));
-
+        try {
+            $apiAuthentication = $this->bingMapApiService->checkAuthenticationKey($key);
+        } catch (InvalidBingApiKeyException $exception) {
+            $apiAuthentication = false;
+        }
+        return ApiResource::make(['authentication' => $apiAuthentication]);
     }
 
 }
