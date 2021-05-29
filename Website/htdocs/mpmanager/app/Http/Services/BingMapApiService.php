@@ -3,7 +3,7 @@
 
 namespace App\Http\Services;
 
-use App\Exceptions\BingApiUnauthorized;
+use App\Exceptions\InvalidBingApiKeyException;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 
@@ -17,13 +17,28 @@ class BingMapApiService
     }
 
 
-    public function checkAuthenticationKey($key)
+    /**
+     * @throws InvalidBingApiKeyException
+     */
+    public function checkAuthenticationKey($key): bool
     {
         try {
-            $response = $this->httpClient->get(config('services.bingApiURL') . $key);
+            $response = $this->httpClient->get(config('services.bingApiURL') . $key)->getBody()->getContents();
         } catch (GuzzleException $e) {
-            throw new BingApiUnauthorized();
+            throw new InvalidBingApiKeyException($e->getMessage());
         }
-        return json_decode((string)$response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+        return $this->isRequestAuthenticated($response);
+    }
+
+    private function isRequestAuthenticated($body): bool
+    {
+
+        try {
+            $jsonBody = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
+            $authenticated = $jsonBody['statusDescription'] === "OK";
+        } catch (\JsonException $exception) {
+            $authenticated = false;
+        }
+        return $authenticated;
     }
 }
