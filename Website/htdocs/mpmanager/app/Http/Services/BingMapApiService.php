@@ -3,28 +3,27 @@
 
 namespace App\Http\Services;
 
+use App\Exceptions\BingApiUnauthorized;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 
 class BingMapApiService
 {
-    private $url = 'https://dev.virtualearth.net/REST/v1/Imagery/Metadata/Aerial?key=';
+    private $httpClient;
 
-    public function checkBingApiKey($key)
+    public function __construct(Client $httpClient)
     {
-        $client = new Client();
+        $this->httpClient = $httpClient;
+    }
 
-        try{
 
-            $response = $client->get($this->url . $key);
-
-            return json_decode((string)$response->getBody(), true);
-
-        }catch (GuzzleException $e){
-
-            return json_decode((string)$e->getMessage(), true);
-
+    public function checkAuthenticationKey($key)
+    {
+        try {
+            $response = $this->httpClient->get(config('services.bingApiURL') . $key);
+        } catch (GuzzleException $e) {
+            throw new BingApiUnauthorized();
         }
-
+        return json_decode((string)$response->getBody(), true, 512, JSON_THROW_ON_ERROR);
     }
 }
