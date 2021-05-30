@@ -11,24 +11,13 @@ namespace App\Http\Services;
 
 use App\Models\City;
 use App\Models\Cluster;
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
 
 class ClusterService
 {
 
-
-    /**
-     * @var Cluster
-     */
-    private $cluster;
-    /**
-     * @var City
-     */
-    private $city;
 
     private $meterService;
 
@@ -39,22 +28,16 @@ class ClusterService
     /**
      * ClusterService constructor.
      *
-     * @param Cluster            $cluster
-     * @param City               $city
      * @param MeterService       $meterService
      * @param TransactionService $transactionService
      * @param CityService        $cityService
      */
     public function __construct(
-        Cluster $cluster,
-        City $city,
         MeterService $meterService,
         TransactionService $transactionService,
         CityService $cityService
     ) {
         $this->meterService = $meterService;
-        $this->cluster = $cluster;
-        $this->city = $city;
         $this->cityService = $cityService;
         $this->transactionService = $transactionService;
     }
@@ -95,9 +78,9 @@ class ClusterService
     public function getClusterList(bool $withCities = false)
     {
         if (!$withCities) {
-            return $this->cluster->get();
+            return Cluster::query()->get();
         }
-        return $this->cluster::with('miniGrids')->get();
+        return Cluster::query()->with('miniGrids')->get();
     }
 
     public function getClustersCities($clusters, $callback): void
@@ -110,8 +93,14 @@ class ClusterService
     public function attachCities(Cluster $cluster, $cities): void
     {
         foreach ($cities as $cityId) {
-            $city = $this->city->find($cityId);
+            $city = City::query()->find($cityId);
             $cluster->cities()->save($city);
         }
+    }
+
+    public function geoLocation($clusterId)
+    {
+        $cluster = Cluster::select('geo_data')->find($clusterId);
+        return $cluster->geo_data;
     }
 }

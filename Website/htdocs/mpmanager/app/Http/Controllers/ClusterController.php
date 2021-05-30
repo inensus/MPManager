@@ -11,10 +11,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ClusterRequest;
 use App\Http\Resources\ApiResource;
-use App\Http\Services\CityService;
 use App\Http\Services\ClusterService;
-use App\Http\Services\MeterService;
-use App\Http\Services\TransactionService;
 use App\Models\Cluster;
 
 class ClusterController
@@ -24,18 +21,6 @@ class ClusterController
      */
     private $clusterService;
     /**
-     * @var CityService
-     */
-    private $cityService;
-    /**
-     * @var MeterService
-     */
-    private $meterService;
-    /**
-     * @var TransactionService
-     */
-    private $transactionService;
-    /**
      * @var Cluster
      */
     private $cluster;
@@ -44,22 +29,13 @@ class ClusterController
      * ClusterController constructor.
      *
      * @param ClusterService     $clusterService
-     * @param CityService        $cityService
-     * @param MeterService       $meterService
-     * @param TransactionService $transactionService
      * @param Cluster            $cluster
      */
     public function __construct(
         ClusterService $clusterService,
-        CityService $cityService,
-        MeterService $meterService,
-        TransactionService $transactionService,
         Cluster $cluster
     ) {
         $this->clusterService = $clusterService;
-        $this->cityService = $cityService;
-        $this->meterService = $meterService;
-        $this->transactionService = $transactionService;
         $this->cluster = $cluster;
     }
 
@@ -82,37 +58,21 @@ class ClusterController
 
     public function show($id): ApiResource
     {
-        $cluster = $this->cluster::with('miniGrids.location')
-            ->find($id);
+        $cluster = Cluster::with('miniGrids.location')->find($id);
         return new ApiResource($cluster);
     }
 
     public function showGeo($id): ApiResource
     {
-        $cluster = Cluster::select('geo_data')->where('id', $id)->first();
-
-        return new ApiResource($cluster['geo_data']);
+        return ApiResource::make($this->clusterService->geoLocation($id));
     }
 
 
     public function store(ClusterRequest $request): ApiResource
     {
-        //type of geo data its either remote or manual
-        $geoType = $request->get('geo_type');
-        //holds coordinates or external url which contains a geojson. Depends on geoType
-        $geoData = $request->get('geo_data');
-        $name = $request->get('name');
-        //a list of city ids which will be attached to the new cluster
-        $cities = $request->get('cities');
-        //the person who has the responsibility for that cluster
-        $managerId = $request->get('manager_id');
-
-        //save cluster
-        $this->cluster->name = $name;
-        $this->cluster->manager_id = $managerId;
-        $this->cluster->geo_data = $geoData;
-        $this->cluster->save();
-
-        return new ApiResource($this->cluster);
+        $cluster = Cluster::query()->create(
+            request()->only(['name', 'manager_id', 'geo_data'])
+        );
+        return new ApiResource($cluster);
     }
 }
