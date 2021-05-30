@@ -163,7 +163,6 @@ export default {
             try {
                 await this.mapSettingsService.update()
                 this.updateMapSettingsStore()
-                this.reRenderMap()
             } catch (e) {
                 this.alertNotify('error', 'Map settings update failed')
             }
@@ -196,7 +195,8 @@ export default {
         updateMapSettingsStore () {
             this.$store.dispatch('settings/setMapSettings', this.mapSettingsService.mapSettings).then(() => {
                 this.alertNotify('success', 'Updated Successfully')
-            }).catch((err) => {
+                this.reRenderMap()
+            }).catch(() => {
                 this.alertNotify('error', 'Map settings update failed')
             })
         },
