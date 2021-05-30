@@ -48,10 +48,9 @@ export class MapSettingsService {
 
     async checkBingMapApiKey () {
         try {
-            const { _, data } = await this.repository.checkBingApiKey(
+            const data  = await this.repository.checkBingApiKey(
                 this.mapSettings.bingMapApiKey)
-            console.log('bing result', data.data.authentication)
-            return data.data.authentication
+            return data.data.data.authentication
         } catch (error) {
             return new ErrorHandler(error.response.data.message, 'http')
         }
