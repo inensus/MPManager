@@ -39,9 +39,11 @@ export default {
             let clusters = await this.clusterService.getClusters()
             let geoData = []
             clusters.forEach((e) => {
-                this.clusterGeo = e.geo[0]
-                this.clusterGeo.clusterId = e.id
-                geoData.push(this.clusterGeo)
+                if(e.geo_data !== null ){
+                    this.clusterGeo = e.geo_data
+                    this.clusterGeo.clusterId = e.id
+                    geoData.push(this.clusterGeo)
+                }
             })
             this.geoData = geoData
         },

@@ -83,7 +83,7 @@ Route::group(['prefix' => '/clusters', 'middleware' => 'jwt.verify'], static fun
     Route::get('/{id}/revenue', 'RevenueController@getClusterRevenue');
     Route::post('/', 'ClusterController@store');
     Route::get('/{id}', 'ClusterController@show');
-    Route::get('/{cluster}/geo', 'ClusterController@showGeo');
+    Route::get('/{id}/geo', 'ClusterController@showGeo');
     Route::get('/{id}/cities-revenue', 'RevenueController@getPeriodicMiniGridsRevenue');
 });
 // Connection-Groups
