@@ -23,7 +23,7 @@ class BingMapApiService
     public function checkAuthenticationKey($key): bool
     {
         try {
-            $response = $this->httpClient->get(config('services.bingApiURL') . $key)->getBody()->getContents();
+            $response = $this->httpClient->get(config('services.bingMapApi.url') . $key)->getBody()->getContents();
         } catch (GuzzleException $e) {
             throw new InvalidBingApiKeyException($e->getMessage());
         }

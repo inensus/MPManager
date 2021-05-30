@@ -107,6 +107,8 @@ return [
     'agent' => [
         'key' => 'key=AAAAdSTAIwc:APA91bHl4w-l4QSlHFPbfM-soHzf0hf1rQSgV-ubjzSxALNYjb_lnJigRvyWvp1IybrZTDfM-CaZ7yFBSoZh47V49fdOz5gLCSriN5T1qmLJ40S1WWUCLWNV32g7YPaz-6lcxbunyHcB',
     ],
-    'bingApiURL' => 'https://dev.virtualearth.net/REST/v1/Imagery/Metadata/Aerial?key=',
+    'bingMapApi' => [
+        'url' => 'https://dev.virtualearth.net/REST/v1/Imagery/Metadata/Aerial?key=',
+    ],
 
 ];
