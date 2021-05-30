@@ -13,6 +13,7 @@ import L from 'leaflet'
 import 'leaflet.markercluster'
 import 'leaflet.featuregroup.subgroup'
 import 'leaflet-draw'
+import 'leaflet-bing-layer'
 
 import { MappingService } from '../services/MappingService'
 import { EventBus } from './eventbus'
@@ -131,12 +132,24 @@ export default {
             dataLoggerActives: null,
             dataLoggerInactives: null,
             geoDataItems: [],
-            parentGroup: null
+            parentGroup: null,
         }
 
     },
     destroyed () {
         this.map = null
+    },
+    computed:{
+        mapProvider(){
+            if(this.$store.getters['settings/getMapSettings'].provider === 'Bing Maps'){
+                return true
+            }else{
+                return false
+            }
+        },
+        bingMapApiKey(){
+            return this.$store.getters['settings/getMapSettings'].bingMapApiKey
+        }
     },
     mounted () {
         this.drawingOptions = {
@@ -154,6 +167,7 @@ export default {
                 remove: this.remove,
                 edit: this.edit
             }
+
         }
         this.generateMap(this.drawingOptions, this.center)
 
@@ -322,12 +336,17 @@ export default {
         generateMap (options, center) {
             this.mapInitialized = true
             this.map = L.map('map').setView(center, this.zoom)
-            L.tileLayer(this.osmUrl, { maxZoom: this.maxZoom, attribution: this.osmAttrib }).addTo(this.map)
+            if(this.mapProvider){
+                L.tileLayer.bing(this.bingMapApiKey, {maxZoom: this.maxZoom, attribution: this.osmAttrib}).addTo(this.map)
+            }else{
+                L.tileLayer(this.osmUrl, { maxZoom: this.maxZoom, attribution: this.osmAttrib }).addTo(this.map)
+            }
             this.editableLayer = new L.FeatureGroup()
             this.markersLayer = new L.markerClusterGroup({
                 chunkedLoading: true,
                 spiderfyOnMaxZoom: false
             })
+
 
             this.map.addLayer(this.editableLayer)
             options.edit.featureGroup = this.editableLayer
@@ -442,7 +461,7 @@ export default {
                 this.map.setView([geoData.lat, geoData.lon], this.zoom)
             }
             EventBus.$emit('getSearchedGeoDataItems', this.geoDataItems)
-        },     
+        },
         setMarker (markerLocations, isConstant) {
 
             if (isConstant) {
@@ -585,7 +604,15 @@ export default {
                 lng: this.map.getCenter().lng.toFixed(4)
             }
             EventBus.$emit('mapEvent', latlng)
-        }
+        },
+        alertNotify (type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message
+            })
+        },
     },
 
     watch: {

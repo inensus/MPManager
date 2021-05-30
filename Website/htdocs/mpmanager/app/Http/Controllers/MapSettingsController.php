@@ -2,20 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\InvalidBingApiKeyException;
 use App\Http\Resources\ApiResource;
+use App\Http\Services\BingMapApiService;
 use App\Models\MapSettings;
 
 class MapSettingsController extends Controller
 {
-    /**
-     * @MapSettings
-     */
 
-    private $mapSettings;
+    private $bingMapApiService;
 
-    public function __construct(MapSettings $mapSettings)
+    public function __construct(BingMapApiService $bingMapApiService)
     {
-        $this->mapSettings = $mapSettings;
+        $this->bingMapApiService = $bingMapApiService;
     }
 
     public function index(): ApiResource
@@ -23,18 +22,29 @@ class MapSettingsController extends Controller
         return new ApiResource(MapSettings::all());
     }
 
-    public function update(MapSettings $mapSettings): ApiResource
+    public function update($id): ApiResource
     {
-        $mapSettings = MapSettings::updateOrCreate(
-            [
-              'id' => request('id')
-            ],
-            [
-                'zoom' => request('zoom'),
-                'latitude' => request('latitude'),
-                'longitude' => request('longitude')
-            ]
-        );
+        $mapSettings = MapSettings::query()
+            ->updateOrCreate(
+                ['id' => $id],
+                [
+                    'zoom' => request('zoom'),
+                    'latitude' => request('latitude'),
+                    'longitude' => request('longitude'),
+                    'provider' => request('provider'),
+                    'bingMapApiKey' => request('bingMapApiKey')
+                ]
+            );
         return new ApiResource([$mapSettings->fresh()]);
+    }
+
+    public function checkBingApiKey($key): ApiResource
+    {
+        try {
+            $apiAuthentication = $this->bingMapApiService->checkAuthenticationKey($key);
+        } catch (InvalidBingApiKeyException $exception) {
+            $apiAuthentication = false;
+        }
+        return ApiResource::make(['authentication' => $apiAuthentication]);
     }
 }
