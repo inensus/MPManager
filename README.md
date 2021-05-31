@@ -1,6 +1,6 @@
 ## System Requirements
 
-PHP ^7.3
+PHP ^8.0
 
 Node ^v14.3
 
@@ -63,7 +63,7 @@ Change the `api_user`, `api_password`, and `ips` in `services.php`
         'ips' => [
             'ALLOWED_IPS TO SEND YOU TRANSACTION DATA'
         ],
-    ],
+    ]
 ```
 The following change should be done in the `.env` file
 ```bash
