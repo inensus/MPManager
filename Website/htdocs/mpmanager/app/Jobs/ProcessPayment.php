@@ -48,5 +48,4 @@ class ProcessPayment implements ShouldQueue
             ->allOnConnection('redis')
             ->onQueue(config('services.queues.energy'));
     }
-
 }
