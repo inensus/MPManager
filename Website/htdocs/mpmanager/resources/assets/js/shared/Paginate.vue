@@ -1,13 +1,13 @@
 <template>
     <div v-if="paginator && paginator.totalPage > 1" class="md-layout md-gutter md-size-100 pagination-area">
-        <div class="md-layout-item md-size-25 pagination-entry" v-if="simplePagination">
+        <div class="md-layout-item md-size-25 pagination-entry" v-if="!simplePagination">
             {{$tc('phrases.paginateLabels',1,{from: paginator.from, to: paginator.to, total:
             paginator.totalEntries})}}
         </div>
-        <div class="md-layout-item md-gutter" :class="{  'md-size-70' : simplePagination}">
+        <div class="md-layout-item md-gutter" :class="{  'md-size-100' : simplePagination}">
             <div class="md-layout pagination">
-                <span v-if="simplePagination">{{ $tc('phrases.perPage') }}:</span>
-                <select v-if="simplePagination" name="per_page" id="per_page" @change="defaultItemsPerPage">
+                <span v-if="showPerPage">{{ $tc('phrases.perPage') }}:</span>
+                <select v-if="showPerPage" name="per_page" id="per_page" @change="defaultItemsPerPage">
                     <option value="15">15</option>
                     <option value="25">25</option>
                     <option value="30">30</option>
@@ -16,8 +16,8 @@
                     <option value="200">200</option>
                     <option value="300">300</option>
                 </select>
-                <input type="number" v-model="goPage" @change="changePage(goPage)" v-if="paginator.totalPage >= 5 && simplePagination ">
-                <button @click="changePage(goPage)" v-if="paginator.totalPage >= 5 && simplePagination "> Go </button>
+                <input type="number" v-model="goPage" @change="changePage(goPage)" v-if="paginator.totalPage >= 5 && !simplePagination ">
+                <button @click="changePage(goPage)" v-if="paginator.totalPage >= 5 && !simplePagination "> Go </button>
 
                 <a href="javascript:void(0)"
                    :class="{disabled : paginator.currentPage === 1 }"
@@ -29,7 +29,8 @@
                    @click="changePage(--paginator.currentPage)">
                     <md-icon :class="{disabled : paginator.currentPage === 1 }">chevron_left</md-icon>
                 </a>
-                <span>{{ paginator.currentPage }} of {{ formatTotalPages(paginator.totalPage) }}</span>
+                <input type="number" v-model="goPage" @change="changePage(goPage)" v-if="simplePagination ">
+                <span>{{ !simplePagination ? paginator.currentPage : '' }} of {{ formatTotalPages(paginator.totalPage) }}</span>
                 <a href="javascript:void(0)"
                    :class="{disabled : paginator.currentPage === paginator.totalPage }"
                    @click="changePage(++paginator.currentPage)">
@@ -83,9 +84,8 @@ export default {
     },
     mounted () {
         //load the first page
-        let pageNumber = this.$route.query.page
+        this.loadFirstPage()
         this.term = this.$route.query
-        this.loadPage(pageNumber)
         EventBus.$on('loadPage', this.eventLoadPage)
     },
     destroyed () {
@@ -98,22 +98,43 @@ export default {
     },
     computed:{
         simplePagination(){
-            if(this.simple_pagination){
+            if (this.isMobile || this.simple_pagination){
+                return true
+            }else{
+                return false
+            }
+
+        },
+        isMobile(){
+            return this.$store.getters['resolution/getDevice']
+        },
+        showPerPage(){
+            if(this.simplePagination){
                 return false
             }else if(this.show_per_page){
                 return true
             }else{
-                return true
+                return false
             }
         }
     },
     methods: {
+        loadFirstPage(){
+            let pageNumber = this.$route.query.page
+            if(!pageNumber){
+                pageNumber = 1
+            }
+            this.loadPage(pageNumber)
+        },
         changePage(pageNumber){
+            if(pageNumber <= 0){
+                this.goPage = pageNumber = 1
+            }
             if(this.goPage !== pageNumber ) this.goPage = pageNumber
             if(!isNaN(pageNumber)){
                 if(pageNumber > this.paginator.totalPage){
                     this.alertNotify('error', 'Page Number is bigger than Total Pages Count')
-                    return
+                    this.goPage = pageNumber = this.paginator.totalPage
                 }
                 this.currentPage = pageNumber
                 this.$router.push({
