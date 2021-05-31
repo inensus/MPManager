@@ -22,6 +22,7 @@ export let resources = {
         download: '/api/reports/', //{id}/download
     },
     user: {
+        list: '/api/users',
         authData: '/user-data',
     },
     address: {
@@ -36,7 +37,7 @@ export let resources = {
     },
 
     admin: {
-        list: '/api/admin/users',
+        list: '/api/users',
         login: '/api/auth/login',
         refresh: '/api/auth/refresh',
     },

@@ -88,6 +88,13 @@ class AgentService implements IUserService
         return $agent;
     }
 
+    /**
+     * @return void
+     */
+    public function create(array $userData)
+    {
+        // TODO: Implement create() method.
+    }
 
     /**
      * @param $agent
@@ -119,11 +126,11 @@ class AgentService implements IUserService
             ->where('id', $agent->id)->firstOrFail();
     }
 
-    public function updateDevice($agent, $deviceId): void
+
+    public function get($id)
     {
-        $agent->device_id = $deviceId;
-        $agent->update();
-        $agent->fresh();
+        return Agent::with(['person', 'person.addresses', 'miniGrid', 'commission'])
+            ->where('id', $id)->firstOrFail();
     }
 
     /**
@@ -150,9 +157,16 @@ class AgentService implements IUserService
         return $newPassword;
     }
 
-    public function list($relations): LengthAwarePaginator
+    public function list(): LengthAwarePaginator
     {
         return Agent::with(['person.addresses', 'miniGrid'])->paginate(config('settings.paginate'));
+    }
+
+    public function updateDevice($agent, $deviceId): void
+    {
+        $agent->device_id = $deviceId;
+        $agent->update();
+        $agent->fresh();
     }
 
     public function setFirebaseToken($agent, $firebaseToken): void
@@ -166,7 +180,6 @@ class AgentService implements IUserService
     {
         return $agent->balance;
     }
-
 
     public function getLastReceiptDate($agent)
     {
@@ -228,23 +241,6 @@ class AgentService implements IUserService
     public function addCitizenship(Person $person, Country $country): Model
     {
         return $person->citizenship()->associate($country);
-    }
-
-    /**
-     * @return void
-     */
-    public function create(array $userData)
-    {
-        // TODO: Implement create() method.
-    }
-
-    /**
-     * @return Model|Builder
-     */
-    public function getAgentDetail(Agent $agent)
-    {
-        return Agent::with(['person', 'person.addresses', 'miniGrid', 'commission'])
-            ->where('id', $agent->id)->firstOrFail();
     }
 
     public function deleteAgent(Agent $agent): void

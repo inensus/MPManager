@@ -55,6 +55,7 @@ import SmsVariableDefaultValueRepository from './SmsVariableDefaultValueReposito
 import PaymentHistoryRepository from './PaymentHistoryRepository'
 import BatchRevenueRepository from './BatchRevenueRepository'
 import TargetRepository from './TargetRepository'
+import UserPasswordRepository from './UserPasswordRepository'
 
 const repositories = {
     'address': AddressRepository,
@@ -113,7 +114,8 @@ const repositories = {
     'smsVariableDefaultValue':SmsVariableDefaultValueRepository,
     'target': TargetRepository,
     'batchRevenue': BatchRevenueRepository,
-    'paymentHistory': PaymentHistoryRepository
+    'paymentHistory': PaymentHistoryRepository,
+    'userPassword':UserPasswordRepository
 }
 
 export default {
