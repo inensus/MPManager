@@ -49,37 +49,4 @@ class ProcessPayment implements ShouldQueue
             ->onQueue(config('services.queues.energy'));
     }
 
-
-    /**
-     * Entry point for Loan Payments
-     *
-     * @param Transaction $transaction
-     */
-    private function handleLoanPayment(Transaction $transaction): void
-    {
-    }
-
-    /**
-     * Entry point for Energy Payments
-     *
-     * @param Transaction $transaction
-     */
-    private function handleEnergyPayment(Transaction $transaction): void
-    {
-        try {
-            //create an object for the token job
-            $transactionData = TransactionDataContainer::initialize($transaction);
-        } catch (Exception $e) {
-            event('transaction.failed', [$transaction, $e->getMessage()]);
-            return;
-        }
-
-        // pay if necessary access rate
-        $transactionData->transaction->amount = AccessRate::payAccessRate($transactionData);
-
-        event('token.generate', [$transactionData]);
-        // if token success send sms
-
-        //fire transaction successful event.
-    }
 }
