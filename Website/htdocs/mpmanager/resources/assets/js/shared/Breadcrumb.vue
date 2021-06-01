@@ -1,19 +1,17 @@
 <template>
-    <div class="breadcrumb">
-
+    <div class="breadcrumb" :key="renderKey">
         <ul>
             <li
                 v-for="(breadcrumb, index) in breadcrumbList"
                 :key="index"
                 @click="routeTo(index)"
-                :class="{'linked': breadcrumb.type === 'base'}">
-                <div v-if="breadcrumb.type === 'final_target'">
-                    {{$tc('words.detail',2)}}: {{ $route.params[breadcrumb.target]}}
+                :class="{'linked': breadcrumbList.length !== index}">
+                <div v-if="breadcrumb.level === 'detail'">
+                    <u> {{ translateItem(breadcrumb.name) }}/{{breadcrumb.targetParam}}</u>
                 </div>
                 <div v-else>
                     <u>{{ translateItem(breadcrumb.name) }}</u>
                 </div>
-
             </li>
         </ul>
     </div>
@@ -26,13 +24,21 @@ export default {
     name: 'Breadcrumb',
     data () {
         return {
-            breadcrumbList: [],
-            prevRoute:null,
+            breadcrumbList:[],
+            breadcrumbListState:[],
+            prevRoute:[],
+            renderKey:0,
             translateItem: translateItem
         }
     },
     mounted () {
-        this.updateList()
+        this.breadcrumbListState = this.$store.getters['breadcrumb/getBreadcrumb']
+        if(this.breadcrumbListState['breadcrumb'].length > 0){
+            this.breadcrumbList = this.breadcrumbListState['breadcrumb']
+        }else{
+            this.updateList()
+        }
+
     },
     watch: {
         '$route' () {
@@ -42,15 +48,42 @@ export default {
     methods: {
         routeTo (index) {
             if (this.breadcrumbList[index].link) {
-                if(window.history.state !== null){
-                    this.$router.back()
-                }else {
+                if(this.breadcrumbList[index].level === 'detail'){
+                    this.$router.push(this.breadcrumbList[index].fullPath)
+                }else{
                     this.$router.push(this.breadcrumbList[index].link)
                 }
             }
         },
+        reRenderBreadcrumb(){
+            this.renderKey += 1
+        },
+        storeBreadcrumb(){
+            this.$store.dispatch('breadcrumb/setBreadcrumb', this.breadcrumbList).then(() => {
+            }).catch((err) => {
+                console.log(err)
+            })
+        },
         updateList () {
-            this.breadcrumbList = this.$route.meta.breadcrumb
+            if(this.$route.meta.breadcrumb){
+                let currentBreadcrumb = this.$route.meta.breadcrumb
+                if(this.$route.meta.breadcrumb.level === 'base'){
+                    this.breadcrumbList = []
+                }else{
+                    currentBreadcrumb.fullPath = currentBreadcrumb.link + '/' + this.$route.params[currentBreadcrumb.target]
+                    currentBreadcrumb.targetParam = this.$route.params[currentBreadcrumb.target]
+                }
+                const breadCrumbAlreadyVisited = this.breadcrumbList.findIndex(breadcrumbItem => breadcrumbItem.fullPath === currentBreadcrumb.fullPath )
+                if(breadCrumbAlreadyVisited !== -1) {
+                    this.breadcrumbList = this.breadcrumbList.slice(0,breadCrumbAlreadyVisited+1)
+                }else{
+                    this.breadcrumbList.push(currentBreadcrumb)
+                }
+            }else{
+                this.breadcrumbList = []
+            }
+            this.reRenderBreadcrumb()
+            this.storeBreadcrumb()
         }
     }
 }
@@ -78,7 +111,7 @@ ul > li {
     align-items: center;
 }
 ul > li:not(:last-child)::after {
-    content: '/';
+    content: '>';
     float: right;
     font-size: .8em;
     margin: 0 .5em;
