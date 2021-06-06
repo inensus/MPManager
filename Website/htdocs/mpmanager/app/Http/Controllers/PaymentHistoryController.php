@@ -158,8 +158,8 @@ class PaymentHistoryController
         $ad = 0;
         $accessDebt = Person::with('meters.meter.accessRatePayment')->find($personId);
         foreach ($accessDebt->meters as $m) {
-            if ($ad += $m->meter->accessRatePayment) {
-                $ad += $m->meter->accessRatePayment->debt;
+            if ($ad += $m->meter->access_rate_payment) {
+                $ad += $m->meter->access_rate_payment->debt;
             }
         }
         $deferredDebt = 0;
