@@ -3,6 +3,7 @@
     <widget
         :title="$tc('phrases.paymentFlow')"
         icon="money"
+        :subscriber="subscriber"
     >
         <md-card>
             <md-card-header>
@@ -14,7 +15,7 @@
             <md-card-content>
                 <div class="md-layout" >
                     <div class="md-layout-item md-size-100" >
-                        <GChart type="ColumnChart" :data="chartData" :options="chartOptions"/>
+                        <GChart type="ColumnChart" :data="paymentService.chartData" :options="chartOptions"/>
                     </div>
                     <div class="md-layout-item md-size-100">
                         {{ $tc('phrases.averagePeriod') }}
@@ -47,10 +48,11 @@
 </template>
 
 <script>
-import { resources } from '../../resources'
 import { currency } from '../../mixins/currency'
 import { GChart } from 'vue-google-charts'
 import Widget from '../../shared/widget'
+import { PaymentService } from '../../services/PaymentService'
+import { EventBus } from '../../shared/eventbus'
 
 export default {
     name: 'PaymentFlow',
@@ -61,6 +63,8 @@ export default {
     mixins: [currency],
     data () {
         return {
+            paymentService: new PaymentService(),
+            subscriber: 'payment-flow',
             monthNames: [
                 'Jan',
                 'Feb',
@@ -75,7 +79,6 @@ export default {
                 'Nov',
                 'Dec'
             ],
-            chartData: [],
             chartOptions: {
                 chart: {
                     title: this.$tc('phrases.paymentFlow'),
@@ -84,22 +87,21 @@ export default {
             },
             lastPayment: null,
             paymentPeriod: 0,
-            flow: [],
             loaded: false,
             accessDebt: 0,
             deferredDebt: 0,
         }
     },
     computed: {
-        paymentSum: function () {
+        paymentSum(){
             let cur = this.$store.getters['settings/getMainSettings'].currency
             let currentMonth = new Date().getMonth()
             let pass = true
             let total = 0
             let paidMonths = 0
-            for (let i = 0; i < this.flow.length; i++) {
+            for (let i = 0; i < this.paymentService.flow.length; i++) {
                 if (currentMonth < i) break
-                let flowVal = this.flow[i]
+                let flowVal = this.paymentService.flow[i]
                 if (flowVal > 0) {
                     pass = false
                 }
@@ -112,7 +114,6 @@ export default {
 
             let result = total === 0 ? 0 : Math.round((total / paidMonths), 2)
             let paymentFlow = [this.readable(result) + cur, paidMonths.toString() ]
-
             return (paymentFlow)
         }
     },
@@ -122,36 +123,40 @@ export default {
         this.getDebt(this.$store.getters.person.id)
     },
     methods: {
-        getFlow (personId) {
-            axios
-                .get(resources.paymenthistories + personId + '/flow')
-                .then(response => {
-                    this.chartData = [[this.$tc('words.month'), this.$tc('words.sale')]]
-                    this.flow = []
-                    //  this.flow = response.data;
-                    for (let i = 0; i < response.data.length; i++) {
-                        this.flow.push(parseInt(response.data[i]))
-                        this.chartData.push([
-                            this.monthNames[i],
-                            parseInt(response.data[i])
-                        ])
-                    }
-                })
+        async getFlow (personId) {
+            try{
+                await this.paymentService.getPaymentFlow(personId)
+                EventBus.$emit('widgetContentLoaded', this.subscriber, this.paymentService.chartData.length)
+            }catch (e) {
+                this.alertNotify('error', e.message)
+            }
         },
-        getPeriod (personId) {
-            axios
-                .get(resources.paymenthistories + personId + '/period')
-                .then(response => {
-                    this.paymentPeriod = response.data.data.difference
-                    this.lastPayment = response.data.data.lastTransaction
-                })
+        async getPeriod (personId) {
+            try{
+                let data = await this.paymentService.getPeriod(personId)
+                this.paymentPeriod = data.difference
+                this.lastPayment = data.lastTransaction
+            }catch (e) {
+                this.alertNotify('error', e.message)
+            }
         },
-        getDebt (personId) {
-            axios.get(resources.debt + personId).then(response => {
-                this.accessDebt = response.data.data.access_rate
-                this.deferredDebt = response.data.data.deferred
+        async getDebt (personId) {
+            try{
+                let data = await this.paymentService.getDebt(personId)
+                this.accessDebt = data.access_rate
+                this.deferredDebt = data.deferred
+            }catch (e) {
+                this.alertNotify('error', e.message)
+            }
+        },
+        alertNotify (type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message
             })
-        }
+        },
     }
 }
 </script>
