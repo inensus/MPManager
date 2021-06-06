@@ -24,18 +24,16 @@ export class ConnectionGroupService {
 
     updateList(data) {
         this.connectionGroups = []
-
-        for (let a in data) {
-
+        this.connectionGroups = data.map(connection => {
             let connectionGroup = {
-                id: data[a].id,
-                name: data[a].name,
-                updated_at: data[a].updated_at,
+                id: connection.id,
+                name: connection.name,
+                updated_at: connection.updated_at,
                 edit: false,
             }
-            this.connectionGroups.push(connectionGroup)
-            return this.connectionGroups
-        }
+            return connectionGroup
+        })
+        return this.connectionGroups
 
     }
 

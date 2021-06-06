@@ -38,8 +38,8 @@ export class SmsVariableDefaultValueService {
 
     prepareShownMessage (body, list) {
         this.shownMessage=''
-        list.forEach((e) => {
-            body = body.replaceAll(e.variable, e.value)
+        body = list.map((e) => {
+            return body.replaceAll(e.variable, e.value)
         })
         this.shownMessage = body
         if (!(body.length)){

@@ -79,41 +79,36 @@ export class TariffService {
             this.socialOptions = true
         }
         if ('pricingComponent' in tariff && tariffData.pricing_component.length > 0) {
-            for (let i = 0; i < tariffData.pricing_component.length; i++) {
-                let component = {
-                    id: tariffData.pricing_component[i].id,
-                    name: tariffData.pricing_component[i].name,
-                    price: tariffData.pricing_component[i].price
+            tariff.components = tariffData.pricing_component.map(component => {
+                let componentObj = {
+                    id: component.id,
+                    name: component.name,
+                    price: component.price
                 }
-                tariff.components.push(component)
-            }
+                return componentObj
+            })
         }
         if (tariffData.tou.length > 0) {
             let price = tariffData.price / 100
-            for (let i = 0; i < tariffData.tou.length; i++) {
-                let tou = {
-                    id: tariffData.tou[i].id,
-                    start: tariffData.tou[i].start,
-                    end: tariffData.tou[i].end,
-                    value: tariffData.tou[i].value,
-                    cost: (price * tariffData.tou[i].value) / 100
+            tariff.tous = tariffData.tou.map(tou => {
+                let touObj = {
+                    id: tou.id,
+                    start: tou.start,
+                    end: tou.end,
+                    value: tou.value,
+                    cost: (price * tou.value) / 100
                 }
-                tariff.tous.push(tou)
-            }
+                return touObj
+            })
         }
         return tariff
     }
 
     updateList (data) {
         this.list = []
-
-        for (let t in data) {
-
-            let tariff = this.fromJson(data[t])
-            this.list.push(tariff)
-
-        }
-
+        this.list = data.map(tariff => {
+            return this.fromJson(tariff)
+        })
     }
 
     async getTariffs () {
@@ -123,11 +118,9 @@ export class TariffService {
             if (response.status === 200 || response.status === 201) {
                 this.list = []
                 let data = response.data.data
-                for (let i in data) {
-                    let tariffData = data[i]
-                    let tariff = this.fromJson(tariffData)
-                    this.list.push(tariff)
-                }
+                this.list = data.map(tariff => {
+                    return this.fromJson(tariff)
+                })
                 return this.list
             } else {
                 return new ErrorHandler(response.error, 'http', response.status)
@@ -397,15 +390,13 @@ export class TariffService {
 
     findConflicts () {
         let overlaps = []
-        let data = []
-        this.tariff.tous.forEach((e) => {
-            overlaps = this.checkOverlaps(e, data)
-        })
+        overlaps = this.tariff.tous.map(this.checkOverlaps)
         this.conflicts = overlaps
     }
 
-    checkOverlaps (usage, data) {
+    checkOverlaps (usage) {
         let overlaps = []
+        let data = []
         let start = Number(usage.start.split(':')[0])
         let end = Number(usage.end.split(':')[0])
         // eslint-disable-next-line no-constant-condition

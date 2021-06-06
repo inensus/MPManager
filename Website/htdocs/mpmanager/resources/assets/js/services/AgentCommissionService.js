@@ -29,11 +29,7 @@ export class AgentCommissionService {
 
     updateList (data) {
         this.list = []
-        for (let a in data) {
-            let agentCommission = this.fromJson(data[a])
-
-            this.list.push(agentCommission)
-        }
+        this.list = data.map(this.fromJson)
         return this.list
     }
 

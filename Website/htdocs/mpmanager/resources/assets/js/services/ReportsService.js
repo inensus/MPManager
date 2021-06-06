@@ -19,17 +19,16 @@ export class ReportsService {
 
     updateList(reports) {
         this.list = []
-
-        for (let index in reports) {
-            let report = {
-                id: reports[index].id,
-                name: reports[index].name,
-                path: reports[index].path,
-                date: reports[index].date,
-                type: reports[index].type,
+        this.list = reports.map(report => {
+            let reportObj = {
+                id: report.id,
+                name: report.name,
+                path: report.path,
+                date: report.date,
+                type: report.type,
             }
-            this.list.push(report)
-        }
+            return reportObj
+        })
         return this.list
     }
 

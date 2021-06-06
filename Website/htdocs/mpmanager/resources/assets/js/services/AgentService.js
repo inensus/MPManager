@@ -54,24 +54,23 @@ export class AgentService {
         return this.agent
     }
 
+    agentFromJson(data){
+        let agent = {
+            id: data.id,
+            personId: data.person_id,
+            miniGrid: data.mini_grid.name,
+            deviceId: data.device_id,
+            name: data.name,
+            email: data.email,
+            balance: data.balance,
+
+        }
+        return agent
+    }
+
     updateList (data) {
         this.list = []
-
-        for (let a in data) {
-
-            let agent = {
-                id: data[a].id,
-                personId: data[a].person_id,
-                miniGrid: data[a].mini_grid.name,
-                deviceId: data[a].device_id,
-                name: data[a].name,
-                email: data[a].email,
-                balance: data[a].balance,
-
-            }
-            this.list.push(agent)
-        }
-
+        this.list = data.map(this.agentFromJson)
     }
 
     search (term) {
