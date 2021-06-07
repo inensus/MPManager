@@ -3,7 +3,7 @@ FROM php:8-apache
 # Install cron
 RUN apt-get update && \
     apt-get install -y \
-    install cron \
+    cron \
     libjpeg-dev \
     libfreetype6-dev \
     libxml2-dev \
