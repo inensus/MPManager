@@ -2,45 +2,36 @@
 
 namespace Tests\Feature;
 
-
 use App\Models\Manufacturer;
 use App\Models\Meter\Meter;
-use App\Models\Meter\MeterTariff;
-use App\Models\Meter\MeterType;
 use App\Models\Person\Person;
+use Database\Factories\MeterTariffFactory;
+use Database\Factories\MeterTypeFactory;
+use Database\Factories\PersonFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Bus;
 use Tests\TestCase;
 
-class CalinApi extends TestCase
+class CalinApiTest extends TestCase
 {
 
     use RefreshDatabase, WithFaker;
 
     /**
-     * @test
      * You need to have a valid registered meter by CALIN
      * for security reasons we can not provide a meter to perfom the test
      * This test passed on 28.06.2020 with a valid meter
      */
-    public function generateTokenForValidMeter()
+    public function test_generate_token_for_a_valid_meter(): void
     {
-
+        Bus::fake();
         $this->withoutExceptionHandling();
 
-        //create person
-        factory(Person::class)->create();
-        //create meter-tariff
-        factory(MeterTariff::class)->create();
+        PersonFactory::new()->create();
+        MeterTariffFactory::new()->create();
+        MeterTypeFactory::new()->create();
 
-        //create meter-type
-        MeterType::query()->create([
-            'online' => 0,
-            'phase' => 1,
-            'max_current' => 10,
-        ]);
-
-        //create calin manufacturer
         Manufacturer::query()->create([
             'name' => 'CALIN',
             'website' => 'http://www.calinmeter.com/',
@@ -65,11 +56,9 @@ class CalinApi extends TestCase
         ]);
 
         $api = app()->make(Manufacturer::query()->first()->api_name);
-        $token = $api->generateToken(Meter::query()->first(), 1);
+        $token = $api->chargeMeter(Meter::query()->first(), 1);
         $this->assertArrayHasKey('token', $token);
         $this->assertArrayHasKey('energy', $token);
 
     }
-
-
 }

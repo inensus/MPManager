@@ -1,9 +1,19 @@
 <?php
 
-use Faker\Generator as Faker;
+namespace Database\Factories;
 
-$factory->define(\App\Models\ConnectionType::class, function (Faker $faker) {
-    return [
-        'name' => $faker->name,
-    ];
-});
+use App\Models\ConnectionType;
+use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
+
+class ConnectionTypeFactory  extends Factory {
+
+    protected $model = ConnectionType::class;
+
+    public function definition(): array
+    {
+        return [
+            'name' => $this->faker->name,
+        ];
+    }
+}
