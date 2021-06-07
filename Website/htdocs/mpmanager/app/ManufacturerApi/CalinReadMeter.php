@@ -135,9 +135,9 @@ class CalinReadMeter implements IMeterReader
     {
         $prevReading = $this->consumption->where('meter_id', $consumption->meter_id)->latest()->first();
         if ($prevReading !== null) {
-            $consumption->daily_consumption = $consumption->total_consumption - $prevReading->total_consumption;
+            $consumption->consumption = $consumption->total_consumption - $prevReading->total_consumption;
         } else {
-            $consumption->daily_consumption = $consumption->total_consumption;
+            $consumption->consumption = $consumption->total_consumption;
         }
         return $consumption;
     }
