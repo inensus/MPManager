@@ -2,6 +2,7 @@
 
 namespace App\Models\Meter;
 
+use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -12,11 +13,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $id
  * @property int $meter_id
  * @property double $total_consumption
- * @property double $daily_consumption
+ * @property double $consumption
  * @property double $credit_on_meter
  * @property string $reading_date
  */
-class MeterConsumption extends Model
+class MeterConsumption extends BaseModel
 {
     protected $table = 'meter_consumptions';
 
