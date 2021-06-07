@@ -42,8 +42,7 @@ class UserResourceTest extends TestCase
             'Authorization' => "Bearer {$this->generateJWTTokenForUser($user)}"
         ]);
         $request->assertStatus(201);
-        $user = User::query()->latest()->first();
-        echo "user {$user->name}";
+        $user = User::latest('id')->first();
         self::assertTrue(Hash::check('1234123123', $user->password));
         self::assertEquals('ako@inensus.com', $user->email);
     }
@@ -56,36 +55,43 @@ class UserResourceTest extends TestCase
             'Authorization' => "Bearer {$this->generateJWTTokenForUser($user)}"
         ]);
         $request->assertStatus(200);
-        $user = User::query()->first();
+        $user =  User::latest('id')->first();
         self::assertEquals('Ali', $user->name);
     }
 
     public function test_update_user_password(): void
     {
+        $user = UserFactory::new()->create();
+
         $this->post('/api/admin', [
             'name' => 'Kemal',
             'email' => 'ako@inensus.com',
             'password' => '1234123123',
+        ], [
+            'Authorization' => "Bearer {$this->generateJWTTokenForUser($user)}"
         ]);
-        $user = User::first();
+        $user =User::latest('id')->first();
         $request = $this->put('/api/admin/' . $user->id, ['password' => 'password']);
         $request->assertStatus(200);
-        $user = User::first();
+        $user = User::latest('id')->first();
         $this->assertTrue(Hash::check('password', $user->password));
     }
 
     public function test_reset_user_password(): void
     {
+        $user = UserFactory::new()->create();
         $this->post('/api/admin', [
             'name' => 'Kemal',
             'email' => 'ako@inensus.com',
             'password' => '1234123123',
+        ], ['Authorization' => "Bearer {$this->generateJWTTokenForUser($user)}"
         ]);
-        $user = User::first();
+        $user = User::query()->latest()->first();
+
         $request = $this->post('/api/admin/forgot-password', ['email' => $user->email]);
         $request->assertStatus(200);
-        $userWitNewPassword = User::first();
-        $this->assertNotEquals($user->password, $userWitNewPassword->password);
+        $userWitNewPassword =  User::latest('id')->first();
+        $this->assertNotEquals('1234123123', $userWitNewPassword->password);
     }
 
     public function test_reset_password_with_non_existing_email(): void

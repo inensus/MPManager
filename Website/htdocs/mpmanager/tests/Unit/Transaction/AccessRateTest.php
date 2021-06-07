@@ -11,6 +11,9 @@ use App\Models\Meter\MeterParameter;
 use App\PaymentHandler\AccessRate;
 use Database\Factories\AccessRateFactory;
 use Database\Factories\AccessRatePaymentFactory;
+use Database\Factories\ConnectionGroupFactory;
+use Database\Factories\ConnectionTypeFactory;
+use Database\Factories\ManufacturerFactory;
 use Database\Factories\MeterTariffFactory;
 use Database\Factories\MeterTypeFactory;
 use Database\Factories\PersonFactory;
@@ -29,10 +32,10 @@ class AccessRateTest extends TestCase
     private function initApplication(): void
     {
         Bus::fake();
-        $manufacturer = Manufacturer::factory()->create();
+        $manufacturer = ManufacturerFactory::new()->create();
         $meterType = MeterTypeFactory::new()->create();
-        $connectionType = ConnectionType::factory()->create();
-        $connectionGroup = ConnectionGroup::factory()->create();
+        $connectionType = ConnectionTypeFactory::new()->create();
+        $connectionGroup = ConnectionGroupFactory::new()->create();
         $meter = new Meter();
         $meter->serial_number = '47000268748';
         $meter->meterType()->associate($meterType);

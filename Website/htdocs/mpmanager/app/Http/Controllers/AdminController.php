@@ -102,7 +102,7 @@ class AdminController extends Controller
                 [
                 'data' => [
                     'message' => 'Failed to send password email. Please try it again later.',
-                    'status_code' => 409
+                    'status_code' => 422
                 ]
                 ]
             );

@@ -70,10 +70,7 @@ class TokenProcessorTest extends TestCase
 
         $transactionContainer = TransactionDataContainer::initialize(Transaction::query()->first());
         $transactionContainer->chargedEnergy = 1;
-        $tp = new TokenProcessor(
-            app()->make(Manufacturer::query()->first()->api_name),
-            $transactionContainer
-        );
+        $tp = new TokenProcessor($transactionContainer);
         $tp->handle();
         $this->assertCount(1, MeterToken::all());
         $this->assertCount(1, PaymentHistory::all());
