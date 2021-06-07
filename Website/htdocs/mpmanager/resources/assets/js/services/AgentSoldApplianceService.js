@@ -28,10 +28,7 @@ export class AgentSoldApplianceService {
 
     updateList (data) {
         this.list = []
-        for (let a in data) {
-            let soldAppliance = this.fromJson(data[a])
-            this.list.push(soldAppliance)
-        }
+        this.list = data.map(this.fromJson)
         return this.list
     }
 }

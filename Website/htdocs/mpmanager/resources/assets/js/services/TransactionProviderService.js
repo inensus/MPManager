@@ -26,10 +26,9 @@ export class TransactionProviderService {
             name: 'All Network Providers',
             value: '-1'
         })
-        for (let tp in transactionProviders) {
-            this.list.push(this.fromJson(transactionProviders[tp]))
-        }
-
+        this.list = transactionProviders.map(tp => {
+            return this.fromJson(tp)
+        })
         return this.list
     }
 

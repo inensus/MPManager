@@ -63,32 +63,11 @@ export class SmsBodiesService {
         try {
             let smsBodiesPM = []
             if (tabName === 'confirmation') {
-                this.confirmationList.forEach((e) => {
-                    let smsBody = {
-                        id: e.id,
-                        reference: e.reference,
-                        body: e.body,
-                    }
-                    smsBodiesPM.push(smsBody)
-                })
+                smsBodiesPM.push(this.confirmationList.map(this.getSmsBody))
             } else if(tabName === 'reminder' ) {
-                this.reminderList.forEach((e) => {
-                    let smsBody = {
-                        id: e.id,
-                        reference: e.reference,
-                        body: e.body,
-                    }
-                    smsBodiesPM.push(smsBody)
-                })
+                smsBodiesPM.push(this.reminderList.map(this.getSmsBody))
             }else {
-                this.resendInformationList.forEach((e) => {
-                    let smsBody = {
-                        id: e.id,
-                        reference: e.reference,
-                        body: e.body,
-                    }
-                    smsBodiesPM.push(smsBody)
-                })
+                smsBodiesPM.push(this.resendInformationList.map(this.getSmsBody))
             }
             let response = await this.repository.update(smsBodiesPM)
             if (response.status === 200) {
@@ -102,5 +81,14 @@ export class SmsBodiesService {
             let errorMessage = e.response.data.message
             return new ErrorHandler(errorMessage, 'http')
         }
+    }
+
+    getSmsBody(sms){
+        const smsBody = {
+            id: sms.id,
+            reference: sms.reference,
+            body: sms.body,
+        }
+        return smsBody
     }
 }

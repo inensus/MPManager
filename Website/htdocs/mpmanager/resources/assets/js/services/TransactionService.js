@@ -104,10 +104,7 @@ export class TransactionService {
 
     updateList (transactionList) {
         this.list = []
-        for (let transaction in transactionList) {
-            this.list.push(this.fromJson(transactionList[transaction]))
-        }
-
+        this.list = transactionList.map(transaction => {return this.fromJson(transaction)})
         return this.list
     }
 
