@@ -20,7 +20,7 @@
 
                     <GChart
                         type="ColumnChart"
-                        :data="chartData"
+                        :data="paymentService.paymentDetailData"
                         :options="chartOptions"
                         :resizeDebounce="500"
                     />
@@ -37,24 +37,23 @@
 <script>
 import Widget from '../../shared/widget'
 import { EventBus } from '../../shared/eventbus'
-
+import { PaymentService } from '../../services/PaymentService'
 export default {
     name: 'PaymentDetail',
     data () {
         return {
+            paymentService: new PaymentService(),
             subscriber: 'payment-overview',
             contentWidth: 0,
             personId: null,
             period: 'M',
             periodName: 'Monthly',
-            chartData: [],
             chartOptions: {
                 chart: {
                     title: 'Customer Payment Flow',
                 },
                 colors: ['#0b920b', '#8b2621', '#0c7cd5']
             },
-
             barData: [],
         }
     },
@@ -63,14 +62,12 @@ export default {
     },
     mounted () {
         this.getFlow()
-        /*  this.contentWidth = document.getElementById('client-payment-detail').clientWidth*/
     },
     components: {
         Widget,
     },
     methods: {
-
-        getFlow (period = 'M') {
+        async getFlow (period = 'M') {
             switch (period) {
             case 'Y':
                 this.periodName = this.$tc('words.annually')
@@ -84,27 +81,22 @@ export default {
             case 'D':
                 this.periodName = this.$tc('words.day',2)
                 break
-
             }
-            axios.get(resources.paymenthistories + this.personId + '/payments/' + period)
-                .then(response => {
-                    this.chartData = [[this.$tc('words.period'), this.$tc('words.energy'), this.$tc('phrases.accessRate'), this.$tc('phrases.loanRate')]]
-
-                    let data = response.data
-                    for (let x in data) {
-                        let items = []
-                        items = [
-                            x,
-                            'energy' in data[x] ? parseInt(data[x]['energy']) : 0,
-                            'access rate' in data[x] ? parseInt(data[x]['access rate']) : 0,
-                            'loan rate' in data[x] ? parseInt(data[x]['loan rate']) : 0,
-                        ]
-                        this.chartData.push(items)
-                        EventBus.$emit('widgetContentLoaded', this.subscriber, this.chartData.length)
-                    }
-                })
-
-        }
+            try {
+                await this.paymentService.getPaymentDetail(this.personId, period)
+                EventBus.$emit('widgetContentLoaded', this.subscriber, this.paymentService.paymentDetailData.length)
+            }catch (e) {
+                this.alertNotify('error', e.message)
+            }
+        },
+        alertNotify (type, message) {
+            this.$notify({
+                group: 'notify',
+                type: type,
+                title: type + ' !',
+                text: message
+            })
+        },
     }
 }
 </script>
@@ -114,13 +106,10 @@ export default {
     padding-right: 2.5rem !important;
     padding-left: 2.5rem !important;
 }
-
 .period-style {
     color: white !important;
     -webkit-text-fill-color: white !important;
-
 }
-
 #period input[type="text"] {
     color: white !important;
     -webkit-text-fill-color: white !important;
