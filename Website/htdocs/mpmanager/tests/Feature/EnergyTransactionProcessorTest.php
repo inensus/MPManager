@@ -82,7 +82,6 @@ class EnergyTransactionProcessorTest extends TestCase
         $eTP = new EnergyTransactionProcessor($transaction);
         $eTP->handle();
         $this->assertCount(1, SocialTariffPiggyBank::all());
-        //$this->assertEquals(1.01, $eTP->transactionData->chargedEnergy); Transaction Data undefined
     }
 
 }
