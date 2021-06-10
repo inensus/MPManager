@@ -2,12 +2,14 @@
 
 namespace Tests\Feature;
 
+use App\Misc\TransactionDataContainer;
 use App\Models\Manufacturer;
 use App\Models\Meter\Meter;
 use App\Models\Person\Person;
 use Database\Factories\MeterTariffFactory;
 use Database\Factories\MeterTypeFactory;
 use Database\Factories\PersonFactory;
+use Database\Factories\TransactionFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Bus;
@@ -31,6 +33,7 @@ class CalinApiTest extends TestCase
         PersonFactory::new()->create();
         MeterTariffFactory::new()->create();
         MeterTypeFactory::new()->create();
+        $transaction = TransactionFactory::new()->make();
 
         Manufacturer::query()->create([
             'name' => 'CALIN',
@@ -40,7 +43,7 @@ class CalinApiTest extends TestCase
 
         //create meter
         Meter::query()->create([
-            'serial_number' => '4700005646',
+            'serial_number' => '47000268748',
             'meter_type_id' => 1,
             'in_use' => 1,
             'manufacturer_id' => 1,
@@ -56,7 +59,7 @@ class CalinApiTest extends TestCase
         ]);
 
         $api = app()->make(Manufacturer::query()->first()->api_name);
-        $token = $api->chargeMeter(Meter::query()->first(), 1);
+        $token = $api->chargeMeter(TransactionDataContainer::initialize($transaction));
         $this->assertArrayHasKey('token', $token);
         $this->assertArrayHasKey('energy', $token);
 
