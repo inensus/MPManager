@@ -97,12 +97,13 @@ class AdminController extends Controller
      */
     public function forgotPassword(AdminResetPasswordRequest $request, Response $response): self
     {
-        if (!$this->userService->resetPassword($request->input('email'))) {
+        $response_message = $this->userService->resetPassword($request->input('email'));
+        if ($response_message === 'Invalid Email.') {
             return $response->setStatusCode(422)->setContent(
                 [
                 'data' => [
                     'message' => 'Failed to send password email. Please try it again later.',
-                    'status_code' => 409
+                    'status_code' => 422
                 ]
                 ]
             );

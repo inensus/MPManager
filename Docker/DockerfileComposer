@@ -1,4 +1,4 @@
-FROM composer:2.0.2
+FROM composer:2.1.1
 
 RUN set -eux;\
     apk add \

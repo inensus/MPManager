@@ -1,19 +1,15 @@
 <?php
+namespace Tests\Unit\Transaction;
 
 use App\Http\Middleware\Transaction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\URL;
 use Tests\TestCase;
 
 
-/**
- * Created by PhpStorm.
- * User: kemal
- * Date: 04.07.18
- * Time: 14:28
- */
 class VodacomTransactionTest extends TestCase
 {
 
@@ -22,8 +18,7 @@ class VodacomTransactionTest extends TestCase
      * @var Response $response
      */
 
-    //send the transaction from an IP which is not on the white list for vodacom transactions
-    public function testTransactionFromUnkownSource()
+    public function test_transaction_sent_from_unknown_ip_address(): void
     {
         $request = Request::create(URL::route('vodacomTransaction'), 'POST', [], [], [],
             ['REMOTE_ADDR' => '127.0.0.2']);
@@ -31,21 +26,20 @@ class VodacomTransactionTest extends TestCase
 
         $response = $middleWare->handle($request, function () {
         });
-        $this->assertEquals($response->status(), 401);
+
+        self::assertEquals(401, $response->status());
     }
 
-    //send the transaction fron an trusted IP which is in the trusted ip list.
-    public function testTransactionFromTrustedSource()
+    public function test_transaction_sent_from_white_listed_ip_address(): void
     {
         $request = Request::create(URL::route('vodacomTransaction'), 'POST', [], [], [],
             ['REMOTE_ADDR' => config('services.vodacom.ips')[0]]);
 
         $middleWare = new Transaction();
 
-        $response = $middleWare->handle($request, function () {
+        $middleWare->handle($request, function ($x) {
+            $this->assertInstanceOf(\App\Transaction\VodacomTransaction::class ,$x->attributes->get('transactionProcessor'));
         });
-        $this->assertEquals($response, null);
+
     }
-
-
 }

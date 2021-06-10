@@ -80,7 +80,7 @@ class TariffController extends Controller
      * @param TariffCreateRequest $request
      * @return ApiResource
      */
-    public function store(TariffCreateRequest $request): ApiResource
+    public function store(TariffCreateRequest $request)
     {
         $newTariff = MeterTariff::query()
             ->create(
@@ -102,7 +102,7 @@ class TariffController extends Controller
             ]
         )->find($newTariff->id);
 
-        return new ApiResource($tariff);
+        return response($tariff)->setStatusCode(201);
     }
 
     public function update(MeterTariff $tariff, TariffCreateRequest $request): ApiResource

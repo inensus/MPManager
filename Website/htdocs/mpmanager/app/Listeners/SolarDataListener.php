@@ -94,7 +94,7 @@ class SolarDataListener
                     'solar_id' => $solar->id,
                     'current_weather_data' => $currentWeatherFileName,
                     'forecast_weather_data' => $forecastWeatherFileName,
-                    'record_time' => $date->time_stamp,
+                    'record_time' => $date->timestamp,
                 ]
             );
 
