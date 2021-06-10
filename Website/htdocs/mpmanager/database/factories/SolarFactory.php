@@ -15,14 +15,14 @@ class SolarFactory extends Factory {
             'node_id' => 1,
             'device_id' => 'test-case',
             'mini_grid_id' => 1,
-            'time_stamp' => $faker->dateTime(),
-            'starting_time' => $faker->dateTime('-5 minutes'),
-            'ending_time' => $faker->dateTime(),
-            'min' => $faker->numberBetween(0, 100),
-            'max' => $faker->numberBetween(0, 100),
-            'average' => $faker->numberBetween(0, 100),
+            'time_stamp' => $this->faker->dateTime(),
+            'starting_time' => $this->faker->dateTime('-5 minutes'),
+            'ending_time' => $this->faker->dateTime(),
+            'min' => $this->faker->numberBetween(0, 100),
+            'max' => $this->faker->numberBetween(0, 100),
+            'average' => $this->faker->numberBetween(0, 100),
             'duration' => 300,
-            'readings' => $faker->numberBetween(200, 300),
+            'readings' => $this->faker->numberBetween(200, 300),
 
         ];
     }
