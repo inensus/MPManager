@@ -77,8 +77,7 @@ class TariffResourceTest extends TestCase
         ],
             $headers
         );
-
         $request->assertStatus(201);
-        $this->assertCount(1, SocialTariff::all());
+        $this->assertCount(1, MeterTariff::all());
     }
 }
