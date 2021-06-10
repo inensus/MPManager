@@ -15,6 +15,8 @@ use App\Models\PaymentHistory;
 use App\Models\Person\Person;
 use App\Models\Transaction\Transaction;
 use App\Models\Transaction\VodacomTransaction;
+use App\Sms\Senders\SmsConfigs;
+use App\Sms\SmsTypes;
 use Database\Factories\MeterTariffFactory;
 use Database\Factories\PersonFactory;
 use Database\Factories\TransactionFactory;
@@ -67,11 +69,14 @@ class TokenProcessorTest extends TestCase
         $vodacomTransaction = VodacomTransaction::query()->first();
         $vodacomTransaction->transaction()->save($transaction);
 
-
         $transactionContainer = TransactionDataContainer::initialize(Transaction::query()->first());
         $transactionContainer->chargedEnergy = 1;
         $tp = new TokenProcessor($transactionContainer);
         $tp->handle();
+        SmsProcessor::dispatch(
+            $transaction,
+            SmsTypes::TRANSACTION_CONFIRMATION,
+            SmsConfigs::class);
         $this->assertCount(1, MeterToken::all());
         $this->assertCount(1, PaymentHistory::all());
         Queue::assertPushed(SmsProcessor::class);
