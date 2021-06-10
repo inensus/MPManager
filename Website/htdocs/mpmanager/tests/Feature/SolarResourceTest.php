@@ -21,9 +21,44 @@ class SolarResourceTest extends TestCase
 
     public function test_create_solar_entry(): void
     {
-        Cluster::create(['name' => 'Test Cluster', 'manager_id' => 1]);
-        $miniGrid = MiniGrid::create(['cluster_id' => 1, 'name' => 'Test-Grid', 'data_stream' => 0]);
-        $miniGrid->location()->save(GeographicalInformation::make(['points' => '-1.8727924588344,33.022885322571']));
+        $headers = $this->headers();
+        Cluster::create([
+            'name' => 'Test Cluster',
+            'manager_id' => 1,
+            'geo_type' => 'manual',
+            'geo_data' => [
+                "leaflet_id" => 1096,
+                "type" => "manual",
+                "geojson" => [
+                    "type" => "Polygon",
+                    "coordinates" => [
+                        [
+                            [
+                                40.205111559596,
+                                29.08639311236141
+                            ],
+                            [
+                                40.23762584107582,
+                                29.24514322081623
+                            ],
+                            [
+                                40.25286179446997,
+                                29.06681420052294
+                            ]
+                        ]
+                    ]
+                ],
+                "searched" => false,
+                "display_name" => "asd",
+                "selected" => true,
+                "draw_type" => "draw",
+                "lat" => 40.231866398380596,
+                "lon" => 29.132783511233526
+            ]
+        ]);
+        MiniGrid::create(['cluster_id' => 1, 'name' => 'Test-Grid', 'data_stream' => 0])->save();;
+        GeographicalInformation::UpdateOrCreate([ 'id' => 1],
+            ['points' => '-1.8727924588344,33.022885322571', 'owner_type' => 'mini-grid', 'owner_id' => 1])->save();
         $requestData = [
             'node_id' => 1,
             'device_id' => 'faker-node',
@@ -38,7 +73,7 @@ class SolarResourceTest extends TestCase
             'time_stamp' => Carbon::now()->timestamp,
 
         ];
-        $request = $this->post('/api/solar', $requestData, ['accept' => 'application/json']);
+        $request = $this->post('/api/solar', $requestData, ['accept' => 'application/json'], $headers);
         $request->assertStatus(201);
         $this->assertCount(1, WeatherData::all());
     }
@@ -47,14 +82,47 @@ class SolarResourceTest extends TestCase
     public function test_list_solars_by_mini_grid()
     {
         $solarToCreate = 2;
-        Cluster::create(['name' => 'Test Cluster', 'manager_id' => 1]);
-        $miniGrid = MiniGrid::create(['cluster_id' => 1, 'name' => 'Test-Grid', 'data_stream' => 0]);
-        $miniGrid->location()->save(GeographicalInformation::make(['points' => '-1.8727924588344,33.022885322571']));
-
-        SolarFactory::times($solarToCreate)->create();create();
+        $headers = $this->headers();
+        Cluster::create([
+            'name' => 'Test Cluster',
+            'manager_id' => 1,
+            'geo_type' => 'manual',
+            'geo_data' => [
+                "leaflet_id" => 1096,
+                "type" => "manual",
+                "geojson" => [
+                    "type" => "Polygon",
+                    "coordinates" => [
+                        [
+                            [
+                                40.205111559596,
+                                29.08639311236141
+                            ],
+                            [
+                                40.23762584107582,
+                                29.24514322081623
+                            ],
+                            [
+                                40.25286179446997,
+                                29.06681420052294
+                            ]
+                        ]
+                    ]
+                ],
+                "searched" => false,
+                "display_name" => "asd",
+                "selected" => true,
+                "draw_type" => "draw",
+                "lat" => 40.231866398380596,
+                "lon" => 29.132783511233526
+            ]
+        ]);
+        MiniGrid::create(['cluster_id' => 1, 'name' => 'Test-Grid', 'data_stream' => 0])->save();;
+        GeographicalInformation::UpdateOrCreate([ 'id' => 1],
+            ['points' => '-1.8727924588344,33.022885322571', 'owner_type' => 'mini-grid', 'owner_id' => 1])->save();
+        SolarFactory::times($solarToCreate)->create();
         $this->assertCount($solarToCreate, Solar::all());
-
-        $request = $this->get('/api/mini-grids/1/solar-readings');
+        $request = $this->get('/api/mini-grids/1/solar-readings', $headers);
         $request->assertStatus(200);
         $this->assertCount($solarToCreate, $request->json('data'));
 
