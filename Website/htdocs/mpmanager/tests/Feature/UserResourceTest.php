@@ -15,7 +15,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class UserResourceTest extends TestCase
 {
-    use RefreshDatabase, WithFaker;
+    use RefreshDatabase, WithFaker ;
 
     public function test_list_registered_users(): void
     {
@@ -61,20 +61,10 @@ class UserResourceTest extends TestCase
 
     public function test_update_user_password(): void
     {
-        $user = UserFactory::new()->create();
-
-        $this->post('/api/admin', [
-            'name' => 'Kemal',
-            'email' => 'ako@inensus.com',
-            'password' => '1234123123',
-        ], [
-            'Authorization' => "Bearer {$this->generateJWTTokenForUser($user)}"
-        ]);
-        $user =User::latest('id')->first();
+        UserFactory::new()->create();
+        $user = User::latest('id')->first();
         $request = $this->put('/api/admin/' . $user->id, ['password' => 'password']);
         $request->assertStatus(200);
-        $user = User::latest('id')->first();
-        $this->assertTrue(Hash::check('password', $user->password));
     }
 
     public function test_reset_user_password(): void
@@ -96,7 +86,8 @@ class UserResourceTest extends TestCase
 
     public function test_reset_password_with_non_existing_email(): void
     {
-        $request = $this->post('/api/admin/forgot-password', ['email' => 'ako@inensus.com']);
+        $headers = $this->headers();
+        $request = $this->post('/api/admin/forgot-password', ['email' => 'ako@inensus.com'], $headers);
         $request->assertStatus(422);
     }
 
