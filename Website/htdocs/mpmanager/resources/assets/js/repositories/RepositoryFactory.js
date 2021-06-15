@@ -55,6 +55,7 @@ import SmsVariableDefaultValueRepository from './SmsVariableDefaultValueReposito
 import PaymentHistoryRepository from './PaymentHistoryRepository'
 import BatchRevenueRepository from './BatchRevenueRepository'
 import TargetRepository from './TargetRepository'
+import MeterDetailRepository from './MeterDetailRepository'
 
 const repositories = {
     'address': AddressRepository,
@@ -80,6 +81,7 @@ const repositories = {
     'meter': MeterRepository,
     'meterType': MeterTypeRepository,
     'meterParameter': MeterParameterRepository,
+    'meterDetail': MeterDetailRepository,
     'person': PersonRepository,
     'revenue': RevenueRepository,
     'restriction': RestrictionRepository,
