@@ -24,18 +24,16 @@ export class ConnectionTypeService {
 
     updateList (data) {
         this.connectionTypes = []
-
-        for (let a in data) {
-
+        this.connectionTypes = data.map(connection => {
             let connectionType = {
-                id: data[a].id,
-                name: data[a].name,
-                updated_at: data[a].updated_at,
+                id: connection.id,
+                name: connection.name,
+                updated_at: connection.updated_at,
                 edit: false,
             }
-            this.connectionTypes.push(connectionType)
-            return this.connectionTypes
-        }
+            return connectionType
+        })
+        return this.connectionTypes
 
     }
 
@@ -111,4 +109,3 @@ export class ConnectionTypeService {
         }
     }
 }
-

@@ -7,24 +7,24 @@ export class MeterTypeService {
         this.meterTypesList = []
     }
 
+    prepareMeterType(meterType){
+        let meterTypeOnline = meterType.online === 1 ? 'Online' : 'Offline'
+        let meterTypes = {
+            id: meterType.id,
+            name: meterType.max_current + 'A ' + meterType.phase + 'P ' + meterTypeOnline,
+            max_current: meterType.max_current,
+            online: meterType.online
+        }
+        return meterTypes
+    }
+
     async getMeterTypes (){
         try {
             this.meterTypesList = []
             let response = await this.repository.index()
             if( response.status === 200 ){
                 let data = response.data.data
-                for(let i in data){
-
-                    let meterTypeData = data[i]
-                    let meterTypeOnline = meterTypeData.online === 1 ? 'Online' : 'Offline'
-                    let meterTypes = {
-                        id: meterTypeData.id,
-                        name: meterTypeData.max_current + 'A ' + meterTypeData.phase + 'P ' + meterTypeOnline,
-                        max_current: meterTypeData.max_current,
-                        online: meterTypeData.online
-                    }
-                    this.meterTypesList.push(meterTypes)
-                }
+                this.meterTypesList = data.map(this.prepareMeterType)
 
                 return this.meterTypesList
 
