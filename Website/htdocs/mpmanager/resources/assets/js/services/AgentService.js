@@ -55,7 +55,7 @@ export class AgentService {
     }
 
     agentFromJson(data){
-        let agent = {
+        return {
             id: data.id,
             personId: data.person_id,
             miniGrid: data.mini_grid.name,
@@ -63,13 +63,10 @@ export class AgentService {
             name: data.name,
             email: data.email,
             balance: data.balance,
-
         }
-        return agent
     }
 
     updateList (data) {
-        this.list = []
         this.list = data.map(this.agentFromJson)
     }
 

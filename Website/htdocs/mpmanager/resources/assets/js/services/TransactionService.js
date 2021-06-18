@@ -103,7 +103,6 @@ export class TransactionService {
     }
 
     updateList (transactionList) {
-        this.list = []
         this.list = transactionList.map(transaction => {return this.fromJson(transaction)})
         return this.list
     }

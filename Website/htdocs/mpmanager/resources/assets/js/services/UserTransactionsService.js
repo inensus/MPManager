@@ -14,7 +14,6 @@ export class UserTransactionsService {
 
 
     updateList (transactionList) {
-        this.list = []
         this.list = transactionList.map(transaction => {return this.fromJson(transaction)})
         return this.list
     }

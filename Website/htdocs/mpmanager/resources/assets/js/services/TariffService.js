@@ -91,14 +91,13 @@ export class TariffService {
         if (tariffData.tou.length > 0) {
             let price = tariffData.price / 100
             tariff.tous = tariffData.tou.map(tou => {
-                let touObj = {
+                return  {
                     id: tou.id,
                     start: tou.start,
                     end: tou.end,
                     value: tou.value,
                     cost: (price * tou.value) / 100
                 }
-                return touObj
             })
         }
         return tariff
@@ -389,9 +388,7 @@ export class TariffService {
     }
 
     findConflicts () {
-        let overlaps = []
-        overlaps = this.tariff.tous.map(this.checkOverlaps)
-        this.conflicts = overlaps
+        this.conflicts = this.tariff.tous.map(this.checkOverlaps)
     }
 
     checkOverlaps (usage) {

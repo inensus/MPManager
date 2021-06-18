@@ -29,7 +29,6 @@ export class AgentReceiptService {
     }
 
     updateList (data) {
-        this.list = []
         this.list = data.map(this.fromJson)
         return this.list
     }
