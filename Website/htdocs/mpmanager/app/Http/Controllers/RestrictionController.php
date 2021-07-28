@@ -26,7 +26,6 @@ class RestrictionController extends Controller
 
     public function __construct(Restriction $restriction, Client $httpClient)
     {
-
         $this->restriction = $restriction;
         $this->httpClient = $httpClient;
     }
@@ -35,8 +34,9 @@ class RestrictionController extends Controller
     /**
      * @return Response
      */
-    public function store(Request $request, Response $response): Response
+    public function store(Request $request,Response $response): Response
     {
+
         $productId = $request->input('product_id');
         $token = $request->input('token');
         $type = $request->input('type');
@@ -56,6 +56,7 @@ class RestrictionController extends Controller
                 ]
                 ]
             );
+
             if ($validation->getStatusCode() !== 200) {
                 return $response->setContent('validation failed')->setStatusCode(409);
             }
