@@ -26,7 +26,6 @@ class RestrictionController extends Controller
 
     public function __construct(Restriction $restriction, Client $httpClient)
     {
-
         $this->restriction = $restriction;
         $this->httpClient = $httpClient;
     }
@@ -37,6 +36,7 @@ class RestrictionController extends Controller
      */
     public function store(Request $request, Response $response): Response
     {
+
         $productId = $request->input('product_id');
         $token = $request->input('token');
         $type = $request->input('type');
@@ -46,16 +46,17 @@ class RestrictionController extends Controller
                 'POST',
                 $url,
                 [
-                'json' => [
-                    'product_id' => $productId,
-                    'type' => $type,
-                    'token' => $token,
-                ],
-                'headers' => [
-                    'mpm-secret' => '22]Qq&e5[2FYu\'t{'
-                ]
+                    'json' => [
+                        'product_id' => $productId,
+                        'type' => $type,
+                        'token' => $token,
+                    ],
+                    'headers' => [
+                        'mpm-secret' => '22]Qq&e5[2FYu\'t{'
+                    ]
                 ]
             );
+
             if ($validation->getStatusCode() !== 200) {
                 return $response->setContent('validation failed')->setStatusCode(409);
             }
@@ -105,9 +106,9 @@ class RestrictionController extends Controller
      * @param $target
      * @param int $toAdd
      *
+     * @return void
      * @throws PurchaseNotProcessable
      *
-     * @return void
      */
     private function updateRestriction(string $target, int $toAdd = 1): void
     {

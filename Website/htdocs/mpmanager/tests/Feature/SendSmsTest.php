@@ -3,58 +3,41 @@
 namespace Tests\Feature;
 
 use App\Models\Address\Address;
-use App\Models\MainSettings;
 use App\Models\Manufacturer;
 use App\Models\Meter\Meter;
-use App\Models\Meter\MeterTariff;
 use App\Models\Meter\MeterType;
 use App\Models\Person\Person;
 use App\Models\Sms;
 use App\Models\SmsBody;
-use App\Models\SmsResendInformationKey;
 use App\Models\Transaction\Transaction;
 use App\Models\Transaction\VodacomTransaction;
-use App\Models\User;
-
+use Database\Factories\MainSettingsFactory;
+use Database\Factories\MeterTariffFactory;
+use Database\Factories\PersonFactory;
+use Database\Factories\SmsResendInformationKeyFactory;
+use Database\Factories\TransactionFactory;
+use Database\Factories\UserFactory;
+use Database\Factories\VodacomTransactionFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
-class SendSms extends TestCase
+class SendSmsTest extends TestCase
 {
     use RefreshDatabase;
 
-    /*  ./vendor/bin/phpunit ./tests/Feature/SendSms  */
-    /** @test */
-    public function store_and_send()
+    public function test_store_and_send()
     {
         Queue::fake();
         $this->withoutExceptionHandling();
         $person = $this->initializeData();
-        $user = factory(User::class)->create();
+        $user = UserFactory::new()->create();
         $data = $this->getData($person, $user);
         $response = $this->actingAs($user)->post('/api/sms/storeandsend', $data);
         $response->assertStatus(201);
         $smsCount = Sms::query()->first()->count();
         $this->assertEquals(1, $smsCount);
-    }
-
-    /** @test */
-    public function store()
-    {
-        Queue::fake();
-        $this->withoutExceptionHandling();
-        $person = $this->initializeData();
-        $user = factory(User::class)->create();
-        $data = [
-            'sender' => $person->addresses[0]->phone,
-            'message' => 'Resend 4700005646'
-        ];
-        $response = $this->actingAs($user)->post('/api/sms', $data);
-        $response->assertStatus(200);
-        $smsCount = Sms::query()->first()->count();
-        $this->assertEquals(2, $smsCount);
     }
 
     private function initializeData()
@@ -156,16 +139,14 @@ class SendSms extends TestCase
             ]);
         }
 
-        //create resend key
-        factory(SmsResendInformationKey::class)->create();
-
+        SmsResendInformationKeyFactory::new()->create();
         //create settings
-        factory(MainSettings::class)->create();
+        MainSettingsFactory::new()->create();
 
         //create person
-        factory(Person::class)->create();
+        PersonFactory::new()->create();
         //create meter-tariff
-        factory(MeterTariff::class)->create();
+        MeterTariffFactory::new()->create();
 
         //create meter-type
         MeterType::query()->create([
@@ -208,12 +189,23 @@ class SendSms extends TestCase
         $address->owner()->associate($p);
 
         //create transaction
-        factory(VodacomTransaction::class)->create();
+        VodacomTransactionFactory::new()->create();
 
-        $transaction = factory(Transaction::class)->make();
+        $transaction = TransactionFactory::new()->make();
         $transaction->message = '4700005646';
 
         return $p;
+    }
+
+
+    private function getData($person, $user): array
+    {
+        $data = [
+            'person_id' => $person->id,
+            'message' => 'Its a dummy message',
+            'senderId' => $user->id
+        ];
+        return $data;
     }
 
     public function actingAs($user, $driver = null)
@@ -225,18 +217,19 @@ class SendSms extends TestCase
         return $this;
     }
 
-    /**
-     * @param $person
-     * @param $user
-     * @return array
-     */
-    public function getData($person, $user): array
+    public function test_store_sms()
     {
+        Queue::fake();
+        $this->withoutExceptionHandling();
+        $person = $this->initializeData();
+        $user = UserFactory::new()->create();
         $data = [
-            'person_id' => $person->id,
-            'message' => 'Its a dummy message',
-            'senderId' => $user->id
+            'sender' => $person->addresses[0]->phone,
+            'message' => 'Resend 4700005646'
         ];
-        return $data;
+        $response = $this->actingAs($user)->post('/api/sms', $data);
+        $response->assertStatus(201);
+        $smsCount = Sms::query()->first()->count();
+        $this->assertEquals(1, $smsCount);
     }
 }

@@ -2,6 +2,20 @@
 
 use Monolog\Handler\StreamHandler;
 
+$slack = [
+    'driver' => 'slack',
+    'url' => env('LOG_SLACK_WEBHOOK_URL'),
+    'username' => 'Error Messenger',
+    'emoji' => ':boom:',
+    'level' => 'critical',
+];
+if (config('app.debug')) {
+    $slack = [
+        'level' => 'critical',
+        'driver' => 'errorlog',
+        'path' => storage_path('logs/critical.log'),
+    ];
+}
 return [
 
     /*
@@ -51,15 +65,7 @@ return [
             'days' => 7,
         ],
 
-        'slack' => [
-            'driver' => 'slack',
-            'url' => env('LOG_SLACK_WEBHOOK_URL'),
-            'username' => 'Error Messenger',
-            'emoji' => ':boom:',
-            'level' => 'critical',
-        ],
-
-
+        'slack' => $slack,
         'stderr' => [
             'driver' => 'monolog',
             'handler' => StreamHandler::class,
