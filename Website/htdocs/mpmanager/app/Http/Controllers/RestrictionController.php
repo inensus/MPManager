@@ -34,7 +34,7 @@ class RestrictionController extends Controller
     /**
      * @return Response
      */
-    public function store(Request $request,Response $response): Response
+    public function store(Request $request, Response $response): Response
     {
 
         $productId = $request->input('product_id');
@@ -46,14 +46,14 @@ class RestrictionController extends Controller
                 'POST',
                 $url,
                 [
-                'json' => [
-                    'product_id' => $productId,
-                    'type' => $type,
-                    'token' => $token,
-                ],
-                'headers' => [
-                    'mpm-secret' => '22]Qq&e5[2FYu\'t{'
-                ]
+                    'json' => [
+                        'product_id' => $productId,
+                        'type' => $type,
+                        'token' => $token,
+                    ],
+                    'headers' => [
+                        'mpm-secret' => '22]Qq&e5[2FYu\'t{'
+                    ]
                 ]
             );
 
@@ -106,9 +106,9 @@ class RestrictionController extends Controller
      * @param $target
      * @param int $toAdd
      *
+     * @return void
      * @throws PurchaseNotProcessable
      *
-     * @return void
      */
     private function updateRestriction(string $target, int $toAdd = 1): void
     {
