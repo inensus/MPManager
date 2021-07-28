@@ -24,6 +24,7 @@ class SocialTariffPiggyBankTest extends TestCase
     /** @test */
     public function test_add_piggy_bank_balance()
     {
+
         MeterTariffFactory::new()->create();
         MeterTariff::first()->socialTariff()->create([
             'tariff_id' => 1,
@@ -44,12 +45,9 @@ class SocialTariffPiggyBankTest extends TestCase
         $createPiggyBankJob = new CreatePiggyBankEntry(Person::first()->meters()->first());
         $createPiggyBankJob->handle();
         $job = new SocialTariffPiggyBankManager();
-
         $socialTariff = SocialTariff::first();
-
         $socialBank = SocialTariffPiggyBank::first();
         $savings = $socialBank->savings;
-
         for ($i = 1; $i <= $socialTariff->maximum_stacked_energy / $socialTariff->daily_allowance; $i++) {
             $job->handle();
             if ($i % ($socialTariff->maximum_stacked_energy / $socialTariff->daily_allowance)) {

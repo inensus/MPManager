@@ -33,9 +33,7 @@ class MeterParameterObserver
 
     public function created(MeterParameter $meterParameter): void
     {
-        CreatePiggyBankEntry::dispatch($meterParameter)
-            ->allOnConnection('redis')
-            ->onQueue(config('services.queues.misc'));
+        CreatePiggyBankEntry::dispatchSync($meterParameter);
         $meter = Meter::find($meterParameter->meter_id);
         $meter->in_use = 1;
         $meter->save();
@@ -43,8 +41,6 @@ class MeterParameterObserver
 
     public function updated(MeterParameter $meterParameter): void
     {
-        UpdatePiggyBankEntry::dispatch($meterParameter)
-            ->allOnConnection('redis')
-            ->onQueue(config('services.queues.misc'));
+        UpdatePiggyBankEntry::dispatchSync($meterParameter);
     }
 }
