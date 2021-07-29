@@ -28,15 +28,24 @@ class MeterParameterObserver
         $meter = $meterParameter->meter()->first();
         $meter->in_use = 0;
         $meter->save();
+
+        event('cluster_meta.connected_meters.decrement', $meterParameter);
     }
 
-
+    /**
+     * Handle the MeterParameter "created" event
+     *
+     * @param MeterParameter $meterParameter
+     * @return void
+     */
     public function created(MeterParameter $meterParameter): void
     {
         CreatePiggyBankEntry::dispatchSync($meterParameter);
         $meter = Meter::find($meterParameter->meter_id);
         $meter->in_use = 1;
         $meter->save();
+
+        event('cluster_meta.connected_meters.increment', $meterParameter);
     }
 
     public function updated(MeterParameter $meterParameter): void

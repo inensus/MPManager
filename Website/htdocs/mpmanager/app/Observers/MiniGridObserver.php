@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\GeographicalInformation;
 use App\Models\MiniGrid;
+use App\Models\ClusterMetaData;
 
 class MiniGridObserver
 {
@@ -35,6 +36,14 @@ class MiniGridObserver
             $this->geographicalInformation->points = "";
         }
         $this->geographicalInformation->save();
+
+        ClusterMetaData::query()->create([
+            'cluster_id' => $miniGrid->cluster_id,
+            'mini_grid_id' => $miniGrid->id,
+            'energy_capacity' => 0,
+            'connected_meters' => 0,
+            'registered_customers' => 0
+        ]);
     }
 
     /**
@@ -58,7 +67,8 @@ class MiniGridObserver
      */
     public function deleted(MiniGrid $miniGrid)
     {
-        //
+        $clusterMetaData = ClusterMetaData::query()->where('mini_grid_id','=',$miniGrid->id);
+        $clusterMetaData->delete();
     }
 
     /**
