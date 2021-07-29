@@ -32,4 +32,5 @@ RUN touch /usr/local/etc/php/conf.d/xdebug.ini; \
 
 COPY configuration/webserver/sites-enabled/000-default.conf /etc/apache2/sites-enabled
 RUN a2enmod ssl
+RUN a2enmod rewrite
 RUN service apache2 restart
