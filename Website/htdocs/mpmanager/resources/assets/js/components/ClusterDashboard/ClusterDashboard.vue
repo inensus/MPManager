@@ -74,6 +74,7 @@ import { ClusterService } from '../../services/ClusterService'
 import { MappingService } from '../../services/MappingService'
 import miniGridIcon from '../../../icons/miniGrid.png'
 import moment from 'moment'
+import { MeterService } from '../../services/MeterService'
 
 export default {
     name: 'ClusterList',
@@ -95,6 +96,7 @@ export default {
             clusters: null,
             geoData: null,
             constantLocations: [],
+            meterService: new MeterService(),
             markingInfos: [],
             center: [this.$store.getters['settings/getMapSettings'].latitude,this.$store.getters['settings/getMapSettings'].longitude],
             base: {},
@@ -134,7 +136,6 @@ export default {
         },
         async getMiniGridList () {
             this.clusterData = await this.clusterService.getDetails(this.clusterId)
-
             let clusterGeoData = await this.clusterService.getClusterGeoLocation(this.clusterId)
             this.center = [clusterGeoData.lat, clusterGeoData.lon]
             this.geoData = this.mappingService.focusLocation(clusterGeoData)
@@ -145,7 +146,15 @@ export default {
                 let lat = points[0]
                 let lon = points[1]
 
-                let markingInfo = this.mappingService.createMarkingInformation(miniGrids[i].id, miniGrids[i].name, null, lat, lon,miniGrids[i].data_stream)
+                let markingInfo = this.mappingService.createMarkingInformation(
+                    miniGrids[i].id,
+                    miniGrids[i].name,
+                    null,
+                    lat,
+                    lon,
+                    miniGrids[i].data_stream,
+                    miniGrids[i].cluster_meta_data
+                )
 
                 this.markingInfos.push(markingInfo)
                 this.constantLocations.push([lat, lon])

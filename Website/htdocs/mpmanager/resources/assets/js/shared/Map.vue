@@ -442,7 +442,7 @@ export default {
                 this.map.setView([geoData.lat, geoData.lon], this.zoom)
             }
             EventBus.$emit('getSearchedGeoDataItems', this.geoDataItems)
-        },     
+        },
         setMarker (markerLocations, isConstant) {
 
             if (isConstant) {
@@ -459,6 +459,7 @@ export default {
                         let markingInfo = this.markingInfos.filter(x => x.lat === e[0] && x.lon === e[1])[0]
                         if (markingInfo !== undefined) {
                             constantMarker.bindTooltip('Mini Grid: ' + markingInfo.name)
+
                             let parent = this
                             constantMarker.on('click', function () {
                                 parent.routeToDetail(markingInfo.id, markingInfo.name)
@@ -509,8 +510,16 @@ export default {
                                     editableMarker.addTo(this.editableLayer)
                                 }
                             } else {
+                                console.log(markingInfo)
+                                if(markingInfo.clusterMetaData !== undefined){
+                                    newMarker.bindTooltip('<b>Mini Grid: </b>' + markingInfo.name + '<br>' +
+                                        '<b>Registered Customers: </b>' + markingInfo.clusterMetaData.registered_customers +
+                                        '<br>' + '<b>Connected Meters: </b>' + markingInfo.clusterMetaData.connected_meters + '<br>' +
+                                        '<b>Capacity: </b>' + markingInfo.clusterMetaData.energy_capacity + 'kWp')
+                                }else{
+                                    newMarker.bindTooltip('<b>Mini Grid: </b>' + markingInfo.name )
+                                }
 
-                                newMarker.bindTooltip('Mini Grid: ' + markingInfo.name)
                                 let parent = this
                                 newMarker.on('click', function () {
                                     parent.routeToDetail(markingInfo.id, markingInfo.name)

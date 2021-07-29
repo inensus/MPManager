@@ -43,4 +43,8 @@ class MiniGrid extends Model
     {
         return $this->hasOne(Agent::Class);
     }
+    public function clusterMetaData(): HasOne
+    {
+        return $this->hasOne(ClusterMetaData::class);
+    }
 }

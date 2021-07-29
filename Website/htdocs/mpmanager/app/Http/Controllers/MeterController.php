@@ -316,8 +316,6 @@ class MeterController extends Controller
      */
     public function meterGeoList($miniGridId): ApiResource
     {
-
-
         $cities = $this->city->select('id')->where('mini_grid_id', $miniGridId)->get()->pluck('id')->toArray();
 
         //city id yi anca addresten yakalariz
@@ -343,6 +341,13 @@ class MeterController extends Controller
         }
 
         return new ApiResource($meters);
+    }
+
+    public function connectedMeterCount($miniGridId): ApiResource
+    {
+        $cities = $this->city->select('id')->where('mini_grid_id', $miniGridId)->get()->pluck('id')->toArray();
+
+        return new ApiResource($cities);
     }
 
     /**
