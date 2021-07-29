@@ -3,7 +3,6 @@
 namespace Tests\Unit\Transaction;
 
 use App\Misc\TransactionDataContainer;
-use App\Models\AccessRate\AccessRate;
 use App\Models\AccessRate\AccessRatePayment;
 use App\Models\Address\Address;
 use App\Models\City;
