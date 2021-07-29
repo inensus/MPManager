@@ -6,7 +6,7 @@ services:
     build:
       context: Docker/
       dockerfile: DockerfileLaravelDev
-    image: laravel/php:73
+    image: laravel/php:8
 
     environment:
       VIRTUAL_HOST: mpmanager.local

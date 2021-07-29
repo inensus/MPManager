@@ -23,6 +23,11 @@ use App\Models\Transaction\VodacomTransaction;
 
 use App\Sms\Senders\SmsConfigs;
 use App\Sms\SmsTypes;
+use Database\Factories\MainSettingsFactory;
+use Database\Factories\MeterTariffFactory;
+use Database\Factories\PersonFactory;
+use Database\Factories\TransactionFactory;
+use Database\Factories\VodacomTransactionFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 use Illuminate\Support\Facades\Config;
@@ -189,8 +194,10 @@ class SmsProcessorTest extends TestCase
 
     private function initializeData()
     {
+
         //create Main Settings
         factory(MainSettings::class)->create();
+
 
         //create cluster
         Cluster::query()->create(['name' => 'Test Cluster', 'manager_id' => 1]);
@@ -211,9 +218,9 @@ class SmsProcessorTest extends TestCase
         ]);
 
         //create person
-        factory(Person::class)->create();
+        PersonFactory::new()->create();
         //create meter-tariff
-        factory(MeterTariff::class)->create();
+        MeterTariffFactory::new()->create();
 
         //create meter-type
         MeterType::query()->create([
@@ -253,8 +260,8 @@ class SmsProcessorTest extends TestCase
         $address->owner()->associate($p);
 
         //create transaction
-        factory(VodacomTransaction::class)->create();
-        $transaction = factory(Transaction::class)->make();
+        VodacomTransactionFactory::new()->create();
+        $transaction = TransactionFactory::new()->make();
         $transaction->message = '4700005646';
 
         $vodacomTransaction = VodacomTransaction::query()->first();

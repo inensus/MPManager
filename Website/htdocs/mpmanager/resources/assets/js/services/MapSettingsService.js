@@ -1,7 +1,6 @@
 import RepositoryFactory from '../repositories/RepositoryFactory'
 import { ErrorHandler } from '../Helpers/ErrorHander'
 
-
 export class MapSettingsService {
     constructor () {
         this.repository = RepositoryFactory.get('mapSettings')
@@ -9,6 +8,51 @@ export class MapSettingsService {
             zoom: null,
             latitude: null,
             longitude: null,
+            provider: null,
+            bingMapApiKey: null,
+        }
+    }
+
+    async list () {
+        try {
+            const { status, data, error } = await this.repository.list()
+            return status === 200 ? this.fromJson(data.data[0]) :
+                new ErrorHandler(error, 'http', status)
+        } catch (error) {
+            return new ErrorHandler(error.response.data.message, 'http')
+        }
+    }
+
+    async update () {
+        try {
+            const mapSettingsPm = {
+                id: this.mapSettings.id,
+                zoom: this.mapSettings.zoom,
+                latitude: this.mapSettings.latitude,
+                longitude: this.mapSettings.longitude,
+                provider: this.mapSettings.provider,
+                bingMapApiKey: this.mapSettings.bingMapApiKey,
+            }
+            let response = await this.repository.update(mapSettingsPm.id,
+                mapSettingsPm)
+            if (response.status === 200) {
+                this.fromJson(response.data.data[0])
+                return this.mapSettings
+            } else {
+                return new ErrorHandler(response.error, 'http', response.status)
+            }
+        } catch (error) {
+            return new ErrorHandler(error.response.data.message, 'http')
+        }
+    }
+
+    async checkBingMapApiKey () {
+        try {
+            const { data } = await this.repository.checkBingApiKey(
+                this.mapSettings.bingMapApiKey)
+            return data.data.authentication
+        } catch (error) {
+            return new ErrorHandler(error.response.data.message, 'http')
         }
     }
 
@@ -18,47 +62,10 @@ export class MapSettingsService {
             zoom: mapSettings.zoom,
             latitude: mapSettings.latitude,
             longitude: mapSettings.longitude,
+            provider: mapSettings.provider,
+            bingMapApiKey: mapSettings.bingMapApiKey,
         }
-
         return this.mapSettings
-    }
-
-    async list () {
-        try {
-            let response = await this.repository.list()
-            if (response.status === 200) {
-                this.fromJson(response.data.data[0])
-                return this.mapSettings
-            } else {
-                return new ErrorHandler(response.error, 'http', response.status)
-            }
-
-        } catch (e) {
-            let erorMessage = e.response.data.message
-            return new ErrorHandler(erorMessage, 'http')
-        }
-    }
-
-    async update () {
-        try {
-
-            let mapSettingsPm = {
-                id: this.mapSettings.id,
-                zoom: this.mapSettings.zoom,
-                latitude: this.mapSettings.latitude,
-                longitude: this.mapSettings.longitude,
-            }
-            let response = await this.repository.update(mapSettingsPm.id, mapSettingsPm)
-            if (response.status === 200) {
-                this.fromJson(response.data.data[0])
-                return this.mapSettings
-            } else {
-                return new ErrorHandler(response.error, 'http', response.status)
-            }
-        } catch (e) {
-            let erorMessage = e.response.data.message
-            return new ErrorHandler(erorMessage, 'http')
-        }
     }
 
 }

@@ -1,7 +1,8 @@
-FROM php:7.3.23-fpm
+FROM php:8-fpm
 
 RUN apt-get update && \
     apt-get install -y \
+    cron \
     libjpeg-dev \
     libfreetype6-dev \
     libxml2-dev \
@@ -14,16 +15,13 @@ RUN apt-get update && \
     vim \
     git
 
-# Clear cache
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # remove apt lists
 RUN rm -rf /var/lib/apt/lists/*
 
-
 # install php extentions
-RUN docker-php-ext-install gd mysqli zip mbstring pdo pdo_mysql soap ftp opcache bcmath pcntl
-RUN docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-png-dir=/usr --with-jpeg-dir=/usr \
+RUN docker-php-ext-install gd mysqli zip pdo pdo_mysql soap ftp opcache bcmath pcntl
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg\
 && docker-php-ext-configure pcntl --enable-pcntl
 
 RUN touch /usr/local/etc/php/conf.d/xdebug.ini; \

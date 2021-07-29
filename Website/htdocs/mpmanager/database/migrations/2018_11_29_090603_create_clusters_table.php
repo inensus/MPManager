@@ -20,6 +20,7 @@ class CreateClustersTable extends Migration
             $table->foreign('manager_id')
                 ->references('id')->on('users')
                 ->onDelete('cascade');
+            $table->json('geo_data');
             $table->timestamps();
         });
     }

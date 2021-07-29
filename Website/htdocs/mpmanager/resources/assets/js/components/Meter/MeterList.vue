@@ -21,7 +21,7 @@
                                 <md-icon>add</md-icon>
                                 {{ $tc('words.add') }}
                             </md-table-head>
-                            <md-table-head>{{ $tc('words.cluster', 2) }}</md-table-head>
+                            <md-table-head>{{ $tc('words.manufacturer') }}</md-table-head>
                             <md-table-head>{{ $tc('words.type') }}</md-table-head>
                             <md-table-head>{{ $tc('phrases.lastUpdate') }}</md-table-head>
                         </md-table-row>
