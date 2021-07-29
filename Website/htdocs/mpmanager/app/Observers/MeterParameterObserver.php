@@ -9,6 +9,7 @@
 
 namespace App\Observers;
 
+use App\Events\ClusterMetaDataEvent;
 use App\Jobs\CreatePiggyBankEntry;
 use App\Jobs\UpdatePiggyBankEntry;
 use App\Models\Meter\Meter;
@@ -17,20 +18,27 @@ use App\Models\Meter\MeterParameter;
 class MeterParameterObserver
 {
     /**
-     * Handle "deleted" event
+     * Handle the MeterParameter "deleted" event
      *
      * @param MeterParameter $meterParameter
      * @return void
      */
-    public function deleted(MeterParameter $meterParameter): void
+    public function deleted(MeterParameter $meterParameter)
     {
         // set the meter free
         $meter = $meterParameter->meter()->first();
         $meter->in_use = 0;
         $meter->save();
+
+        event('cluster_meta.connected_meters.decrement', $meterParameter);
     }
 
-
+    /**
+     * Handle the MeterParameter "created" event
+     *
+     * @param MeterParameter $meterParameter
+     * @return void
+     */
     public function created(MeterParameter $meterParameter): void
     {
         CreatePiggyBankEntry::dispatch($meterParameter)
@@ -39,8 +47,17 @@ class MeterParameterObserver
         $meter = Meter::find($meterParameter->meter_id);
         $meter->in_use = 1;
         $meter->save();
+
+        event('cluster_meta.connected_meters.increment', $meterParameter);
+
     }
 
+    /**
+     * Handle the MeterParameter "updated" event
+     *
+     * @param MeterParameter $meterParameter
+     * @return void
+     */
     public function updated(MeterParameter $meterParameter): void
     {
         UpdatePiggyBankEntry::dispatch($meterParameter)
