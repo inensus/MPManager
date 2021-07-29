@@ -7,12 +7,15 @@ use App\Jobs\SmsProcessor;
 use App\Jobs\TokenProcessor;
 use App\Misc\TransactionDataContainer;
 use App\Models\Address\Address;
+use App\Models\City;
+use App\Models\Cluster;
 use App\Models\MainSettings;
 use App\Models\Manufacturer;
 use App\Models\Meter\Meter;
 use App\Models\Meter\MeterTariff;
 use App\Models\Meter\MeterType;
 
+use App\Models\MiniGrid;
 use App\Models\Person\Person;
 use App\Models\SmsBody;
 use App\Models\Transaction\Transaction;
@@ -186,8 +189,26 @@ class SmsProcessorTest extends TestCase
 
     private function initializeData()
     {
-        //create person
+        //create Main Settings
         factory(MainSettings::class)->create();
+
+        //create cluster
+        Cluster::query()->create(['name' => 'Test Cluster', 'manager_id' => 1]);
+
+        //create mini-grid
+        MiniGrid::query()->create(['cluster_id' => 1, 'name' => 'Test-Grid', 'data_stream' => 0]);
+
+        //create city
+        City::query()->create(['name' => 'test', 'country_id' => 1, 'cluster_id' => 1, 'mini_grid_id' => 1]);
+
+        //create address
+        Address::query()->create([
+            'phone' => '+905494322161',
+            'is_primary' => 1,
+            'owner_type' => 'person',
+            'owner_id' => 1,
+            'city_id' => 1
+        ]);
 
         //create person
         factory(Person::class)->create();

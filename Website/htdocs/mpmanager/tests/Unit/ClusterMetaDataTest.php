@@ -70,7 +70,23 @@ class ClusterMetaDataTest extends TestCase
     /** @test */
     public function decrement_registered_customers_count_after_deleted_a_customer()
     {
-        $this->initializeData();
+
+        //create mini-grid
+        MiniGrid::query()->create(['cluster_id' => 1, 'name' => 'Test-Grid', 'data_stream' => 0]);
+        //create city
+        City::query()->create(['name' => 'test', 'country_id' => 1, 'cluster_id' => 1, 'mini_grid_id' => 1]);
+
+        //create address
+        Address::query()->create([
+            'phone' => '+905494322161',
+            'is_primary' => 1,
+            'owner_type' => 'person',
+            'owner_id' => 1,
+            'city_id' => 1
+        ]);
+
+        //create person
+        factory(Person::class)->create();
 
         $person = Person::query()->latest()->first();
         $person->delete();
