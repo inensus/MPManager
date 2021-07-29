@@ -529,7 +529,14 @@ export default {
                                 }
                             } else {
 
-                                newMarker.bindTooltip('Mini Grid: ' + markingInfo.name)
+                                if(markingInfo.clusterMetaData !== undefined){
+                                    newMarker.bindTooltip('<b>Mini Grid: </b>' + markingInfo.name + '<br>' +
+                                        '<b>Registered Customers: </b>' + markingInfo.clusterMetaData.registered_customers +
+                                        '<br>' + '<b>Connected Meters: </b>' + markingInfo.clusterMetaData.connected_meters + '<br>' +
+                                        '<b>Capacity: </b>' + markingInfo.clusterMetaData.energy_capacity + 'kWp')
+                                }else{
+                                    newMarker.bindTooltip('<b>Mini Grid: </b>' + markingInfo.name )
+                                }
                                 let parent = this
                                 newMarker.on('click', function () {
                                     parent.routeToDetail(markingInfo.id, markingInfo.name)

@@ -58,7 +58,7 @@ class ClusterController
 
     public function show($id): ApiResource
     {
-        $cluster = Cluster::with('miniGrids.location')->find($id);
+        $cluster = Cluster::with('miniGrids.location', 'miniGrids.clusterMetaData')->find($id);
         return new ApiResource($cluster);
     }
 
