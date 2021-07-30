@@ -11,8 +11,12 @@ use App\Models\Sms;
 use App\Models\SmsBody;
 use App\Models\Transaction\Transaction;
 use App\Models\Transaction\VodacomTransaction;
+use Database\Factories\AddressFactory;
+use Database\Factories\CityFactory;
+use Database\Factories\ClusterFactory;
 use Database\Factories\MainSettingsFactory;
 use Database\Factories\MeterTariffFactory;
+use Database\Factories\MiniGridFactory;
 use Database\Factories\PersonFactory;
 use Database\Factories\SmsResendInformationKeyFactory;
 use Database\Factories\TransactionFactory;
@@ -143,6 +147,14 @@ class SendSmsTest extends TestCase
         //create settings
         MainSettingsFactory::new()->create();
 
+        //create cluster
+        ClusterFactory::new()->create();
+        //create mini-grid
+        MiniGridFactory::new()->create();
+        //create city
+        CityFactory::new()->create();
+        //create address
+        AddressFactory::new()->create();
         //create person
         PersonFactory::new()->create();
         //create meter-tariff

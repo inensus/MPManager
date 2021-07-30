@@ -101,7 +101,7 @@ class ClusterMetaDataTest extends TestCase
         //create address
         AddressFactory::new()->create();
         //create person
-        PersonFactory::new()->create();
+        PersonFactory::new()->create(['is_customer' => 1]);
         MeterTariffFactory::new()->create();
         //create meter
         MeterFactory::new()->create();

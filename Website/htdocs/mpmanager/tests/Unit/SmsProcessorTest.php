@@ -20,8 +20,12 @@ use App\Models\Transaction\VodacomTransaction;
 
 use App\Sms\Senders\SmsConfigs;
 use App\Sms\SmsTypes;
+use Database\Factories\AddressFactory;
+use Database\Factories\CityFactory;
+use Database\Factories\ClusterFactory;
 use Database\Factories\MainSettingsFactory;
 use Database\Factories\MeterTariffFactory;
+use Database\Factories\MiniGridFactory;
 use Database\Factories\PersonFactory;
 use Database\Factories\TransactionFactory;
 use Database\Factories\VodacomTransactionFactory;
@@ -191,14 +195,20 @@ class SmsProcessorTest extends TestCase
 
     private function initializeData()
     {
-        //create person
+        //create cluster
+        ClusterFactory::new()->create();
+        //create mini-grid
+        MiniGridFactory::new()->create();
+        //create city
+        CityFactory::new()->create();
+        //create address
+        AddressFactory::new()->create();
+        //create settings
         MainSettingsFactory::new()->create();
-
         //create person
         PersonFactory::new()->create();
         //create meter-tariff
         MeterTariffFactory::new()->create();
-
         //create meter-type
         MeterType::query()->create([
             'online' => 0,

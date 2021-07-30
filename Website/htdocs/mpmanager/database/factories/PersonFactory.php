@@ -17,7 +17,7 @@ class PersonFactory extends Factory
             'surname' => $this->faker->firstName(),
             'birth_date' => $this->faker->date(),
             'sex' => $this->faker->randomKey(['male', 'female']),
-            'is_customer' => 1,
+            'is_customer' => 0,
         ];
     }
 }

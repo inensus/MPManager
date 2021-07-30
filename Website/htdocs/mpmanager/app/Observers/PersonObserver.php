@@ -66,6 +66,9 @@ class PersonObserver
      */
     public function created(Person $person)
     {
-        event('cluster_meta.registered_customers.increment', $person);
+        if($person->is_customer === 1){
+            event('cluster_meta.registered_customers.increment', $person);
+        }
+
     }
 }
