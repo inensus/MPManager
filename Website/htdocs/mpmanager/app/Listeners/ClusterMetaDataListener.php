@@ -54,13 +54,21 @@ class ClusterMetaDataListener
 
     public function subscribe(Dispatcher $events)
     {
-        $events->listen('cluster_meta.connected_meters.increment',
-            '\App\Listeners\ClusterMetaDataListener@incrementConnectedMetersCount');
-        $events->listen('cluster_meta.connected_meters.decrement',
-            '\App\Listeners\ClusterMetaDataListener@decrementConnectedMetersCount');
-        $events->listen('cluster_meta.registered_customers.increment',
-            '\App\Listeners\ClusterMetaDataListener@incrementRegisteredCustomersCount');
-        $events->listen('cluster_meta.registered_customers.decrement',
-            '\App\Listeners\ClusterMetaDataListener@decrementRegisteredCustomersCount');
+        $events->listen(
+            'cluster_meta.connected_meters.increment',
+            '\App\Listeners\ClusterMetaDataListener@incrementConnectedMetersCount'
+        );
+        $events->listen(
+            'cluster_meta.connected_meters.decrement',
+            '\App\Listeners\ClusterMetaDataListener@decrementConnectedMetersCount'
+        );
+        $events->listen(
+            'cluster_meta.registered_customers.increment',
+            '\App\Listeners\ClusterMetaDataListener@incrementRegisteredCustomersCount'
+        );
+        $events->listen(
+            'cluster_meta.registered_customers.decrement',
+            '\App\Listeners\ClusterMetaDataListener@decrementRegisteredCustomersCount'
+        );
     }
 }
