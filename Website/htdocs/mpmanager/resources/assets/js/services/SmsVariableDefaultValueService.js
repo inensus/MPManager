@@ -11,14 +11,12 @@ export class SmsVariableDefaultValueService {
 
     fromJson (smsVariableDefaultValues) {
         this.list = []
-        for (let s in smsVariableDefaultValues) {
-            let defaultValue = smsVariableDefaultValues[s]
-            let smsVariableDefaultValue = {
+        this.list = smsVariableDefaultValues.map(defaultValue => {
+            return {
                 variable: '[' + defaultValue.variable + ']',
                 value: defaultValue.value,
             }
-            this.list.push(smsVariableDefaultValue)
-        }
+        })
     }
 
     async getSmsVariableDefaultValues () {
@@ -37,9 +35,8 @@ export class SmsVariableDefaultValueService {
     }
 
     prepareShownMessage (body, list) {
-        this.shownMessage=''
-        list.forEach((e) => {
-            body = body.replaceAll(e.variable, e.value)
+        body = list.map((e) => {
+            return body.replaceAll(e.variable, e.value)
         })
         this.shownMessage = body
         if (!(body.length)){

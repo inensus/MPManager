@@ -27,19 +27,16 @@ export class AssetService {
     }
 
     updateList (data) {
-        this.list = []
-
-        for (let a in data) {
-
+        this.list = data.map(asset => {
             let assetType = {
-                id: data[a].id,
-                name: data[a].name,
-                updated_at: data[a].updated_at.toString().replace(/T/, ' ').replace(/\..+/, ''),
+                id: asset.id,
+                name: asset.name,
+                updated_at: asset.updated_at.toString().replace(/T/, ' ').replace(/\..+/, ''),
                 edit: false,
-                price: data[a].price
+                price: asset.price
             }
-            this.list.push(assetType)
-        }
+            return assetType
+        })
         return this.list
     }
 

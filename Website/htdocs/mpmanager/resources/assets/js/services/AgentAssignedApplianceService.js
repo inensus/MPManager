@@ -29,11 +29,9 @@ export class AgentAssignedApplianceService {
     }
 
     updateList (data) {
-        this.list = []
-        for (let a in data) {
-            let assignedAppliance = this.fromJson(data[a])
-            this.list.push(assignedAppliance)
-        }
+        this.list = data.map(appliance => {
+            return this.fromJson(appliance)
+        })
         return this.list
     }
 

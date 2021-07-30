@@ -18,11 +18,12 @@ export class AgentTransactionService{
     }
 
     fromJson (data) {
+        const meterParameter = data.meter.meter_parameter
         let transaction = {
             id: data.id,
             amount: data.amount,
             meter: data.message,
-            customer:data.meter.meter_parameter.owner.name +' ' + data.meter.meter_parameter.owner.surname,
+            customer: meterParameter ? meterParameter.owner.name + ' ' + meterParameter.owner.surname : '',
             createdAt: data.created_at.toString().replace(/T/, ' ').replace(/\..+/, '')
         }
         return transaction
@@ -30,10 +31,9 @@ export class AgentTransactionService{
 
     updateList (data) {
         this.list = []
-        for (let a in data) {
-            let transaction = this.fromJson(data[a])
-            this.list.push(transaction)
-        }
+        this.list = data.map(transaction => {
+            return this.fromJson(transaction)
+        })
         return this.list
     }
 }
