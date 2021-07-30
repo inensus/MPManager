@@ -26,17 +26,23 @@ export const exportedRoutes = [
     path: '/',
     component: require('./components/ClustersDashboard/ClusterList').default,
     name: 'cluster-list-dashboard',
-    meta: { layout: 'default' },
+    meta: { layout: 'default', breadcrumb:
+            { level: 'base', name: 'Clusters', link: '/' },
+         },
   },
   {
     path: '/dashboards/mini-grid/:id',
     component: require('./components/MiniGrid/Dashboard').default,
-    meta: { layout: 'default' },
+    meta: { layout: 'default', breadcrumb:
+            { level: 'detail', name: 'Mini-Grid', link: '/dashboards/mini-grid', target: 'id' },
+         },
   },
   {
     path: '/dashboards/mini-grid/',
     component: require('./components/MiniGrid/Selector').default,
-    meta: { layout: 'default' },
+    meta: { layout: 'default', breadcrumb:
+            { level: 'base', name: 'Mini-Grids', link: '/dashboards/mini-grid' },
+         },
   },
   {
     path: '/reports',
@@ -47,21 +53,24 @@ export const exportedRoutes = [
   {
     path: '/people',
     component: require('./components/Client/ClientList').default,
-    meta: { layout: 'default' },
+    meta: { layout: 'default', breadcrumb:
+            { level: 'base', name: 'Customers', link: '/people' },
+         },
   },
   {
     path: '/people/:id',
     component: require('./components/Client/ClientDetail').default,
-    meta: { layout: 'default' , breadcrumb: [
-            { type: 'base', name: 'Customers', link: '/people' },
-            { type: 'final_target', target: 'id' }
-        ] },
+    meta: { layout: 'default' , breadcrumb:
+            { level: 'detail', name: 'Customers', link: '/people', target: 'id' },
+         },
   },
   {
     //transaction list
     path: '/transactions',
     component: require('./components/Transactions/TransactionList').default,
-    meta: { layout: 'default' },
+    meta: { layout: 'default', breadcrumb:
+            { level: 'base', name: 'Transactions', link: '/transactions' },
+         },
   },
   {
     //transaction list
@@ -73,10 +82,9 @@ export const exportedRoutes = [
     //transaction details
     path: '/transactions/:id',
     component: require('./components/Transactions/TransactionDetail').default,
-    meta: { layout: 'default', breadcrumb: [
-            { type: 'base', name: 'Transactions', link: '/transactions' },
-            { type: 'final_target', target: 'id' }
-        ]},
+    meta: { layout: 'default', breadcrumb:
+            { level: 'detail', name: 'Transactions', link: '/transactions', target: 'id' },
+        },
   },
   {
     path: '/tickets',
@@ -96,20 +104,23 @@ export const exportedRoutes = [
   {
     path: '/tariffs',
     component: require('./components/Tariff/TariffList').default,
-    meta: { layout: 'default' },
+    meta: { layout: 'default', breadcrumb:
+            { level: 'base', name: 'Tariffs', link: '/tariffs' },
+         },
   },
   {
     path: '/tariffs/:id',
     component: require('./components/Tariff/TariffDetail').default,
-    meta: { layout: 'default' , breadcrumb: [
-            { type: 'base', name: 'Tariffs', link: '/tariffs' },
-            { type: 'final_target', target: 'id' }
-        ]},
+    meta: { layout: 'default' , breadcrumb:
+            { level: 'detail', name: 'Tariffs', link: '/tariffs',target: 'id' },
+        },
   },
   {
     path: '/meters',
     component: require('./components/Meter/MeterList').default,
-    meta: { layout: 'default' },
+    meta: { layout: 'default', breadcrumb:
+            { level: 'base', name: 'Meters', link: '/meters' },
+          },
 
   },
   {
@@ -122,10 +133,9 @@ export const exportedRoutes = [
   {
     path: '/meters/:id',
     component: require('./components/Meter/MeterDetail').default,
-    meta: { layout: 'default', breadcrumb: [
-            { type: 'base', name: 'Meters', link: '/meters' },
-            { type: 'final_target', target: 'id' }
-        ] },
+    meta: { layout: 'default', breadcrumb:
+            { level: 'detail', name: 'Meters', link: '/meters', target: 'id' },
+         },
 
   },
   {
@@ -138,7 +148,9 @@ export const exportedRoutes = [
     path: '/clusters',
     component: require('./components/ClustersDashboard/ClusterList').default,
     name: 'cluster-list',
-    meta: { layout: 'default' },
+    meta: { layout: 'default', breadcrumb:
+            { level: 'base', name: 'Clusters', link: '/clusters' }
+         },
   },
 
   {
@@ -152,10 +164,9 @@ export const exportedRoutes = [
     path: '/clusters/:id',
     component: require('./components/ClusterDashboard/ClusterDashboard').default,
     name: 'cluster-detail',
-    meta: { layout: 'default', breadcrumb: [
-            { type: 'base', name: 'Clusters', link: '/clusters' },
-            { type: 'final_target', target: 'id' }
-        ]},
+    meta: { layout: 'default', breadcrumb:
+            { level: 'detail', name: 'Clusters', link: '/clusters', target:'id' }
+        },
   },
   //targets
   {
@@ -176,17 +187,18 @@ export const exportedRoutes = [
     path: '/connection-types',
     component: require('./components/ConnectionTypes/ConnectionTypesList').default,
     name: 'connection-types',
-    meta: { layout: 'default' },
+    meta: { layout: 'default', breadcrumb:
+            { level: 'base', name: 'Connection Types', link: '/connection-types' },
+         },
   },
   // connection-types
   {
     path: '/connection-types/:id',
     component: require('./components/ConnectionTypes/ConnectionTypeDetail').default,
     name: 'connection-type-detail',
-    meta: { layout: 'default' , breadcrumb: [
-            { type: 'base', name: 'Connection Types', link: '/connection-types' },
-            { type: 'final_target', target: 'id' }
-        ]}
+    meta: { layout: 'default' , breadcrumb:
+            { level: 'detail', name: 'Connection Types', link: '/connection-types', target: 'id' },
+        }
   },
   {
     path: '/connection-types/new',
@@ -273,10 +285,9 @@ export const exportedRoutes = [
   {
     path: '/agents/:id',
     component: require('./components/Agent/Agent').default,
-    meta: { layout: 'default', breadcrumb: [
-            { type: 'base', name: 'Agents', link: '/agents' },
-            { type: 'final_target', target: 'id' }
-        ] },
+    meta: { layout: 'default', breadcrumb:
+            { level: 'base', name: 'Agents', link: '/agents', target: 'id' },
+         },
   },
   {
     path: '/commissions',

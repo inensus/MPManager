@@ -6,6 +6,7 @@ import { Admin } from '../classes/admin'
 import * as auth from '../store/modules/authentication'
 import * as settings from '../store/modules/settings'
 import * as resolution from '../store/modules/resolution'
+import * as breadcrumb from '../store/modules/breadcrumb'
 import VuexPersist from 'vuex-persist'
 
 Vue.use(Vuex)
@@ -23,6 +24,9 @@ const vuexLocalStorage = new VuexPersist({
             width: state.resolution.width,
             height: state.resolution.height,
             isMobile: state.resolution.isMobile
+        },
+        breadcrumb:{
+            breadcrumb: state.breadcrumb
         }
     }),
     key: 'vuex',
@@ -32,7 +36,8 @@ export default new Vuex.Store({
     modules: {
         auth,
         settings,
-        resolution
+        resolution,
+        breadcrumb
     },
     plugins: [vuexLocalStorage.plugin],
     state: {
@@ -46,6 +51,7 @@ export default new Vuex.Store({
         meters: state => state.meters,
         admin: state => state.admin,
         search: state => state.search,
-        resolution: state => state.resolution
+        resolution: state => state.resolution,
+        breadcrumb: state => state.breadcrumb
     }
 })
