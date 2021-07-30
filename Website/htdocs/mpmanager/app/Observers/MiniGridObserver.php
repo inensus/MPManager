@@ -67,7 +67,7 @@ class MiniGridObserver
      */
     public function deleted(MiniGrid $miniGrid)
     {
-        $clusterMetaData = ClusterMetaData::query()->where('mini_grid_id','=',$miniGrid->id);
+        $clusterMetaData = ClusterMetaData::query()->where('mini_grid_id', '=', $miniGrid->id);
         $clusterMetaData->delete();
     }
 

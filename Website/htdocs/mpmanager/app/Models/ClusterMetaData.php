@@ -20,5 +20,4 @@ use Illuminate\Database\Eloquent\Model;
 class ClusterMetaData extends Model
 {
     protected $guarded = [];
-
 }
