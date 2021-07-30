@@ -148,33 +148,32 @@
                     <energy-chart-box :mini-grid-id="miniGridId"/>
                 </div>
 
+                <div class="md-layout-item md-layout md-gutter md-size-100">
+                    <div class="md-layout-item md-medium-size-100 md-size-33" style="min-height: 500px">
+                        <revenue-per-customer-type
+                            ref="donut"
+                            :batch-revenues="batchRevenues"
+                        ></revenue-per-customer-type>
 
-                <div class="md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-33">
-                    <revenue-per-customer-type
-                        ref="donut"
-                        :batch-revenues="batchRevenues"
-                    ></revenue-per-customer-type>
+                    </div>
+                    <div class="md-layout-item md-medium-size-100 md-size-66" style="min-height: 500px">
+                        <revenue-target-per-customer-type
+                            ref="targetChart"
+                        ></revenue-target-per-customer-type>
 
+                    </div>
                 </div>
-                <div class="md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-66">
-                    <revenue-target-per-customer-type
-                    ref="progress-chart"
-                    :batch-revenues="batchRevenues"
-                    ></revenue-target-per-customer-type>
 
-                </div>
-
-                <div class="md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-100">
+                <div class="md-layout-item md-size-100">
                     <mini-grid-map :mini-grid-id="miniGridId"/>
                 </div>
-                <div class="md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-100">
+                <div class="md-layout-item md-size-100">
                     <target-list
                         ref="target"
                         :target-id="miniGridId"
                         target-type="mini-grid"
                         :base="highlighted.base"
                         :compared="highlighted.compared"
-                        @baseDataAvailable=baseDataAvailable
                     />
                 </div>
                 <div class="md-layout-item md-medium-size-100 md-xsmall-size-100 md-size-100">
@@ -271,6 +270,8 @@ import TicketsOverview from './TicketsOverview'
 import RevenueTrends from './RevenueTrends'
 import RevenuePerCustomerType from './RevenuePerCustomerType'
 import RevenueTargetPerCustomerType from './RevenueTargetPerCustomerType'
+import { BatchRevenueService } from '../../services/BatchRevenueService'
+
 export default {
     name: 'Dashboard',
     components: {
@@ -375,6 +376,7 @@ export default {
             },
             miniGridService: new MiniGridService(),
             revenueService: new RevenueService(),
+            batchRevenueService: new BatchRevenueService(),
             revenueTrends: null,
             ticketsData: null,
             enableDataStream: false,
@@ -662,19 +664,22 @@ export default {
                 }
 
             }
-
+            this.getBatchRevenues()
             this.$refs.box.getSoldEnergy(this.startDate,this.endDate)
             this.$refs.box.getTransactionsOverview(this.startDate,this.endDate)
-            this.$refs.target.getBatchData()
             this.$refs.revenue.getRevenueTrends(this.startDate,this.endDate,this.tab)
             this.$refs.tickets.getTicketsData()
-        },
 
-        baseDataAvailable (data) {
-            this.batchRevenues = data
-            this.$refs.donut.initDonutData(data)
         },
-
+        async getBatchRevenues(){
+            try {
+                this.batchRevenues = await this.batchRevenueService.getRevenueForPeriod(this.miniGridId,'mini-grid',this.startDate,this.endDate)
+                this.$refs.donut.initDonutData(this.batchRevenues)
+                this.$refs.targetChart.getColumnChartData(this.batchRevenues)
+            } catch (e) {
+                this.alertNotify('error', e.message)
+            }
+        },
         formatDates (dateOne, dateTwo) {
             let formattedDates = ''
             if (dateOne) {

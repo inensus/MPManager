@@ -11,14 +11,12 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 
-class TariffResource extends TestCase
+class TariffResourceTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    public function createBasicTariff(): void
+    public function test_create_basic_tariff(): void
     {
-
         $headers = $this->headers();
         $request = $this->post('/api/tariffs', [
             'name' => 'Tariff',
@@ -32,12 +30,10 @@ class TariffResource extends TestCase
         $request->assertStatus(201);
         $this->assertCount(1, MeterTariff::all());
         $this->assertEquals(10000, MeterTariff::first()->total_price);
-
     }
 
 
-    /** @test */
-    public function createTariffWithPriceComponents(): void
+    public function test_create_tariff_with_price_components(): void
     {
         Queue::fake();
         $this->withoutExceptionHandling();
@@ -63,8 +59,7 @@ class TariffResource extends TestCase
         Queue::assertPushed(TariffPricingComponentsCalculator::class);
     }
 
-    /** @test */
-    public function createTariffWithSocialInputs(): void
+    public function test_create_tariff_with_social_inputs(): void
     {
         $this->withoutExceptionHandling();
         $headers = $this->headers();
@@ -82,8 +77,7 @@ class TariffResource extends TestCase
         ],
             $headers
         );
-
         $request->assertStatus(201);
-        $this->assertCount(1, SocialTariff::all());
+        $this->assertCount(1, MeterTariff::all());
     }
 }

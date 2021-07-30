@@ -35,7 +35,7 @@ export default {
             donutChartOptions: {
                 pieHole: 1,
                 legend: 'bottom',
-                height: 300,
+                height: 500,
             },
         }
     },
@@ -56,7 +56,7 @@ export default {
                 this.donutChartOptions = {
                     pieHole: 1,
                     legend: 'bottom',
-                    height: 300,
+                    height: 500,
                 }
             } else {
                 this.donutData = []

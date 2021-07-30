@@ -69,13 +69,14 @@ export class ConnectionGroupService {
         }
     }
 
-    async createConnectionGroup(name) {
+    async createConnectionGroup() {
         try {
             let connectionGroup_PM = {
-                name: name
+                name: this.connectionGroup.name
             }
             let response = await this.repository.create(connectionGroup_PM)
             if (response.status === 200 || response.status === 201) {
+                this.resetConnectionGroup()
                 return response.data.data
             } else {
                 return new ErrorHandler(response.error, 'http', response.status)
@@ -83,6 +84,13 @@ export class ConnectionGroupService {
         } catch (e) {
             let erorMessage = e.response.data.data.message
             return new ErrorHandler(erorMessage, 'http')
+        }
+    }
+    resetConnectionGroup(){
+        this.connectionGroup ={
+            id: null,
+            name: null,
+            target: this.target
         }
     }
 }

@@ -6,5 +6,5 @@ export default {
     },
     refresh (token) {
         return Client.post(`${resource}/refresh`, null, { headers: { Authorization: 'Bearer' + token } })
-    }
+    },
 }

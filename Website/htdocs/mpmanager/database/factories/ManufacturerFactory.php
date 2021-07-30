@@ -1,15 +1,20 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
-use App\Model;
 use App\Models\Manufacturer;
-use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(Manufacturer::class, function (Faker $faker) {
-    return [
-        'name' => 'CALIN',
-        'website' => 'http://www.calinmeter.com/',
-        'api_name' => 'CalinApi',
-    ];
-});
+class ManufacturerFactory extends Factory
+{
+    protected $model = Manufacturer::class;
+
+    public function definition(): array
+    {
+        return [
+            'name' => $this->faker->company,
+            'website' => $this->faker->url,
+            'api_name' => $this->faker->name,
+        ];
+    }
+}

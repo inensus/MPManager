@@ -18,6 +18,8 @@ class CreateMapSettingsTable extends Migration
             $table->integer('zoom');
             $table->double('latitude',10);
             $table->double('longitude',10);
+            $table->string('provider');
+            $table->string('bingMapApiKey');
             $table->timestamps();
         });
     }

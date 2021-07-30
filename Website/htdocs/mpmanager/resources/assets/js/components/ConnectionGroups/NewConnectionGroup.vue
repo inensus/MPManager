@@ -1,30 +1,31 @@
 <template>
     <widget
-        v-if="showAdd"
-        :id="'new-connection-group'"
-        :title="$tc('phrases.newConnectionGroup')"
-        :color="'red'"
+            :hidden="!showAdd"
+            :id="'new-connection-group'"
+            :title="$tc('phrases.newConnectionGroup')"
+            :color="'red'"
     >
-
-
         <md-card>
-
             <md-card-content>
-                <div class="md-layout md-gutter">
-                    <div class="md-layout-item">
-                        <md-field :class="{'md-invalid': errors.has($tc('words.name'))}">
-                            <label for="name">{{ $tc('words.name') }}</label>
-                            <md-input
-                                id="name"
-                                :name="$tc('words.name')"
-                                v-model="connectionGroup.name"
-                                v-validate="'required|min:3'"
-                            />
-                            <span class="md-error">{{ errors.first($tc('words.name')) }}</span>
-                        </md-field>
+                <form ref="connectionGroupForm">
+                    <div class="md-layout md-gutter">
+                        <div class="md-layout-item">
 
+                            <md-field :class="{'md-invalid': errors.has($tc('words.name'))}">
+                                <label for="name">{{ $tc('words.name') }}</label>
+                                <md-input
+                                        id="name"
+                                        :name="$tc('words.name')"
+                                        v-model="connectionGroupService.connectionGroup.name"
+                                        v-validate="'required|min:3'"
+                                />
+                                <span class="md-error">{{ errors.first($tc('words.name')) }}</span>
+                            </md-field>
+
+
+                        </div>
                     </div>
-                </div>
+                </form>
             </md-card-content>
 
             <md-card-actions>
@@ -40,27 +41,26 @@
 
 <script>
 import Widget from '../../shared/widget'
-import {EventBus} from '../../shared/eventbus'
-import {ConnectionGroupService} from '../../services/ConnectionGroupService'
+import { EventBus } from '../../shared/eventbus'
+import { ConnectionGroupService } from '../../services/ConnectionGroupService'
 
 export default {
     name: 'NewConnectionGroup',
-    components: {Widget},
-    data() {
+    components: { Widget },
+    data () {
         return {
             connectionGroupService: new ConnectionGroupService(),
-            connectionGroup: null,
             showAdd: false,
         }
     },
-    created() {
-        this.connectionGroup = this.connectionGroupService.connectionGroup
+    created () {
+
     },
-    mounted() {
+    mounted () {
         EventBus.$on('showNewConnectionGroup', this.show)
     },
     methods: {
-        async store() {
+        async store () {
             let validator = await this.$validator.validateAll()
             if (!validator) {
 
@@ -68,22 +68,22 @@ export default {
             }
             this.hide()
             try {
-
-                await this.connectionGroupService.createConnectionGroup(this.connectionGroup.name)
-                this.alertNotify('success', this.$tc('phrases.newConnectionGroup',2))
+                await this.connectionGroupService.createConnectionGroup()
+                this.alertNotify('success', this.$tc('phrases.newConnectionGroup', 2))
+                this.$refs['connectionGroupForm'].reset()
                 EventBus.$emit('connectionGroupAdded', this.connectionGroup)
             } catch (e) {
                 this.alertNotify('error', e.message)
             }
 
         },
-        hide() {
+        hide () {
             this.showAdd = false
         },
-        show() {
+        show () {
             this.showAdd = true
         },
-        alertNotify(type, message) {
+        alertNotify (type, message) {
             this.$notify({
                 group: 'notify',
                 type: type,
@@ -91,6 +91,14 @@ export default {
                 text: message
             })
         },
+    },
+    watch: {
+        showAdd (value) {
+            if (value) {
+                this.errors.clear()
+            }
+
+        }
     }
 }
 </script>

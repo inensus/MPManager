@@ -1,51 +1,47 @@
 <template>
     <widget
 
-            :title="$tc('phrases.lastTransactions')"
-            :paginator="userTransactionsService.paginator"
-            color="green"
-            :subscriber="subscriber"
+        :title="$tc('phrases.lastTransactions')"
+        :paginator="userTransactionsService.paginator"
+        color="green"
+        :subscriber="subscriber"
     >
+        <md-table style="width:100%" v-model="userTransactionsService.list" md-card md-fixed-header>
+            <md-table-row
+                @click="loadTransaction(item.id)"
+                slot="md-table-row"
+                slot-scope="{ item }"
+            >
+                <md-table-cell
+                    :md-label="$tc('phrases.paymentType')"
+                    md-sort-by="paymentType"
+                    md-numeric
+                >{{ item.paymentType }}
+                </md-table-cell>
+                <md-table-cell :md-label="$tc('words.sender')" md-sort-by="sender">{{ item.sender }}
+                </md-table-cell>
+                <md-table-cell :md-label="$tc('words.amount')" md-sort-by="amount">{{
+                        item.amount + ' ' +
+                        appConfig.currency
+                    }}
+                </md-table-cell>
+                <md-table-cell :md-label="$tc('phrases.paidFor')" md-sort-by="type">{{
+                        item.type
+                    }}
+                </md-table-cell>
+                <md-table-cell
+                    :md-label="$tc('phrases.paymentService')"
+                    md-sort-by="paymentService"
+                >{{ item.paymentService }}
+                </md-table-cell>
+                <md-table-cell
+                    :md-label="$tc('phrases.createdAt')"
+                    md-sort-by="createdAt"
+                >{{ timeForHuman(item.createdAt) }}
+                </md-table-cell>
+            </md-table-row>
+        </md-table>
 
-        <md-card>
-            <md-card-content>
-
-                <md-table style="width:100%" v-model="userTransactionsService.list" md-card md-fixed-header>
-                    <md-table-row
-                            @click="loadTransaction(item.id)"
-                            slot="md-table-row"
-                            slot-scope="{ item }"
-                    >
-                        <md-table-cell
-                                :md-label="$tc('phrases.paymentType')"
-                                md-sort-by="paymentType"
-                                md-numeric
-                        >{{ item.paymentType }}
-                        </md-table-cell>
-                        <md-table-cell :md-label="$tc('words.sender')" md-sort-by="sender">{{ item.sender }}
-                        </md-table-cell>
-                        <md-table-cell :md-label="$tc('words.amount')" md-sort-by="amount">{{ item.amount + ' ' +
-                            appConfig.currency}}
-                        </md-table-cell>
-                        <md-table-cell :md-label="$tc('phrases.paidFor')" md-sort-by="type">{{
-                            item.type }}
-                        </md-table-cell>
-                        <md-table-cell
-                                :md-label="$tc('phrases.paymentService')"
-                                md-sort-by="paymentService"
-                        >{{ item.paymentService }}
-                        </md-table-cell>
-                        <md-table-cell
-                                :md-label="$tc('phrases.createdAt')"
-                                md-sort-by="createdAt"
-                        >{{timeForHuman(item.createdAt)}}
-                        </md-table-cell>
-                    </md-table-row>
-                </md-table>
-
-            </md-card-content>
-
-        </md-card>
     </widget>
 </template>
 
@@ -115,21 +111,21 @@ export default {
 }
 </script>
 <style scoped lang="scss">
-    .pagination {
-        color: #ac2925;
+.pagination {
+    color: #ac2925;
+    list-style: none;
+    display: flex;
+
+    li {
         list-style: none;
-        display: flex;
-
-        li {
-            list-style: none;
-            display: inline-block;
-            padding: 5px;
-            margin: 1px;
-            background-color: #f7f7f7;
-        }
-
-        .active {
-            background-color: #dddddd;
-        }
+        display: inline-block;
+        padding: 5px;
+        margin: 1px;
+        background-color: #f7f7f7;
     }
+
+    .active {
+        background-color: #dddddd;
+    }
+}
 </style>

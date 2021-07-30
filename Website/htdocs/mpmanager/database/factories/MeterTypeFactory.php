@@ -1,14 +1,20 @@
 <?php
 
-/** @var \Illuminate\Database\Eloquent\Factory $factory */
+namespace Database\Factories;
 
 use App\Models\Meter\MeterType;
-use Faker\Generator as Faker;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-$factory->define(MeterType::class, function (Faker $faker) {
-    return [
-        'online' => 0,
-        'phase' => 1,
-        'max_current' => 10,
-    ];
-});
+class MeterTypeFactory extends Factory
+{
+    protected $model = MeterType::class;
+
+    public function definition(): array
+    {
+        return [
+            'online' => $this->faker->numberBetween(0,1),
+            'phase' => 1,
+            'max_current' => 10,
+        ];
+    }
+}

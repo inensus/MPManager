@@ -50,7 +50,7 @@ export default {
     data(){
         return{
             revenueService: new RevenueService(),
-            redirectionUrl: '/locations/add-city',
+            redirectionUrl: '/locations/add-village',
             imperativeItem: 'City',
             redirectDialogActive: false,
             subscriber: 'miniGrid-revenue-trends'

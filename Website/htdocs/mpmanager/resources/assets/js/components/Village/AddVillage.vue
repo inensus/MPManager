@@ -238,7 +238,7 @@ export default {
                     const city = await this.cityService.createCity(this.cityName, this.clusterId, this.selectedMiniGridId, this.geoData)
                     this.alertNotify('success', this.$tc('phrases.newVillageNotify',1))
                     this.loading = false
-                    await this.$router.replace('/dashboards/mini-grid/' + city.data.data.mini_grid.id)
+                    await this.$router.replace('/dashboards/mini-grid/' + city.mini_grid.id)
                 } catch (e) {
                     this.loading = false
                     this.alertNotify('error', e.message)
