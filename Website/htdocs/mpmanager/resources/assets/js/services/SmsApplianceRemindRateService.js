@@ -14,20 +14,19 @@ export class SmsApplianceRemindRateService {
         }
     }
     fromJson (applianceTypes) {
-        this.list = []
         if (!applianceTypes.length){
             return
         }
-        for (let s in applianceTypes) {
+        this.list = applianceTypes.map(applianceType => {
             this.smsApplianceRemindRate = {
-                id: (applianceTypes[s].sms_reminder_rate == null || applianceTypes[s].sms_reminder_rate === undefined)  ? -1 * Math.floor(Math.random() * 10000000) : applianceTypes[s].sms_reminder_rate.id,
-                applianceTypeId: applianceTypes[s].id,
-                applianceType: applianceTypes[s].name,
-                overdueRemindRate: (applianceTypes[s].sms_reminder_rate == null || applianceTypes[s].sms_reminder_rate === undefined)  ? 0 : applianceTypes[s].sms_reminder_rate.overdue_remind_rate,
-                remindRate: (applianceTypes[s].sms_reminder_rate == null || applianceTypes[s].sms_reminder_rate === undefined)  ? 0 : applianceTypes[s].sms_reminder_rate.remind_rate,
+                id: (applianceType.sms_reminder_rate == null || applianceTypes.sms_reminder_rate === undefined)  ? -1 * Math.floor(Math.random() * 10000000) : applianceType.sms_reminder_rate.id,
+                applianceTypeId: applianceType.id,
+                applianceType: applianceType.name,
+                overdueRemindRate: (applianceType.sms_reminder_rate == null || applianceType.sms_reminder_rate === undefined)  ? 0 : applianceType.sms_reminder_rate.overdue_remind_rate,
+                remindRate: (applianceType.sms_reminder_rate == null || applianceType.sms_reminder_rate === undefined)  ? 0 : applianceType.sms_reminder_rate.remind_rate,
             }
-            this.list.push(this.smsApplianceRemindRate)
-        }
+            return this.smsApplianceRemindRate
+        })
     }
     async getSmsApplianceRemindRates () {
         try {

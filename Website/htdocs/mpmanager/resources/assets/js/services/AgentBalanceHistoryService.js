@@ -27,11 +27,7 @@ export class AgentBalanceHistoryService {
     }
 
     updateList (data) {
-        this.list = []
-        for (let a in data) {
-            let balanceHistory = this.fromJson(data[a])
-            this.list.push(balanceHistory)
-        }
+        this.list = data.map(this.fromJson)
         return this.list
     }
 

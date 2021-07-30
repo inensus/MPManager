@@ -39,24 +39,23 @@ export class SmsService {
     }
 
     updateList(smsList) {
-        this.numberList = []
-        for (let index in smsList) {
-            let sms = {
-                id: smsList[index].id,
-                number: smsList[index].receiver,
-                date: smsList[index].created_at,
-                message: smsList[index].body,
+        this.numberList = smsList.map(sms => {
+            let smsObj = {
+                id: sms.id,
+                number: sms.receiver,
+                date: sms.created_at,
+                message: sms.body,
                 owner: '',
                 total: 0
             }
-            if (smsList[index].address !== null) {
-                sms.owner = smsList[index].address.owner
+            if (sms.address !== null) {
+                smsObj.owner = sms.address.owner
             }
-            if ('total' in smsList[index]) {
-                sms.total = smsList[index].total
+            if ('total' in sms) {
+                smsObj.total = sms.total
             }
-            this.numberList.push(sms)
-        }
+            return smsObj
+        })
         return this.numberList
     }
 

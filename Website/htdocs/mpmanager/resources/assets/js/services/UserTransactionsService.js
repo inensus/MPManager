@@ -12,13 +12,8 @@ export class UserTransactionsService {
 
     }
 
-
     updateList (transactionList) {
-        this.list = []
-        for (let transaction in transactionList) {
-            this.list.push(this.fromJson(transactionList[transaction]))
-        }
-
+        this.list = transactionList.map(transaction => {return this.fromJson(transaction)})
         return this.list
     }
 
@@ -34,7 +29,6 @@ export class UserTransactionsService {
         }
 
     }
-
 
     async getTransactions (userId, page) {
         try {

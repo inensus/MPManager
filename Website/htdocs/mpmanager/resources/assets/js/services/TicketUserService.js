@@ -17,15 +17,7 @@ export class TicketUserService {
             let response = await this.repository.list()
             if (response.status === 200) {
                 let users = response.data.data
-                users.forEach((user) => {
-                    this.list.push({
-                        id: user.id,
-                        name: user.user_name,
-                        tag: user.user_tag,
-                        created_at:  user.created_at.toString().replace(/T/, ' ').replace(/\..+/, '')
-                    })
-                })
-
+                this.list = users.map(this.pushUsers)
                 return this.list
             } else {
                 return new ErrorHandler(response.error, 'http', response.status)
@@ -36,7 +28,14 @@ export class TicketUserService {
         }
 
     }
-
+    pushUsers(user){
+        return {
+            id: user.id,
+            name: user.user_name,
+            tag: user.user_tag,
+            created_at:  user.created_at.toString().replace(/T/, ' ').replace(/\..+/, '')
+        }
+    }
     async createUser (name, tag, outsourcing) {
         try {
             let userPM = {

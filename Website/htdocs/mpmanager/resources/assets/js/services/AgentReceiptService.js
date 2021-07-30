@@ -29,11 +29,7 @@ export class AgentReceiptService {
     }
 
     updateList (data) {
-        this.list = []
-        for (let a in data) {
-            let receipt = this.fromJson(data[a])
-            this.list.push(receipt)
-        }
+        this.list = data.map(this.fromJson)
         return this.list
     }
 
