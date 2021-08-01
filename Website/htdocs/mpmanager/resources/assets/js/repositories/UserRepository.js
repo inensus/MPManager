@@ -1,13 +1,18 @@
-const resource ={
-    list: '/api/admin/users',
-    login: '/api/auth/login',
-    refresh: '/api/auth/refresh',
-}
+const resource = '/api/users'
 import Client from './Client/AxiosClient'
 
 export default {
 
-    list(paginate){
-        return Client.get(`${resource.list}?paginate=${paginate}`)
+    list(){
+        return Client.get(`${resource}`)
+    },
+    create(userData){
+        return Client.post(`${resource}`,userData)
+    },
+    put(userData){
+        return Client.put(`${resource}/${userData.id}/addresses`,userData)
+    },
+    get(id){
+        return Client.get(`${resource}/${id}`)
     }
 }

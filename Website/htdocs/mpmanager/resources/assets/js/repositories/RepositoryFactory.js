@@ -56,6 +56,7 @@ import PaymentHistoryRepository from './PaymentHistoryRepository'
 import BatchRevenueRepository from './BatchRevenueRepository'
 import TargetRepository from './TargetRepository'
 import MeterDetailRepository from './MeterDetailRepository'
+import UserPasswordRepository from './UserPasswordRepository'
 
 const repositories = {
     'address': AddressRepository,
@@ -115,7 +116,8 @@ const repositories = {
     'target': TargetRepository,
     'batchRevenue': BatchRevenueRepository,
     'paymentHistory': PaymentHistoryRepository,
-    'meterDetail': MeterDetailRepository
+    'meterDetail': MeterDetailRepository,
+    'userPassword': UserPasswordRepository
 }
 
 export default {
