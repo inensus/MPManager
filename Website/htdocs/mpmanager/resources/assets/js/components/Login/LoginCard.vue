@@ -63,7 +63,6 @@
 
 <script>
 import { validationMixin } from 'vuelidate'
-import { Admin } from '../../classes/admin'
 import { AuthenticationService } from '../../services/AuthenticationService'
 
 export default {
@@ -78,7 +77,6 @@ export default {
 
         userSaved: false,
         sending: false,
-        admin: new Admin(),
         service: new AuthenticationService()
     }),
 
