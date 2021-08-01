@@ -19,7 +19,7 @@ class UserAddressController extends Controller
 
     public function store(User $user, CreateAddressRequest $request): ApiResource
     {
-        return new ApiResource($this->userAddressService->update($user,$request->all()));
+        return new ApiResource($this->userAddressService->update($user, $request->all()));
     }
 
     public function admin(User $user, Request $request)
@@ -30,6 +30,6 @@ class UserAddressController extends Controller
 
     public function update(User $user, CreateAddressRequest $request)
     {
-        return new ApiResource($this->userAddressService->update($user,$request->all()));
+        return new ApiResource($this->userAddressService->update($user, $request->all()));
     }
 }

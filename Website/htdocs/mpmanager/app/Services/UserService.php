@@ -18,7 +18,7 @@ class UserService implements IUserService
     private $user;
     public function __construct(User $user)
     {
-        $this->user=$user;
+        $this->user = $user;
     }
 
     /**
@@ -32,7 +32,7 @@ class UserService implements IUserService
 
     public function update($user, $data)
     {
-        $user->update(['password'=>$data['password']]);
+        $user->update(['password' => $data['password']]);
         return $user->fresh();
     }
 

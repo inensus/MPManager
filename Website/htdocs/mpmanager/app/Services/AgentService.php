@@ -337,5 +337,4 @@ class AgentService implements IUserService
         }
         return $p;
     }
-
 }

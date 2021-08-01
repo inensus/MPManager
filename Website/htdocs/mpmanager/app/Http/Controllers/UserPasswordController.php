@@ -40,9 +40,8 @@ class UserPasswordController extends Controller
         );
     }
 
-    public function update(User $user,UserChangePasswordRequest $changePasswordRequest)
+    public function update(User $user, UserChangePasswordRequest $changePasswordRequest)
     {
-        return  new ApiResource($this->userService->update($user,$changePasswordRequest->all()));
+        return  new ApiResource($this->userService->update($user, $changePasswordRequest->all()));
     }
-
 }

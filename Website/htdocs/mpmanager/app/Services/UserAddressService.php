@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Services;
-
 
 use App\Exceptions\UserAddressNorFoundException;
 use App\Models\Address\Address;
@@ -13,13 +11,12 @@ class UserAddressService
 {
     private $address;
     private $user;
-    public function __construct(Address $address,User $user)
+    public function __construct(Address $address, User $user)
     {
-        $this->address=$address;
-        $this->user=$user;
-
+        $this->address = $address;
+        $this->user = $user;
     }
-    public function create(User $user,$data)
+    public function create(User $user, $data)
     {
         $address = $this->address->newQuery()->create([
             'email' => $data['email'] ?? '',
@@ -33,18 +30,18 @@ class UserAddressService
         $address->save();
         return $address->with(['city']);
     }
-    public function update(User $user,$data)
+    public function update(User $user, $data)
     {
         $user->name = $data['name'];
         $user->update();
         $address = $user->address()->first();
-        if(!$address){
+        if (!$address) {
             $address = $this->address->newQuery()->create([
                 'email' =>   $user->email,
                 'phone' => $data['phone'],
                 'street' => $data['street'],
                 'city_id' => $data['city_id'],
-                'is_primary'=>1
+                'is_primary' => 1
             ]);
             $address->owner()->associate($user);
             $address->save();
@@ -55,10 +52,8 @@ class UserAddressService
             'phone' => $data['phone'],
             'street' => $data['street'],
             'city_id' => $data['city_id'],
-            'is_primary'=>$address->is_primary
+            'is_primary' => $address->is_primary
         ]);
         return $this->user->newQuery()->with(['addressDetails'])->find($user->id);
-
-
     }
 }
