@@ -32,7 +32,6 @@ require_once 'resources/AgentApp.php';
 // Agent Web panel routes
 require_once 'resources/AgentWeb.php';
 
-//               ['middleware' => 'jwt.verify', 'uses' => 'AdminController@index']
 
 
 //JWT authentication
@@ -44,16 +43,23 @@ Route::group(['middleware' => 'api', 'prefix' => 'auth'], static function () {
     Route::get('me', 'AuthController@me');
 
 });
-// admin
-Route::group(['prefix' => 'admin', 'middleware' => 'jwt.verify'], static function () {
-    Route::post('/', 'AdminController@store');
-    Route::post('/forgot-password', 'AdminController@forgotPassword');
-    Route::put('/{user}', 'AdminController@update');
-    Route::get('/users', 'AdminController@index');
-    Route::post('{user}/addresses', 'AddressController@storeAdmin');
-    Route::put('{user}/addresses', 'AddressController@updateAdmin');
-    Route::get('{user}/addresses', 'AddressController@adminAddress');
+// user
+Route::group(['prefix' => 'users', 'middleware' => 'jwt.verify'], static function () {
+    Route::post('/', 'UserController@store');
+    Route::put('/{user}', 'UserController@update');
+    Route::get('/{user}', 'UserController@show');
+    Route::get('/', 'UserController@index');
+
+    Route::group(['prefix' => '/{user}/addresses'], static function () {
+        Route::post('/', 'UserAddressController@store');
+        Route::put('/', 'UserAddressController@update');
+        Route::get('/', 'UserAddressController@show');
+    });
+    Route::group(['prefix' => '/password'], static function () {
+        Route::put('/{user}', 'UserPasswordController@update');
+    });
 });
+Route::post('users/password', 'UserPasswordController@forgotPassword');
 // Assets
 Route::group(['prefix' => 'assets', 'middleware' => 'jwt.verify'], function () {
     Route::group(['prefix' => 'types'], function () {
