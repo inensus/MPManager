@@ -48,9 +48,9 @@ class Handler extends ExceptionHandler
      *
      * @param  Request   $request
      * @param  Throwable $exception
-     * @return Response
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function render($request, Throwable $exception)
+    public function render($request, Exception|Throwable $exception)
     {
         // api request outputs are json
         if (preg_match('/.*\.local\/api.*/', $request->url()) || preg_match('/.*\.com\/api.*/', $request->url())) {
