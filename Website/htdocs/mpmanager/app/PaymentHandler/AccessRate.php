@@ -105,7 +105,7 @@ class AccessRate
      * @param TransactionDataContainer $transactionData
      * @return int
      */
-    public static function payAccessRate(TransactionDataContainer $transactionData): int
+    public static function payAccessRate(TransactionDataContainer $transactionData): TransactionDataContainer
     {
         $nonStaticGateway = new self();
         //get accessRatePayment
@@ -113,7 +113,7 @@ class AccessRate
         try {
             $debt_amount = $nonStaticGateway->getDebt($transactionData->meter);
         } catch (NoAccessRateFound $e) { //no access rate found
-            return 0;
+            return $transactionData;
         }
 
         if ($debt_amount > 0) { //there is unpaid amount
@@ -123,10 +123,10 @@ class AccessRate
                 $transactionData->transaction->amount = 0;
                 $satisfied = false;
             } else {
-                //$transactionData->transaction->amount -= $debt_amount;
+                $transactionData->transaction->amount -= $debt_amount;
             }
             $nonStaticGateway->updatePayment($accessRatePayment, $debt_amount, $satisfied);
-
+            $transactionData->accessRateDebt = $debt_amount;
             //add payment history for the client
             event(
                 'payment.successful',
@@ -141,7 +141,7 @@ class AccessRate
                 ]
             );
         }
-        return $debt_amount ?? 0;
+        return $transactionData;
     }
 
 
