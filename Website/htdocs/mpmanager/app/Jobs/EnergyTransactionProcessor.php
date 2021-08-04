@@ -61,8 +61,7 @@ class EnergyTransactionProcessor implements ShouldQueue
         }
         if ($transactionData->transaction->amount > 0) {
             // pay if necessary access rate
-            $transactionData->accessRateDebt = AccessRate::payAccessRate($transactionData);
-            $transactionData->transaction->amount -= $transactionData->accessRateDebt;
+            $transactionData = AccessRate::payAccessRate($transactionData);
         }
         if ($transactionData->transaction->amount > 0) {
             //give transaction to token processor
