@@ -103,7 +103,6 @@ class RevenueService
             ->whereIn('message', $meters->pluck('serial_number'))
             ->whereBetween('created_at', $period)
             ->groupBy(DB::raw('DATE_FORMAT(created_at,\'%Y-%m\'),WEEKOFYEAR(created_at)'))->get();
-
     }
 
     /**

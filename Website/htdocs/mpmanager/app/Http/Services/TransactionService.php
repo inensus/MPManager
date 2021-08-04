@@ -90,7 +90,6 @@ class TransactionService
         )
             ->whereBetween('created_at', $range)
             ->sum('amount');
-
     }
 
     public function totalMiniGridTransactions($miniGridId, $range)
@@ -147,7 +146,7 @@ class TransactionService
                 }
             )->whereHasMorph(
                 'originalTransaction',
-               '*',
+                '*',
                 static function ($q) {
                     $q->where('status', 1);
                 }
