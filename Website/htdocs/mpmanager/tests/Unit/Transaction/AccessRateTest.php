@@ -70,8 +70,8 @@ class AccessRateTest extends TestCase
         $this->initApplication();
         $transaction = $this->createFakeTransaction(500);
         $transactionContainer = TransactionDataContainer::initialize($transaction);
-        $accessRateDebt = AccessRate::payAccessRate($transactionContainer);
-        $this->assertEquals(0, $accessRateDebt);
+        $transactionData = AccessRate::payAccessRate($transactionContainer);
+        $this->assertEquals(0, $transactionData->accessRateDebt);
 
     }
 
@@ -83,7 +83,8 @@ class AccessRateTest extends TestCase
         $accessRatePayment = $transactionContainer->meter->accessRatePayment()->first();
         $accessRatePayment->debt = 100;
         $accessRatePayment->save();
-        $accessRateDebt = AccessRate::payAccessRate($transactionContainer);
+        $transactionData = AccessRate::payAccessRate($transactionContainer);
+        $accessRateDebt = $transactionData->accessRateDebt;
         $accessRatePayment = $transactionContainer->meter->accessRatePayment()->first();
         $this->assertEquals(100, $accessRateDebt);
         $this->assertEquals(0, $accessRatePayment->debt);
@@ -97,7 +98,8 @@ class AccessRateTest extends TestCase
         $accessRatePayment = $transactionContainer->meter->accessRatePayment()->first();
         $accessRatePayment->debt = 1000;
         $accessRatePayment->save();
-        $accessRateDebt = AccessRate::payAccessRate($transactionContainer);
+        $transactionData = AccessRate::payAccessRate($transactionContainer);
+        $accessRateDebt = $transactionData->accessRateDebt;
         $accessRatePayment = $transactionContainer->meter->accessRatePayment()->first();
         $this->assertEquals(500, $accessRateDebt);
         $this->assertEquals(500, $accessRatePayment->debt);
@@ -114,9 +116,8 @@ class AccessRateTest extends TestCase
         $accessRatePayment = $transactionContainer->meter->accessRatePayment()->first();
         $accessRatePayment->debt = 1000;
         $accessRatePayment->save();
-
-        $accessRateDebt = AccessRate::payAccessRate($transactionContainer);
-
+        $transactionData = AccessRate::payAccessRate($transactionContainer);
+        $accessRateDebt = $transactionData->accessRateDebt;
         //get access rate payment again
         $accessRatePayment = $transactionContainer->meter->accessRatePayment()->first();
 
