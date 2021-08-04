@@ -88,61 +88,22 @@ class RevenueService
         return $this->getClusterTransactionsByMonthlyPeriod($meters, $period, $connectionType);
     }
 
-    private function getMeterTransactionsByWeeklyPeriod($meters, $period): Collection
+    private function getMeterTransactionsByWeeklyPeriod($meters, $period)
     {
-        $revenue = $this->meter->transactions()
+        return $this->meter->transactions()
             ->selectRaw('DATE_FORMAT(created_at,\'%Y-%m\') as period ,DATE_FORMAT(created_at,\'%Y-%u\') ' .
                 ' as week, SUM(amount) as revenue')
-            ->where(
-                function ($q) {
-                    $q->where('original_transaction_type', 'airtel_transaction');
-                    $q->whereHas(
-                        'originalAirtel',
-                        function ($q) {
-                            $q->where('status', 1);
-                        }
-                    );
-                }
-            )
-            ->orWhere(
-                function ($q) {
-                    $q->where('original_transaction_type', 'vodacom_transaction');
-                    $q->whereHas(
-                        'originalVodacom',
-                        function ($q) {
-                            $q->where('status', 1);
-                        }
-                    );
-                }
-            )
-            ->orWhere(
-                function ($q) {
-                    $q->where('original_transaction_type', 'agent_transaction');
-                    $q->whereHas(
-                        'originalAgent',
-                        function ($q) {
-                            $q->where('status', 1);
-                        }
-                    );
-                }
-            )
-            ->orWhere(
-                function ($q) {
-                    $q->where('original_transaction_type', 'third_party_transaction');
-                    $q->whereHas(
-                        'originalThirdParty',
-                        function ($q) {
-                            $q->where('status', 1);
-                        }
-                    );
+            ->whereHasMorph(
+                'originalTransaction',
+                '*',
+                static function ($q) {
+                    $q->where('status', 1);
                 }
             )
             ->whereIn('message', $meters->pluck('serial_number'))
             ->whereBetween('created_at', $period)
             ->groupBy(DB::raw('DATE_FORMAT(created_at,\'%Y-%m\'),WEEKOFYEAR(created_at)'))->get();
 
-
-        return $revenue;
     }
 
     /**
@@ -168,48 +129,11 @@ class RevenueService
     {
         return $this->meter->transactions()
             ->selectRaw('COUNT(id) as amount, SUM(amount) as revenue')
-            ->where(
-                function ($q) {
-                    $q->where('original_transaction_type', 'airtel_transaction');
-                    $q->whereHas(
-                        'originalAirtel',
-                        function ($q) {
-                            $q->where('status', 1);
-                        }
-                    );
-                }
-            )
-            ->orWhere(
-                function ($q) {
-                    $q->where('original_transaction_type', 'vodacom_transaction');
-                    $q->whereHas(
-                        'originalVodacom',
-                        function ($q) {
-                            $q->where('status', 1);
-                        }
-                    );
-                }
-            )
-            ->orWhere(
-                function ($q) {
-                    $q->where('original_transaction_type', 'agent_transaction');
-                    $q->whereHas(
-                        'originalAgent',
-                        function ($q) {
-                            $q->where('status', 1);
-                        }
-                    );
-                }
-            )
-            ->orWhere(
-                function ($q) {
-                    $q->where('original_transaction_type', 'third_party_transaction');
-                    $q->whereHas(
-                        'originalThirdParty',
-                        function ($q) {
-                            $q->where('status', 1);
-                        }
-                    );
+            ->whereHasMorph(
+                'originalTransaction',
+                '*',
+                static function ($q) {
+                    $q->where('status', 1);
                 }
             )
             ->whereIn('message', $meters->pluck('serial_number'))
@@ -245,12 +169,7 @@ class RevenueService
                 }
             )->whereHasMorph(
                 'originalTransaction',
-                [
-                    VodacomTransaction::class,
-                    AirtelTransaction::class,
-                    AgentTransaction::class,
-                    ThirdPartyTransaction::class
-                ],
+                '*',
                 static function ($q) {
                     $q->where('status', 1);
                 }
@@ -285,12 +204,7 @@ class RevenueService
                 }
             )->whereHasMorph(
                 'originalTransaction',
-                [
-                    VodacomTransaction::class,
-                    AirtelTransaction::class,
-                    AgentTransaction::class,
-                    ThirdPartyTransaction::class
-                ],
+                '*',
                 static function ($q) {
                     $q->where('status', 1);
                 }

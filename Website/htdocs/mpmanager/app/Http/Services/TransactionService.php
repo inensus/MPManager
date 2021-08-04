@@ -61,41 +61,36 @@ class TransactionService
     public function totalClusterTransactions($clusterId, array $range)
     {
 
-        return
-            \App\Models\Transaction\Transaction::query()->whereHas(
-                'meter',
-                function ($q) use ($clusterId) {
-                    $q->whereHas(
-                        'meterParameter',
-                        function ($q) use ($clusterId) {
-                            $q->whereHas(
-                                'address',
-                                function ($q) use ($clusterId) {
-                                    $q->whereHas(
-                                        'city',
-                                        function ($q) use ($clusterId) {
-                                            $q->where('cluster_id', $clusterId);
-                                        }
-                                    );
-                                }
-                            );
-                        }
-                    );
-                }
-            )->whereHasMorph(
-                'originalTransaction',
-                [
-                    VodacomTransaction::class,
-                    AirtelTransaction::class,
-                    AgentTransaction::class,
-                    ThirdPartyTransaction::class
-                ],
-                static function ($q) {
-                    $q->where('status', 1);
-                }
-            )
-                ->whereBetween('created_at', $range)
-                ->sum('amount');
+        return   \App\Models\Transaction\Transaction::query()->whereHas(
+            'meter',
+            function ($q) use ($clusterId) {
+                $q->whereHas(
+                    'meterParameter',
+                    function ($q) use ($clusterId) {
+                        $q->whereHas(
+                            'address',
+                            function ($q) use ($clusterId) {
+                                $q->whereHas(
+                                    'city',
+                                    function ($q) use ($clusterId) {
+                                        $q->where('cluster_id', $clusterId);
+                                    }
+                                );
+                            }
+                        );
+                    }
+                );
+            }
+        )->whereHasMorph(
+            'originalTransaction',
+            '*',
+            static function ($q) {
+                $q->where('status', 1);
+            }
+        )
+            ->whereBetween('created_at', $range)
+            ->sum('amount');
+
     }
 
     public function totalMiniGridTransactions($miniGridId, $range)
@@ -123,13 +118,7 @@ class TransactionService
                 }
             )->whereHasMorph(
                 'originalTransaction',
-                [
-                    VodacomTransaction::class,
-                    AirtelTransaction::class,
-                    AirtelTransaction::class,
-                    AgentTransaction::class,
-                    ThirdPartyTransaction::class
-                ],
+                '*',
                 static function ($q) {
                     $q->where('status', 1);
                 }
@@ -158,13 +147,7 @@ class TransactionService
                 }
             )->whereHasMorph(
                 'originalTransaction',
-                [
-                    VodacomTransaction::class,
-                    AirtelTransaction::class,
-                    AirtelTransaction::class,
-                    AgentTransaction::class,
-                    ThirdPartyTransaction::class
-                ],
+               '*',
                 static function ($q) {
                     $q->where('status', 1);
                 }

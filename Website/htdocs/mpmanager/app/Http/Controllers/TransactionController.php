@@ -243,12 +243,7 @@ class TransactionController extends Controller
         $transactions = Transaction::with('originalAirtel', 'originalVodacom')
             ->whereHasMorph(
                 'originalTransaction',
-                [
-                    VodacomTransaction::class,
-                    AirtelTransaction::class,
-                    AgentTransaction::class,
-                    ThirdPartyTransaction::class
-                ],
+                '*',
                 static function ($q) {
                     $q->where('status', 1);
                 }
@@ -269,12 +264,7 @@ class TransactionController extends Controller
         $transactions = Transaction::with('originalAirtel', 'originalVodacom')
             ->whereHasMorph(
                 'originalTransaction',
-                [
-                    VodacomTransaction::class,
-                    AirtelTransaction::class,
-                    AgentTransaction::class,
-                    ThirdPartyTransaction::class
-                ],
+                '*',
                 static function ($q) {
                     $q->where('status', -1);
                 }
@@ -447,52 +437,11 @@ class TransactionController extends Controller
      */
     private function getCancelledTransactions($transactionIds)
     {
-        return Transaction::where(
+        return Transaction::query()->whereHasMorph(
+            'originalTransaction',
+            '*',
             static function ($q) {
-                $q->where(
-                    static function ($q) {
-                        $q->where('original_transaction_type', 'airtel_transaction');
-                        $q->whereHas(
-                            'originalAirtel',
-                            static function ($q) {
-                                $q->where('status', -1);
-                            }
-                        );
-                    }
-                );
-                $q->orWhere(
-                    static function ($q) {
-                        $q->where('original_transaction_type', 'vodacom_transaction');
-                        $q->whereHas(
-                            'originalVodacom',
-                            static function ($q) {
-                                $q->where('status', -1);
-                            }
-                        );
-                    }
-                );
-                $q->orWhere(
-                    static function ($q) {
-                        $q->where('original_transaction_type', 'agent_transaction');
-                        $q->whereHas(
-                            'originalAgent',
-                            static function ($q) {
-                                $q->where('status', -1);
-                            }
-                        );
-                    }
-                );
-                $q->orWhere(
-                    static function ($q) {
-                        $q->where('original_transaction_type', 'third_party_transaction');
-                        $q->whereHas(
-                            'originalThirdParty',
-                            static function ($q) {
-                                $q->where('status', -1);
-                            }
-                        );
-                    }
-                );
+                $q->where('status', -1);
             }
         )
             ->whereIn('id', $transactionIds)
@@ -507,52 +456,11 @@ class TransactionController extends Controller
      */
     private function getConfirmedTransactions($transactionIds)
     {
-        return Transaction::where(
+        return Transaction::query()->whereHasMorph(
+            'originalTransaction',
+            '*',
             static function ($q) {
-                $q->where(
-                    static function ($q) {
-                        $q->where('original_transaction_type', 'airtel_transaction');
-                        $q->whereHas(
-                            'originalAirtel',
-                            static function ($q) {
-                                $q->where('status', 1);
-                            }
-                        );
-                    }
-                );
-                $q->orWhere(
-                    static function ($q) {
-                        $q->where('original_transaction_type', 'vodacom_transaction');
-                        $q->whereHas(
-                            'originalVodacom',
-                            static function ($q) {
-                                $q->where('status', 1);
-                            }
-                        );
-                    }
-                );
-                $q->orWhere(
-                    static function ($q) {
-                        $q->where('original_transaction_type', 'agent_transaction');
-                        $q->whereHas(
-                            'originalAgent',
-                            static function ($q) {
-                                $q->where('status', 1);
-                            }
-                        );
-                    }
-                );
-                $q->orWhere(
-                    static function ($q) {
-                        $q->where('original_transaction_type', 'third_party_transaction');
-                        $q->whereHas(
-                            'originalThirdParty',
-                            static function ($q) {
-                                $q->where('status', 1);
-                            }
-                        );
-                    }
-                );
+                $q->where('status', 1);
             }
         )
             ->whereIn('id', $transactionIds)
@@ -567,52 +475,11 @@ class TransactionController extends Controller
      */
     private function getAmountOfConfirmedTransaction($transactionIds)
     {
-        return Transaction::where(
+        return Transaction::query()->whereHasMorph(
+            'originalTransaction',
+            '*',
             static function ($q) {
-                $q->where(
-                    static function ($q) {
-                        $q->where('original_transaction_type', 'airtel_transaction');
-                        $q->whereHas(
-                            'originalAirtel',
-                            static function ($q) {
-                                $q->where('status', 1);
-                            }
-                        );
-                    }
-                );
-                $q->orWhere(
-                    static function ($q) {
-                        $q->where('original_transaction_type', 'vodacom_transaction');
-                        $q->whereHas(
-                            'originalVodacom',
-                            static function ($q) {
-                                $q->where('status', 1);
-                            }
-                        );
-                    }
-                );
-                $q->orWhere(
-                    static function ($q) {
-                        $q->where('original_transaction_type', 'agent_transaction');
-                        $q->whereHas(
-                            'originalAgent',
-                            static function ($q) {
-                                $q->where('status', 1);
-                            }
-                        );
-                    }
-                );
-                $q->orWhere(
-                    static function ($q) {
-                        $q->where('original_transaction_type', 'third_party_transaction');
-                        $q->whereHas(
-                            'originalThirdParty',
-                            static function ($q) {
-                                $q->where('status', 1);
-                            }
-                        );
-                    }
-                );
+                $q->where('status', 1);
             }
         )
             ->whereIn('id', $transactionIds)
@@ -638,7 +505,6 @@ class TransactionController extends Controller
 
         // the total amount of confirmed transactions
         $amount = $this->getAmountOfConfirmedTransaction($transactions);
-
         // the number of confirmed transactions
         $confirmation = $this->getConfirmedTransactions($transactions);
         // The number of cancelled transactions
