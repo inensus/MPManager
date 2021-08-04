@@ -19,15 +19,15 @@ class AgentController extends Controller
         $this->agentService = $agentService;
     }
 
-    public function index(Request $request): ApiResource
+    public function index(): ApiResource
     {
-        $users = $this->agentService->list($request->all());
+        $users = $this->agentService->list();
         return new ApiResource($users);
     }
 
     public function show(Agent $agent, Request $request): ApiResource
     {
-        $agent = $this->agentService->getAgentDetail($agent);
+        $agent = $this->agentService->get($agent->id);
         return new ApiResource($agent);
     }
 
@@ -77,10 +77,10 @@ class AgentController extends Controller
 
         return $response->setStatusCode(200)->setContent(
             [
-            'data' => [
-                'message' => $responseMessage,
-                'status_code' => 200
-            ]
+                'data' => [
+                    'message' => $responseMessage,
+                    'status_code' => 200
+                ]
             ]
         );
     }
@@ -110,9 +110,9 @@ class AgentController extends Controller
                     'balance' => $agent->balance,
                     'profit' => $agent->commission_revenue,
                     'dept' => $agent->due_to_energy_supplier,
-                'average' => $average,
-                'since' => $since,
-                'status_code' => 200
+                    'average' => $average,
+                    'since' => $since,
+                    'status_code' => 200
                 ]
             ]
         );

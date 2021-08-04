@@ -6,93 +6,100 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
-class UserResourceTest extends TestCase
+class UserResource extends TestCase
 {
-    use RefreshDatabase, WithFaker ;
 
-    public function test_list_registered_users(): void
+    use RefreshDatabase, WithFaker;
+    public function actingAs($user, $driver = null)
     {
+        $token = JWTAuth::fromUser($user);
+        $this->withHeader('Authorization', "Bearer {$token}");
+        parent::actingAs($user);
+
+        return $this;
+    }
+    /** @test */
+    public function listRegisteredUsers(): void
+    {
+        $user = UserFactory::new()->create();
+        //create random users
         UserFactory::times(30)->create();
-        $user = User::query()->first();
 
-        $request = $this->get('/api/admin/users', [
-            'Authorization' => "Bearer {$this->generateJWTTokenForUser($user)}"
-        ]);
-        $request->assertStatus(200);
-        self::assertEquals(30, $request->json()['total']);
+        $response  = $this->actingAs($user)->get('/api/users');
+        $response->assertStatus(200);
+        $this->assertEquals($response->json()['total'], 31);
     }
 
-    public function test_create_user(): void
-    {
-        $user = UserFactory::new()->create();
-
-        $this->withoutExceptionHandling();
-        $request = $this->post('/api/admin', [
-            'name' => 'Kemal',
-            'email' => 'ako@inensus.com',
-            'password' => '1234123123',
-        ], [
-            'Authorization' => "Bearer {$this->generateJWTTokenForUser($user)}"
-        ]);
-        $request->assertStatus(201);
-        $user = User::latest('id')->first();
-        self::assertTrue(Hash::check('1234123123', $user->password));
-        self::assertEquals('ako@inensus.com', $user->email);
-    }
-
-    public function test_update_user_name(): void
+    /** @test */
+    public function createUser(): void
     {
         $this->withoutExceptionHandling();
         $user = UserFactory::new()->create();
-        $request = $this->put("/api/admin/{$user->id}", ['name' => 'Ali'], [
-            'Authorization' => "Bearer {$this->generateJWTTokenForUser($user)}"
+        $response = $this->actingAs($user)->post('/api/users', [
+            'name' => 'TestUser',
+            'email' => 'test@test.com',
+            'password' => '1234123123',
         ]);
-        $request->assertStatus(200);
-        $user =  User::latest('id')->first();
-        self::assertEquals('Ali', $user->name);
+        $response->assertStatus(200);
+        $user = User::query()->get()[1];
+        $this->assertTrue(Hash::check('1234123123', $user->password));
+        $this->assertEquals($user->email, 'test@test.com');
     }
 
-    public function test_update_user_password(): void
-    {
-        UserFactory::new()->create();
-        $user = User::latest('id')->first();
-        $request = $this->put('/api/admin/' . $user->id, ['password' => 'password']);
-        $request->assertStatus(200);
-    }
-
-    public function test_reset_user_password(): void
+    /** @test */
+    public function updateUserPassword(): void
     {
         $user = UserFactory::new()->create();
-        $this->post('/api/admin', [
-            'name' => 'Kemal',
-            'email' => 'ako@inensus.com',
+        //create user
+        $this->actingAs($user)->post('/api/users', [
+            'name' => 'Test',
+            'email' => 'test@test.com',
             'password' => '1234123123',
-        ], ['Authorization' => "Bearer {$this->generateJWTTokenForUser($user)}"
         ]);
-        $user = User::query()->latest()->first();
 
-        $request = $this->post('/api/admin/forgot-password', ['email' => $user->email]);
-        $request->assertStatus(200);
-        $userWitNewPassword =  User::latest('id')->first();
-        $this->assertNotEquals('1234123123', $userWitNewPassword->password);
+        $user = User::query()->get()[1];
+
+        $response = $this->actingAs($user)->put('/api/users/password/' . $user->id,
+            [
+                'id' => $user->id,
+                'password' => '12345',
+                'confirm_password' => '12345',
+            ]);
+        $response->assertStatus(200);
+        $user = User::query()->get()[1];
+        $this->assertTrue(Hash::check('12345', $user->password));
     }
 
-    public function test_reset_password_with_non_existing_email(): void
+    /** @test */
+    public function resetUserPassword(): void
     {
-        $headers = $this->headers();
-        $request = $this->post('/api/admin/forgot-password', ['email' => 'ako@inensus.com'], $headers);
+        $user = UserFactory::new()->create();
+        //create user
+        $this->actingAs($user)->post('/api/users', [
+            'name' => 'Test',
+            'email' => 'test@test.com',
+            'password' => '1234123123',
+        ]);
+        $user = User::query()->get()[1];
+        $oldPassword = $user->password;
+        $this->post('/api/users/password', ['email' => $user->email]);
+        $userWitNewPassword =  User::query()->get()[1];
+
+        $this->assertNotEquals($oldPassword, $userWitNewPassword->password);
+    }
+
+    /** @test */
+    public function resetPasswordWithNonExistingEmail(): void
+    {
+        $request = $this->post('/api/users/password', ['email' => 'ako@inensus.com']);
+
         $request->assertStatus(422);
-    }
 
-    private function generateJWTTokenForUser(User|Model $user): string
-    {
-        return JWTAuth::fromUser($user);
     }
 }

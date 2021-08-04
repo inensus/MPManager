@@ -15,48 +15,30 @@ use Illuminate\Support\Facades\Log;
 
 class UserService implements IUserService
 {
+    private $user;
+    public function __construct(User $user)
+    {
+        $this->user = $user;
+    }
 
     /**
      * @return Builder|Model
      */
     public function create(array $userData)
     {
-        return User::query()->create(
-            [
+        $user =  $this->user->newQuery()->create([
             'name' => $userData['name'],
             'password' => $userData['password'],
-            'email' => $userData['email'],
-            ]
-        );
+            'email' => $userData['email']
+        ]);
+        return $this->user->newQuery()->with(['addressDetails'])->find($user->id);
     }
 
-    public function update($user, $data): bool
+    public function update($user, $data)
     {
-        return $user->update($data);
+        $user->update(['password' => $data['password']]);
+        return $user->fresh();
     }
-
-    public function updateAddress($user, $createOnFailure = true): ?User
-    {
-        try {
-            $user->addresses()->firstOrFail();
-        } catch (ModelNotFoundException $exception) {
-            return null;
-        }
-
-        if ($user->address === null) {
-            if ($createOnFailure) {
-                $user->address()->create(request()->only('phone', 'email', 'street', 'city_id', 'is_primary'));
-                return $user;
-            }
-            return null;
-        }
-
-        $user->address()->update(
-            request()->only('email', 'phone', 'street', 'city_id', 'is_primary')
-        );
-        return $user;
-    }
-
 
     public function resetPassword(string $email)
     {
@@ -65,6 +47,7 @@ class UserService implements IUserService
         } catch (Exception $exception) {
             $newPassword = time();
         }
+
         try {
             $user = User::query()->where('email', $email)->firstOrFail();
         } catch (ModelNotFoundException $x) {
@@ -87,38 +70,26 @@ class UserService implements IUserService
             Log::debug(
                 'Failed to reset password',
                 [
-                'id' => '4
+                    'id' => '4
                 78efhd3497gvfdhjkwgsdjkl4ghgdf',
-                'message' => 'Password reset email for ' . $user->email . ' failed',
-                'reason' => $exception->getMessage(),
+                    'message' => 'Password reset email for ' . $user->email . ' failed',
+                    'reason' => $exception->getMessage(),
                 ]
             );
             return null;
         }
 
-        return $user->fresh();
+        return $user->fresh()->with(['addressDetails']);
     }
 
-    /**
-     * User list with optional address relation
-     *
-     * @param $relations
-     *
-     * @return Builder[]|Collection|LengthAwarePaginator
-     *
-     * @psalm-return Collection|LengthAwarePaginator|array<array-key, Builder>
-     */
-    public function list($relations)
+    public function list()
     {
-        $user = User::query()->select('id', 'name', 'email');
-        // the only supported filter is currently address
-        if (array_key_exists('address', $relations)) {
-            $user->with('address');
-        }
+        return User::query()->select('id', 'name', 'email')->with(['addressDetails'])->paginate();
+    }
 
-        if (array_key_exists('paginate', $relations) && $relations['paginate'] === 0) {
-            return $user->get();
-        }
-        return $user->paginate();
+    public function get($id)
+    {
+        return User::with(['addressDetails'])
+            ->where('id', $id)->firstOrFail();
     }
 }
