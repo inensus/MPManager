@@ -183,7 +183,7 @@ export class TariffService {
                 response = await this.repository.update(tariffPM)
             }
             if (response.status === 200 || response.status === 201) {
-                let tariffData = response.data.data
+                let tariffData = response.data
                 return this.getTariff(tariffData.id)
             } else {
                 return new ErrorHandler(response.error, 'http', response.status)
