@@ -22,10 +22,7 @@ class AgentBalanceHistory extends Model
     {
         return $this->morphTo();
     }
-    public function triggerCharge(): BelongsTo
-    {
-        return BelongsToMorph::build($this, AgentCharge::class, 'trigger');
-    }
+
     public function transaction(): BelongsTo
     {
         return $this->belongsTo(Transaction::class);

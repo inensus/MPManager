@@ -17,17 +17,11 @@ class AgentBalanceHistoryService
 
     public function agentBalanceHistories(int $agentId): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
-        return AgentBalanceHistory::with(['triggerCharge'])
+        return AgentBalanceHistory::query()
             ->where('agent_id', $agentId)
             ->whereHasMorph(
                 'trigger',
-                [
-                    AgentCharge::class,
-                    AgentCommission::class,
-                    AgentTransaction::class,
-                    AgentAssignedAppliances::class,
-                    AgentReceipt::class
-                ]
+                '*'
             )->latest()->paginate();
     }
 
