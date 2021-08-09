@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use App\Models\ClusterMetaData;
 use App\Models\Meter\MeterParameter;
+use App\Models\MiniGrid;
 use App\Models\Person\Person;
 use Database\Factories\AddressFactory;
 use Database\Factories\CityFactory;
@@ -20,8 +21,7 @@ class ClusterMetaDataTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    public function create_cluster_meta_data_object_after_added_a_miniGrid()
+    public function test_create_cluster_meta_data_object_after_added_a_miniGrid()
     {
         $this->initializeData();
 
@@ -30,19 +30,17 @@ class ClusterMetaDataTest extends TestCase
 
     }
 
-    /** @test */
-    public function delete_cluster_meta_data_object_after_deleted_a_miniGrid()
+    public function test_delete_cluster_meta_data_object_after_deleted_a_miniGrid()
     {
         $this->initializeData();
-        $cluster_meta_data = ClusterMetaData::query()->latest()->first();
-        $cluster_meta_data->delete();
+        $mini_grid = MiniGrid::query()->latest()->first();
+        $mini_grid->delete();
         $cluster_meta_data_count = ClusterMetaData::all()->count();
         $this->assertEquals(0,$cluster_meta_data_count);
 
     }
 
-    /** @test */
-    public function increment_connected_meters_count_after_created_new_meter()
+    public function test_increase_connected_meters_count_after_created_new_meter()
     {
         $this->initializeData();
 
@@ -50,8 +48,7 @@ class ClusterMetaDataTest extends TestCase
         $this->assertEquals(1,$cluster_meta_data->connected_meters);
     }
 
-    /** @test */
-    public function increment_registered_customers_count_after_add_new_customer()
+    public function test_increase_registered_customers_count_after_add_new_customer()
     {
         $this->initializeData();
 
@@ -59,8 +56,7 @@ class ClusterMetaDataTest extends TestCase
         $this->assertEquals(1,$cluster_meta_data->registered_customers);
     }
 
-    /** @test */
-    public function decrement_connected_meters_count_after_deleted_a_meter()
+    public function test_decrease_connected_meters_count_after_deleted_a_meter()
     {
         $this->initializeData();
 
@@ -70,8 +66,7 @@ class ClusterMetaDataTest extends TestCase
         $this->assertEquals(0,$cluster_meta_data->connected_meters);
     }
 
-    /** @test */
-    public function decrement_registered_customers_count_after_deleted_a_customer()
+    public function test_decrease_registered_customers_count_after_deleted_a_customer()
     {
         //create cluster
         ClusterFactory::new()->create();
