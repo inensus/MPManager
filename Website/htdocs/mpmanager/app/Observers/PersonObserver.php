@@ -42,7 +42,7 @@ class PersonObserver
         the model should be pulled first and deleted afterwards.
         */
         if ($person->is_customer == 1) {
-            event('cluster_meta.registered_customers.decrement', $person);
+            event('cluster_meta.registered_customers.decrease', $person);
         }
         // delete all addresses
         foreach ($person->addresses()->get() as $address) {
@@ -67,7 +67,7 @@ class PersonObserver
     public function created(Person $person)
     {
         if ($person->is_customer === 1) {
-            event('cluster_meta.registered_customers.increment', $person);
+            event('cluster_meta.registered_customers.increase', $person);
         }
     }
 }

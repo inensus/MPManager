@@ -29,7 +29,7 @@ class MeterParameterObserver
         $meter->in_use = 0;
         $meter->save();
 
-        event('cluster_meta.connected_meters.decrement', $meterParameter);
+        event('cluster_meta.connected_meters.decrease', $meterParameter);
     }
 
     /**
@@ -45,7 +45,7 @@ class MeterParameterObserver
         $meter->in_use = 1;
         $meter->save();
 
-        event('cluster_meta.connected_meters.increment', $meterParameter);
+        event('cluster_meta.connected_meters.increase', $meterParameter);
     }
 
     public function updated(MeterParameter $meterParameter): void
