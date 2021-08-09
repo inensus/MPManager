@@ -11,14 +11,14 @@ use Illuminate\Events\Dispatcher;
 
 class ClusterMetaDataListener
 {
-    public function incrementConnectedMetersCount(MeterParameter $meterParameter): void
+    public function increaseConnectedMetersCount(MeterParameter $meterParameter): void
     {
         $mini_grid_id = $this->getMiniGridId($meterParameter);
 
         ClusterMetaData::query()->where('mini_grid_id', '=', $mini_grid_id)->first()->increment('connected_meters');
     }
 
-    public function decrementConnectedMetersCount(MeterParameter $meterParameter): void
+    public function decreaseConnectedMetersCount(MeterParameter $meterParameter): void
     {
         $mini_grid_id = $this->getMiniGridId($meterParameter);
 
@@ -27,7 +27,7 @@ class ClusterMetaDataListener
             ->decrement('connected_meters');
     }
 
-    public function incrementRegisteredCustomersCount(Person $person): void
+    public function increaseRegisteredCustomersCount(Person $person): void
     {
         $address = Address::with('city')->where('owner_id', '=', $person->id)->first();
 
@@ -36,7 +36,7 @@ class ClusterMetaDataListener
         ClusterMetaData::query()->where('mini_grid_id', '=', $mini_grid_id)->first()->increment('registered_customers');
     }
 
-    public function decrementRegisteredCustomersCount(Person $person): void
+    public function decreaseRegisteredCustomersCount(Person $person): void
     {
         $address = Address::with('city')->where('owner_id', '=', $person->id)->first();
 
@@ -55,20 +55,20 @@ class ClusterMetaDataListener
     public function subscribe(Dispatcher $events)
     {
         $events->listen(
-            'cluster_meta.connected_meters.increment',
-            '\App\Listeners\ClusterMetaDataListener@incrementConnectedMetersCount'
+            'cluster_meta.connected_meters.increase',
+            '\App\Listeners\ClusterMetaDataListener@increaseConnectedMetersCount'
         );
         $events->listen(
-            'cluster_meta.connected_meters.decrement',
-            '\App\Listeners\ClusterMetaDataListener@decrementConnectedMetersCount'
+            'cluster_meta.connected_meters.decrease',
+            '\App\Listeners\ClusterMetaDataListener@decreaseConnectedMetersCount'
         );
         $events->listen(
-            'cluster_meta.registered_customers.increment',
-            '\App\Listeners\ClusterMetaDataListener@incrementRegisteredCustomersCount'
+            'cluster_meta.registered_customers.increase',
+            '\App\Listeners\ClusterMetaDataListener@increaseRegisteredCustomersCount'
         );
         $events->listen(
-            'cluster_meta.registered_customers.decrement',
-            '\App\Listeners\ClusterMetaDataListener@decrementRegisteredCustomersCount'
+            'cluster_meta.registered_customers.decrease',
+            '\App\Listeners\ClusterMetaDataListener@decreaseRegisteredCustomersCount'
         );
     }
 }
