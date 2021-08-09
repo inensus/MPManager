@@ -27,7 +27,7 @@
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.5",
-        "beyondcode/laravel-dump-server": "^1.0",
+        "beyondcode/laravel-dump-server": "^1.7",
         "facade/ignition": "^2.0",
         "filp/whoops": "^2.0",
         "fzaninotto/faker": "^1.9.1",
