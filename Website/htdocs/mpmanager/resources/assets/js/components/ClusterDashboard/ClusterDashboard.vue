@@ -147,7 +147,7 @@ export default {
                 let lat = points[0]
                 let lon = points[1]
 
-                let markingInfo = this.mappingService.createMarkingInformation(
+                let markingInfo = this.mappingService.markerInformation(
                     miniGrids[i].id,
                     miniGrids[i].name,
                     null,

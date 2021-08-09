@@ -208,7 +208,7 @@ export default {
                     this.miniGridLatLng.lat = Points[0]
                     this.miniGridLatLng.lon = Points[1]
                     await this.getGeoData(miniGridGeoData.cluster_id)
-                    let markingInfo = this.mappingService.createMarkingInformation(miniGridGeoData.id, miniGridGeoData.name, null, Points[0], Points[1],-1)
+                    let markingInfo = this.mappingService.markerInformation(miniGridGeoData.id, miniGridGeoData.name, null, Points[0], Points[1],-1)
                     this.markingInfos.push(markingInfo)
                     this.constantLocations.push([this.miniGridLatLng.lat, this.miniGridLatLng.lon])
                 } else {
@@ -262,7 +262,7 @@ export default {
             this.miniGridLatLng.lat = Points[0]
             this.miniGridLatLng.lon = Points[1]
             await this.getGeoData(miniGridGeoData.cluster_id)
-            let markingInfo = this.mappingService.createMarkingInformation(miniGridGeoData.id, miniGridGeoData.name, Points[0], Points[1]-1)
+            let markingInfo = this.mappingService.markerInformation(miniGridGeoData.id, miniGridGeoData.name, Points[0], Points[1]-1)
             this.markingInfos.push(markingInfo)
             this.constantLocations.push([this.miniGridLatLng.lat, this.miniGridLatLng.lon])
         },
