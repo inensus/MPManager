@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class ClusterMetaData
@@ -17,7 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $registered_customers
  */
 
-class ClusterMetaData extends Model
+class ClusterMetaData extends BaseModel
 {
     protected $guarded = [];
 }
