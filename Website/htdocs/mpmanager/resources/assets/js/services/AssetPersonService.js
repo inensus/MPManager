@@ -23,13 +23,25 @@ export class AssetPersonService {
             return new ErrorHandler(errorMessage, 'http')
         }
     }
-
+    async show(applianceId){
+        try {
+            let response = await this.repository.show(applianceId)
+            if (response.status === 200) {
+                return response.data.data[0]
+            }else{
+                new ErrorHandler(response.error, 'http', response.status)
+            }
+        } catch (e) {
+            let errorMessage = e.response.data.data.message
+            return new ErrorHandler(errorMessage, 'http')
+        }
+    }
     async saveAsset(id,personId,assetPM){
         try {
             let response = await this.repository.create(id,personId,assetPM)
+            console.log(assetPM)
             if (response.status === 200 || response.status === 201) {
-
-                return response
+                return response.data.data
             } else {
                 new ErrorHandler(response.error, 'http', response.status)
             }

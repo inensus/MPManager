@@ -7,6 +7,7 @@ use App\Models\AssetPerson;
 use App\Models\AssetType;
 use App\Models\Person\Person;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Response;
 
 class AssetPersonController extends Controller
@@ -37,6 +38,7 @@ class AssetPersonController extends Controller
             'person_id' => $person->id,
             'asset_type_id' => $assetType->id,
             'total_cost' => $request->get('cost'),
+            'down_payment' => $request->get('downPayment'),
             'rate_count' => $request->get('rate'),
 
             ]
@@ -51,10 +53,18 @@ class AssetPersonController extends Controller
      * @param  Request $request
      * @return ApiResource
      */
-    public function show(Person $person, Request $request): ApiResource
+    public function index(Person $person, Request $request): ApiResource
     {
         $assets = $this->assetPerson::with('assetType', 'rates.logs', 'logs.owner')
             ->where('person_id', $person->id)
+            ->get();
+        return new ApiResource($assets);
+    }
+
+    public function show($applianceId): ApiResource
+    {
+        $assets = $this->assetPerson::with('assetType', 'rates.logs', 'logs.owner')
+            ->where('id', '=', $applianceId)
             ->get();
         return new ApiResource($assets);
     }
