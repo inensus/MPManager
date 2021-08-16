@@ -41,7 +41,9 @@ class AssetPersonObserver
         }
 
         foreach (range(1, $assetPerson->rate_count) as $rate) {
-            if ((int)$rate === (int)$assetPerson->rate_count) {
+            if ($assetPerson->rate_count === 0){
+                $rate_cost = 0;
+            }else if ((int)$rate === (int)$assetPerson->rate_count) {
                 //last rate
                 $rate_cost = $assetPerson->total_cost
                     - (($rate - 1) * floor($assetPerson->total_cost / $assetPerson->rate_count));

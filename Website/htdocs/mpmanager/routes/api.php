@@ -69,7 +69,8 @@ Route::group(['prefix' => 'assets', 'middleware' => 'jwt.verify'], function () {
         Route::delete('/{asset_type}', 'AssetTypeController@destroy');
 
         Route::post('/{asset_type}/people/{person}', 'AssetPersonController@store');
-        Route::get('/people/{person}', 'AssetPersonController@show');
+        Route::get('/people/{person}', 'AssetPersonController@index');
+        Route::get('/people/detail/{applianceId}', 'AssetPersonController@show');
     });
 
     Route::group(['prefix' => 'rates'], static function () {

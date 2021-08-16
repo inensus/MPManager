@@ -294,5 +294,20 @@ export const exportedRoutes = [
     component: require('./components/Agent/Commission/AgentCommissionList').default,
     meta: { layout: 'default' },
   },
-
+  {
+    path: '/sell-appliance/:id',
+    component: require('./components/Client/Appliances/SellAppliance.vue').default,
+    meta: {
+        layout: 'default', breadcrumb: {
+        level: 'detail', name: 'Sell Appliance', link: '/sell-appliance/', target: 'id' }
+          }
+  },
+  {
+    path: '/sold-appliance-detail/:id',
+    component: require('./components/Client/Appliances/SoldApplianceDetail.vue').default,
+    meta: {
+        layout: 'default', breadcrumb: {
+        level: 'detail', name: 'Sold Appliance Detail', link: '/sold-appliance-detail', target: 'id' }
+          }
+  },
 ]

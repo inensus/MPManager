@@ -9,5 +9,8 @@ export default {
     },
     create(id,customerId,assetPM){
         return Client.post(`${resource}/${id}/people/${customerId}`,assetPM)
+    },
+    show(applianceId){
+        return Client.get(`${resource}/people/detail/${applianceId}`)
     }
 }
