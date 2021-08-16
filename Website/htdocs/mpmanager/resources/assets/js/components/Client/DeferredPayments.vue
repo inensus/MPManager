@@ -292,7 +292,7 @@ export default {
                     try {
                         let validator = await this.$validator.validateAll()
                         if (validator) {
-                            await this.assetPersonService.saveAsset(this.newAsset.id, this.personId, this.newAsset)
+                            await this.assetPersonService.saveAsset(this.newAsset.id, this.personId, this.newAsset, this.adminId)
                             this.showNewAsset = false
                             this.clearForm()
                             this.alertNotify('success', this.$tc('phrases.sellAsset', 1))

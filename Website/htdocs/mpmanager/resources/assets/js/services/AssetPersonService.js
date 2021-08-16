@@ -24,8 +24,9 @@ export class AssetPersonService {
         }
     }
 
-    async saveAsset(id,personId,assetPM){
+    async saveAsset(id,personId,assetPM,adminId){
         try {
+            assetPM.creatorId = adminId
             let response = await this.repository.create(id,personId,assetPM)
             if (response.status === 200 || response.status === 201) {
 
