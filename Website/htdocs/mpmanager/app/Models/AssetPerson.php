@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @property int $asset_type_id
  * @property int $person_id
  * @property int $total_cost
+ * @property int $down_payment
  * @property int $rate_count
  */
 class AssetPerson extends BaseModel
