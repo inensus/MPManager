@@ -15,7 +15,7 @@
                     <md-table-head> Down Payment </md-table-head>
                     <md-table-head>{{ $tc('words.rate',1) }}</md-table-head>
                 </md-table-row>
-                <md-table-row v-for="(item, index) in soldAppliancesList" :key="index">
+                <md-table-row v-for="(item, index) in soldAppliancesList" :key="index" :class="selectedApplianceId === item.id  ? 'selected-row' : ''">
                     <md-table-cell md-label="Name" md-sort-by="name">{{item.asset_type.name}}</md-table-cell>
                     <md-table-cell md-label="Cost" md-sort-by="total_cost">{{moneyFormat(item.total_cost)}} {{ currency }}</md-table-cell>
                     <md-table-cell md-label="Down Payment" md-sort-by="Down Payment">{{moneyFormat(item.down_payment)}} {{currency}} </md-table-cell>
@@ -46,7 +46,8 @@ export default {
     mixins: [currency],
     data (){
         return{
-            currency: this.$store.getters['settings/getMainSettings'].currency
+            currency: this.$store.getters['settings/getMainSettings'].currency,
+            selectedApplianceId: null,
         }
     },
     props:{
@@ -57,18 +58,31 @@ export default {
             required: true
         }
     },
+    created () {
+        this.selectedApplianceId = parseInt(this.$route.params.id)
+    },
     methods:{
         soldNewAsset(){
             this.$router.push('/sell-appliance/'+ this.personId)
         },
         showDetails(id){
-            this.$router.push({ path:'/sold-appliance-detail/' + id, force: true})
-        }
+            this.selectedRow(id)
+            this.$router.push({ path:'/sold-appliance-detail/' + id}).catch(err => err)
+
+        },
+        selectedRow(id){
+            if (this.selectedApplianceId !== id) {
+                this.selectedApplianceId = id
+            }
+
+        },
     }
 
 }
 </script>
 
 <style scoped>
-
+.selected-row{
+    background-color: #ccc
+}
 </style>

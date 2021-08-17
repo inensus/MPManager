@@ -69,7 +69,7 @@
                         </md-table>
                         <div v-else>
                         <span class="md-subheader md-layout-item">
-                            fully paid in advance
+                           <h1> <md-icon>price_check</md-icon>Fully paid.</h1>
                         </span>
                         </div>
 
