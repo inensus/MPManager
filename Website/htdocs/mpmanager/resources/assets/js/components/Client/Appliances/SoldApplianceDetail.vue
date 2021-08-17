@@ -1,7 +1,7 @@
 <template>
     <div class="md-layout md-gutter">
         <div class="md-layout-item md-size-40">
-            <client-detail-card :person-id="personId" :show-customer-information="false" />
+            <client-detail-card :person-id="personId" :show-customer-information="false" v-if="personId" />
             <sold-appliances-list :sold-appliances-list="soldAppliancesList" :person-id="personId" />
         </div>
         <div class="md-layout-item md-size-60">
@@ -123,7 +123,12 @@ export default {
             assetRateService: new AssetRateService(),
             assetPersonService: new AssetPersonService(),
             personService: new PersonService(),
-            soldAppliance: {},
+            soldAppliance: {
+                asset_type: {
+                    name:''
+                },
+                logs:[]
+            },
             adminId: this.$store.getters['auth/authenticationService'].authenticateUser.id,
             personId: null,
             editRow: null,
@@ -138,7 +143,7 @@ export default {
             this.getSoldApplianceDetail()
         }
     },
-    mounted () {
+    created () {
         this.selectedApplianceId = this.$route.params.id
         this.getSoldApplianceDetail().then(personId => {
             this.getPersonSoldAppliances(personId)
