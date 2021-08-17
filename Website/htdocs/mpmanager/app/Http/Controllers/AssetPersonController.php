@@ -38,7 +38,7 @@ class AssetPersonController extends Controller
             'asset_type_id' => $assetType->id,
             'total_cost' => $request->get('cost'),
             'rate_count' => $request->get('rate'),
-
+            'creator_id' => $request->get('creatorId')
             ]
         );
         return new ApiResource($assetPerson);
