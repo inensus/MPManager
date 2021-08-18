@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Listeners\AccessRateListener;
+use App\Listeners\ClusterMetaDataListener;
 use App\Listeners\HistoryListener;
 use App\Listeners\LogListener;
 use App\Listeners\MeterListener;
@@ -35,7 +36,8 @@ class EventServiceProvider extends ServiceProvider
         PaymentPeriodListener::class,
         LogListener::class,
         SolarDataListener::class,
-        SmsListener::class
+        SmsListener::class,
+        ClusterMetaDataListener::class
     ];
 
 

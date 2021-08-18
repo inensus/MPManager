@@ -94,7 +94,7 @@ export class MappingService {
 
     }
 
-    createMarkingInformation (id, name,serialNumber, lat, lon,data_stream) {
+    markerInformation (id, name,serialNumber, lat, lon,data_stream, clusterMetaData) {
         this.markingInfo = {
 
             id: id,
@@ -103,6 +103,9 @@ export class MappingService {
             lat: lat,
             lon: lon,
             dataStream:data_stream
+        }
+        if(clusterMetaData !== null){
+            this.markingInfo.clusterMetaData = clusterMetaData
         }
 
         return this.markingInfo

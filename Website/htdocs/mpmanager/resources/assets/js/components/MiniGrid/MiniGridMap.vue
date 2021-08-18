@@ -154,7 +154,7 @@ export default {
                     let points = this.meters[i].meter_parameter.address.geo.points.split(',')
                     this.meterLatLng.lat = points[0]
                     this.meterLatLng.lon = points[1]
-                    let markingInfo = this.mappingService.createMarkingInformation(this.meters[i].id, null, this.meters[i].serial_number, points[0], points[1],-1)
+                    let markingInfo = this.mappingService.markerInformation(this.meters[i].id, null, this.meters[i].serial_number, points[0], points[1],-1)
                     this.markingInfos.push(markingInfo)
                     this.markerLocations.push([this.meterLatLng.lat, this.meterLatLng.lon])
                 }

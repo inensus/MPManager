@@ -41,7 +41,9 @@ class PersonObserver
         in order to fire the deleted event on relation models,
         the model should be pulled first and deleted afterwards.
         */
-
+        if ($person->is_customer == 1) {
+            event('cluster_meta.registered_customers.decrease', $person);
+        }
         // delete all addresses
         foreach ($person->addresses()->get() as $address) {
             $address->delete();
@@ -53,6 +55,19 @@ class PersonObserver
         // delete all transactions which are belong to that person
         foreach ($person->transactions()->get() as $transaction) {
             $transaction->delete();
+        }
+    }
+
+    /**
+     * Handle the User "created" event.
+     *
+     * @param  Person $person
+     * @return void
+     */
+    public function created(Person $person)
+    {
+        if ($person->is_customer === 1) {
+            event('cluster_meta.registered_customers.increase', $person);
         }
     }
 }

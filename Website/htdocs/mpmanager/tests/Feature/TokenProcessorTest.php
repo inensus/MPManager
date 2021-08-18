@@ -17,7 +17,11 @@ use App\Models\Transaction\Transaction;
 use App\Models\Transaction\VodacomTransaction;
 use App\Sms\Senders\SmsConfigs;
 use App\Sms\SmsTypes;
+use Database\Factories\AddressFactory;
+use Database\Factories\CityFactory;
+use Database\Factories\ClusterFactory;
 use Database\Factories\MeterTariffFactory;
+use Database\Factories\MiniGridFactory;
 use Database\Factories\PersonFactory;
 use Database\Factories\TransactionFactory;
 use Database\Factories\VodacomTransactionFactory;
@@ -34,6 +38,14 @@ class TokenProcessorTest extends TestCase
     public function test_with_valid_transaction()
     {
         Queue::fake();
+        //create cluster
+        ClusterFactory::new()->create();
+        //create mini-grid
+        MiniGridFactory::new()->create();
+        //create city
+        CityFactory::new()->create();
+        //create address
+        AddressFactory::new()->create();
         PersonFactory::new()->create();
         MeterTariffFactory::new()->create();
         MeterType::create([

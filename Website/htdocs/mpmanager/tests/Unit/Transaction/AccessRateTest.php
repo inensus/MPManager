@@ -11,11 +11,15 @@ use App\Models\Meter\MeterParameter;
 use App\PaymentHandler\AccessRate;
 use Database\Factories\AccessRateFactory;
 use Database\Factories\AccessRatePaymentFactory;
+use Database\Factories\AddressFactory;
+use Database\Factories\CityFactory;
+use Database\Factories\ClusterFactory;
 use Database\Factories\ConnectionGroupFactory;
 use Database\Factories\ConnectionTypeFactory;
 use Database\Factories\ManufacturerFactory;
 use Database\Factories\MeterTariffFactory;
 use Database\Factories\MeterTypeFactory;
+use Database\Factories\MiniGridFactory;
 use Database\Factories\PersonFactory;
 use Database\Factories\TransactionFactory;
 use Database\Factories\VodacomTransactionFactory;
@@ -32,6 +36,16 @@ class AccessRateTest extends TestCase
     private function initApplication(): void
     {
         Bus::fake();
+        //create cluster
+        ClusterFactory::new()->create();
+        //create mini-grid
+        MiniGridFactory::new()->create();
+        //create city
+        CityFactory::new()->create();
+        //create address
+        AddressFactory::new()->create();
+        //create person
+        $customer = PersonFactory::new()->create();
         $manufacturer = ManufacturerFactory::new()->create();
         $meterType = MeterTypeFactory::new()->create();
         $connectionType = ConnectionTypeFactory::new()->create();
@@ -45,7 +59,6 @@ class AccessRateTest extends TestCase
         $tariff = MeterTariffFactory::new()->create();
         $accessRate = AccessRateFactory::new()->make();
         $tariff->accessRate()->save($accessRate);
-        $customer = PersonFactory::new()->create();
         $meterParameter = new MeterParameter();
         $meterParameter->tariff()->associate($tariff);
         $meterParameter->meter()->associate($meter);

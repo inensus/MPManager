@@ -9,8 +9,12 @@ use App\Models\Meter\MeterTariff;
 use App\Models\Person\Person;
 use App\Models\SocialTariff;
 use App\Models\SocialTariffPiggyBank;
+use Database\Factories\AddressFactory;
+use Database\Factories\CityFactory;
+use Database\Factories\ClusterFactory;
 use Database\Factories\MeterFactory;
 use Database\Factories\MeterTariffFactory;
+use Database\Factories\MiniGridFactory;
 use Database\Factories\PersonFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -34,6 +38,15 @@ class SocialTariffPiggyBankTest extends TestCase
             'maximum_stacked_energy' => 70,
         ]);
         MeterFactory::new()->create();
+        //create cluster
+        ClusterFactory::new()->create();
+        //create mini-grid
+        MiniGridFactory::new()->create();
+        //create city
+        CityFactory::new()->create();
+        //create address
+        AddressFactory::new()->create();
+        //create person
         PersonFactory::new()->create();
         Person::first()->meters()->create([
             'meter_id' => 1,
@@ -62,22 +75,7 @@ class SocialTariffPiggyBankTest extends TestCase
     public function changeTariffAndResetSavings()
     {
         Queue::fake();
-        //create tariff
-        MeterTariffFactory::new()->times(2)->create();
-        //add social tariff
-        MeterTariff::first()->socialTariff()->create([
-            'tariff_id' => 1,
-            'daily_allowance' => 10,
-            'price' => 10000,
-            'initial_energy_budget' => 10,
-            'maximum_stacked_energy' => 70,
-        ]);
-
-        //create meter
-        MeterFactory::new()->create();
-        //create customer
-        PersonFactory::new()->create();
-        // attach meter to customer with tariff
+        $this->initiliazeData();
         Person::first()->meters()->create([
             'meter_id' => 1,
             'tariff_id' => 2,
@@ -115,5 +113,31 @@ class SocialTariffPiggyBankTest extends TestCase
         $createPiggyBankJob->handle();
 
         $this->assertCount(1, \App\Models\SocialTariffPiggyBank::all());
+    }
+    private function initiliazeData()
+    {
+        //create cluster
+        ClusterFactory::new()->create();
+        //create mini-grid
+        MiniGridFactory::new()->create();
+        //create city
+        CityFactory::new()->create();
+        //create address
+        AddressFactory::new()->create();
+        //create person
+        PersonFactory::new()->create();
+        //create tariff
+        MeterTariffFactory::new()->times(2)->create();
+        //add social tariff
+        MeterTariff::first()->socialTariff()->create([
+            'tariff_id' => 1,
+            'daily_allowance' => 10,
+            'price' => 10000,
+            'initial_energy_budget' => 10,
+            'maximum_stacked_energy' => 70,
+        ]);
+
+        //create meter
+        MeterFactory::new()->create();
     }
 }
