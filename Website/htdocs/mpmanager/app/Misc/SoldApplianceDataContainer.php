@@ -1,12 +1,10 @@
 <?php
 
-
 namespace App\Misc;
 
 use App\Models\AssetType;
 use App\Models\AssetPerson;
 use App\Models\Transaction\Transaction;
-
 
 class SoldApplianceDataContainer
 {
@@ -46,6 +44,4 @@ class SoldApplianceDataContainer
     {
         return $this->transaction;
     }
-
-
 }

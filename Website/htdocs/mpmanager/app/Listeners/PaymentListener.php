@@ -59,7 +59,7 @@ class PaymentListener
         $paymentHistory->sender = $sender;
         $paymentHistory->payer()->associate($payer); //the related payer
         $paymentHistory->paidFor()->associate($paidFor); // Loan , Token {Energy} , AccessRate
-        if($transaction !== null){
+        if ($transaction !== null) {
             $paymentHistory->transaction()->associate($transaction);
 
             if ($paymentHistory->payment_service === 'third_party_transaction') {

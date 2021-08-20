@@ -102,6 +102,5 @@ class AgentSoldApplianceObserver
         );
         $history->trigger()->associate($commission);
         $history->save();
-
     }
 }

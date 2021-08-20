@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Listeners;
-
 
 use App\Misc\SoldApplianceDataContainer;
 use App\Models\AssetRate;
@@ -22,7 +20,7 @@ class SoldApplianceListener
         $this->assetRate = $assetRate;
     }
 
-    public function initializeApplianceRates(SoldApplianceDataContainer $soldAppliance):void
+    public function initializeApplianceRates(SoldApplianceDataContainer $soldAppliance): void
     {
         $assetPerson = $soldAppliance->getAssetPerson();
         $assetType = $soldAppliance->getAssetType();
@@ -65,8 +63,8 @@ class SoldApplianceListener
                 ]
             );
         }
-        if($transaction === null){
-            if( $assetPerson->down_payment > 0){
+        if ($transaction === null) {
+            if ($assetPerson->down_payment > 0) {
                 event(
                     'payment.successful',
                     [
@@ -80,7 +78,7 @@ class SoldApplianceListener
                     ]
                 );
             }
-        }else{
+        } else {
             event(
                 'payment.successful',
                 [
@@ -94,13 +92,11 @@ class SoldApplianceListener
                 ]
             );
         }
-
     }
 
 
-    public function subscribe(Dispatcher $events):void
+    public function subscribe(Dispatcher $events): void
     {
         $events->listen('appliance.sold', 'App\Listeners\SoldApplianceListener@initializeApplianceRates');
     }
-
 }
