@@ -32,7 +32,6 @@ use App\Observers\AgentObserver;
 use App\Observers\AgentReceiptObserver;
 use App\Observers\AgentSoldApplianceObserver;
 use App\Observers\AgentTransactionObserver;
-use App\Observers\AssetPersonObserver;
 use App\Observers\BatteryObserver;
 use App\Observers\MeterParameterObserver;
 use App\Observers\MeterTariffObserver;
@@ -56,7 +55,6 @@ class ServicesProvider extends ServiceProvider
         Person::observe(PersonObserver::class);
         Address::observe(AddressesObserver::class);
         MeterParameter::observe(MeterParameterObserver::class);
-        AssetPerson::observe(AssetPersonObserver::class);
         PV::observe(PVObserver::class);
         Battery::observe(BatteryObserver::class);
         Horizon::auth(
