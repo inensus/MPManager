@@ -3,12 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\ApiResource;
+use App\Misc\SoldApplianceDataContainer;
 use App\Models\AssetPerson;
 use App\Models\AssetType;
 use App\Models\Person\Person;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Http\Response;
 
 class AssetPersonController extends Controller
 {
@@ -33,16 +32,26 @@ class AssetPersonController extends Controller
      */
     public function store(AssetType $assetType, Person $person, Request $request): ApiResource
     {
-        $assetPerson = $this->assetPerson::create(
+        $assetPerson = $this->assetPerson::query()->create(
             [
             'person_id' => $person->id,
             'asset_type_id' => $assetType->id,
             'total_cost' => $request->get('cost'),
             'down_payment' => $request->get('downPayment'),
             'rate_count' => $request->get('rate'),
+            'creator_id' => $request->get('creatorId')
 
             ]
         );
+        $soldApplianceDataContainer = app()->makeWith(
+            'App\Misc\SoldApplianceDataContainer',
+            [
+                'assetType' => $assetType,
+                'assetPerson' => $assetPerson,
+                'transaction' => null
+            ]
+        );
+        event('appliance.sold', $soldApplianceDataContainer);
         return new ApiResource($assetPerson);
     }
 
