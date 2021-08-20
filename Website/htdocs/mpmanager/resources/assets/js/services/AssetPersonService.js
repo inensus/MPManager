@@ -36,8 +36,9 @@ export class AssetPersonService {
             return new ErrorHandler(errorMessage, 'http')
         }
     }
-    async saveAsset(id,personId,assetPM){
+    async saveAsset(id,personId,assetPM,creatorId){
         try {
+            assetPM.creatorId = creatorId
             let response = await this.repository.create(id,personId,assetPM)
             console.log(assetPM)
             if (response.status === 200 || response.status === 201) {
