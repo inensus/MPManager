@@ -8,7 +8,6 @@ use App\Models\AgentBalanceHistory;
 use App\Models\AgentCommission;
 use App\Models\AgentSoldAppliance;
 use App\Models\AssetPerson;
-use App\Models\AssetRate;
 use App\Models\Person\Person;
 use App\Models\Transaction\AgentTransaction;
 use App\Models\Transaction\Transaction;
@@ -43,24 +42,36 @@ class AgentSoldApplianceObserver
             [
             'amount' => request()->input('down_payment'),
             'sender' => $agent->device_id,
-            'message' => '-',
+            'message' => '-'
             ]
         );
         $transaction->originalTransaction()->associate($agentTransaction);
         $transaction->save();
 
-        event(
-            'payment.successful',
+        $assetPerson = AssetPerson::make(
             [
-            'amount' => $transaction->amount,
-            'paymentService' => 'agent',
-            'paymentType' => 'appliance',
-            'sender' => $agent->device_id,
-            'paidFor' => $appliance,
-            'payer' => $buyer,
-            'transaction' => $transaction,
+                'person_id' => request()->input('person_id'),
+                'first_payment_date' => request()->input('first_payment_date'),
+                'rate_count' => request()->input('tenure'),
+                'total_cost' => $assignedAppliance->cost,
+                'down_payment' => request()->input('down_payment'),
+                'asset_type_id' => $assignedAppliance->applianceType->id,
             ]
         );
+        $assetPerson->creator()->associate($agent);
+        $assetPerson->save();
+
+        $soldApplianceDataContainer = app()->makeWith(
+            'App\Misc\SoldApplianceDataContainer',
+            [
+                'assetType' => $appliance,
+                'assetPerson' => $assetPerson,
+                'transaction' => $transaction
+            ]
+        );
+
+        event('appliance.sold', $soldApplianceDataContainer);
+
 
         $history = AgentBalanceHistory::query()->make(
             [
@@ -91,17 +102,5 @@ class AgentSoldApplianceObserver
         );
         $history->trigger()->associate($commission);
         $history->save();
-        $assetPerson = AssetPerson::make(
-            [
-            'person_id' => $buyer->id,
-            'first_payment_date' => request()->input('first_payment_date'),
-            'rate_count' => request()->input('tenure'),
-            'total_cost' => $assignedAppliance->cost,
-            'down_payment' => request()->input('down_payment'),
-            'asset_type_id' => $assignedAppliance->applianceType->id,
-            ]
-        );
-        $assetPerson->creator()->associate($agent);
-        $assetPerson->save();
     }
 }

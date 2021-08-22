@@ -26,6 +26,7 @@ class AssetRate extends Model
         'rate_cost',
         'remaining',
         'due_date',
+        'remind'
     ];
 
     public function assetPerson(): BelongsTo

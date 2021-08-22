@@ -110,6 +110,7 @@ export default {
         return {
             newAppliance: {
             },
+            adminId: this.$store.getters['auth/getAuthenticateUser'].id,
             applianceRate: true,
             showRates: false,
             assetService: new AssetService(),
@@ -168,7 +169,7 @@ export default {
                         try {
                             let validator = await this.$validator.validateAll()
                             if (validator) {
-                                let appliance = await this.assetPersonService.saveAsset(this.newAppliance.id, this.personId, this.newAppliance)
+                                let appliance = await this.assetPersonService.saveAsset(this.newAppliance.id, this.personId, this.newAppliance, this.adminId)
                                 this.alertNotify('success', this.$tc('phrases.sellAsset', 1))
                                 await this.$router.push('/sold-appliance-detail/' + appliance.id)
                             }
