@@ -31,7 +31,7 @@ export default {
             translateItem: translateItem
         }
     },
-    mounted () {
+    created () {
         this.breadcrumbListState = this.$store.getters['breadcrumb/getBreadcrumb']
         if(this.breadcrumbListState['breadcrumb'].length > 0){
             this.breadcrumbList = this.breadcrumbListState['breadcrumb']
@@ -60,9 +60,7 @@ export default {
         },
         storeBreadcrumb(){
             this.$store.dispatch('breadcrumb/setBreadcrumb', this.breadcrumbList).then(() => {
-            }).catch((err) => {
-                console.log(err)
-            })
+            }).catch((err) => err)
         },
         updateList () {
             if(this.$route.meta.breadcrumb){
