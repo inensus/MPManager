@@ -18,12 +18,14 @@ abstract class SmsSender
     protected $receiver;
     protected $callback;
     protected $parserSubPath;
+    private $smsAndroidSettings;
 
-    public function __construct($data, $smsBodyService, $parserSubPath)
+    public function __construct($data, $smsBodyService, $parserSubPath, $smsAndroidSettings)
     {
         $this->smsBodyService = $smsBodyService;
         $this->data = $data;
         $this->parserSubPath = $parserSubPath;
+        $this->smsAndroidSettings = $smsAndroidSettings;
     }
 
     public function sendSms()
@@ -48,7 +50,8 @@ abstract class SmsSender
             ->sendSms(
                 $this->receiver,
                 $this->body,
-                $this->callback
+                $this->callback,
+                $this->smsAndroidSettings
             );
     }
     public function prepareHeader()
@@ -157,13 +160,13 @@ abstract class SmsSender
         return $this->receiver;
     }
 
-    public function generateCallback()
+    public function generateCallback($callback)
     {
         $uuid = (string)Uuid::generate(4);
         if (!($this->data instanceof Transaction) && ($this->data instanceof AssetRate)) {
             $this->callback = 'manual';
         }
-        $this->callback = sprintf(config()->get('services.sms.callback'), $uuid);
+        $this->callback = sprintf($callback, $uuid);
         return $uuid;
     }
 }
