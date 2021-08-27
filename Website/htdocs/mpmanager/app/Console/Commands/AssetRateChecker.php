@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Jobs\SmsProcessor;
 use App\Models\AssetRate;
 use App\Models\User;
+use App\Services\SmsAndroidSettingService;
 use App\Services\SmsApplianceRemindRateService;
 use App\Sms\Senders\SmsConfigs;
 use App\Sms\SmsTypes;
@@ -106,7 +107,8 @@ class AssetRateChecker extends Command
         SmsProcessor::dispatch(
             $assetRate,
             SmsTypes::APPLIANCE_RATE,
-            SmsConfigs::class
+            SmsConfigs::class,
+            SmsAndroidSettingService::class
         )->allOnConnection('redis')->onQueue(\config('services.queues.sms'));
     }
 
