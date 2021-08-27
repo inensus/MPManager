@@ -3,21 +3,21 @@
 namespace Tests\Unit;
 
 
+use App\Jobs\SmsLoadBalancer;
 use App\Jobs\SmsProcessor;
 use App\Jobs\TokenProcessor;
 use App\Misc\TransactionDataContainer;
 use App\Models\Address\Address;
-use App\Models\MainSettings;
 use App\Models\Manufacturer;
 use App\Models\Meter\Meter;
-use App\Models\Meter\MeterTariff;
 use App\Models\Meter\MeterType;
 
 use App\Models\Person\Person;
+use App\Models\SmsAndroidSetting;
 use App\Models\SmsBody;
-use App\Models\Transaction\Transaction;
 use App\Models\Transaction\VodacomTransaction;
 
+use App\Services\SmsAndroidSettingService;
 use App\Sms\Senders\SmsConfigs;
 use App\Sms\SmsTypes;
 use Database\Factories\MainSettingsFactory;
@@ -27,7 +27,6 @@ use Database\Factories\TransactionFactory;
 use Database\Factories\VodacomTransactionFactory;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Queue;
 use Tests\TestCase;
 
@@ -37,8 +36,7 @@ class SmsProcessorTest extends TestCase
     /*    ./vendor/bin/phpunit --filter   sms_sending_with_transaction     */
     use RefreshDatabase;
 
-    /** @test */
-    public function token_creation_with_valid_transaction()
+    public function test_token_creation_with_valid_transaction()
     {
         Queue::fake();
         $transaction = $this->initializeData();
@@ -51,8 +49,7 @@ class SmsProcessorTest extends TestCase
         Queue::assertPushed(TokenProcessor::class);
     }
 
-    /** @test */
-    public function sms_sending_with_transaction()
+    public function test_sms_sending_with_transaction()
     {
         Queue::fake();
         $transaction = $this->initializeData();
@@ -62,13 +59,15 @@ class SmsProcessorTest extends TestCase
         SmsProcessor::dispatch(
             $transaction,
             SmsTypes::TRANSACTION_CONFIRMATION,
-            SmsConfigs::class
+            SmsConfigs::class,
+            SmsAndroidSettingService::class
         );
         Queue::assertPushed(SmsProcessor::class);
+
+
     }
 
-    /** @test */
-    public function sms_sending_with_resend_information_with_no_transaction()
+    public function test_sms_sending_with_resend_information_with_no_transaction()
     {
         Queue::fake();
         $transaction = $this->initializeData();
@@ -80,12 +79,23 @@ class SmsProcessorTest extends TestCase
             'phone' => '905494322161',
             'meter' => $transaction->message
         ];
+        $smsAndroidSettings = SmsAndroidSetting::query()->latest()->first();
         SmsProcessor::dispatch(
             $data,
             SmsTypes::RESEND_INFORMATION,
-            SmsConfigs::class
+            SmsConfigs::class,
+            SmsAndroidSettingService::class
         );
         Queue::assertPushed(SmsProcessor::class);
+
+        SmsLoadBalancer::dispatch([
+            'number' => 123123123,
+            'message' => 'test',
+            'sms_id' => 'test',
+            'key' => $smsAndroidSettings->key,
+            'token' => $smsAndroidSettings->token,
+        ])->onConnection('redis')->onQueue('sms_gateway');
+        Queue::assertPushed(SmsLoadBalancer::class);
     }
 
     private function addSmsBodies()
@@ -219,6 +229,13 @@ class SmsProcessorTest extends TestCase
             'meter_type_id' => 1,
             'in_use' => 1,
             'manufacturer_id' => 1,
+        ]);
+
+        SmsAndroidSetting::query()->create([
+            'ur' => 'https://fcm.googleapis.com/fcm/send',
+            'token' => 'test',
+            'key' => 'test',
+            'callback' => 'https://your-domain/api/sms/%s/confirm'
         ]);
 
         //associate meter with a person
