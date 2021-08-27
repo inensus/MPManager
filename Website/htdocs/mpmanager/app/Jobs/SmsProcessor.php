@@ -115,6 +115,8 @@ class SmsProcessor implements ShouldQueue
         if (!$reflection->isSubclassOf(SmsSender::class)) {
             throw new  SmsBodyParserNotExtendedException('SmsBodyParser has not extended.');
         }
-        return $reflection->newInstanceArgs([$this->data,$smsBodyService,$configs->bodyParsersPath, $this->smsAndroidSettings]);
+        return $reflection->newInstanceArgs([
+            $this->data,$smsBodyService,$configs->bodyParsersPath, $this->smsAndroidSettings
+        ]);
     }
 }
