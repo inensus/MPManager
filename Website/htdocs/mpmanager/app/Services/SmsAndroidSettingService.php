@@ -2,7 +2,10 @@
 
 namespace App\Services;
 
+use App\Models\Sms;
 use App\Models\SmsAndroidSetting;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Log;
 
 class SmsAndroidSettingService
 {
@@ -41,5 +44,26 @@ class SmsAndroidSettingService
     {
         $smsAndroidSetting->delete();
         return $this->smsAndroidSetting->newQuery()->get();
+    }
+
+    public function getResponsible()
+    {
+        $smsAndroidSettings = SmsAndroidSetting::all();
+        if($smsAndroidSettings->count() !== 0){
+            try {
+                $lastSms = Sms::query()->latest()->select('id')->take(1)->firstOrFail()->id;
+                $responsibleGateway = $smsAndroidSettings[$lastSms % $smsAndroidSettings->count()];
+            } catch (ModelNotFoundException $e) {
+                $responsibleGateway = $smsAndroidSettings[0];
+            }
+            return $responsibleGateway;
+        }else{
+            Log::critical(
+                'Sms Android Settings is empty'
+            );
+            return ;
+        }
+
+
     }
 }
