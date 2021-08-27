@@ -37,7 +37,7 @@ class SmsProcessor implements ShouldQueue
      * @param $smsConfigs
      * @param $smsAndroidSettingsService
      */
-    public function __construct($data, int $smsType, $smsConfigs, $smsAndroidSettingsService )
+    public function __construct($data, int $smsType, $smsConfigs, $smsAndroidSettingsService)
     {
         $this->data = $data;
         $this->smsType = $smsType;

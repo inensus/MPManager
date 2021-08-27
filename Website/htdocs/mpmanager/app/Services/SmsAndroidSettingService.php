@@ -49,7 +49,7 @@ class SmsAndroidSettingService
     public function getResponsible()
     {
         $smsAndroidSettings = SmsAndroidSetting::all();
-        if($smsAndroidSettings->count() !== 0){
+        if ($smsAndroidSettings->count() !== 0) {
             try {
                 $lastSms = Sms::query()->latest()->select('id')->take(1)->firstOrFail()->id;
                 $responsibleGateway = $smsAndroidSettings[$lastSms % $smsAndroidSettings->count()];
@@ -57,13 +57,11 @@ class SmsAndroidSettingService
                 $responsibleGateway = $smsAndroidSettings[0];
             }
             return $responsibleGateway;
-        }else{
+        } else {
             Log::critical(
                 'Sms Android Settings is empty'
             );
             return ;
         }
-
-
     }
 }
