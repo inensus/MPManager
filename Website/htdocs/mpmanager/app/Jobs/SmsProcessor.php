@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Exceptions\SmsAndroidSettingNotExistingException;
 use App\Exceptions\SmsBodyParserNotExtendedException;
 use App\Exceptions\SmsTypeNotFoundException;
 use App\Models\Sms;
@@ -25,6 +26,8 @@ class SmsProcessor implements ShouldQueue
     public $data;
     public $smsType;
     private $smsConfigs;
+    private $smsAndroidSettings;
+
 
     /**
      * Create a new job instance.
@@ -48,6 +51,7 @@ class SmsProcessor implements ShouldQueue
     public function handle()
     {
         try {
+            $this->getSmsAndroidSettings();
             $smsType = $this->resolveSmsType();
         } catch (SmsTypeNotFoundException $exception) {
             Log::critical('Sms send failed.', ['message : ' => $exception->getMessage()]);
@@ -55,7 +59,11 @@ class SmsProcessor implements ShouldQueue
         } catch (SmsBodyParserNotExtendedException $exception) {
             Log::critical('Sms send failed.', ['message : ' => $exception->getMessage()]);
             return;
+        } catch (SmsAndroidSettingNotExistingException $exception) {
+            Log::critical('Sms send failed.', ['message : ' => $exception->getMessage()]);
+            return;
         }
+
         $receiver = $smsType->getReceiver();
         //dont send sms if debug
         if (config('app.debug')) {
@@ -72,7 +80,7 @@ class SmsProcessor implements ShouldQueue
         }
         try {
             //set the uuid for the callback
-            $uuid = $smsType->generateCallback();
+            $uuid = $smsType->generateCallback($this->smsAndroidSettings->callback);
             //sends sms or throws exception
             $smsType->sendSms();
         } catch (Exception $e) {
@@ -91,8 +99,25 @@ class SmsProcessor implements ShouldQueue
             ]);
             $sms->trigger()->associate($this->data);
             $sms->save();
+        } else {
+            $lastSentManualSms = Sms::query()->where('receiver', $receiver)->where(
+                'body',
+                $smsType->body
+            )->latest()->first();
+            if ($lastSentManualSms) {
+                $lastSentManualSms->update([
+                    'uuid' => $uuid,
+                ]);
+            }
         }
     }
+
+    private function getSmsAndroidSettings()
+    {
+        $smsAndroidSettingsService = resolve('AndroidSettingsService');
+        $this->smsAndroidSettings = $smsAndroidSettingsService->getResponsible();
+    }
+
     private function resolveSmsType()
     {
         $configs = resolve($this->smsConfigs);
@@ -104,6 +129,11 @@ class SmsProcessor implements ShouldQueue
         if (!$reflection->isSubclassOf(SmsSender::class)) {
             throw new  SmsBodyParserNotExtendedException('SmsBodyParser has not extended.');
         }
-        return $reflection->newInstanceArgs([$this->data,$smsBodyService,$configs->bodyParsersPath]);
+        return $reflection->newInstanceArgs([
+            $this->data,
+            $smsBodyService,
+            $configs->bodyParsersPath,
+            $this->smsAndroidSettings
+        ]);
     }
 }

@@ -8,6 +8,7 @@ use App\Models\Meter\Meter;
 use App\Models\Meter\MeterType;
 use App\Models\Person\Person;
 use App\Models\Sms;
+use App\Models\SmsAndroidSetting;
 use App\Models\SmsBody;
 use App\Models\Transaction\Transaction;
 use App\Models\Transaction\VodacomTransaction;
@@ -138,6 +139,12 @@ class SendSmsTest extends TestCase
                 'title' => $body['title']
             ]);
         }
+        SmsAndroidSetting::query()->create([
+            'ur' => 'https://fcm.googleapis.com/fcm/send',
+            'token' => 'test',
+            'key' => 'test',
+            'callback' => 'https://your-domain/api/sms/%s/confirm'
+        ]);
 
         SmsResendInformationKeyFactory::new()->create();
         //create settings

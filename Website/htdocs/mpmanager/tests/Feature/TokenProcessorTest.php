@@ -13,8 +13,10 @@ use App\Models\Meter\MeterToken;
 use App\Models\Meter\MeterType;
 use App\Models\PaymentHistory;
 use App\Models\Person\Person;
+use App\Models\SmsAndroidSetting;
 use App\Models\Transaction\Transaction;
 use App\Models\Transaction\VodacomTransaction;
+use App\Services\SmsAndroidSettingService;
 use App\Sms\Senders\SmsConfigs;
 use App\Sms\SmsTypes;
 use Database\Factories\MeterTariffFactory;
@@ -54,6 +56,14 @@ class TokenProcessorTest extends TestCase
             'in_use' => 1,
             'manufacturer_id' => 1,
         ]);
+
+        SmsAndroidSetting::query()->create([
+            'ur' => 'https://fcm.googleapis.com/fcm/send',
+            'token' => 'test',
+            'key' => 'test',
+            'callback' => 'https://your-domain/api/sms/%s/confirm'
+        ]);
+
         $p = Person::first();
         $p->meters()->create([
             'tariff_id' => 1,
@@ -76,7 +86,8 @@ class TokenProcessorTest extends TestCase
         SmsProcessor::dispatch(
             $transaction,
             SmsTypes::TRANSACTION_CONFIRMATION,
-            SmsConfigs::class);
+            SmsConfigs::class
+        );
         $this->assertCount(1, MeterToken::all());
         $this->assertCount(1, PaymentHistory::all());
         Queue::assertPushed(SmsProcessor::class);

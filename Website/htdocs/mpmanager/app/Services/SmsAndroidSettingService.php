@@ -2,7 +2,11 @@
 
 namespace App\Services;
 
+use App\Exceptions\SmsAndroidSettingNotExistingException;
+use App\Models\Sms;
 use App\Models\SmsAndroidSetting;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Log;
 
 class SmsAndroidSettingService
 {
@@ -41,5 +45,21 @@ class SmsAndroidSettingService
     {
         $smsAndroidSetting->delete();
         return $this->smsAndroidSetting->newQuery()->get();
+    }
+
+    public function getResponsible()
+    {
+        $smsAndroidSettings = SmsAndroidSetting::all();
+        if ($smsAndroidSettings->count()) {
+            try {
+                $lastSms = Sms::query()->latest()->select('id')->take(1)->firstOrFail()->id;
+                $responsibleGateway = $smsAndroidSettings[$lastSms % $smsAndroidSettings->count()];
+            } catch (ModelNotFoundException $e) {
+                $responsibleGateway = $smsAndroidSettings[0];
+            }
+            return $responsibleGateway;
+        } else {
+            throw new SmsAndroidSettingNotExistingException('No SMS android setting registered.');
+        }
     }
 }
