@@ -25,21 +25,18 @@ class AndroidGateway implements ISmsProvider
      * @param string $callback
      * @param SmsAndroidSetting $smsAndroidSettings
      */
-    public function sendSms(string $number, string $body, string $callback, SmsAndroidSetting $smsAndroidSettings)
+    public function sendSms(string $number, string $body, string $callback, SmsAndroidSetting $smsAndroidSetting)
     {
         if (config('app.debug')) {
             Log::debug('Send sms on debug is not allowed', ['number' => $number, 'message' => $body]);
             return;
         }
-
         //add sms to sms_gateway job
-        SmsLoadBalancer::dispatchSync([
+        SmsLoadBalancer::dispatch([
             'number' => $number,
             'message' => $body,
             'sms_id' => $callback,
-            'key' => $smsAndroidSettings->key,
-            'token' => $smsAndroidSettings->token
-
+            'setting' => $smsAndroidSetting,
         ])->onConnection('redis')->onQueue('sms_gateway');
     }
 }

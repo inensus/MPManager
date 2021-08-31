@@ -17,7 +17,7 @@ use App\Models\SmsAndroidSetting;
 use App\Models\SmsBody;
 use App\Models\Transaction\VodacomTransaction;
 
-use App\Services\SmsAndroidSettingService;
+
 use App\Sms\Senders\SmsConfigs;
 use App\Sms\SmsTypes;
 use Database\Factories\MainSettingsFactory;
@@ -59,8 +59,7 @@ class SmsProcessorTest extends TestCase
         SmsProcessor::dispatch(
             $transaction,
             SmsTypes::TRANSACTION_CONFIRMATION,
-            SmsConfigs::class,
-            SmsAndroidSettingService::class
+            SmsConfigs::class
         );
         Queue::assertPushed(SmsProcessor::class);
 
@@ -79,23 +78,13 @@ class SmsProcessorTest extends TestCase
             'phone' => '905494322161',
             'meter' => $transaction->message
         ];
-        $smsAndroidSettings = SmsAndroidSetting::query()->latest()->first();
         SmsProcessor::dispatch(
             $data,
             SmsTypes::RESEND_INFORMATION,
-            SmsConfigs::class,
-            SmsAndroidSettingService::class
+            SmsConfigs::class
         );
         Queue::assertPushed(SmsProcessor::class);
 
-        SmsLoadBalancer::dispatch([
-            'number' => 123123123,
-            'message' => 'test',
-            'sms_id' => 'test',
-            'key' => $smsAndroidSettings->key,
-            'token' => $smsAndroidSettings->token,
-        ])->onConnection('redis')->onQueue('sms_gateway');
-        Queue::assertPushed(SmsLoadBalancer::class);
     }
 
     private function addSmsBodies()
@@ -232,7 +221,6 @@ class SmsProcessorTest extends TestCase
         ]);
 
         SmsAndroidSetting::query()->create([
-            'ur' => 'https://fcm.googleapis.com/fcm/send',
             'token' => 'test',
             'key' => 'test',
             'callback' => 'https://your-domain/api/sms/%s/confirm'

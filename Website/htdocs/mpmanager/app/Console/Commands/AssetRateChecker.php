@@ -107,8 +107,7 @@ class AssetRateChecker extends Command
         SmsProcessor::dispatch(
             $assetRate,
             SmsTypes::APPLIANCE_RATE,
-            SmsConfigs::class,
-            SmsAndroidSettingService::class
+            SmsConfigs::class
         )->allOnConnection('redis')->onQueue(\config('services.queues.sms'));
     }
 

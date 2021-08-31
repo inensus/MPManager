@@ -98,8 +98,7 @@ class EnergyTransactionProcessor implements ShouldQueue
             SmsProcessor::dispatch(
                 $transactionData->transaction,
                 SmsTypes::TRANSACTION_CONFIRMATION,
-                SmsConfigs::class,
-                SmsAndroidSettingService::class
+                SmsConfigs::class
             )->allOnConnection('redis')->onQueue(\config('services.queues.sms'));
         }
     }

@@ -111,8 +111,7 @@ class VodacomTransaction implements ITransactionProvider
                     SmsProcessor::dispatch(
                         $transaction,
                         SmsTypes::TRANSACTION_CONFIRMATION,
-                        SmsConfigs::class,
-                        SmsAndroidSettingService::class
+                        SmsConfigs::class
                     )->allOnConnection('redis')->onQueue(\config('services.queues.sms'));
                 }
 

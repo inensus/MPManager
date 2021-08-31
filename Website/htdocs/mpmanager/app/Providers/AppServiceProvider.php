@@ -21,11 +21,13 @@ use App\Models\Meter\MeterTariff;
 use App\Models\Meter\MeterToken;
 use App\Models\MiniGrid;
 use App\Models\Person\Person;
+use App\Models\SmsAndroidSetting;
 use App\Models\Transaction\ThirdPartyTransaction;
 use App\Models\Transaction\Transaction;
 use App\Models\Transaction\VodacomTransaction;
 use App\Models\User;
 use App\Services\FirebaseService;
+use App\Services\SmsAndroidSettingService;
 use App\Sms\AndroidGateway;
 use App\Transaction\AgentTransaction;
 use App\Transaction\AirtelTransaction;
@@ -95,6 +97,10 @@ class AppServiceProvider extends ServiceProvider
             $client = new Client();
             $transaction = new Transaction();
             return new CalinApi($client, $transaction);
+        });
+
+        $this->app->bind('AndroidSettingsService', function ($app) {
+            return new SmsAndroidSettingService($app->make(SmsAndroidSetting::class));
         });
 
         $this->app->singleton(

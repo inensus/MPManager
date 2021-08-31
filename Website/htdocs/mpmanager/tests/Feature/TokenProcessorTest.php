@@ -86,8 +86,7 @@ class TokenProcessorTest extends TestCase
         SmsProcessor::dispatch(
             $transaction,
             SmsTypes::TRANSACTION_CONFIRMATION,
-            SmsConfigs::class,
-            SmsAndroidSettingService::class
+            SmsConfigs::class
         );
         $this->assertCount(1, MeterToken::all());
         $this->assertCount(1, PaymentHistory::all());

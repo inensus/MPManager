@@ -45,8 +45,7 @@ class SmsService
          SmsProcessor::dispatch(
              $data,
              $smsType,
-             $SmsConfigClass,
-             SmsAndroidSettingService::class
+             $SmsConfigClass
          )->allOnConnection('redis')->onQueue(\config('services.queues.sms'));
     }
 }

@@ -75,8 +75,7 @@ class TokenListener
         SmsProcessor::dispatch(
             $transactionContainer->transaction,
             SmsTypes::TRANSACTION_CONFIRMATION,
-            SmsConfigs::class,
-            SmsAndroidSettingService::class
+            SmsConfigs::class
         )->allOnConnection('redis')->onQueue(\config('services.queues.sms'));
 
         //payment successful

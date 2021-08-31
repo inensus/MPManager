@@ -56,16 +56,16 @@ class SmsLoadBalancer implements ShouldQueue
         $smsCollection = $smsCollection->chunk(3);
         $httpClient = new Client();
         $request = $httpClient->post(
-            config()->get('services.sms.android.url'),
+            $smsCollection[1]['setting']['url'],
             [
                 'headers' => [
                     'Content-Type' => 'application/json',
-                    'Authorization' => 'key=' . $smsCollection[1]['key'],
+                    'Authorization' => 'key=' . $smsCollection[1]['setting']['key'],
                     'Accept' => 'application/json',
                 ],
                 'json' => [
                     'data' => $smsCollection[0],
-                    'to' => $smsCollection[1]['token'],
+                    'to' => $smsCollection[1]['setting']['token'],
                 ],
             ]
         );
