@@ -41,7 +41,6 @@ class SmsProcessor implements ShouldQueue
         $this->data = $data;
         $this->smsType = $smsType;
         $this->smsConfigs = $smsConfigs;
-
     }
 
     /**
@@ -101,8 +100,10 @@ class SmsProcessor implements ShouldQueue
             $sms->trigger()->associate($this->data);
             $sms->save();
         } else {
-            $lastSentManualSms = Sms::query()->where('receiver', $receiver)->where('body',
-                $smsType->body)->latest()->first();
+            $lastSentManualSms = Sms::query()->where('receiver', $receiver)->where(
+                'body',
+                $smsType->body
+            )->latest()->first();
             if ($lastSentManualSms) {
                 $lastSentManualSms->update([
                     'uuid' => $uuid,
