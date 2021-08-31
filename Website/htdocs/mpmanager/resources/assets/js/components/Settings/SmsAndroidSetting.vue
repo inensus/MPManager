@@ -46,7 +46,8 @@
                                 :id="'callback_'+index"
                                 :name="'callback_'+index"
                                 v-model="smsAndroidSetting.callback"
-                                v-validate="'required|min:3'"
+                                placeholder="https://your-domain/api/sms/%s/confirm"
+                                v-validate="'required|min:3|url'"
                         />
                         <span class="md-error">{{ errors.first('SmsAndroidSettings-Form.callback_'+index) }}</span>
                     </md-field>
