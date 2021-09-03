@@ -41,7 +41,13 @@
                                 </md-table-head>
                             </md-table-row>
                             <md-table-row v-for="(rate,index) in getAppliance()" :key="rate.id">
-                                <md-table-cell>{{index +1 }}</md-table-cell>
+                                <md-table-cell>
+                                    {{index +1 }}
+                                    <md-icon v-if="rate.remaining === 0">
+                                        check
+                                        <md-tooltip md-direction="top">Paid</md-tooltip>
+                                    </md-icon>
+                                </md-table-cell>
                                 <md-table-cell>{{moneyFormat( rate.rate_cost)}} {{ currency }}</md-table-cell>
                                 <md-table-cell v-if="editRow === 'rate'+'_'+rate.id">
                                     <div style="display: inline-flex;">
