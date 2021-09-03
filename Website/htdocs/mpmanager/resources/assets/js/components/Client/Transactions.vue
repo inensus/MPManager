@@ -21,8 +21,7 @@
                 <md-table-cell :md-label="$tc('words.sender')" md-sort-by="sender">{{ item.sender }}
                 </md-table-cell>
                 <md-table-cell :md-label="$tc('words.amount')" md-sort-by="amount">{{
-                        item.amount + ' ' +
-                        appConfig.currency
+                        item.amount + ' ' + currency
                     }}
                 </md-table-cell>
                 <md-table-cell :md-label="$tc('phrases.paidFor')" md-sort-by="type">{{
@@ -64,13 +63,13 @@ export default {
             userTransactionsService: new UserTransactionsService(this.personId),
             subscriber: 'client-transactions',
             articleClass: 'col-sm-12',
-
             transactions: [],
             currentPage: 1,
             from: 0,
             to: 0,
             total: 0,
             totalPages: 0,
+            currency: this.$store.getters['settings/getMainSettings'].currency
 
         }
     },
