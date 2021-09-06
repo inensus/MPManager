@@ -40,7 +40,6 @@ export class AssetPersonService {
         try {
             assetPM.creatorId = creatorId
             let response = await this.repository.create(id,personId,assetPM)
-            console.log(assetPM)
             if (response.status === 200 || response.status === 201) {
                 return response.data.data
             } else {
