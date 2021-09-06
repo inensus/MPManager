@@ -7,7 +7,9 @@ use App\Misc\SoldApplianceDataContainer;
 use App\Models\AssetPerson;
 use App\Models\AssetType;
 use App\Models\Person\Person;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class AssetPersonController extends Controller
 {
@@ -32,6 +34,20 @@ class AssetPersonController extends Controller
      */
     public function store(AssetType $assetType, Person $person, Request $request): ApiResource
     {
+        if($request->get('cost') !== $request->get('preferredPrice'))
+        {
+            Log::debug(
+                ': Appliance Sale Cost is different than the preferred sale price for appliance ',
+                [
+                    'user' => $request->get('creatorId'),
+                    'customer' => $person->id,
+                    'sale_price' => $request->get('cost'),
+                    'preferred_price' => $request->get('preferredPrice'),
+                    'appliance_type' => $assetType->id,
+                    'date_time' => Carbon::now()
+                ]
+            );
+        }
         $assetPerson = $this->assetPerson::query()->create(
             [
             'person_id' => $person->id,
