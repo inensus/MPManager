@@ -34,8 +34,7 @@ class AssetPersonController extends Controller
      */
     public function store(AssetType $assetType, Person $person, Request $request): ApiResource
     {
-        if($request->get('cost') !== $request->get('preferredPrice'))
-        {
+        if ($request->get('cost') !== $request->get('preferredPrice')) {
             Log::debug(
                 ': Appliance Sale Cost is different than the preferred sale price for appliance ',
                 [
