@@ -9,12 +9,12 @@
                         <md-card-content>
                             <md-field :class="{'md-invalid': errors.has($tc('words.appliance'))}">
                                 <label for="appliance">{{ $tc('words.appliance') }}</label>
-                                <md-select :name="$tc('words.appliance')" id="appliance" v-model="applianceTypeIndex"
+                                <md-select :name="$tc('words.appliance')" id="appliance" v-model="newAppliance.id"
                                 >
                                     <md-option disabled value>--{{ $tc('words.select') }}--</md-option>
                                     <md-option
-                                        :value="index"
-                                        v-for="(appliance, index) in assetService.list"
+                                        :value="appliance.id"
+                                        v-for="appliance in assetService.list"
                                         :key="appliance.id"
                                     >{{ appliance.name }}
                                     </md-option>
@@ -110,20 +110,11 @@ export default {
         return {
             newAppliance: {
             },
-            applianceTypeIndex: null,
             adminId: this.$store.getters['auth/getAuthenticateUser'].id,
             applianceRate: true,
             showRates: false,
             assetService: new AssetService(),
             assetPersonService: new AssetPersonService(),
-            currency: this.$store.getters['settings/getMainSettings'].currency
-        }
-    },
-    watch:{
-        applianceTypeIndex(){
-            this.newAppliance.id = this.assetService.list[this.applianceTypeIndex].id
-            this.newAppliance.cost = this.newAppliance.preferredPrice = String(this.assetService.list[this.applianceTypeIndex].price)
-            this.newAppliance.downPayment = 0
         }
     },
     computed:{
@@ -174,7 +165,7 @@ export default {
                     cancelButtonText: this.$tc('words.cancel'),
                     confirmButtonText: this.$tc('words.sell')
                 }).then(async result => {
-                    if (result.value) {
+                    if (result) {
                         try {
                             let validator = await this.$validator.validateAll()
                             if (validator) {
@@ -191,7 +182,7 @@ export default {
             }
         },
         checkDownPayment () {
-            if (parseFloat(this.newAppliance.downPayment)  > parseFloat(this.newAppliance.cost) ) {
+            if (parseFloat(this.newAppliance.downPayment)  >parseFloat(this.newAppliance.cost) ) {
                 this.newAppliance.downPayment = 0
                 this.alertNotify('warn', 'Down Payment is not bigger than Appliance Cost')
             } else if (this.newAppliance.cost === this.newAppliance.downPayment) {
