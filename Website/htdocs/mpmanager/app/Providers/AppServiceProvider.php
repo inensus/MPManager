@@ -22,6 +22,7 @@ use App\Models\Meter\MeterToken;
 use App\Models\MiniGrid;
 use App\Models\Person\Person;
 use App\Models\SmsAndroidSetting;
+use App\Models\Transaction\CashTransaction;
 use App\Models\Transaction\ThirdPartyTransaction;
 use App\Models\Transaction\Transaction;
 use App\Models\Transaction\VodacomTransaction;
@@ -72,7 +73,8 @@ class AppServiceProvider extends ServiceProvider
                 'agent_receipt' => AgentReceipt::class,
                 'agent_charge' => AgentCharge::class,
                 'meter_tariff' => MeterTariff::class,
-                'third_party_transaction' => ThirdPartyTransaction::class
+                'third_party_transaction' => ThirdPartyTransaction::class,
+                'cash_transaction' => CashTransaction::class
             ]
         );
     }

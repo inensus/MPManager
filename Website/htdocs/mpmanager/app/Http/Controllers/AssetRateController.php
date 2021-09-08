@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\ApiResource;
 use App\Models\AssetRate;
+use App\Models\Person\Person;
+use App\Services\ApplianceRateService;
+use App\Services\CashTransactionService;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 
 class AssetRateController extends Controller
 {
@@ -15,22 +19,38 @@ class AssetRateController extends Controller
      * @param AssetRate $assetRate
      * @return ApiResource
      */
-    public function update(Request $request, AssetRate $assetRate): ApiResource
+
+    private $cashTransactionService;
+    private $applianceRateService;
+
+    public function __construct(
+        CashTransactionService $cashTransactionService,
+        ApplianceRateService $applianceRateService
+    ) {
+        $this->cashTransactionService = $cashTransactionService;
+        $this->applianceRateService = $applianceRateService;
+    }
+
+    public function update(Request $request, AssetRate $applianceRate): ApiResource
     {
+        $cost = $request->get('cost');
+        $newCost = $request->get('newCost');
+        $creatorId = $request->get('admin_id');
+        $amount = $newCost - $cost;
+        $appliancePerson = $applianceRate->assetPerson;
+
         // notify log listener
-        event(
-            'new.log',
-            [
-                'logData' => [
-                    'user_id' => $request->get('admin_id'),
-                    'affected' => $assetRate->assetPerson,
-                    'action' => 'Remaining rate ' . $assetRate->due_date . ' cost updated. From '
-                        . $assetRate->remaining . ' to ' . $request->get('remaining')
-                ]
-            ]
-        );
-        $assetRate->remaining = $request->get('remaining');
-        $assetRate->update();
-        return new ApiResource($assetRate);
+        if ($newCost === 0) {
+            $this->applianceRateService
+                ->deleteUpdatedApplianceRateIfCostZero($applianceRate, $creatorId, $cost, $newCost);
+            $appliancePerson->rate_count -= 1;
+        } else {
+            $this->applianceRateService->updateApplianceRateCost($applianceRate, $creatorId, $cost, $newCost);
+        }
+        $appliancePerson->total_cost += $amount;
+        $appliancePerson->update();
+        $appliancePerson->save();
+
+        return new ApiResource($applianceRate);
     }
 }
