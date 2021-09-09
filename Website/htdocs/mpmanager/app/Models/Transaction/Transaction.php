@@ -67,6 +67,11 @@ class Transaction extends BaseModel
         return BelongsToMorph::build($this, ThirdPartyTransaction::class, 'originalTransaction');
     }
 
+    public function originalCash(): BelongsToMorph
+    {
+        return BelongsToMorph::build($this, CashTransaction::class, 'originalTransaction');
+    }
+
     public function token(): HasOne
     {
         return $this->hasOne(MeterToken::class);

@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\ApiResource;
-use App\Misc\SoldApplianceDataContainer;
 use App\Models\AssetPerson;
 use App\Models\AssetType;
 use App\Models\Person\Person;
+use App\Services\AppliancePersonService;
+use App\Services\CashTransactionService;
 use Illuminate\Http\Request;
 
 class AssetPersonController extends Controller
@@ -17,9 +18,18 @@ class AssetPersonController extends Controller
      */
     private $assetPerson;
 
-    public function __construct(AssetPerson $assetPerson)
-    {
+    private $assetPersonService;
+
+    private $cashTransactionService;
+
+    public function __construct(
+        AssetPerson $assetPerson,
+        AppliancePersonService $assetPersonService,
+        CashTransactionService $cashTransactionService
+    ) {
         $this->assetPerson = $assetPerson;
+        $this->assetPersonService = $assetPersonService;
+        $this->cashTransactionService = $cashTransactionService;
     }
 
     /**
@@ -30,9 +40,12 @@ class AssetPersonController extends Controller
      * @param  Request   $request
      * @return ApiResource
      */
-    public function store(AssetType $assetType, Person $person, Request $request): ApiResource
-    {
-        $assetPerson = $this->assetPerson::query()->create(
+    public function store(
+        AssetType $assetType,
+        Person $person,
+        Request $request
+    ): ApiResource {
+        $assetPerson = $this->assetPerson::query()->make(
             [
             'person_id' => $person->id,
             'asset_type_id' => $assetType->id,
@@ -43,15 +56,25 @@ class AssetPersonController extends Controller
 
             ]
         );
-        $soldApplianceDataContainer = app()->makeWith(
-            'App\Misc\SoldApplianceDataContainer',
-            [
-                'assetType' => $assetType,
-                'assetPerson' => $assetPerson,
-                'transaction' => null
-            ]
+        $buyerAddress = $person->addresses()->where('is_primary', 1)->first();
+        $sender = $buyerAddress == null ? '-' : $buyerAddress->phone;
+        $transaction = null;
+        if ((int)$request->get('downPayment') > 0) {
+            $transaction = $this->cashTransactionService->createCashTransaction(
+                $request->get('creatorId'),
+                $request->get('downPayment'),
+                $sender
+            );
+        }
+
+        $assetPerson->save();
+
+        $this->assetPersonService->initSoldApplianceDataContainer(
+            $assetType,
+            $assetPerson,
+            $transaction
         );
-        event('appliance.sold', $soldApplianceDataContainer);
+
         return new ApiResource($assetPerson);
     }
 

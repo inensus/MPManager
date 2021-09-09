@@ -74,10 +74,16 @@ Route::group(['prefix' => 'assets', 'middleware' => 'jwt.verify'], function () {
     });
 
     Route::group(['prefix' => 'rates'], static function () {
-        Route::put('/{asset_rate}', 'AssetRateController@update');
+        Route::put('/{appliance_rate}', 'AssetRateController@update');
+    });
+
+    Route::group(['prefix' => 'payment'], static function () {
+        Route::post('/{appliance_person}', 'AppliancePaymentController@store');
     });
 
 });
+
+
 // Batteries
 Route::group(['prefix' => 'batteries'], static function () {
     Route::post('/', 'BatteryController@store');
