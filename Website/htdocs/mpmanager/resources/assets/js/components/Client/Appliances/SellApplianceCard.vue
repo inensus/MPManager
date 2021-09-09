@@ -9,12 +9,12 @@
                         <md-card-content>
                             <md-field :class="{'md-invalid': errors.has($tc('words.appliance'))}">
                                 <label for="appliance">{{ $tc('words.appliance') }}</label>
-                                <md-select :name="$tc('words.appliance')" id="appliance" v-model="newAppliance.id"
+                                <md-select :name="$tc('words.appliance')" id="appliance" v-model="applianceTypeIndex"
                                 >
                                     <md-option disabled value>--{{ $tc('words.select') }}--</md-option>
                                     <md-option
-                                        :value="appliance.id"
-                                        v-for="appliance in assetService.list"
+                                        :value="index"
+                                        v-for="(appliance, index) in assetService.list"
                                         :key="appliance.id"
                                     >{{ appliance.name }}
                                     </md-option>
@@ -96,7 +96,6 @@ import widget from '../../../shared/widget'
 import { AssetService } from '../../../services/AssetService'
 import { AssetPersonService } from '../../../services/AssetPersonService'
 import { currency } from '../../../mixins/currency'
-
 export default {
     name: 'SellApplianceCard',
     components: { widget },
@@ -110,11 +109,20 @@ export default {
         return {
             newAppliance: {
             },
+            applianceTypeIndex: null,
             adminId: this.$store.getters['auth/getAuthenticateUser'].id,
             applianceRate: true,
             showRates: false,
             assetService: new AssetService(),
             assetPersonService: new AssetPersonService(),
+            currency: this.$store.getters['settings/getMainSettings'].currency
+        }
+    },
+    watch:{
+        applianceTypeIndex(){
+            this.newAppliance.id = this.assetService.list[this.applianceTypeIndex].id
+            this.newAppliance.cost = this.newAppliance.preferredPrice = String(this.assetService.list[this.applianceTypeIndex].price)
+            this.newAppliance.downPayment = 0
         }
     },
     computed:{
@@ -136,7 +144,6 @@ export default {
             } catch (e) {
                 this.alertNotify('error', e.message)
             }
-
         },
         getRate (index, rateCount, cost) {
             if (index === parseInt(rateCount)) {
@@ -155,7 +162,6 @@ export default {
         },
         async saveAppliance () {
             let validator = await this.$validator.validateAll()
-
             if (validator) {
                 this.$swal({
                     type: 'question',
@@ -165,7 +171,7 @@ export default {
                     cancelButtonText: this.$tc('words.cancel'),
                     confirmButtonText: this.$tc('words.sell')
                 }).then(async result => {
-                    if (result) {
+                    if (result.value) {
                         try {
                             let validator = await this.$validator.validateAll()
                             if (validator) {
@@ -173,7 +179,6 @@ export default {
                                 this.alertNotify('success', this.$tc('phrases.sellAsset', 1))
                                 await this.$router.push('/sold-appliance-detail/' + appliance.id)
                             }
-
                         } catch (e) {
                             this.alertNotify('error', e.message)
                         }
@@ -182,7 +187,7 @@ export default {
             }
         },
         checkDownPayment () {
-            if (parseFloat(this.newAppliance.downPayment)  >parseFloat(this.newAppliance.cost) ) {
+            if (parseFloat(this.newAppliance.downPayment)  > parseFloat(this.newAppliance.cost) ) {
                 this.newAppliance.downPayment = 0
                 this.alertNotify('warn', 'Down Payment is not bigger than Appliance Cost')
             } else if (this.newAppliance.cost === this.newAppliance.downPayment) {
@@ -197,5 +202,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>
