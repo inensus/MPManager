@@ -7,7 +7,8 @@
         <div class="md-layout-item md-size-60">
             <widget
                 :title="'Details of ' + soldAppliance.asset_type.name "
-                color="green" :key="updateDetail">
+                color="green" :key="updateDetail"
+                :subscriber="subscriber">
                 <confirmation-box :title="$tc('phrases.editRate')" @confirmed="editRate"></confirmation-box>
                 <md-dialog :md-active.sync="getPayment">
                     <md-dialog-title>
@@ -22,7 +23,7 @@
                                 v-model="payment"
                                 :id="$tc('words.amount')"
                                 :name="$tc('words.amount')"
-                                v-validate="'required|numeric|min_value:0'"
+                                v-validate="'required|numeric|min_value:1'"
                                 @change="checkPaymentForTotalRemaining()"
                             />
                             <span class="md-error">{{ errors.first($tc('words.amount')) }}</span>
@@ -38,9 +39,10 @@
                 <div class="md-layout md-gutter dialog-place">
                     <div class="md-layout-item md-layout md-gutter md-size-100 " style="padding: 2vw">
                         <div class="md-layout-item md-size-50">
-                            <h3><b>{{$tc('phrases.totalCost') }}: </b> {{moneyFormat(soldAppliance.total_cost) + currency}} </h3>
-                            <h3><b>Down Payment:</b> {{moneyFormat(soldAppliance.down_payment) + ' ' + currency}}</h3>
-                            <h3><b>Total Remaining Amount:</b> {{moneyFormat(totalRemainingAmount) + ' ' + currency}}</h3>
+                            <h2><b>{{$tc('phrases.totalCost') }}: </b> {{moneyFormat(soldAppliance.total_cost) + currency}} </h2>
+                            <h4><b>Down Payment:</b> {{moneyFormat(soldAppliance.down_payment) + ' ' + currency}}</h4>
+                            <h4><b>Total Payments :</b> {{moneyFormat(soldAppliance.totalPayments) + ' ' + currency}}</h4>
+                            <h4><b>Total Remaining Amount:</b> {{moneyFormat(soldAppliance.totalRemainingAmount) + ' ' + currency}}</h4>
                         </div>
                         <div class="md-layout-item md-size-50">
                             <h3><b>{{$tc('phrases.soldDate') }}: </b> {{formatReadableDate(soldAppliance.created_at)}}</h3>
@@ -54,7 +56,8 @@
                                     <h1 class="md-title">Payment Plan</h1>
                                 </div>
                                 <div class="md-toolbar-section-end">
-                                    <md-button class="md-primary md-raised md-dense" @click="getPayment = true">
+                                    <md-button class="md-primary md-raised md-dense" @click="getPayment = true"
+                                               :disabled="soldAppliance.totalPayments === soldAppliance.total_cost">
                                         <md-icon style="color: white">payments</md-icon> Get Payment
                                     </md-button>
                                 </div>
@@ -189,7 +192,6 @@ export default {
                 },
                 logs:[]
             },
-            totalRemainingAmount: null,
             adminId: this.$store.getters['auth/authenticationService'].authenticateUser.id,
             personId: null,
             getPayment: false,
@@ -266,9 +268,9 @@ export default {
             try {
                 this.soldAppliance =  await this.assetPersonService.show(this.selectedApplianceId)
                 this.personId = this.soldAppliance.person_id
-                this.sumTotalRemainingAmount()
                 this.updateDetail ++
                 await this.getPersonSoldAppliances()
+                EventBus.$emit('widgetContentLoaded', this.subscriber, Object.keys(this.soldAppliance))
                 return this.personId
             }catch (e) {
                 this.alertNotify('error', e.message)
@@ -283,29 +285,29 @@ export default {
             }
         },
         async getAppliancePayment(){
-            if(this.checkPaymentForTotalRemaining()){
-                return
-            }
-            try {
-                await this.appliancePayment.getPaymentForAppliance(this.selectedApplianceId, this.personId, this.adminId, this.soldAppliance.rates, this.payment)
-                this.payment = null
-                this.getPayment = false
-                await this.getSoldApplianceDetail()
-            }catch (e) {
-                this.alertNotify('error', e.message)
+            let validator = await this.$validator.validateAll()
+            if(validator){
+                if(this.checkPaymentForTotalRemaining()){
+                    return
+                }
+                try {
+                    await this.appliancePayment.getPaymentForAppliance(this.selectedApplianceId, this.personId, this.adminId, this.soldAppliance.rates, this.payment)
+                    this.payment = null
+                    this.getPayment = false
+                    await this.getSoldApplianceDetail()
+                }catch (e) {
+                    this.alertNotify('error', e.message)
+                }
             }
         },
         checkPaymentForTotalRemaining(){
-            if(this.payment > this.totalRemainingAmount){
+            if(this.payment > this.soldAppliance.totalRemainingAmount){
                 this.errorLabel = true
                 return true
             }else{
                 this.errorLabel = false
                 return false
             }
-        },
-        sumTotalRemainingAmount(){
-            this.totalRemainingAmount = this.soldAppliance.rates.reduce((sum, rate) => sum + rate.remaining, 0)
         },
         alertNotify (type, message) {
             this.$notify({

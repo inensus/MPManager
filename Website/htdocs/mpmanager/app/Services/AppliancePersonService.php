@@ -111,4 +111,29 @@ class AppliancePersonService
         $mainSettings = $this->mainSettings->newQuery()->first();
         return $mainSettings === null ? '€' : $mainSettings->currency;
     }
+
+    public function getApplianceDetails($applianceId)
+    {
+        $appliance = $this->assetPerson::with('assetType', 'rates.logs', 'logs.owner')
+            ->where('id', '=', $applianceId)
+            ->first();
+
+        return $this->sumTotalPaymentsAndTotalRemainingAmount($appliance);
+    }
+
+    private function sumTotalPaymentsAndTotalRemainingAmount($appliance)
+    {
+        $rates = Collect($appliance->rates);
+        $appliance['totalRemainingAmount'] = 0;
+        $appliance['totalPayments'] = 0;
+
+        $rates->map(function ($rate) use ($appliance) {
+                $appliance['totalRemainingAmount'] +=  $rate->remaining;
+            if ($rate->remaining !== $rate->rate_cost) {
+                $appliance['totalPayments'] += $rate->rate_cost - $rate->remaining;
+            }
+        });
+
+        return $appliance;
+    }
 }

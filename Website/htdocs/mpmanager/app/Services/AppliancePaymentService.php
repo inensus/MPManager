@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Exceptions\PaymentAmountBiggerThanTotalRemainingAmount;
+use App\Exceptions\PaymentAmountSmallerThanZero;
 use App\Models\AssetRate;
 use App\Models\AssetType;
 use App\Models\MainSettings;
@@ -14,24 +16,38 @@ class AppliancePaymentService
     private $person;
     private $payment;
     private $mainSettings;
+    private $appliancePersonService;
 
     public function __construct(
         CashTransactionService $cashTransactionService,
         AssetType $applianceType,
         Person $person,
-        MainSettings $mainSettings
+        MainSettings $mainSettings,
+        AppliancePersonService $appliancePersonService
     ) {
         $this->cashTransactionService = $cashTransactionService;
         $this->applianceType = $applianceType;
         $this->person = $person;
         $this->mainSettings = $mainSettings;
+        $this->appliancePersonService = $appliancePersonService;
     }
 
     public function getPaymentForAppliance($request, $appliancePerson)
     {
         $creatorId = auth('api')->user()->id;
         $this->payment = (int)$request->input('amount');
-        $rates = Collect($request->input('rates'));
+        $soldApplianceDetail = $this->appliancePersonService->getApplianceDetails($appliancePerson->id);
+        if ($this->payment > $soldApplianceDetail->totalRemainingAmount) {
+            throw new PaymentAmountBiggerThanTotalRemainingAmount(
+                'Payment Amount can not bigger than Total Remaining Amount'
+            );
+        }
+        if ($this->payment <= 0) {
+            throw new PaymentAmountSmallerThanZero(
+                'Payment amount can not smaller than zero'
+            );
+        }
+        $rates = Collect($soldApplianceDetail->rates);
         $buyer = $appliancePerson->person;
         $applianceType = $this->applianceType->newQuery()->find($appliancePerson->asset_type_id);
         $buyerAddress = $buyer->addresses()->where('is_primary', 1)->first();

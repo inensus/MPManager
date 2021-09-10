@@ -8,6 +8,7 @@ use App\Models\AssetType;
 use App\Models\Person\Person;
 use App\Services\AppliancePersonService;
 use Illuminate\Http\Request;
+use Ramsey\Collection\Collection;
 
 class AssetPersonController extends Controller
 {
@@ -63,9 +64,8 @@ class AssetPersonController extends Controller
 
     public function show($applianceId): ApiResource
     {
-        $assets = $this->assetPerson::with('assetType', 'rates.logs', 'logs.owner')
-            ->where('id', '=', $applianceId)
-            ->get();
-        return new ApiResource($assets);
+        $appliance = $this->assetPersonService->getApplianceDetails($applianceId);
+
+        return new ApiResource($appliance);
     }
 }
