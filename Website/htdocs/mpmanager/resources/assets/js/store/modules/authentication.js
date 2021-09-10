@@ -5,7 +5,7 @@ export const namespaced = true
 export const state = {
     service: new AuthenticationService(),
     authenticateUser: {},
-    status: '',
+    status: ''
 }
 export const mutations = {
     AUTH_REQUEST (state) {
@@ -25,6 +25,7 @@ export const mutations = {
         state.token = ''
         state.authenticateUser = {}
     },
+
 }
 export const actions = {
     authenticate ({ dispatch, commit, state }, { email, password }) {
@@ -43,7 +44,7 @@ export const actions = {
     refreshToken ({ dispatch, commit, state }, token) {
         commit('AUTH_REQUEST')
         return new Promise((resolve, reject) => {
-            state.service.refreshToken(token).then(user => {
+            state.service.refreshToken(token, state.authenticateUser.intervalId).then(user => {
                 commit('AUTH_SUCCESS', user)
                 resolve(user)
                 dispatch('settings/getSettings', null, { root: true })
@@ -53,13 +54,17 @@ export const actions = {
             })
         })
     },
-    logOut ({ commit }) {
-        return new Promise((resolve) => {
-            commit('SET_LOGOUT')
-            localStorage.removeItem('token')
-            resolve()
+    logOut ({ commit, state }) {
+        return new Promise((resolve, reject) => {
+            state.service.logOut(state.authenticateUser.intervalId).then(() => {
+                localStorage.removeItem('token')
+                commit('SET_LOGOUT')
+                resolve()
+            }).catch((e) => {
+                commit('AUTH_ERROR')
+                reject(e)
+            })
         })
-
     },
 
 }
@@ -69,6 +74,9 @@ export const getters = {
     },
     getToken: state => {
         return state.authenticateUser.token
+    },
+    getIntervalId: state => {
+        return state.authenticateUser.intervalId
     },
     authenticationService: state => state.service,
 

@@ -10,7 +10,8 @@ export class AuthenticationService {
             id: null,
             email: null,
             token: null,
-            remaining_time: 0
+            remaining_time: 0,
+            intervalId: 0
         }
     }
 
@@ -21,13 +22,14 @@ export class AuthenticationService {
                 email: data.user.email,
                 token: data.access_token,
                 remaining_time: data.expires_in,
-                name: data.user.name
+                name: data.user.name,
+                intervalId: 0
             }
             localStorage.setItem('token', this.authenticateUser.token)
             this.startTimer()
             return this.authenticateUser
         } catch (e) {
-            return this.setAuthenticateUserEmpty()
+            return this.setAuthenticateUserEmpty(this.authenticateUser.intervalId)
 
         }
 
@@ -52,9 +54,11 @@ export class AuthenticationService {
 
     }
 
-    async refreshToken (token) {
+    async refreshToken (token, intervalId) {
+
         try {
             let response = await this.repository.refresh(token)
+            clearInterval(intervalId)
             if (response.status === 200) {
                 return this._fetchData(response.data)
             } else {
@@ -66,24 +70,33 @@ export class AuthenticationService {
         }
     }
 
-    startTimer () {
+    async logOut (intervalId) {
 
-        if (this.authenticateUser.remaining_time <= 0) return
-        let interval = setInterval(() => {
-            this.authenticateUser.remaining_time--
-
-            if (this.authenticateUser.remaining_time <= 300 && this.authenticateUser.remaining_time > 0) {
-
-                EventBus.$emit('ask.for.extend', this.authenticateUser.remaining_time)
-            } else if (this.authenticateUser.remaining_time === 0) {
-
-                EventBus.$emit('session.end', true)
-                clearInterval(interval)
-            }
-        }, 1000)
+        this.stopTimer(intervalId)
+        this.setAuthenticateUserEmpty(intervalId)
     }
 
-    setAuthenticateUserEmpty () {
+    startTimer () {
+        if (this.authenticateUser.remaining_time <= 0) return
+        this.authenticateUser.intervalId = setInterval(() => {
+            this.authenticateUser.remaining_time--
+            if (this.authenticateUser.remaining_time <= 300 && this.authenticateUser.remaining_time > 0) {
+                EventBus.$emit('ask.for.extend', this.authenticateUser.remaining_time)
+            } else if (this.authenticateUser.remaining_time === 0) {
+                EventBus.$emit('session.end', true)
+                clearInterval(this.authenticateUser.intervalId)
+            }
+        }, 1000)
+
+    }
+
+    stopTimer (intervalId) {
+
+        clearInterval(intervalId)
+    }
+
+    setAuthenticateUserEmpty (intervalId) {
+        clearInterval(intervalId)
         this.authenticateUser = {}
         return this.authenticateUser
     }
