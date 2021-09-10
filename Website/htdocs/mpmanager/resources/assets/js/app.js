@@ -20,13 +20,14 @@ Vue.component('default', Default)
 
 router.beforeEach((to, from, next) => {
     const authToken = store.getters['auth/getToken']
+    const intervalId = store.getters['auth/getIntervalId']
     if (['login', 'forgot_password'].includes(to.name)) {
         return next()
     }
     if (authToken === undefined || authToken === '') {
         return next({ name: 'login' })
     }
-    store.dispatch('auth/refreshToken', authToken).then((result) => {
+    store.dispatch('auth/refreshToken', authToken, intervalId).then((result) => {
         return result ? next() : next({ name: 'login' })
     }).catch(() => {
         return next({ name: 'login' })
@@ -44,9 +45,9 @@ const app = new Vue({
             mainSettingsService: new MainSettingsService(),
             mapSettingService: new MapSettingsService(),
             ticketSettingsService: new TicketSettingsService(),
-            resolution:{
+            resolution: {
                 width: window.innerWidth,
-                height:window.innerHeight,
+                height: window.innerHeight,
                 isMobile: false
             }
         }
@@ -59,13 +60,13 @@ const app = new Vue({
     beforeDestroy () {
         window.removeEventListener('resize', this.handleResize)
     },
-    methods:{
-        handleResize(){
+    methods: {
+        handleResize () {
             this.resolution.width = window.innerWidth
             this.resolution.height = window.innerHeight
-            if(this.resolution.width <= 960){
+            if (this.resolution.width <= 960) {
                 this.resolution.isMobile = true
-            }else{
+            } else {
                 this.resolution.isMobile = false
             }
             this.$store.dispatch('resolution/setResolution', this.resolution).then(() => {
