@@ -41,7 +41,7 @@ class SoldApplianceListener
                     'amount' => $transaction->amount,
                     'paymentService' =>
                         $transaction->original_transaction_type === 'cash_transaction' ? 'web' : 'agent',
-                    'paymentType' => 'appliance',
+                    'paymentType' => 'down payment',
                     'sender' => $transaction->sender,
                     'paidFor' => $assetType,
                     'payer' => $buyer,
