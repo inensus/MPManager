@@ -8,9 +8,9 @@
                             <label for="period">{{ $tc('words.period') }}</label>
                             <md-select v-model="period" name="period" id="period" @md-selected="getPeriod">
                                 <md-option value="Yesterday">{{ $tc('words.yesterday') }}</md-option>
-                                <md-option value="Same day last week">{{$tc('phrases.sameDayLastWeek')}}</md-option>
-                                <md-option value="Past 7 days">{{ $tc('phrases.lastXDays',1,{x: 7}) }}</md-option>
-                                <md-option value="Past 30 days">{{ $tc('phrases.lastXDays',1,{x: 30}) }}</md-option>
+                                <md-option value="Same day last week">{{ $tc('phrases.sameDayLastWeek') }}</md-option>
+                                <md-option value="Past 7 days">{{ $tc('phrases.lastXDays', 1, { x: 7 }) }}</md-option>
+                                <md-option value="Past 30 days">{{ $tc('phrases.lastXDays', 1, { x: 30 }) }}</md-option>
                             </md-select>
                         </md-field>
                     </div>
@@ -23,7 +23,7 @@
                                 <md-icon class="md-primary">check</md-icon>
                             </div>
                             <div class="md-layout">
-                                <small>{{ $tc('words.confirm',2) }}</small>
+                                <small>{{ $tc('words.confirm', 2) }}</small>
                             </div>
                         </div>
                         <div class="md-layout-item">
@@ -34,12 +34,14 @@
                                 <md-icon class="md-accent">cancel</md-icon>
                             </div>
                             <div class="md-layout">
-                                <small>{{ $tc('words.cancel',2) }}</small>
+                                <small>{{ $tc('words.cancel', 2) }}</small>
                             </div>
                         </div>
                         <div class="md-layout-item">
                             <div class="md-layout">
-                                <span>{{ readable(analyticsData.current.amount) + $store.getters['settings/getMainSettings'].currency }}</span>
+                                <span>{{
+                                        readable(analyticsData.current.amount) + $store.getters['settings/getMainSettings'].currency
+                                    }}</span>
                             </div>
                             <div class="md-layout">
                                 <md-icon>attach_money</md-icon>
@@ -50,8 +52,6 @@
                         </div>
 
                     </div>
-
-
 
 
                 </div>
@@ -127,7 +127,7 @@
             <div
                 class="md-layout-item  md-size-25 md-small-size-50 "
                 v-if="analyticsData === null && loading ===false">
-                <h5>{{$tc('phrases.transactionNotify')}}</h5>
+                <h5>{{ $tc('phrases.transactionNotify') }}</h5>
             </div>
         </div>
 
@@ -192,14 +192,15 @@
                                 @click="transactionDetail(transaction.id)"
                             >
                                 <md-table-cell>
-                                    <md-icon v-if="transaction.status===1" style="color:green" md-toolt>check_circle_outline
-                                        <md-tooltip md-direction="right">{{ $tc('words.confirm',2) }}</md-tooltip>
+                                    <md-icon v-if="transaction.status===1" style="color:green" md-toolt>
+                                        check_circle_outline
+                                        <md-tooltip md-direction="right">{{ $tc('words.confirm', 2) }}</md-tooltip>
                                     </md-icon>
                                     <md-icon v-if="transaction.status===0" style="color:goldenrod">contact_support
-                                        <md-tooltip md-direction="right">{{ $tc('words.process',3) }}</md-tooltip>
+                                        <md-tooltip md-direction="right">{{ $tc('words.process', 3) }}</md-tooltip>
                                     </md-icon>
                                     <md-icon v-if="transaction.status===-1" style="color:red">cancel
-                                        <md-tooltip md-direction="right">{{ $tc('words.reject',2) }}</md-tooltip>
+                                        <md-tooltip md-direction="right">{{ $tc('words.reject', 2) }}</md-tooltip>
                                     </md-icon>
                                 </md-table-cell>
 
@@ -215,31 +216,41 @@
                                          src="https://image.flaticon.com/icons/svg/99/99395.svg"
                                          style="max-height:18px;"
                                     />
-
+                                    <img v-if="transaction.service==='cash_transaction'"
+                                         src="https://image.flaticon.com/icons/png/512/631/631200.png"
+                                         style="max-height:18px;"
+                                    />
 
                                 </md-table-cell>
-                                <md-table-cell>{{transaction.sender}}</md-table-cell>
-                                <md-table-cell>{{readable(transaction.amount) + appConfig.currency}}
+                                <md-table-cell>{{ transaction.sender }}</md-table-cell>
+                                <md-table-cell>
+                                    {{
+                                        readable(transaction.amount) + $store.getters['settings/getMainSettings'].currency
+                                    }}
                                 </md-table-cell>
-                                <md-table-cell>{{transaction.type}}</md-table-cell>
-                                <md-table-cell>{{transaction.message}}</md-table-cell>
+                                <md-table-cell>{{ transaction.type }}</md-table-cell>
+                                <md-table-cell>{{ transaction.message }}</md-table-cell>
                                 <md-table-cell>
                                     <div v-if="transaction!=undefined">
-                                        {{timeForHuman(transaction.sentDate)}}
-                                        <small>{{transaction.sentDate}}</small>
+                                        {{ timeForHuman(transaction.sentDate) }}
+                                        <small>{{ transaction.sentDate }}</small>
                                     </div>
                                 </md-table-cell>
                                 <md-table-cell>
                                     <div v-if="transaction!=undefined">
-                                        {{$tc('phrases.inXSeconds',1,{x: timeDiffForHuman(transaction.sentDate,
-                                            transaction.lastUpdate) })}}
+                                        {{
+                                            $tc('phrases.inXSeconds', 1, {
+                                                x: timeDiffForHuman(transaction.sentDate,
+                                                    transaction.lastUpdate)
+                                            })
+                                        }}
 
                                     </div>
                                 </md-table-cell>
                             </md-table-row>
                         </md-table>
                     </div>
-          </widget>
+                </widget>
 
             </div>
         </div>
@@ -304,7 +315,7 @@ export default {
 
     },
     methods: {
-        checkRouteChanges(){
+        checkRouteChanges () {
             let isFiltering = false
             let queryParams = this.$route.query
             if (Object.keys(queryParams).length > 0) {
@@ -319,7 +330,7 @@ export default {
             }
 
         },
-        closeFilter(){
+        closeFilter () {
             this.showFilter = false
         },
         filterTransaction (filterData) {
@@ -422,11 +433,12 @@ export default {
 </script>
 
 <style scoped>
-span{
-    text-align: center!important;
+span {
+    text-align: center !important;
     margin-left: auto;
     margin-right: auto;
 }
+
 .box {
     border-right: 2px solid #6d7f94;
     padding-left: 45px;
@@ -478,7 +490,8 @@ span{
 .transaction-list-grid {
     padding: 1rem;
 }
-.transaction-filter{
+
+.transaction-filter {
 
     min-width: 300px;
     width: 30%;
@@ -487,11 +500,13 @@ span{
     position: absolute;
 
 }
-.box-margin{
+
+.box-margin {
     margin-bottom: 35px;
 }
-.period-area{
-    width: 30%!important;
+
+.period-area {
+    width: 30% !important;
     min-width: 300px;
     margin-right: 1vw;
 }
@@ -501,7 +516,6 @@ span{
         display: none;
     }
 }
-
 
 
 </style>
