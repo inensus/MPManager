@@ -6,7 +6,7 @@
         </div>
         <div class="md-layout-item md-size-60">
             <widget
-                :title="'Details of ' + soldAppliance.asset_type.name "
+                :title="'Details of ' + soldAppliance.applianceType.name "
                 color="green" :key="updateDetail"
                 :subscriber="subscriber">
                 <confirmation-box :title="$tc('phrases.editRate')" @confirmed="editRate"></confirmation-box>
@@ -40,25 +40,25 @@
                 <div class="md-layout md-gutter dialog-place">
                     <div class="md-layout-item md-layout md-gutter md-size-100 " style="padding: 2vw">
                         <div class="md-layout-item md-size-50">
-                            <h2><b>{{$tc('phrases.totalCost') }}: </b> {{moneyFormat(soldAppliance.total_cost) + currency}} </h2>
-                            <h4><b>Down Payment:</b> {{moneyFormat(soldAppliance.down_payment) + ' ' + currency}}</h4>
+                            <h2><b>{{$tc('phrases.totalCost') }}: </b> {{moneyFormat(soldAppliance.totalCost) + currency}} </h2>
+                            <h4><b>Down Payment:</b> {{moneyFormat(soldAppliance.downPayment) + ' ' + currency}}</h4>
                             <h4><b>Total Payments :</b> {{moneyFormat(soldAppliance.totalPayments) + ' ' + currency}}</h4>
                             <h4><b>Total Remaining Amount:</b> {{moneyFormat(soldAppliance.totalRemainingAmount) + ' ' + currency}}</h4>
                         </div>
                         <div class="md-layout-item md-size-50">
-                            <h3><b>{{$tc('phrases.soldDate') }}: </b> {{formatReadableDate(soldAppliance.created_at)}}</h3>
-                            <h3><b>{{$tc('phrases.ratesCount') }}: </b> {{soldAppliance.rate_count}}</h3>
+                            <h3><b>{{$tc('phrases.soldDate') }}: </b> {{formatReadableDate(soldAppliance.createdAt)}}</h3>
+                            <h3><b>{{$tc('phrases.ratesCount') }}: </b> {{soldAppliance.rateCount}}</h3>
                         </div>
                     </div>
                     <div class="md-layout-item md-size-100">
-                        <md-table v-if="soldAppliance.rate_count > 0">
+                        <md-table v-if="soldAppliance.rateCount > 0">
                             <md-table-toolbar>
                                 <div class="md-toolbar-section-start">
                                     <h1 class="md-title">Payment Plan</h1>
                                 </div>
                                 <div class="md-toolbar-section-end">
                                     <md-button class="md-primary md-raised md-dense" @click="getPayment = true"
-                                               :disabled="soldAppliance.totalPayments === soldAppliance.total_cost">
+                                               :disabled="soldAppliance.totalPayments === soldAppliance.totalCost">
                                         <md-icon style="color: white">payments</md-icon> Get Payment
                                     </md-button>
                                 </div>
@@ -188,7 +188,7 @@ export default {
             assetPersonService: new AssetPersonService(),
             personService: new PersonService(),
             soldAppliance: {
-                asset_type: {
+                applianceType: {
                     name:''
                 },
                 logs:[]
@@ -224,7 +224,7 @@ export default {
     },
     methods:{
         getAppliance(){
-            if(this.soldAppliance.down_payment > 0){
+            if(this.soldAppliance.downPayment > 0){
                 return this.soldAppliance.rates.slice(1)
             }else{
                 return this.soldAppliance.rates
@@ -241,9 +241,9 @@ export default {
             this.editRow = null
             this.tempCost = cost
         },
-        changeRateAmount (rate_id, cost) {
+        changeRateAmount (id, cost) {
             this.tempCost = cost
-            this.editRow = 'rate_' + rate_id
+            this.editRow = 'rate_' + id
         },
         closeGetPayment(){
             this.getPayment = false
@@ -269,7 +269,7 @@ export default {
         async getSoldApplianceDetail(){
             try {
                 this.soldAppliance =  await this.assetPersonService.show(this.selectedApplianceId)
-                this.personId = this.soldAppliance.person_id
+                this.personId = this.soldAppliance.personId
                 this.updateDetail ++
                 await this.getPersonSoldAppliances()
                 EventBus.$emit('widgetContentLoaded', this.subscriber, Object.keys(this.soldAppliance))
