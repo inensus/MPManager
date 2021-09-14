@@ -58,7 +58,7 @@
                                 </div>
                                 <div class="md-toolbar-section-end">
                                     <md-button class="md-primary md-raised md-dense" @click="getPayment = true"
-                                               :disabled="soldAppliance.totalPayments === soldAppliance.totalCost">
+                                               :disabled="soldAppliance.totalRemainingAmount == 0">
                                         <md-icon style="color: white">payments</md-icon> Get Payment
                                     </md-button>
                                 </div>
@@ -287,12 +287,12 @@ export default {
             }
         },
         async getAppliancePayment(){
-            this.paymentProgress = true
             let validator = await this.$validator.validateAll()
             if(validator){
                 if(this.checkPaymentForTotalRemaining()){
                     return
                 }
+                this.paymentProgress = true
                 try {
                     await this.appliancePayment.getPaymentForAppliance(this.selectedApplianceId, this.personId, this.adminId, this.soldAppliance.rates, this.payment)
                     this.alertNotify('success',
