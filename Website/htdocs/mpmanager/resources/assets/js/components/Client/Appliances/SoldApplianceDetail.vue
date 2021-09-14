@@ -30,9 +30,10 @@
                         </md-field>
                         <md-content class="md-accent" v-if="errorLabel">Amount is not bigger than total remaining amount !!!</md-content>
                     </div>
+                    <md-progress-bar v-if="paymentProgress" md-mode="indeterminate"></md-progress-bar>
                     <md-dialog-actions>
                         <md-button class="md-accent md-dense md-raised" @click="closeGetPayment()">{{ $tc('words.cancel') }}</md-button>
-                        <md-button class="md-primary md-dense md-raised" @click="getAppliancePayment()">{{ $tc('words.save') }}</md-button>
+                        <md-button class="md-primary md-dense md-raised" @click="getAppliancePayment()" :disabled="paymentProgress">{{ $tc('words.save') }}</md-button>
                     </md-dialog-actions>
                 </md-dialog>
 
@@ -202,6 +203,7 @@ export default {
             tempCost: null,
             soldAppliancesList:[],
             payment: null,
+            paymentProgress: false,
             updateDetail: 0,
             subscriber: 'sold-appliance-detail',
             currency: this.$store.getters['settings/getMainSettings'].currency
@@ -285,6 +287,7 @@ export default {
             }
         },
         async getAppliancePayment(){
+            this.paymentProgress = true
             let validator = await this.$validator.validateAll()
             if(validator){
                 if(this.checkPaymentForTotalRemaining()){
@@ -292,8 +295,11 @@ export default {
                 }
                 try {
                     await this.appliancePayment.getPaymentForAppliance(this.selectedApplianceId, this.personId, this.adminId, this.soldAppliance.rates, this.payment)
+                    this.alertNotify('success',
+                        this.payment +  ' ' + this.currency + ' of payment is made.')
                     this.payment = null
                     this.getPayment = false
+                    this.paymentProgress = false
                     await this.getSoldApplianceDetail()
                 }catch (e) {
                     this.alertNotify('error', e.message)
