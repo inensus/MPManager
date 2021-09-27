@@ -53,7 +53,7 @@ class MeterController extends Controller
     }
 
     /**
-     * List
+     * List of all Meters
      * Lists all used meters with meterType and meterParameters.tariff
      * The response is paginated with 15 results on each page/request
      *
@@ -77,7 +77,6 @@ class MeterController extends Controller
     }
 
     /**
-     * Create
      * Stores a new meter
      *
      * @param     Request $request
@@ -111,7 +110,6 @@ class MeterController extends Controller
     }
 
     /**
-     * Detail
      * Detailed meter with following relations
      * - MeterParameter.tariff
      * - MeterParameter.owner
@@ -144,7 +142,7 @@ class MeterController extends Controller
     }
 
     /**
-     * Search
+     * Search Meter
      * The search term will be searched in following fields
      * - Tariff.name
      * - Serial number
@@ -176,7 +174,7 @@ class MeterController extends Controller
 
 
     /**
-     * Update
+     * Update Meter
      * Updates the geo coordinates of the meter
      *
      * @urlParam  meter int
@@ -346,7 +344,7 @@ class MeterController extends Controller
     }
 
     /**
-     * Delete
+     * Delete Meter
      * Deletes the meter with its all releations
      *
      * @urlParam meterId. The ID of the meter to be delete

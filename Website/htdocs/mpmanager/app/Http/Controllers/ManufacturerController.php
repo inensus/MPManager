@@ -9,11 +9,16 @@ use App\Models\Manufacturer;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
+/**
+ * @group   Manufacturer
+ * Class ManufacturerController
+ * @package App\Http\Controllers
+ */
 class ManufacturerController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     *
+     * List of all Manufacturers
+     * @responseFile responses/manufacturer/manufacturers.list.json
      * @return ApiResource
      */
     public function index(): ApiResource
@@ -25,8 +30,16 @@ class ManufacturerController extends Controller
 
 
     /**
-     * Store a newly created resource in storage.
+     * Create a new manufacturer.
      *
+     * @bodyParam name string required
+     * @bodyParam contact_person string required
+     * @bodyParam website string required
+     * @bodyParam api_name string required
+     * @bodyParam city_id int required
+     * @bodyParam email string required
+     * @bodyParam phone string required
+     * @bodyParam street string required
      * @param  ManufacturerRequest $request
      * @return ApiResource
      */
@@ -54,8 +67,9 @@ class ManufacturerController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
+     * Details of specified manufacturer.
+     * @urlParam manufacturerId required.
+     * @responseFile responses/manufacturer/manufacturer.detail.json
      * @param  Manufacturer $manufacturer
      * @return ApiResource
      */

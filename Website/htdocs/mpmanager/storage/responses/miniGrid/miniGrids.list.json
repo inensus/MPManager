@@ -1,0 +1,100 @@
+{
+    "data": [
+        {
+            "id": 1,
+            "cluster_id": 12,
+            "name": "Mafia",
+            "created_at": null,
+            "updated_at": "2021-02-02T20:43:49.000000Z",
+            "data_stream": 1
+        },
+        {
+            "id": 6,
+            "cluster_id": 14,
+            "name": "Konde",
+            "created_at": null,
+            "updated_at": "2021-08-31T08:25:29.000000Z",
+            "data_stream": 1
+        },
+        {
+            "id": 7,
+            "cluster_id": 14,
+            "name": "Wette",
+            "created_at": null,
+            "updated_at": "2021-05-10T15:32:27.000000Z",
+            "data_stream": 1
+        },
+        {
+            "id": 9,
+            "cluster_id": 14,
+            "name": "Tumbe",
+            "created_at": null,
+            "updated_at": "2021-09-21T13:32:12.000000Z",
+            "data_stream": 1
+        },
+        {
+            "id": 10,
+            "cluster_id": 12,
+            "name": "Jibondo Island",
+            "created_at": null,
+            "updated_at": "2021-03-03T18:14:25.000000Z",
+            "data_stream": 0
+        },
+        {
+            "id": 11,
+            "cluster_id": 12,
+            "name": "tester2",
+            "created_at": "2020-12-15T10:35:11.000000Z",
+            "updated_at": "2020-12-15T10:35:11.000000Z",
+            "data_stream": null
+        },
+        {
+            "id": 12,
+            "cluster_id": 14,
+            "name": "Adetayo",
+            "created_at": "2021-04-27T11:28:44.000000Z",
+            "updated_at": "2021-04-27T11:28:44.000000Z",
+            "data_stream": null
+        },
+        {
+            "id": 13,
+            "cluster_id": 14,
+            "name": "Oopsy",
+            "created_at": "2021-08-17T11:06:01.000000Z",
+            "updated_at": "2021-08-17T11:06:01.000000Z",
+            "data_stream": null
+        },
+        {
+            "id": 14,
+            "cluster_id": 14,
+            "name": "Oopsy",
+            "created_at": "2021-08-17T11:06:06.000000Z",
+            "updated_at": "2021-08-17T11:06:06.000000Z",
+            "data_stream": null
+        },
+        {
+            "id": 15,
+            "cluster_id": 14,
+            "name": "Oopsy",
+            "created_at": "2021-08-17T11:06:17.000000Z",
+            "updated_at": "2021-08-17T11:06:17.000000Z",
+            "data_stream": null
+        },
+        {
+            "id": 16,
+            "cluster_id": 12,
+            "name": "Oopsy",
+            "created_at": "2021-08-17T11:06:33.000000Z",
+            "updated_at": "2021-08-17T11:06:33.000000Z",
+            "data_stream": null
+        },
+        {
+            "id": 17,
+            "cluster_id": 12,
+            "name": "Oopsy",
+            "created_at": "2021-08-17T11:06:36.000000Z",
+            "updated_at": "2021-08-17T11:06:36.000000Z",
+            "data_stream": null
+        }
+    ]
+}

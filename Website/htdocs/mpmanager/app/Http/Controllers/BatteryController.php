@@ -26,7 +26,13 @@ class BatteryController extends Controller
         $this->battery = $battery;
     }
 
-
+    /**
+     * Detail of battery
+     * @urlParam miniGridId required
+     * @param Request $request
+     * @param $miniGridId
+     * @return ApiResource
+     */
     public function show(Request $request, $miniGridId): ApiResource
     {
         $batteryReadings = $this->battery->newQuery()

@@ -1,0 +1,60 @@
+{
+    "current_page": 1,
+    "data": [
+        {
+            "id": 6,
+            "name": "Mafia Village",
+            "date": "2021-04-12---2021-04-19",
+            "path": "\/var\/www\/vhosts\/micropowermanager.com\/demo.micropowermanager.com\/releases\/github-clone\/MPManager\/Website\/htdocs\/mpmanager\/storage\/.\/weekly\/weekly-mafia-village-2021-04-12-2021-04-19.xlsx",
+            "type": "weekly",
+            "created_at": "2021-04-20T19:56:38.000000Z",
+            "updated_at": "2021-04-20T19:56:38.000000Z"
+        },
+        {
+            "id": 7,
+            "name": "Wete",
+            "date": "2021-04-12---2021-04-19",
+            "path": "\/var\/www\/vhosts\/micropowermanager.com\/demo.micropowermanager.com\/releases\/github-clone\/MPManager\/Website\/htdocs\/mpmanager\/storage\/.\/weekly\/weekly-wete-2021-04-12-2021-04-19.xlsx",
+            "type": "weekly",
+            "created_at": "2021-04-20T19:56:39.000000Z",
+            "updated_at": "2021-04-20T19:56:39.000000Z"
+        },
+        {
+            "id": 8,
+            "name": "Konde Village",
+            "date": "2021-04-12---2021-04-19",
+            "path": "\/var\/www\/vhosts\/micropowermanager.com\/demo.micropowermanager.com\/releases\/github-clone\/MPManager\/Website\/htdocs\/mpmanager\/storage\/.\/weekly\/weekly-konde-village-2021-04-12-2021-04-19.xlsx",
+            "type": "weekly",
+            "created_at": "2021-04-20T19:56:39.000000Z",
+            "updated_at": "2021-04-20T19:56:39.000000Z"
+        },
+        {
+            "id": 9,
+            "name": "Tumbe Village",
+            "date": "2021-04-12---2021-04-19",
+            "path": "\/var\/www\/vhosts\/micropowermanager.com\/demo.micropowermanager.com\/releases\/github-clone\/MPManager\/Website\/htdocs\/mpmanager\/storage\/.\/weekly\/weekly-tumbe-village-2021-04-12-2021-04-19.xlsx",
+            "type": "weekly",
+            "created_at": "2021-04-20T19:56:40.000000Z",
+            "updated_at": "2021-04-20T19:56:40.000000Z"
+        },
+        {
+            "id": 10,
+            "name": "Jibondo Village",
+            "date": "2021-04-12---2021-04-19",
+            "path": "\/var\/www\/vhosts\/micropowermanager.com\/demo.micropowermanager.com\/releases\/github-clone\/MPManager\/Website\/htdocs\/mpmanager\/storage\/.\/weekly\/weekly-jibondo-village-2021-04-12-2021-04-19.xlsx",
+            "type": "weekly",
+            "created_at": "2021-04-20T19:56:40.000000Z",
+            "updated_at": "2021-04-20T19:56:40.000000Z"
+        }
+    ],
+    "first_page_url": "https:\/\/demo.micropowermanager.com\/api\/reports?page=1",
+    "from": 1,
+    "last_page": 1,
+    "last_page_url": "https:\/\/demo.micropowermanager.com\/api\/reports?page=1",
+    "next_page_url": null,
+    "path": "https:\/\/demo.micropowermanager.com\/api\/reports",
+    "per_page": 15,
+    "prev_page_url": null,
+    "to": 5,
+    "total": 5
+}

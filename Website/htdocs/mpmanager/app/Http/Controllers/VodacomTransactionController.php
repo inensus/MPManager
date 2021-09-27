@@ -6,10 +6,24 @@ use App\Models\Transaction\VodacomTransaction;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
+/**
+ * @group   Transactions
+ * Class VodacomTransactionController
+ * @package App\Http\Controllers
+ */
 class VodacomTransactionController extends Controller
 {
     /**
-     * Store a newly created resource in storage.
+     * Create
+     * Create a new vodacom transaction
+     * @bodyParam conversation_id int
+     * @bodyParam originator_conversation_id int
+     * @bodyParam mpesa_receipt int
+     * @bodyParam transaction_date date
+     * @bodyParam transaction_id int
+     * @bodyParam amount double
+     * @bodyParam sender string
+     * @bodyParam message string
      *
      * @param Request $request
      *

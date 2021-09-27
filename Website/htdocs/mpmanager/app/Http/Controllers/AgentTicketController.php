@@ -10,6 +10,12 @@ use Illuminate\Http\Request;
 use Inensus\Ticket\Exceptions\TicketOwnerNotFoundException;
 use Inensus\Ticket\Http\Resources\TicketResource;
 
+/**
+ * @group   Agent Ticket
+ * Class AgentTicketController
+ * @package App\Http\Controllers
+ */
+
 class AgentTicketController extends Controller
 {
     private $agentTicketService;
@@ -22,8 +28,9 @@ class AgentTicketController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
-     *
+     * List of all Agent Tickets
+     * A list of the all ticket for the given agent.
+     * @responseFile responses/agent/agent.tickets.json
      * @param  Request $request
      * @return ApiResource
      */
@@ -35,6 +42,14 @@ class AgentTicketController extends Controller
         return new ApiResource($tickets);
     }
 
+    /**
+     * List of Tickets by Customer
+     * A list of all tickets for the customer of authenticated agent.
+     * @urlParam customerId required
+     * @param $customerId
+     * @param Request $request
+     * @return ApiResource
+     */
     public function agentCustomerTickets($customerId, Request $request): ApiResource
     {
         $agent = request()->attributes->get('user');
@@ -43,8 +58,14 @@ class AgentTicketController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Create a new Ticket
+     * Create a new ticket for the customer of agent.
      *
+     * @bodyParam owner_id int. required
+     * @bodyParam due_date date. required
+     * @bodyParam label string. required
+     * @bodyParam title string. required
+     * @bodyParam description string. required
      * @param  CreateAgentTicketRequest $request
      * @return JsonResponse|TicketResource
      */
@@ -68,6 +89,14 @@ class AgentTicketController extends Controller
         return new TicketResource($this->agentTicketService->getBatch([$ticket]));
     }
 
+    /**
+     * Detail of Agent Ticket
+     * Detail of ticket for the given ticketId.
+     * @responseFile responses/agent/agent.ticket.detail.json
+     * @urlParam ticketId required
+     * @param $ticketId
+     * @return ApiResource
+     */
     public function show($ticketId): ApiResource
     {
         $ticket = $this->agentTicketService->getTicket($ticketId);

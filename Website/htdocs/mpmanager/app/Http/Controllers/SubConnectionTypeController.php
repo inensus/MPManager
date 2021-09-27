@@ -9,6 +9,11 @@ use App\Models\Meter\MeterTariff;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
+/**
+ * @group   Connection
+ * Class SubConnectionTypeController
+ * @package App\Http\Controllers
+ */
 class SubConnectionTypeController extends Controller
 {
 
@@ -23,7 +28,9 @@ class SubConnectionTypeController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
+     * Sub Connection List
+     * A list of the all sub connections.
+     * @responseFile responses/connection/sub.types.list.json
      *
      * @return ApiResource
      */
@@ -42,8 +49,11 @@ class SubConnectionTypeController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
+     * Sub Connection Create
+     * Create a new sub connection.
+     * @bodyParam name string required
+     * @bodyParam connection_type_id int required
+     * @bodyParam tariff_id int required
      * @param  SubConnectionTypeCreateRequest $request
      * @return ApiResource
      */
@@ -58,8 +68,11 @@ class SubConnectionTypeController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
-     *
+     * Sub Connection Update
+     * Update of the specified sub connection.
+     * @urlParam subConnectionId required.
+     * @bodyParam name string
+     * @bodyParam tariff_id int
      * @param SubConnectionType $subConnectionType
      *
      * @return ApiResource

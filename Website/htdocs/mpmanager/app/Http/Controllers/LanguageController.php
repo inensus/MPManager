@@ -6,6 +6,12 @@ use App\Http\Resources\ApiResource;
 use File;
 use Storage;
 
+/**
+ * @group   Language
+ * Class LanguageController
+ * @package App\Http\Controllers
+ */
+
 class LanguageController extends Controller
 {
     private $languagesList;
@@ -15,6 +21,10 @@ class LanguageController extends Controller
         $this->languagesList = $languagesList;
     }
 
+    /**
+     * List of all supported languages
+     * @return ApiResource
+     */
     public function index(): ApiResource
     {
         $path = resource_path('assets/locales');

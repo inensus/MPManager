@@ -8,6 +8,12 @@ use App\Models\AgentCommission;
 use App\Services\AgentCommissionService;
 use Illuminate\Http\Request;
 
+/**
+ * @group   Agent Commission
+ * Class AgentCommissionController
+ * @package App\Http\Controllers
+ */
+
 class AgentCommissionController extends Controller
 {
 
@@ -19,8 +25,9 @@ class AgentCommissionController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
-     *
+     * List Agent Commissions
+     * Display a listing of the all commissions.
+     * @responseFile responses/agent/agent.commissions.json
      * @return ApiResource
      */
     public function index(): ApiResource
@@ -31,7 +38,12 @@ class AgentCommissionController extends Controller
 
 
     /**
-     * Store a newly created resource in storage.
+     * Create commission
+     * Create a new agent commission.
+     * @bodyParam name string. required
+     * @bodyParam energy_commission int. required
+     * @bodyParam appliance_commission int. required
+     * @bodyParam risk_balance int. required
      *
      * @param  CreateAgentCommissionRequest $request
      * @return ApiResource
@@ -44,8 +56,14 @@ class AgentCommissionController extends Controller
 
 
     /**
-     * Update the specified resource in storage.
+     * Update commission
+     * Update agent commission for the given id.
+     * @urlParam AgentCommissionId int required
      *
+     * @bodyParam name string. required
+     * @bodyParam energy_commission int. required
+     * @bodyParam appliance_commission int. required
+     * @bodyParam risk_balance int. required
      * @param CreateAgentCommissionRequest $request
      * @param AgentCommission $commission
      *
@@ -58,8 +76,9 @@ class AgentCommissionController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
-     *
+     * Delete commission
+     * Remove agent commission for the given id.
+     * @urlParam AgentCommissionId int required
      * @param AgentCommission $commission
      *
      * @return ApiResource

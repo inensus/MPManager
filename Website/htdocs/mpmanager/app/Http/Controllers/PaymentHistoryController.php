@@ -19,7 +19,7 @@ use DatePeriod;
 use function count;
 
 /**
- * @group   Payment-History
+ * @group   Payment History
  * Class PaymentHistoryController
  * @package App\Http\Controllers
  */
@@ -41,12 +41,12 @@ class PaymentHistoryController
     }
 
     /**
-     * Detail
-     *
+     * Details of payment history for specified period.
      * @urlParam payerId integer required
      * @urlParam period string required
      * @urlParam limit integer
      * @urlParam order string
+     * @responseFile responses/paymentHistory/payment.periodic.history.json
      * @param    int    $payerId
      * @param    string $period
      * @param    null   $limit
@@ -74,7 +74,15 @@ class PaymentHistoryController
         return $this->preparePaymentFlow($payments);
     }
 
-
+    /**
+     * Detail for agent customers
+     * Details for the agent customers.
+     * @urlParam period string
+     * @param string $period
+     * @param null $limit
+     * @param string $order
+     * @return array[]
+     */
     public function showForAgentCustomers(string $period, $limit = null, $order = 'ASC')
     {
         $agent = request()->attributes->get('user');
@@ -103,6 +111,7 @@ class PaymentHistoryController
      * Payment Periods
      *
      * @urlParam personId integer required
+     * @responseFile responses/paymentHistory/payment.period.json
      * @param    $personId
      * @return   ApiResource
      * @throws   \Exception
@@ -127,7 +136,7 @@ class PaymentHistoryController
      * Person payment flow per year
      *
      * @urlParam personId integer required
-     *
+     * @responseFile responses/paymentHistory/payment.flow.json
      * @param int $personId
      * @param int|null $year
      *

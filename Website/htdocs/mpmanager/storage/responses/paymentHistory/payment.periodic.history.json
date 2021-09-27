@@ -1,0 +1,17 @@
+{
+    "2019": {
+        "energy": "-92867",
+        "access rate": "110500"
+    },
+    "2020": {
+        "access rate": "72308",
+        "loan rate": "39138",
+        "energy": "-98989",
+        "appliance": "350"
+    },
+    "2021": {
+        "energy": "-32661",
+        "loan rate": "1800",
+        "access rate": "241864"
+    }
+}

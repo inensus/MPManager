@@ -10,6 +10,12 @@ use App\Services\AppliancePersonService;
 use Illuminate\Http\Request;
 use Ramsey\Collection\Collection;
 
+/**
+ * @group   Appliance Person
+ * Class AssetPersonController
+ * @package App\Http\Controllers
+ */
+
 class AssetPersonController extends Controller
 {
 
@@ -30,8 +36,15 @@ class AssetPersonController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store sold appliance
+     * @urlParam applianceId required
+     * @urlParam personId required
      *
+     * @bodyParam asset_type_id int required
+     * @bodyParam total_cost float required
+     * @bodyParam down_payment float
+     * @bodyParam rate_count int required
+     * @bodyParam creator_id int required
      * @param  AssetType $assetType
      * @param  Person    $person
      * @param  Request   $request
@@ -48,8 +61,10 @@ class AssetPersonController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
+     * List Sold Appliances
+     * A list of the all sold appliances for the given personId.
+     * @responseFile responses/appliance/appliance.person.sold.list.json
+     * @urlParam personId required
      * @param  Person  $person
      * @param  Request $request
      * @return ApiResource
@@ -62,6 +77,14 @@ class AssetPersonController extends Controller
         return new ApiResource($assets);
     }
 
+    /**
+     * Detail Sold Appliance
+     * Detail of sold appliance with logs and rates for the given applianceId.
+     * @urlParam applianceId required
+     * @responseFile responses/appliance/appliance.person.detail.json
+     * @param $applianceId
+     * @return ApiResource
+     */
     public function show($applianceId): ApiResource
     {
         $appliance = $this->assetPersonService->getApplianceDetails($applianceId);

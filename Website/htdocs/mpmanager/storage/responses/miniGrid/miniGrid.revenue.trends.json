@@ -1,0 +1,264 @@
+{
+    "data": {
+        "2021-30": {
+            "House Hold": {
+                "revenue": 12338
+            },
+            "Commercial Usage": {
+                "revenue": 0
+            },
+            "Productive Usage": {
+                "revenue": 0
+            },
+            "default connection type": {
+                "revenue": 0
+            },
+            "Not Specified": {
+                "revenue": 0
+            },
+            "Residential": {
+                "revenue": 0
+            },
+            "Business": {
+                "revenue": 0
+            },
+            "Institution": {
+                "revenue": 0
+            }
+        },
+        "2021-31": {
+            "House Hold": {
+                "revenue": 16143
+            },
+            "Commercial Usage": {
+                "revenue": 0
+            },
+            "Productive Usage": {
+                "revenue": 0
+            },
+            "default connection type": {
+                "revenue": 0
+            },
+            "Not Specified": {
+                "revenue": 0
+            },
+            "Residential": {
+                "revenue": 0
+            },
+            "Business": {
+                "revenue": 0
+            },
+            "Institution": {
+                "revenue": 0
+            }
+        },
+        "2021-32": {
+            "House Hold": {
+                "revenue": 67338
+            },
+            "Commercial Usage": {
+                "revenue": 0
+            },
+            "Productive Usage": {
+                "revenue": 0
+            },
+            "default connection type": {
+                "revenue": 0
+            },
+            "Not Specified": {
+                "revenue": 0
+            },
+            "Residential": {
+                "revenue": 0
+            },
+            "Business": {
+                "revenue": 0
+            },
+            "Institution": {
+                "revenue": 0
+            }
+        },
+        "2021-33": {
+            "House Hold": {
+                "revenue": 17486
+            },
+            "Commercial Usage": {
+                "revenue": 0
+            },
+            "Productive Usage": {
+                "revenue": 0
+            },
+            "default connection type": {
+                "revenue": 0
+            },
+            "Not Specified": {
+                "revenue": 0
+            },
+            "Residential": {
+                "revenue": 0
+            },
+            "Business": {
+                "revenue": 0
+            },
+            "Institution": {
+                "revenue": 0
+            }
+        },
+        "2021-34": {
+            "House Hold": {
+                "revenue": 21630
+            },
+            "Commercial Usage": {
+                "revenue": 2969
+            },
+            "Productive Usage": {
+                "revenue": 0
+            },
+            "default connection type": {
+                "revenue": 0
+            },
+            "Not Specified": {
+                "revenue": 0
+            },
+            "Residential": {
+                "revenue": 0
+            },
+            "Business": {
+                "revenue": 0
+            },
+            "Institution": {
+                "revenue": 0
+            }
+        },
+        "2021-35": {
+            "House Hold": {
+                "revenue": 20010
+            },
+            "Commercial Usage": {
+                "revenue": 0
+            },
+            "Productive Usage": {
+                "revenue": 0
+            },
+            "default connection type": {
+                "revenue": 0
+            },
+            "Not Specified": {
+                "revenue": 0
+            },
+            "Residential": {
+                "revenue": 0
+            },
+            "Business": {
+                "revenue": 0
+            },
+            "Institution": {
+                "revenue": 0
+            }
+        },
+        "2021-36": {
+            "House Hold": {
+                "revenue": 0
+            },
+            "Commercial Usage": {
+                "revenue": 0
+            },
+            "Productive Usage": {
+                "revenue": 0
+            },
+            "default connection type": {
+                "revenue": 0
+            },
+            "Not Specified": {
+                "revenue": 0
+            },
+            "Residential": {
+                "revenue": 0
+            },
+            "Business": {
+                "revenue": 0
+            },
+            "Institution": {
+                "revenue": 0
+            }
+        },
+        "2021-37": {
+            "House Hold": {
+                "revenue": 0
+            },
+            "Commercial Usage": {
+                "revenue": 0
+            },
+            "Productive Usage": {
+                "revenue": 0
+            },
+            "default connection type": {
+                "revenue": 0
+            },
+            "Not Specified": {
+                "revenue": 0
+            },
+            "Residential": {
+                "revenue": 0
+            },
+            "Business": {
+                "revenue": 0
+            },
+            "Institution": {
+                "revenue": 0
+            }
+        },
+        "2021-38": {
+            "House Hold": {
+                "revenue": 0
+            },
+            "Commercial Usage": {
+                "revenue": 0
+            },
+            "Productive Usage": {
+                "revenue": 0
+            },
+            "default connection type": {
+                "revenue": 0
+            },
+            "Not Specified": {
+                "revenue": 0
+            },
+            "Residential": {
+                "revenue": 0
+            },
+            "Business": {
+                "revenue": 0
+            },
+            "Institution": {
+                "revenue": 0
+            }
+        },
+        "2021-39": {
+            "House Hold": {
+                "revenue": 0
+            },
+            "Commercial Usage": {
+                "revenue": 0
+            },
+            "Productive Usage": {
+                "revenue": 0
+            },
+            "default connection type": {
+                "revenue": 0
+            },
+            "Not Specified": {
+                "revenue": 0
+            },
+            "Residential": {
+                "revenue": 0
+            },
+            "Business": {
+                "revenue": 0
+            },
+            "Institution": {
+                "revenue": 0
+            }
+        }
+    }
+}

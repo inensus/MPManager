@@ -1,0 +1,30 @@
+{
+    "data": [
+        {
+            "id": 91035,
+            "receiver": "+915396398161",
+            "trigger_type": 0,
+            "trigger_id": 104855,
+            "body": "Meter Number:SM60R-01-77777121, Token : 6664 8965 0265 8232 7729, Amount:11891 TZs, MicroPowerManager",
+            "status": 0,
+            "uuid": null,
+            "direction": 1,
+            "sender_id": null,
+            "created_at": "2019-01-11T00:00:00.000000Z",
+            "updated_at": "2019-01-11T00:00:00.000000Z"
+        },
+        {
+            "id": 91163,
+            "receiver": "+915396398161",
+            "trigger_type": 0,
+            "trigger_id": 104981,
+            "body": "Meter Number:SM60R-01-77777121, Token : 6664 8965 0265 8232 7729, Amount:5694 TZs, MicroPowerManager",
+            "status": 0,
+            "uuid": null,
+            "direction": 1,
+            "sender_id": null,
+            "created_at": "2020-08-27T00:00:00.000000Z",
+            "updated_at": "2020-08-27T00:00:00.000000Z"
+        }
+    ]
+}

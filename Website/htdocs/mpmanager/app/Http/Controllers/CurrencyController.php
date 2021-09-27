@@ -5,6 +5,12 @@ namespace App\Http\Controllers;
 use App\Http\Resources\ApiResource;
 use Storage;
 
+/**
+ * @group   Currency
+ * Class CurrencyController
+ * @package App\Http\Controllers
+ */
+
 class CurrencyController extends Controller
 {
     private $currencyList;
@@ -14,6 +20,10 @@ class CurrencyController extends Controller
         $this->currencyList = $currencyList;
     }
 
+    /**
+     * List of all Currencies
+     * @return ApiResource
+     */
     public function index(): ApiResource
     {
         $currency = Storage::disk('local')->get('currency.json');

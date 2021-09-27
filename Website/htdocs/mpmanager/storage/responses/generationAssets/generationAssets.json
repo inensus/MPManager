@@ -1,0 +1,89 @@
+{
+    "data": [
+        {
+            "d_newly_energy": 0,
+            "d_newly_energy_unit": "kWh",
+            "new_generated_energy": 0,
+            "new_generated_energy_unit": "kWh",
+            "absorbed_energy_since_last": 0,
+            "absorbed_energy_since_last_unit": "kWh",
+            "energyFromDieselGen": 0,
+            "c_newly_energy": null,
+            "c_newly_energy_unit": null,
+            "read_key": "2020-05-04-19-30-00",
+            "data_reading_date": "2020-05-04",
+            "data_reading_time": "19:30:00"
+        },
+        {
+            "d_newly_energy": 0,
+            "d_newly_energy_unit": "kWh",
+            "new_generated_energy": 0,
+            "new_generated_energy_unit": "kWh",
+            "absorbed_energy_since_last": null,
+            "absorbed_energy_since_last_unit": "kWh",
+            "energyFromDieselGen": 0,
+            "c_newly_energy": null,
+            "c_newly_energy_unit": null,
+            "read_key": "2020-05-04-20-00-00",
+            "data_reading_date": "2020-05-04",
+            "data_reading_time": "20:00:00"
+        },
+        {
+            "d_newly_energy": 0,
+            "d_newly_energy_unit": "kWh",
+            "new_generated_energy": 0,
+            "new_generated_energy_unit": "kWh",
+            "absorbed_energy_since_last": null,
+            "absorbed_energy_since_last_unit": "kWh",
+            "energyFromDieselGen": 0,
+            "c_newly_energy": null,
+            "c_newly_energy_unit": null,
+            "read_key": "2020-05-04-20-15-00",
+            "data_reading_date": "2020-05-04",
+            "data_reading_time": "20:15:00"
+        },
+        {
+            "d_newly_energy": 0,
+            "d_newly_energy_unit": "kWh",
+            "new_generated_energy": 0,
+            "new_generated_energy_unit": "kWh",
+            "absorbed_energy_since_last": null,
+            "absorbed_energy_since_last_unit": "kWh",
+            "energyFromDieselGen": 0,
+            "c_newly_energy": null,
+            "c_newly_energy_unit": null,
+            "read_key": "2020-05-04-20-30-00",
+            "data_reading_date": "2020-05-04",
+            "data_reading_time": "20:30:00"
+        },
+        {
+            "d_newly_energy": 0,
+            "d_newly_energy_unit": "kWh",
+            "new_generated_energy": 0,
+            "new_generated_energy_unit": "kWh",
+            "absorbed_energy_since_last": null,
+            "absorbed_energy_since_last_unit": "kWh",
+            "energyFromDieselGen": 0,
+            "c_newly_energy": null,
+            "c_newly_energy_unit": null,
+            "read_key": "2020-05-04-20-45-00",
+            "data_reading_date": "2020-05-04",
+            "data_reading_time": "20:45:00"
+        },
+        {
+            "d_newly_energy": 0,
+            "d_newly_energy_unit": "kWh",
+            "new_generated_energy": 0,
+            "new_generated_energy_unit": "kWh",
+            "absorbed_energy_since_last": null,
+            "absorbed_energy_since_last_unit": "kWh",
+            "energyFromDieselGen": 0,
+            "c_newly_energy": null,
+            "c_newly_energy_unit": null,
+            "read_key": "2020-05-04-21-00-00",
+            "data_reading_date": "2020-05-04",
+            "data_reading_time": "21:00:00"
+        }
+    ]
+}
+

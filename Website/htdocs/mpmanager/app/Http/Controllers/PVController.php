@@ -28,7 +28,12 @@ class PVController extends Controller
         $this->pv = $pv;
     }
 
-
+    /**
+     * Show Readings
+     * @param Request $request
+     * @param $miniGridId
+     * @return ApiResource
+     */
     public function showReadings(Request $request, $miniGridId): ApiResource
     {
         $pvReadings = $this->pv->newQuery()
@@ -52,8 +57,7 @@ class PVController extends Controller
     }
 
     /**
-     * Create
-     *
+     * Create a new pv.
      * @param PVRequest $request
      * @param Response  $response
      *

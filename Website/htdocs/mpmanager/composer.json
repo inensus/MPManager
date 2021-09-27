@@ -18,6 +18,7 @@
         "laravel/horizon": "^5.0",
         "laravel/tinker": "^2.5",
         "laravel/ui": "^3.2",
+        "nelmio/api-doc-bundle": "^4.6",
         "phpmailer/phpmailer": "^6.1.5",
         "phpoffice/phpspreadsheet": "^1.7",
         "predis/predis": "^1.1.7",
@@ -36,7 +37,9 @@
         "phpunit/phpunit": "^9.0",
         "spatie/laravel-web-tinker": "^1.7",
         "squizlabs/php_codesniffer": "*",
-        "vimeo/psalm": "^4.4"
+        "vimeo/psalm": "^4.4",
+        "mpociot/documentarian": "dev-master as 0.4.0",
+        "mpociot/laravel-apidoc-generator": "dev-master"
     },
     "config": {
         "optimize-autoloader": true,
@@ -58,7 +61,8 @@
     "autoload-dev": {
         "psr-4": {
             "Tests\\": "tests/",
-            "Inensus\\Ticket\\": "packages/inensus/ticket/src"
+            "Inensus\\Ticket\\": "packages/inensus/ticket/src",
+            "mpociot\\laravel-apidoc-generator"
         }
     },
     "minimum-stability": "dev",

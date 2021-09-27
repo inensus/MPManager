@@ -6,6 +6,12 @@ use App\Models\Country;
 use App\Http\Requests\CountryRequest;
 use App\Http\Resources\ApiResource;
 
+/**
+ * @group Country
+ * Class CountryController
+ * @package App\Http\Controllers
+ */
+
 class CountryController extends Controller
 {
     public function index(): ApiResource
@@ -17,6 +23,13 @@ class CountryController extends Controller
         );
     }
 
+    /**
+     * Detail
+     * Details of specified country.
+     * @urlParam countryId required.
+     * @param Country $country
+     * @return ApiResource
+     */
     public function show(Country $country): ApiResource
     {
         return new ApiResource(
@@ -24,6 +37,14 @@ class CountryController extends Controller
         );
     }
 
+    /**
+     * Create
+     * Create a new country.
+     * @bodyParam country_name string required
+     * @bodyParam country_code int required
+     * @param CountryRequest $request
+     * @return ApiResource
+     */
     public function store(CountryRequest $request): ApiResource
     {
         return

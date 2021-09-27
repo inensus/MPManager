@@ -28,6 +28,12 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Inensus\Ticket\Services\CommentService;
 
+/**
+ * @group   Sms
+ * Class SmsController
+ * @package App\Http\Controllers
+ */
+
 class SmsController extends Controller
 {
     /**
@@ -87,6 +93,11 @@ class SmsController extends Controller
         $this->commentService = $commentService;
     }
 
+    /**
+     * List of all Smses
+     * @responseFile responses/sms/smses.list.json
+     * @return ApiResource
+     */
     public function index(): ApiResource
     {
         $list = $this->sms
@@ -99,6 +110,12 @@ class SmsController extends Controller
     }
 
     /**
+     * Store Bulk Sms
+     * @bodyParam type string required
+     * @bodyParam receivers array required
+     * @bodyParam message string required
+     * @bodyParam miniGrid int required
+     * @bodyParam senderId int required
      * @return void
      */
     public function storeBulk(Request $request)
@@ -221,6 +238,13 @@ class SmsController extends Controller
         }
     }
 
+    /**
+     * Store a single Sms
+     * @bodyParam sender int required
+     * @bodyParam message string required
+     * @param StoreSmsRequest $request
+     * @return ApiResource
+     */
     public function store(StoreSmsRequest $request): ApiResource
     {
         $sender = $request->get('sender');
@@ -244,6 +268,14 @@ class SmsController extends Controller
         return new ApiResource($sms);
     }
 
+    /**
+     * Store and Send single Message
+     * @bodyParam person_id int required
+     * @bodyParam senderId int required
+     * @bodyParam message string required
+     * @param SmsRequest $request
+     * @return ApiResource
+     */
     public function storeAndSend(SmsRequest $request): ApiResource
     {
         $personId = $request->get('person_id');
@@ -304,6 +336,12 @@ class SmsController extends Controller
         }
     }
 
+    /**
+     * Detail of Sms
+     * @param $person_id
+     * @responseFile responses/sms/sms.detail.json
+     * @return ApiResource
+     */
     public function show($person_id): ApiResource
     {
         $personAddresses = $this->person::with(
@@ -320,12 +358,23 @@ class SmsController extends Controller
         return new ApiResource($smses);
     }
 
+    /**
+     * List of Sms By a Phone Number
+     * @responseFile responses/sms/sms.list.by.number.json
+     * @param $phone
+     * @return ApiResource
+     */
     public function byPhone($phone): ApiResource
     {
         $smses = $this->sms->where('receiver', $phone)->get();
         return new ApiResource($smses);
     }
 
+    /**
+     * Search Sms
+     * @param $search
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     */
     public function search($search)
     {
         //search in people

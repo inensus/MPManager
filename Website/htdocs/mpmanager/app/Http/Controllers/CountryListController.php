@@ -5,6 +5,13 @@ namespace App\Http\Controllers;
 use App\Http\Resources\ApiResource;
 use Storage;
 
+
+/**
+ * @group   Country
+ * Class CountryListController
+ * @package App\Http\Controllers
+ */
+
 class CountryListController extends Controller
 {
     private $countryList;
@@ -14,6 +21,10 @@ class CountryListController extends Controller
         $this->countryList = $countryList;
     }
 
+    /**
+     * List of all Countries
+     * @return ApiResource
+     */
     public function index(): ApiResource
     {
         $country = Storage::disk('local')->get('countries.json');

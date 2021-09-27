@@ -10,16 +10,14 @@ use App\Services\CashTransactionService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @group   Appliance Rate
+ * Class AssetRateController
+ * @package App\Http\Controllers
+ */
+
 class AssetRateController extends Controller
 {
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param Request $request
-     * @param AssetRate $assetRate
-     * @return ApiResource
-     */
-
     private $cashTransactionService;
     private $applianceRateService;
 
@@ -31,6 +29,18 @@ class AssetRateController extends Controller
         $this->applianceRateService = $applianceRateService;
     }
 
+    /**
+     * Update Appliance Rate
+     * Update of the rates of sold appliance
+     * @urlParam applianceRateId required
+     *
+     * @bodyParam cost float required
+     * @bodyParam newCost float required
+     * @bodyParam admin_id int required
+     * @param Request $request
+     * @param AssetRate $applianceRate
+     * @return ApiResource
+     */
     public function update(Request $request, AssetRate $applianceRate): ApiResource
     {
         $cost = $request->get('cost');

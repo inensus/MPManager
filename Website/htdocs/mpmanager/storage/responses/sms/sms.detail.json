@@ -1,0 +1,43 @@
+{
+    "data": [
+        {
+            "id": 91198,
+            "receiver": "Agent-1",
+            "trigger_type": 0,
+            "trigger_id": 105015,
+            "body": "Service Charge: TZS 250  VAT 18% \t-45 \n Jumla \t -205",
+            "status": 0,
+            "uuid": null,
+            "direction": 1,
+            "sender_id": null,
+            "created_at": "2020-11-17T11:34:12.000000Z",
+            "updated_at": "2020-11-17T11:34:12.000000Z"
+        },
+        {
+            "id": 91199,
+            "receiver": "Agent-1",
+            "trigger_type": 0,
+            "trigger_id": 105016,
+            "body": "Service Charge: TZS 2224  VAT 18% \t-400 \n Jumla \t -1824",
+            "status": 0,
+            "uuid": null,
+            "direction": 1,
+            "sender_id": null,
+            "created_at": "2020-11-17T11:34:48.000000Z",
+            "updated_at": "2020-11-17T11:34:48.000000Z"
+        },
+        {
+            "id": 91200,
+            "receiver": "Agent-1",
+            "trigger_type": 0,
+            "trigger_id": 105017,
+            "body": "Service Charge: TZS 777  VAT 18% \t-140 \n Jumla \t -637",
+            "status": 0,
+            "uuid": null,
+            "direction": 1,
+            "sender_id": null,
+            "created_at": "2020-11-17T11:36:45.000000Z",
+            "updated_at": "2020-11-17T11:36:45.000000Z"
+        }
+    ]
+}

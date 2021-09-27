@@ -9,7 +9,7 @@ use App\Services\AgentAssignedApplianceService;
 use Illuminate\Http\Request;
 
 /**
- * @group   Agent-Appliances
+ * @group   Agent Assigned Appliances
  * Class AgentAssignedApplianceController
  * @package App\Http\Controllers
  */
@@ -24,8 +24,8 @@ class AgentAssignedAppliancesController extends Controller
     }
 
     /**
-     * List for Android-APP.
-     *
+     * List assigned appliances for Android-APP.
+     * @responseFile responses/agent/agent.assigned.appliances.json
      * @param  Request $request
      * @return ApiResource
      */
@@ -37,7 +37,7 @@ class AgentAssignedAppliancesController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Create a new assigned appliance.
      *
      * @bodyParam agent_id integer required
      * @bodyParam user_id integer required
@@ -68,7 +68,7 @@ class AgentAssignedAppliancesController extends Controller
 
     /**
      * List for Web interface.
-     *
+     * @responseFile responses/agent/agent.assigned.appliances.json
      * @param  Agent   $agent
      * @param  Request $request
      * @return ApiResource

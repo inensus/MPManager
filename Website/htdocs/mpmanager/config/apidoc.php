@@ -145,6 +145,7 @@ return [
              * Note that the route must be referenced by name here (wildcards are supported).
              */
             'exclude' => [
+                'time-of-usages',
                 // 'users.create', 'admin.*'
             ],
 

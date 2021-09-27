@@ -8,6 +8,11 @@ use App\Http\Resources\ApiResource;
 use App\Models\MiniGrid;
 use Illuminate\Http\Request;
 
+/**
+ * @group   MiniGrid
+ * Class MiniGridController
+ * @package App\Http\Controllers
+ */
 class MiniGridController extends Controller
 {
 
@@ -28,9 +33,10 @@ class MiniGridController extends Controller
     }
 
     /**
-     * List
-     *
+     * List of all MiniGrids
+     * A list of the all mini grid data
      * @urlParam data_stream filters the list based on data_stream column
+     * @responseFile responses/miniGrid/miniGrids.list.json
      *
      * @param  Request $request
      * @return ApiResource
@@ -46,10 +52,10 @@ class MiniGridController extends Controller
     }
 
     /**
-     * Detail
-     *
+     * Detail of MiniGrid
+     * Details of the specified mini grid data.
      * @bodyParam id int required
-     *
+     * @responseFile responses/miniGrid/miniGrid.detail.json
      * @param int     $id
      *
      * @param Request $request
@@ -70,8 +76,9 @@ class MiniGridController extends Controller
     }
 
     /**
-     * Update
-     *
+     * Update Mini Grid
+     * Update of the specified mini grid.
+     * @urlParam miniGridId required.
      * @bodyParam name string The name of the MiniGrid.
      * @bodyParam data_stream int If the data_stream is enabled or not.
      *

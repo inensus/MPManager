@@ -12,13 +12,14 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
+/**
+ * @group   Address
+ * Class AddressController
+ * @package App\Http\Controllers
+ */
+
 class AddressController extends Controller
 {
-    /**
-     * The address model.
-     *
-     * @var Address
-     */
     private $address;
 
     public function __construct(Address $address)
@@ -27,8 +28,9 @@ class AddressController extends Controller
     }
 
     /**
+     * List Addresses
      * A list of all registered addresses
-     *
+     * @responseFile responses/people/person.addresses.list.json
      * @return ApiResource
      */
     public function index(): ApiResource
@@ -39,9 +41,11 @@ class AddressController extends Controller
     }
 
     /**
+     * Detail Addresses
      * The detail of a given address id
-     *
-     * @param  integer $id
+     * @urlParam userId required
+     * @responseFile responses/people/person.addresses.list.json
+     * @param $id
      * @return ApiResource
      */
     public function show($id): ApiResource
@@ -53,10 +57,9 @@ class AddressController extends Controller
 
 
     /**
-     * @group    People
-     * Create a new address
+     * Create Address
      * It adds a new address to the given person.
-     * @urlParam person required The ID of person
+     * @urlParam personId required The ID of person
      *
      * @bodyParam email string. Example: johndoe@mail.com
      * @bodyParam phone string.
@@ -88,7 +91,21 @@ class AddressController extends Controller
     }
 
 
-
+    /**
+     * Update Address
+     *  Updates address for the given person
+     * @urlParam personId required int
+     *
+     * @bodyParam email string
+     * @bodyParam phone string
+     * @bodyParam street string
+     * @bodyParam city_id int
+     * @bodyParam primary bool
+     *
+     * @param Person $person
+     * @return ApiResource
+     * @throws ValidationException
+     */
     public function update(Person $person): ApiResource
     {
         $validation = Validator::make(request()->all(), Address::$rules);

@@ -52,7 +52,7 @@ class TransactionController extends Controller
     }
 
     /**
-     * List
+     * List of all Transactions
      * The latest transactions.
      * The result is paginated and contains 15 results on default
      *
@@ -95,7 +95,6 @@ class TransactionController extends Controller
     }
 
     /**
-     * Search
      * Searches in the transaction list for a match
      * The search term will be search in following fields;
      * - Sender/ Phone number
@@ -274,7 +273,6 @@ class TransactionController extends Controller
 
 
     /**
-     * Create
      * Transactions can only been  created  by allowed IPS.
      * Please be sure to allow the mobile money provider IP under /config/services.php
      *
@@ -308,7 +306,6 @@ class TransactionController extends Controller
 
 
     /**
-     * Detail
      * Shows the detail of the transaction with following relations
      * - Sent sms to the customer (if confirmed)
      * - Original Transaction source ( which mobile money provider)

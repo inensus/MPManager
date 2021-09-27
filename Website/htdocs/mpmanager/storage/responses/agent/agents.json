@@ -1,0 +1,126 @@
+{
+    "current_page": 1,
+    "data": [
+        {
+            "id": 1,
+            "person_id": 5383,
+            "mini_grid_id": 1,
+            "agent_commission_id": 1,
+            "name": "Anthony",
+            "email": "a@micropowermanager.com",
+            "fire_base_token": "f9gtgfpaR5G9jEiXGxZa9_:APA91bG1aoA_KGEmzbn9SM17ESw-4m6NNaxxp_2UbrOZlDfXrCpig9zDn5sgM1jNQh3_Rmrqk9MjgAnVlYcNHGgGyZUsr-oNV0FLOHYOj6AAumupjy5cbkYCCbcXARhfBCzjc6kKykOQ",
+            "balance": -1335.9,
+            "commission_revenue": 0,
+            "due_to_energy_supplier": 1335.9,
+            "created_at": "2020-11-10T21:30:39.000000Z",
+            "updated_at": "2021-06-10T10:47:17.000000Z",
+            "person": {
+                "id": 5383,
+                "title": null,
+                "education": null,
+                "name": "Anthony",
+                "surname": "agent",
+                "birth_date": "1961-04-05",
+                "sex": "male",
+                "nationality": null,
+                "created_at": "2020-09-28T10:24:49.000000Z",
+                "updated_at": "2020-11-06T15:25:14.000000Z",
+                "customer_group_id": null,
+                "is_customer": 0,
+                "deleted_at": null,
+                "addresses": [
+                    {
+                        "id": 30577,
+                        "is_primary": 1,
+                        "email": "agent@test.com",
+                        "phone": "+22588899444132",
+                        "street": "",
+                        "city_id": 6,
+                        "geo_id": null,
+                        "created_at": "2020-09-28T10:24:49.000000Z",
+                        "updated_at": "2020-09-28T10:24:49.000000Z"
+                    }
+                ]
+            },
+            "mini_grid": {
+                "id": 1,
+                "cluster_id": 12,
+                "name": "Mafia",
+                "created_at": null,
+                "updated_at": "2021-02-02T20:43:49.000000Z",
+                "data_stream": 1
+            }
+        },
+        {
+            "id": 2,
+            "person_id": 5386,
+            "mini_grid_id": 1,
+            "agent_commission_id": 1,
+            "name": "Test",
+            "email": "test@test.com",
+            "fire_base_token": "ctVVSBI-Q62bhOiB2MZtJm:APA91bGRGNnOzHcYbWv8PsXhL2zjCXIq9jTdDyJyz6Up6HvLN0XBxBSziEK1hQeKBkf6h9bM0-2bBIyY1U1K9EVtiTCtP0VeyIMk-78h7SAHyzJXrbXzBInoJV90gqtBgiFGctRVYO2v",
+            "balance": 0,
+            "commission_revenue": 0,
+            "due_to_energy_supplier": 0,
+            "created_at": "2021-09-21T07:54:52.000000Z",
+            "updated_at": "2021-09-21T07:57:34.000000Z",
+            "person": {
+                "id": 5386,
+                "title": null,
+                "education": null,
+                "name": "Test",
+                "surname": "Agent",
+                "birth_date": null,
+                "sex": "male",
+                "nationality": null,
+                "created_at": "2021-09-21T07:54:52.000000Z",
+                "updated_at": "2021-09-21T07:54:52.000000Z",
+                "customer_group_id": null,
+                "is_customer": 0,
+                "deleted_at": null,
+                "addresses": [
+                    {
+                        "id": 30774,
+                        "is_primary": 1,
+                        "email": null,
+                        "phone": "+2553123231",
+                        "street": "sokak4",
+                        "city_id": null,
+                        "geo_id": null,
+                        "created_at": "2020-11-10T13:22:29.000000Z",
+                        "updated_at": "2020-11-10T13:22:29.000000Z"
+                    },
+                    {
+                        "id": 31414,
+                        "is_primary": 1,
+                        "email": "test@test.com",
+                        "phone": "05396398161",
+                        "street": "",
+                        "city_id": 1,
+                        "geo_id": null,
+                        "created_at": "2021-09-21T07:54:52.000000Z",
+                        "updated_at": "2021-09-21T07:54:52.000000Z"
+                    }
+                ]
+            },
+            "mini_grid": {
+                "id": 1,
+                "cluster_id": 12,
+                "name": "Mafia",
+                "created_at": null,
+                "updated_at": "2021-02-02T20:43:49.000000Z",
+                "data_stream": 1
+            }
+        }
+    ],
+    "first_page_url": "https:\/\/demo.micropowermanager.com\/api\/agents?page=1",
+    "from": 1,
+    "last_page": 1,
+    "last_page_url": "https:\/\/demo.micropowermanager.com\/api\/agents?page=1",
+    "next_page_url": null,
+    "path": "https:\/\/demo.micropowermanager.com\/api\/agents",
+    "per_page": 15,
+    "prev_page_url": null,
+    "to": 2,
+    "total": 2
+}

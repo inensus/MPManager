@@ -9,6 +9,11 @@ use App\Models\User;
 use App\Services\IUserService;
 use Illuminate\Http\Response;
 
+/**
+ * @group   User
+ * Class UserPasswordController
+ * @package App\Http\Controllers
+ */
 class UserPasswordController extends Controller
 {
     private $userService;
@@ -17,6 +22,14 @@ class UserPasswordController extends Controller
         $this->userService = $userService;
     }
 
+    /**
+     * Forgot Password
+     * Admin reset password request.
+     * @urlParam email password
+     * @param AdminResetPasswordRequest $request
+     * @param Response $response
+     * @return Response|object
+     */
     public function forgotPassword(AdminResetPasswordRequest $request, Response $response)
     {
 
@@ -40,6 +53,15 @@ class UserPasswordController extends Controller
         );
     }
 
+    /**
+     * Change Password
+     * Admin change password request.
+     * @urlParam userId required.
+     * @bodyParam password string required
+     * @param User $user
+     * @param UserChangePasswordRequest $changePasswordRequest
+     * @return ApiResource
+     */
     public function update(User $user, UserChangePasswordRequest $changePasswordRequest)
     {
         return  new ApiResource($this->userService->update($user, $changePasswordRequest->all()));

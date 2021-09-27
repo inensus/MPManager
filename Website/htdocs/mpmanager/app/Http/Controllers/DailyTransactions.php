@@ -13,12 +13,11 @@ use App\Models\Transaction\Transaction;
 use Illuminate\Http\Request;
 
 /**
+ * @group   Daily Transaction
  * Class DailyTransactions
- *
- * @package App\Http\Controllers\Export
- *
- * @group Export
+ * @package App\Http\Controllers
  */
+
 class DailyTransactions extends Controller
 {
 
@@ -34,7 +33,13 @@ class DailyTransactions extends Controller
         $this->transaction = $transaction;
     }
 
-
+    /**
+     * Daily Report
+     * Daily report for between given dates.
+     * @bodyParam date date required.
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\StreamedResponse|null
+     */
     public function getDailyReport(Request $request)
     {
         $date = $request->get('date') ?? date('Y-m-d');

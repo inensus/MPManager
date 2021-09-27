@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 
 /**
- * @group   MeterTypes
+ * @group   Meter Type
  * Class MeterTypeController
  * @package App\Http\Controllers
  */
@@ -19,8 +19,8 @@ class MeterTypeController extends Controller
     use SoftDeletes;
 
     /**
-     * List
-     *
+     * List of all Meter Types
+     * A list of the all meter types.
      * @responseFile responses/metertypes/meter.types.list.json
      *
      * @return ApiResource
@@ -34,7 +34,6 @@ class MeterTypeController extends Controller
 
 
     /**
-     * Store
      * Creates a new meter type
      *
      * @bodyParam online int required
@@ -61,10 +60,9 @@ class MeterTypeController extends Controller
     }
 
     /**
-     * Detail
-     *
+     * Details of the specified meter type.
      * @bodyParam id int required
-     *
+     * @responseFile responses/metertypes/metertype.detail.json
      * @param  int $id
      * @return ApiResource
      */
@@ -77,7 +75,6 @@ class MeterTypeController extends Controller
 
 
     /**
-     * Update
      * Updates the given meter type
      *
      * @urlParam  id required

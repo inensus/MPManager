@@ -1,0 +1,167 @@
+{
+    "current_page": 1,
+    "data": [
+        {
+            "id": 4,
+            "agent_id": 1,
+            "user_id": 22,
+            "appliance_type_id": 12,
+            "cost": "1100.0000",
+            "created_at": "2021-06-10T10:44:45.000000Z",
+            "updated_at": "2021-06-10T10:44:45.000000Z",
+            "user": {
+                "id": 22,
+                "name": "Demo User",
+                "email": "demo@inensus.com",
+                "created_at": "2020-04-22T21:03:26.000000Z",
+                "updated_at": "2020-04-22T21:03:26.000000Z"
+            },
+            "agent": {
+                "id": 1,
+                "person_id": 5383,
+                "mini_grid_id": 1,
+                "agent_commission_id": 1,
+                "name": "Anthony",
+                "email": "a@micropowermanager.com",
+                "fire_base_token": "f9gtgfpaR5G9jEiXGxZa9_:APA91bG1aoA_KGEmzbn9SM17ESw-4m6NNaxxp_2UbrOZlDfXrCpig9zDn5sgM1jNQh3_Rmrqk9MjgAnVlYcNHGgGyZUsr-oNV0FLOHYOj6AAumupjy5cbkYCCbcXARhfBCzjc6kKykOQ",
+                "balance": -1335.9,
+                "commission_revenue": 0,
+                "due_to_energy_supplier": 1335.9,
+                "created_at": "2020-11-10T21:30:39.000000Z",
+                "updated_at": "2021-06-10T10:47:17.000000Z"
+            },
+            "appliance_type": {
+                "id": 12,
+                "name": "Waffle Machine",
+                "price": 10000,
+                "created_at": "2021-05-06T07:21:13.000000Z",
+                "updated_at": "2021-05-06T07:21:13.000000Z",
+                "deleted_at": null
+            }
+        },
+        {
+            "id": 3,
+            "agent_id": 1,
+            "user_id": 22,
+            "appliance_type_id": 9,
+            "cost": "1100.0000",
+            "created_at": "2020-11-10T21:37:46.000000Z",
+            "updated_at": "2020-11-10T21:37:46.000000Z",
+            "user": {
+                "id": 22,
+                "name": "Demo User",
+                "email": "demo@inensus.com",
+                "created_at": "2020-04-22T21:03:26.000000Z",
+                "updated_at": "2020-04-22T21:03:26.000000Z"
+            },
+            "agent": {
+                "id": 1,
+                "person_id": 5383,
+                "mini_grid_id": 1,
+                "agent_commission_id": 1,
+                "name": "Anthony",
+                "email": "a@micropowermanager.com",
+                "fire_base_token": "f9gtgfpaR5G9jEiXGxZa9_:APA91bG1aoA_KGEmzbn9SM17ESw-4m6NNaxxp_2UbrOZlDfXrCpig9zDn5sgM1jNQh3_Rmrqk9MjgAnVlYcNHGgGyZUsr-oNV0FLOHYOj6AAumupjy5cbkYCCbcXARhfBCzjc6kKykOQ",
+                "balance": -1335.9,
+                "commission_revenue": 0,
+                "due_to_energy_supplier": 1335.9,
+                "created_at": "2020-11-10T21:30:39.000000Z",
+                "updated_at": "2021-06-10T10:47:17.000000Z"
+            },
+            "appliance_type": {
+                "id": 9,
+                "name": "Smart TV",
+                "price": 87878,
+                "created_at": "2020-11-07T14:12:52.000000Z",
+                "updated_at": "2020-11-07T14:12:52.000000Z",
+                "deleted_at": null
+            }
+        },
+        {
+            "id": 2,
+            "agent_id": 1,
+            "user_id": 22,
+            "appliance_type_id": 8,
+            "cost": "650.0000",
+            "created_at": "2020-11-10T21:37:32.000000Z",
+            "updated_at": "2020-11-10T21:37:32.000000Z",
+            "user": {
+                "id": 22,
+                "name": "Demo User",
+                "email": "demo@inensus.com",
+                "created_at": "2020-04-22T21:03:26.000000Z",
+                "updated_at": "2020-04-22T21:03:26.000000Z"
+            },
+            "agent": {
+                "id": 1,
+                "person_id": 5383,
+                "mini_grid_id": 1,
+                "agent_commission_id": 1,
+                "name": "Anthony",
+                "email": "a@micropowermanager.com",
+                "fire_base_token": "f9gtgfpaR5G9jEiXGxZa9_:APA91bG1aoA_KGEmzbn9SM17ESw-4m6NNaxxp_2UbrOZlDfXrCpig9zDn5sgM1jNQh3_Rmrqk9MjgAnVlYcNHGgGyZUsr-oNV0FLOHYOj6AAumupjy5cbkYCCbcXARhfBCzjc6kKykOQ",
+                "balance": -1335.9,
+                "commission_revenue": 0,
+                "due_to_energy_supplier": 1335.9,
+                "created_at": "2020-11-10T21:30:39.000000Z",
+                "updated_at": "2021-06-10T10:47:17.000000Z"
+            },
+            "appliance_type": {
+                "id": 8,
+                "name": "Washing Machine",
+                "price": 120000,
+                "created_at": "2020-10-26T09:06:14.000000Z",
+                "updated_at": "2020-10-26T09:06:14.000000Z",
+                "deleted_at": null
+            }
+        },
+        {
+            "id": 1,
+            "agent_id": 1,
+            "user_id": 22,
+            "appliance_type_id": 7,
+            "cost": "600.0000",
+            "created_at": "2020-11-10T21:37:11.000000Z",
+            "updated_at": "2020-11-10T21:37:11.000000Z",
+            "user": {
+                "id": 22,
+                "name": "Demo User",
+                "email": "demo@inensus.com",
+                "created_at": "2020-04-22T21:03:26.000000Z",
+                "updated_at": "2020-04-22T21:03:26.000000Z"
+            },
+            "agent": {
+                "id": 1,
+                "person_id": 5383,
+                "mini_grid_id": 1,
+                "agent_commission_id": 1,
+                "name": "Anthony",
+                "email": "a@micropowermanager.com",
+                "fire_base_token": "f9gtgfpaR5G9jEiXGxZa9_:APA91bG1aoA_KGEmzbn9SM17ESw-4m6NNaxxp_2UbrOZlDfXrCpig9zDn5sgM1jNQh3_Rmrqk9MjgAnVlYcNHGgGyZUsr-oNV0FLOHYOj6AAumupjy5cbkYCCbcXARhfBCzjc6kKykOQ",
+                "balance": -1335.9,
+                "commission_revenue": 0,
+                "due_to_energy_supplier": 1335.9,
+                "created_at": "2020-11-10T21:30:39.000000Z",
+                "updated_at": "2021-06-10T10:47:17.000000Z"
+            },
+            "appliance_type": {
+                "id": 7,
+                "name": "60lt Fridge",
+                "price": 25000,
+                "created_at": "2020-10-06T07:52:32.000000Z",
+                "updated_at": "2020-10-06T07:52:32.000000Z",
+                "deleted_at": null
+            }
+        }
+    ],
+    "first_page_url": "https:\/\/demo.micropowermanager.com\/api\/agents\/assigned\/1?page=1",
+    "from": 1,
+    "last_page": 1,
+    "last_page_url": "https:\/\/demo.micropowermanager.com\/api\/agents\/assigned\/1?page=1",
+    "next_page_url": null,
+    "path": "https:\/\/demo.micropowermanager.com\/api\/agents\/assigned\/1",
+    "per_page": 15,
+    "prev_page_url": null,
+    "to": 4,
+    "total": 4
+}

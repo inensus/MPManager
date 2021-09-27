@@ -6,6 +6,12 @@ use App\Http\Resources\ApiResource;
 use App\Models\ConnectionType;
 use Illuminate\Http\Request;
 
+/**
+ * @group   Connection
+ * Class ConnectionTypeController
+ * @package App\Http\Controllers
+ */
+
 class ConnectionTypeController extends Controller
 {
 
@@ -20,6 +26,13 @@ class ConnectionTypeController extends Controller
         $this->connectionType = $connectionType;
     }
 
+    /**
+     * Connection Type List
+     * A List of all connection types.
+     * @responseFile responses/connection/types.list.json
+     * @param Request $request
+     * @return ApiResource
+     */
     public function index(Request $request): ApiResource
     {
         if ($request->get('paginate') === null) {
@@ -30,7 +43,13 @@ class ConnectionTypeController extends Controller
         return new ApiResource($connectionTypes);
     }
 
-
+    /**
+     * Connection Type Create
+     * Create a new connection type.
+     * @bodyParam name string required
+     * @param Request $request
+     * @return ApiResource
+     */
     public function store(Request $request): ApiResource
     {
         $connectionName = $request->get('name');
@@ -40,6 +59,14 @@ class ConnectionTypeController extends Controller
         return new ApiResource($connectionType);
     }
 
+    /**
+     * Connection Type Detail
+     * Details of specified connection type.
+     * @urlParam connectionTypeId required.
+     * @responseFile responses/connection/type.detail.json
+     * @param $connectionTypeId
+     * @return ApiResource
+     */
     public function show($connectionTypeId): ApiResource
     {
         $meter_count_relation = request()->input('meter_count');
@@ -54,6 +81,15 @@ class ConnectionTypeController extends Controller
         return new ApiResource(null);
     }
 
+    /**
+     * Connection Type Update
+     * Update of specified connection type.
+     * @urlParam connectionTypeId required.
+     *
+     * @bodyParam name string required.
+     * @param ConnectionType $connectionType
+     * @return ApiResource
+     */
     public function update(ConnectionType $connectionType): ApiResource
     {
         $connectionType->name = request('name');

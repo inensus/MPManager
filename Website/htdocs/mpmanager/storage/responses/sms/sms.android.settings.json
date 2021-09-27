@@ -1,0 +1,13 @@
+{
+    "data": [
+        {
+            "id": 1,
+            "url": "https:\/\/fcm.googleapis.com\/fcm\/send",
+            "token": "test",
+            "key": "test",
+            "callback": "https:\/\/test.com",
+            "created_at": "2021-09-23T13:29:45.000000Z",
+            "updated_at": "2021-09-23T13:29:45.000000Z"
+        }
+    ]
+}

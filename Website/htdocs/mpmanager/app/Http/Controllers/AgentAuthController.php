@@ -7,9 +7,8 @@ use App\Services\AgentService;
 use Illuminate\Http\JsonResponse;
 
 /**
- * @group   Agent-Authenticator
+ * @group   Agent Authenticator
  * Class AgentAuthController
- * Responsible for AgentAPP-API-Call authentications.
  * @package App\Http\Controllers
  */
 class AgentAuthController extends Controller
@@ -18,6 +17,7 @@ class AgentAuthController extends Controller
     private $agentService;
 
     /**
+     * Create
      * Create a new AuthController instance.
      *
      * @param AgentService $agentService
@@ -29,6 +29,7 @@ class AgentAuthController extends Controller
     }
 
     /**
+     * Login
      * Get JWT via given credentials.
      *
      * @bodyParam email string required
@@ -50,6 +51,7 @@ class AgentAuthController extends Controller
     }
 
     /**
+     * Auth User
      * Get the authenticated User.
      *
      * @return JsonResponse
@@ -60,6 +62,7 @@ class AgentAuthController extends Controller
     }
 
     /**
+     * LogOut
      * Log the user out (Invalidate the token).
      *
      * @return JsonResponse
@@ -83,6 +86,7 @@ class AgentAuthController extends Controller
     }
 
     /**
+     * Token
      * Get the token array structure.
      *
      * @param string $token

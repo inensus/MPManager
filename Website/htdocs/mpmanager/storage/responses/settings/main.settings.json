@@ -1,0 +1,16 @@
+{
+    "data": [
+        {
+            "id": 1,
+            "site_title": "MPM - Demo",
+            "company_name": "Demo MPM",
+            "currency": "TSh",
+            "country": "Tanzania",
+            "language": "en",
+            "vat_energy": 1,
+            "vat_appliance": 18,
+            "created_at": "2021-01-26T12:16:03.000000Z",
+            "updated_at": "2021-09-09T16:07:55.000000Z"
+        }
+    ]
+}

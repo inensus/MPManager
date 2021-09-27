@@ -12,6 +12,11 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 
+/**
+ * @group   Maintenance User
+ * Class MaintenanceUserController
+ * @package App\Http\Controllers
+ */
 class MaintenanceUserController extends Controller
 {
     private $roles;
@@ -31,7 +36,11 @@ class MaintenanceUserController extends Controller
         $this->maintenanceUsers = $maintenance_users;
     }
 
-
+    /**
+     * List of all Maintenance Users
+     * @responseFile responses/maintenanceUser/maintenance.users.list.json
+     * @return ApiResource
+     */
     public function index(): ApiResource
     {
         $maintenance_user_list = $this->maintenanceUsers::with('person')->get();
@@ -39,6 +48,13 @@ class MaintenanceUserController extends Controller
     }
 
     /**
+     * Create a new maintenance user.
+     *
+     * @bodyParam name string required
+     * @bodyParam surname string required
+     * @bodyParam phone string required
+     * @bodyParam person_id int required
+     * @bodyParam mini_grid_id int required
      * @param MaintenanceRequest $request
      * @return JsonResponse
      */

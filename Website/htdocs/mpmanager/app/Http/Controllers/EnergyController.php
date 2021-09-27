@@ -9,6 +9,12 @@ use App\Models\Energy;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
+/**
+ * @group   Energy
+ * Class EnergyController
+ * @package App\Http\Controllers
+ */
+
 class EnergyController extends Controller
 {
     /**
@@ -21,6 +27,11 @@ class EnergyController extends Controller
         $this->energy = $energy;
     }
 
+    /**
+     * Store
+     * @param StoreEnergyRequest $request
+     * @return ApiResource
+     */
     public function store(StoreEnergyRequest $request): ApiResource
     {
         $meters = $request->get('meters');

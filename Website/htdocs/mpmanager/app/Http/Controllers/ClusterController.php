@@ -14,6 +14,12 @@ use App\Http\Resources\ApiResource;
 use App\Http\Services\ClusterService;
 use App\Models\Cluster;
 
+/**
+ * @group   Cluster
+ * Class ClusterController
+ * @package App\Http\Controllers
+ */
+
 class ClusterController
 {
     /**
@@ -39,6 +45,12 @@ class ClusterController
         $this->cluster = $cluster;
     }
 
+    /**
+     * List of Clusters
+     * A list of all clusters.
+     * @responseFile responses/cluster/clusters.list.json
+     * @return ApiResource
+     */
     public function index(): ApiResource
     {
         $startDate = request('start_date');
@@ -56,18 +68,41 @@ class ClusterController
         return new ApiResource($this->clusterService->fetchClusterData($clusters, $dateRange));
     }
 
+    /**
+     * Details of specified cluster.
+     * @urlParam clusterId required
+     * @responseFile responses/cluster/cluster.detail.json
+     * @param $id
+     * @return ApiResource
+     */
     public function show($id): ApiResource
     {
         $cluster = Cluster::with('miniGrids.location')->find($id);
         return new ApiResource($cluster);
     }
 
+    /**
+     * Show Geo
+     * Show geographical information of specified cluster.
+     * @urlParam clusterId required
+     * @responseFile responses/cluster/cluster.geo.information.json
+     * @param $id
+     * @return ApiResource
+     */
     public function showGeo($id): ApiResource
     {
         return ApiResource::make($this->clusterService->geoLocation($id));
     }
 
-
+    /**
+     * Create a new cluster.
+     *
+     * @bodyParam name string required
+     * @bodyParam manager_id int required
+     * @bodyParam geo_data json required
+     * @param ClusterRequest $request
+     * @return ApiResource
+     */
     public function store(ClusterRequest $request): ApiResource
     {
         $cluster = Cluster::query()->create(

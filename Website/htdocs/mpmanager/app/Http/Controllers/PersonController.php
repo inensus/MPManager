@@ -69,7 +69,7 @@ class PersonController extends Controller
     }
 
     /**
-     * Detail
+     * Detail of Person
      * Displays the person with following relations
      * - Addresses
      * - Citizenship
@@ -92,8 +92,14 @@ class PersonController extends Controller
     }
 
     /**
-     * Create
-     *
+     * Create a new person.
+     * @urlParam title string
+     * @urlParam education string
+     * @urlParam name string
+     * @urlParam surname string
+     * @urlParam birth_date date
+     * @urlParam sex string
+     * @urlParam is_customer bool
      * @param PersonRequest $request
      *
      * @return JsonResponse
@@ -114,7 +120,6 @@ class PersonController extends Controller
     }
 
     /**
-     * Update
      * Updates the given parameter of that person
      *
      * @urlParam  id required The ID of the person to update
@@ -143,7 +148,7 @@ class PersonController extends Controller
     }
 
     /**
-     * Transactions
+     * Person Transactions
      * The list of all transactions(paginated) which belong to that person.
      * Each page contains 7 entries of the last transaction
      *
@@ -201,7 +206,7 @@ class PersonController extends Controller
     }
 
     /**
-     * Delete
+     * Delete a Person
      * Deletes that person with all his/her relations from the database. The person model uses soft deletes.
      * That means the orinal record wont be deleted but all mentioned relations will be removed permanently
      *

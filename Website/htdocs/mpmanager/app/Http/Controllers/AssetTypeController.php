@@ -11,6 +11,12 @@ use Exception;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 
+/**
+ * @group   Appliance Type
+ * Class AssetTypeController
+ * @package App\Http\Controllers
+ */
+
 class AssetTypeController extends Controller
 {
     use SoftDeletes;
@@ -26,8 +32,10 @@ class AssetTypeController extends Controller
     }
 
     /**
-     * Display a listing of the resource.
-     *
+     * List Appliance Types
+     * A list of the all appliance types.
+     * @responseFile responses/appliance/appliance.types.json
+     * @param Request $request
      * @return ApiResource
      */
     public function index(Request $request): ApiResource
@@ -37,8 +45,11 @@ class AssetTypeController extends Controller
 
 
     /**
-     * Store a newly created resource in storage.
+     * Create Appliance Type
+     * Store a new appliance type.
      *
+     * @bodyParam name string required
+     * @bodyParam price float required
      * @param  AssetTypeCreateRequest $request
      * @return ApiResource
      */
@@ -50,8 +61,12 @@ class AssetTypeController extends Controller
 
 
     /**
-     * Update the specified resource in storage.
+     * Update Appliance Type
+     * Update the specified appliance in storage.
      *
+     * @urlParam applianceId required
+     * @bodyParam name string
+     * @bodyParam price float
      * @param  AssetTypeUpdateRequest $request
      * @param  AssetType              $assetType
      * @return ApiResource
@@ -63,8 +78,10 @@ class AssetTypeController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Delete Appliance Type
+     * Remove the specified appliance from storage.
      *
+     * @urlParam applianceId required
      * @param  AssetType $assetType
      * @return ApiResource
      * @throws Exception

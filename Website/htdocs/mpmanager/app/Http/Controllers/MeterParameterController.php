@@ -13,7 +13,7 @@ use App\Models\SubConnectionType;
 use Illuminate\Http\Request;
 
 /**
- * @group   MeterParameter
+ * @group   Meter Parameter
  * Class MeterParameterController
  * @package App\Http\Controllers
  */
@@ -41,7 +41,7 @@ class MeterParameterController extends Controller
     }
 
     /**
-     * List
+     * List of all Meter Parameters
      *
      * @responseFile responses/meterparameters/meterparameters.list.json
      *
@@ -54,8 +54,11 @@ class MeterParameterController extends Controller
 
 
     /**
-     * Create
-     *
+     * Create a new meter parameter.
+     * @bodyParam geo_points json required
+     * @bodyParam meter_id int required
+     * @bodyParam tariff_id int required
+     * @bodyParam customer_id int required
      * @param MeterParameterRequest $request
      *
      * @return ApiResource
@@ -103,9 +106,8 @@ class MeterParameterController extends Controller
 
 
     /**
-     * Update
-     *
-     * @urlParam meterId int required
+     * Update specified meter parameter.
+     * @urlParam meterId required int
      *
      * @bodyParam tariffId int
      * @bodyParam personId int

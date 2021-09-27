@@ -14,6 +14,7 @@ use Illuminate\Http\JsonResponse;
 class AuthController extends Controller
 {
     /**
+     * Create
      * Create a new AuthController instance.
      *
      * @return void
@@ -24,6 +25,7 @@ class AuthController extends Controller
     }
 
     /**
+     * Login
      * JWT authentication
      *
      * @bodyParam email string required
@@ -41,6 +43,7 @@ class AuthController extends Controller
     }
 
     /**
+     * Auth User
      * Get the authenticated User.
      *
      * @return JsonResponse
@@ -51,6 +54,7 @@ class AuthController extends Controller
     }
 
     /**
+     * Logout
      * Log the user out (Invalidate the token).
      *
      * @return JsonResponse
@@ -75,6 +79,7 @@ class AuthController extends Controller
     }
 
     /**
+     * Token
      * Get the token array structure.
      *
      * @param string $token

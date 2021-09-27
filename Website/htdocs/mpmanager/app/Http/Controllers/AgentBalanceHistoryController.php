@@ -10,9 +10,14 @@ use App\Models\User;
 use App\Services\AgentBalanceHistoryService;
 use Illuminate\Http\Request;
 
+/**
+ * @group   Agent Balance History
+ * Class AgentBalanceHistoryController
+ * @package App\Http\Controllers
+ */
+
 class AgentBalanceHistoryController extends Controller
 {
-
     private $agentBalanceHistoryService;
 
     public function __construct(AgentBalanceHistoryService $agentBalanceHistoryService)
@@ -21,6 +26,7 @@ class AgentBalanceHistoryController extends Controller
     }
 
     /**
+     * Create
      * Store a newly created resource in storage.
      *
      * @param  Agent                            $agent
@@ -43,6 +49,7 @@ class AgentBalanceHistoryController extends Controller
 
 
     /**
+     * Detail
      * Display the specified resource.
      *
      * @param  AgentBalanceHistory $agent_balance_history
@@ -55,6 +62,7 @@ class AgentBalanceHistoryController extends Controller
 
 
     /**
+     * Update
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request $request
@@ -67,6 +75,7 @@ class AgentBalanceHistoryController extends Controller
     }
 
     /**
+     * Delete
      * Remove the specified resource from storage.
      *
      * @param  AgentBalanceHistory $agent_balance_history
@@ -79,8 +88,9 @@ class AgentBalanceHistoryController extends Controller
 
 
     /**
-     * Display a listing of the resource.
+     * List of agent balance history for web
      *
+     * @responseFile responses/agent/agent.balance.history.json
      * @param  Agent   $agent
      * @param  Request $request
      * @return ApiResource

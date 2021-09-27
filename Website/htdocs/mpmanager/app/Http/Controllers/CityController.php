@@ -37,7 +37,7 @@ class CityController extends Controller
 
     /**
      * List of all cities
-     *
+     * @responseFile responses/city/cities.list.json
      * @return ApiResource
      */
     public function index()
@@ -49,9 +49,9 @@ class CityController extends Controller
 
     /**
      * Details of requested city
-     *
+     * @urlParam cityId required
      * @param $id
-     *
+     * @responseFile responses/city/city.detail.json
      * @return ApiResource
      */
     public function show($id)
@@ -69,7 +69,8 @@ class CityController extends Controller
 
     /**
      * Updates the given city
-     *
+     * @urlParam cityId required
+     * @bodyParam name string required
      * @param CityRequest $request
      * @param City        $city
      *
@@ -84,13 +85,12 @@ class CityController extends Controller
     }
 
     /**
-     * Create
-     *
+     * Create a new city.
+     * @bodyParam mini_grid_id int required
+     * @bodyParam cluster_id int required
+     * @bodyParam name string required
      * @param CityRequest $request
-     *
      * @return ApiResource
-     *
-     * @throws ValidationException
      */
     public function store(CityRequest $request)
     {

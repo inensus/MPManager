@@ -20,11 +20,10 @@ use Illuminate\Support\Facades\Route;
 //Routes for City resource
 require_once 'resources/Cities.php';
 //Routes for Country resource
-require_once 'resources/Countries.php';
+//require_once 'resources/Countries.php';
 //Routes for meter resource
 require_once 'resources/Meters.php';
-//Routes for Addresses resource
-require_once 'resources/Addresses.php';
+
 // Transaction routes
 require_once 'api_paths/transactions.php';
 // Agent routes

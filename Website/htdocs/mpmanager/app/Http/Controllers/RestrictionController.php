@@ -12,6 +12,11 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 
+/**
+ * @group Restriction
+ * Class RestrictionController
+ * @package App\Http\Controllers
+ */
 class RestrictionController extends Controller
 {
 
@@ -32,6 +37,12 @@ class RestrictionController extends Controller
 
 
     /**
+     * Create a restriction
+     * @bodyParam product_id int
+     * @bodyParam token string
+     * @bodyParam type string
+     * @param Request $request
+     * @param Response $response
      * @return Response
      */
     public function store(Request $request, Response $response): Response
@@ -103,6 +114,8 @@ class RestrictionController extends Controller
     }
 
     /**
+     * Update
+     *
      * @param $target
      * @param int $toAdd
      *

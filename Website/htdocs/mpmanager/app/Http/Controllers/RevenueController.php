@@ -30,6 +30,11 @@ use stdClass;
 
 use function count;
 
+/**
+ * @group   Revenue
+ * Class RevenueController
+ * @package App\Http\Controllers
+ */
 class RevenueController extends Controller
 {
     /**
@@ -182,7 +187,12 @@ class RevenueController extends Controller
             $this->connectionTypeBaseAnalysis($request);
     }
 
-
+    /**
+     * Tariff type based analysis
+     * Tariff type based analysis for a given period
+     * @param Request $request
+     * @return ApiResource
+     */
     private function tariffTypeBaasedAnalysis(Request $request): ApiResource
     {
         // the array which holds the final response
@@ -214,6 +224,12 @@ class RevenueController extends Controller
         return new ApiResource($response);
     }
 
+    /**
+     * Connection type base analysis
+     * Connection type base analysis for a given period
+     * @param Request $request
+     * @return ApiResource
+     */
     private function connectionTypeBaseAnalysis(Request $request): ApiResource
     {
         // the array which holds the final response
@@ -265,8 +281,10 @@ class RevenueController extends Controller
     }
 
     /**
+     * Ticket Data
+     *
+     * @param $id
      * @return ApiResource
-     * @throws \Exception
      */
     public function ticketData($id): ApiResource
     {
@@ -308,6 +326,18 @@ class RevenueController extends Controller
         );
     }
 
+    /**
+     * Revenue Trends
+     * Trending Revenue for a given period.
+     * @urlParam mini_grid_id required.
+     * @bodyParam starDate date
+     * @bodyParam endDate date
+     * @responseFile responses/miniGrid/miniGrid.revenue.trends.json
+     * @param $id
+     * @param Request $request
+     * @return ApiResource
+     * @throws \Exception
+     */
     public function trending($id, Request $request): ApiResource
     {
         // the array which holds the final response
@@ -366,6 +396,8 @@ class RevenueController extends Controller
 
 
     /**
+     * Fetch targets
+     * @param $targetData
      * @return array
      */
     private function fetchTargets($targetData): array
@@ -637,6 +669,18 @@ class RevenueController extends Controller
         );
     }
 
+    /**
+     * Revenue by miniGrid
+     * Periodic revenue for specified mini grid.
+     * @urlParam mini_grid_id required.
+     * @bodyParam startDate date
+     * @bodyParam endDate date
+     * @bodyParam period string
+     * @param $id
+     * @param Request $request
+     * @return ApiResource
+     * @throws \Exception
+     */
     public function getPeriodicMiniGridsRevenue($id, Request $request): ApiResource
     {
         $startDate = $request->input('startDate') ?? date('Y-01-01');
@@ -728,8 +772,11 @@ class RevenueController extends Controller
     }
 
     /**
-     * /api/revenue
-     *
+     * Clusters Revenue
+     * @bodyParam startDate date
+     * @bodyParam endDate date
+     * @bodyParam period string
+     * @responseFile responses/cluster/clusters.revenue.json
      * @param Request $request
      *
      * @return ApiResource
@@ -779,7 +826,17 @@ class RevenueController extends Controller
     }
 
 
-
+    /**
+     * Cluster Revenue
+     * Details of the specified cluster revenues for a given period.
+     * @urlParam clusterId required.
+     * @bodyParam startDate date
+     * @bodyParam endDate date
+     * @responseFile responses/cluster/cluster.revenue.json
+     * @param $id
+     * @param Request $request
+     * @return ApiResource
+     */
     public function getClusterRevenue($id, Request $request): ApiResource
     {
         $clusterId = $id;
@@ -805,7 +862,17 @@ class RevenueController extends Controller
         return new ApiResource($cluster);
     }
 
-
+    /**
+     * Revenue Analysis for Cluster
+     * @urlParam clusterId required
+     * @bodyParam startDate date
+     * @bodyParam endDate date
+     * @bodyParam period string
+     * @param $id
+     * @param Request $request
+     * @return ApiResource
+     * @throws \Exception
+     */
     public function getRevenueAnalysisForCluster($id, Request $request): ApiResource
     {
         /**
@@ -861,6 +928,16 @@ class RevenueController extends Controller
         return new ApiResource($revenueAnalysis);
     }
 
+    /**
+     * Transaction Revenue Per MiniGrid
+     * @urlParam miniGridId required
+     * @bodyParam startDate date
+     * @bodyParam endDate date
+     * @responseFile responses/miniGrid/miniGrid.transactions.revenue.json
+     * @param $miniGridId
+     * @param Request $request
+     * @return ApiResource
+     */
     public function transactionRevenuePerMiniGrid($miniGridId, Request $request): ApiResource
     {
         $startDate = $request->get('startDate') ?? date('Y-01-01');
@@ -876,6 +953,16 @@ class RevenueController extends Controller
         return new ApiResource($revenues);
     }
 
+    /**
+     * Sold Energy per MiniGrid
+     * @urlParam miniGridId required
+     * @bodyParam startDate date
+     * @bodyParam endDate date
+     * @responseFile responses/miniGrid/miniGrid.energy.json
+     * @param $miniGridId
+     * @param Request $request
+     * @return ApiResource
+     */
     public function soldEnergyPerMiniGrid($miniGridId, Request $request): ApiResource
     {
         $startDate = $request->get('startDate') ?? date('Y-01-01');

@@ -24,7 +24,7 @@ class TariffController extends Controller
     }
 
     /**
-     * List
+     * List of all tariffs.
      * a list of all tariffs.
      * The list is paginated and each page contains 15 results
      *
@@ -46,8 +46,7 @@ class TariffController extends Controller
     }
 
     /**
-     * Detail
-     *
+     * Details of the specified tariff.
      * @urlParam     id int required
      * @responseFile responses/tariffs/tariff.detail.json
      * @param MeterTariff $tariff
@@ -71,8 +70,7 @@ class TariffController extends Controller
     }
 
     /**
-     * Create
-     *
+     * Create a new tariff.
      * @bodyParam name string required
      * @bodyParam factor int. The factor between two different sub tariffs. Like day/night sub-tariffs.
      * @bodyParam currency string
@@ -105,6 +103,13 @@ class TariffController extends Controller
         return response($tariff)->setStatusCode(201);
     }
 
+    /**
+     * Update of the specified tariff.
+     * @urlParam tariffId required.
+     * @param MeterTariff $tariff
+     * @param TariffCreateRequest $request
+     * @return ApiResource
+     */
     public function update(MeterTariff $tariff, TariffCreateRequest $request): ApiResource
     {
         $result = $this->meterTariffService->update($tariff, $request);
@@ -118,6 +123,9 @@ class TariffController extends Controller
     }
 
     /**
+     * Change Meter Tariff
+     * @urlParam tariffId required
+     * @urlParam changeID required
      * @param MeterTariff $tariff
      * @param int $changeId
      * @return ApiResource
@@ -130,6 +138,12 @@ class TariffController extends Controller
         return new ApiResource($result);
     }
 
+    /**
+     * Remove of the specified tariff.
+     * @urlParam tariffId required.
+     * @param MeterTariff $tariff
+     * @return bool|null
+     */
     public function destroy(MeterTariff $tariff): ?bool
     {
         return $tariff->delete();

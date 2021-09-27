@@ -1,0 +1,10 @@
+{
+    "id": 1,
+    "reference": "SmsTransactionHeader",
+    "title": "Sms Header",
+    "body": "Dear  [name] [surname] we received  [transaction_amount] Euros",
+    "place_holder": "Dear [name] [surname], we received your transaction [transaction_amount].",
+    "variables": "name,surname,transaction_amount",
+    "created_at": null,
+    "updated_at": "2021-05-05T21:39:03.000000Z"
+}

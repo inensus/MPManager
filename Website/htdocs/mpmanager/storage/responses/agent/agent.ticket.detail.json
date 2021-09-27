@@ -1,0 +1,288 @@
+{
+    "data": {
+        "id": 115,
+        "ticket_id": "5fd3b0159bdaca48c2d3d3b9",
+        "creator_id": 1,
+        "owner_type": "person",
+        "owner_id": 1119,
+        "status": 1,
+        "category_id": 12,
+        "created_at": "2020-12-11T17:44:54.000000Z",
+        "updated_at": "2021-02-02T13:30:01.000000Z",
+        "assigned_id": null,
+        "creator_type": "agent",
+        "ticket": {
+            "id": "5fd3b0159bdaca48c2d3d3b9",
+            "address": null,
+            "checkItemStates": [],
+            "closed": true,
+            "coordinates": null,
+            "creationMethod": null,
+            "dateLastActivity": "2021-03-04T21:17:31.775Z",
+            "desc": "Ticket",
+            "descData": null,
+            "dueReminder": null,
+            "idBoard": "5e600b95a5476b18dc10388a",
+            "idLabels": [],
+            "idList": "5e600c8fd7de8461aa19d195",
+            "idMembersVoted": [],
+            "idShort": 167,
+            "idAttachmentCover": null,
+            "locationName": null,
+            "manualCoverAttachment": false,
+            "name": "Ticket",
+            "pos": 2555904,
+            "shortLink": "BB3VkdLY",
+            "isTemplate": false,
+            "cardRole": null,
+            "dueComplete": false,
+            "due": "2020-12-17T01:44:00.000Z",
+            "email": null,
+            "labels": [],
+            "shortUrl": "https:\/\/trello.com\/c\/BB3VkdLY",
+            "staticMapUrl": null,
+            "start": null,
+            "url": "https:\/\/trello.com\/c\/BB3VkdLY\/167-ticket",
+            "idMembers": [],
+            "limits": {
+                "attachments": {
+                    "perCard": {
+                        "status": "ok",
+                        "disableAt": 1000,
+                        "warnAt": 900
+                    }
+                },
+                "checklists": {
+                    "perCard": {
+                        "status": "ok",
+                        "disableAt": 500,
+                        "warnAt": 450
+                    }
+                },
+                "stickers": {
+                    "perCard": {
+                        "status": "ok",
+                        "disableAt": 70,
+                        "warnAt": 63
+                    }
+                }
+            },
+            "idChecklists": [],
+            "badges": {
+                "attachmentsByType": {
+                    "trello": {
+                        "board": 0,
+                        "card": 0
+                    }
+                },
+                "location": false,
+                "votes": 0,
+                "viewingMemberVoted": false,
+                "subscribed": false,
+                "fogbugz": "",
+                "checkItems": 0,
+                "checkItemsChecked": 0,
+                "checkItemsEarliestDue": null,
+                "comments": 3,
+                "attachments": 0,
+                "description": true,
+                "due": "2020-12-17T01:44:00.000Z",
+                "dueComplete": false,
+                "start": null
+            },
+            "subscribed": false,
+            "cover": {
+                "idAttachment": null,
+                "color": null,
+                "idUploadedBackground": null,
+                "size": "normal",
+                "brightness": "light",
+                "idPlugin": null
+            }
+        },
+        "actions": [
+            {
+                "id": "60414e6b6b9d6443a018a16c",
+                "idMemberCreator": "51640fc2dd104cfa6f0014aa",
+                "data": {
+                    "text": "Demo User demo@inensus.com: dsd",
+                    "card": {
+                        "id": "5fd3b0159bdaca48c2d3d3b9",
+                        "name": "Ticket",
+                        "idShort": 167,
+                        "shortLink": "BB3VkdLY"
+                    },
+                    "board": {
+                        "id": "5e600b95a5476b18dc10388a",
+                        "name": "mpmmanager.demo",
+                        "shortLink": "CtI4FfOk"
+                    },
+                    "list": {
+                        "id": "5e600c8fd7de8461aa19d195",
+                        "name": "jumeme_cards1583352975"
+                    }
+                },
+                "type": "commentCard",
+                "date": "2021-03-04T21:17:31.782Z",
+                "limits": {
+                    "reactions": {
+                        "perAction": {
+                            "status": "ok",
+                            "disableAt": 1000,
+                            "warnAt": 900
+                        },
+                        "uniquePerAction": {
+                            "status": "ok",
+                            "disableAt": 17,
+                            "warnAt": 16
+                        }
+                    }
+                },
+                "appCreator": {
+                    "id": "5b2ba007cd09bea6230d7456"
+                },
+                "memberCreator": {
+                    "id": "51640fc2dd104cfa6f0014aa",
+                    "activityBlocked": false,
+                    "avatarHash": "9ae1d66d7ecdefbe5fe3ed9a63b79761",
+                    "avatarUrl": "https:\/\/trello-members.s3.amazonaws.com\/51640fc2dd104cfa6f0014aa\/9ae1d66d7ecdefbe5fe3ed9a63b79761",
+                    "fullName": "alchalade",
+                    "idMemberReferrer": null,
+                    "initials": "A",
+                    "nonPublic": {},
+                    "nonPublicAvailable": true,
+                    "username": "alikemalzkan"
+                }
+            },
+            {
+                "id": "603e20398bf9ac2e290e9786",
+                "idMemberCreator": "51640fc2dd104cfa6f0014aa",
+                "data": {
+                    "text": "Demo User demo@inensus.com: asdasd",
+                    "card": {
+                        "id": "5fd3b0159bdaca48c2d3d3b9",
+                        "name": "Ticket",
+                        "idShort": 167,
+                        "shortLink": "BB3VkdLY"
+                    },
+                    "board": {
+                        "id": "5e600b95a5476b18dc10388a",
+                        "name": "mpmmanager.demo",
+                        "shortLink": "CtI4FfOk"
+                    },
+                    "list": {
+                        "id": "5e600c8fd7de8461aa19d195",
+                        "name": "jumeme_cards1583352975"
+                    }
+                },
+                "type": "commentCard",
+                "date": "2021-03-02T11:23:37.126Z",
+                "limits": {
+                    "reactions": {
+                        "perAction": {
+                            "status": "ok",
+                            "disableAt": 1000,
+                            "warnAt": 900
+                        },
+                        "uniquePerAction": {
+                            "status": "ok",
+                            "disableAt": 17,
+                            "warnAt": 16
+                        }
+                    }
+                },
+                "appCreator": {
+                    "id": "5b2ba007cd09bea6230d7456"
+                },
+                "memberCreator": {
+                    "id": "51640fc2dd104cfa6f0014aa",
+                    "activityBlocked": false,
+                    "avatarHash": "9ae1d66d7ecdefbe5fe3ed9a63b79761",
+                    "avatarUrl": "https:\/\/trello-members.s3.amazonaws.com\/51640fc2dd104cfa6f0014aa\/9ae1d66d7ecdefbe5fe3ed9a63b79761",
+                    "fullName": "alchalade",
+                    "idMemberReferrer": null,
+                    "initials": "A",
+                    "nonPublic": {},
+                    "nonPublicAvailable": true,
+                    "username": "alikemalzkan"
+                }
+            },
+            {
+                "id": "6036812c54c07367304a25a5",
+                "idMemberCreator": "51640fc2dd104cfa6f0014aa",
+                "data": {
+                    "text": " : sfdghv",
+                    "card": {
+                        "id": "5fd3b0159bdaca48c2d3d3b9",
+                        "name": "Ticket",
+                        "idShort": 167,
+                        "shortLink": "BB3VkdLY"
+                    },
+                    "board": {
+                        "id": "5e600b95a5476b18dc10388a",
+                        "name": "mpmmanager.demo",
+                        "shortLink": "CtI4FfOk"
+                    },
+                    "list": {
+                        "id": "5e600c8fd7de8461aa19d195",
+                        "name": "jumeme_cards1583352975"
+                    }
+                },
+                "type": "commentCard",
+                "date": "2021-02-24T16:39:08.317Z",
+                "limits": {
+                    "reactions": {
+                        "perAction": {
+                            "status": "ok",
+                            "disableAt": 1000,
+                            "warnAt": 900
+                        },
+                        "uniquePerAction": {
+                            "status": "ok",
+                            "disableAt": 17,
+                            "warnAt": 16
+                        }
+                    }
+                },
+                "appCreator": {
+                    "id": "5b2ba007cd09bea6230d7456"
+                },
+                "memberCreator": {
+                    "id": "51640fc2dd104cfa6f0014aa",
+                    "activityBlocked": false,
+                    "avatarHash": "9ae1d66d7ecdefbe5fe3ed9a63b79761",
+                    "avatarUrl": "https:\/\/trello-members.s3.amazonaws.com\/51640fc2dd104cfa6f0014aa\/9ae1d66d7ecdefbe5fe3ed9a63b79761",
+                    "fullName": "alchalade",
+                    "idMemberReferrer": null,
+                    "initials": "A",
+                    "nonPublic": {},
+                    "nonPublicAvailable": true,
+                    "username": "alikemalzkan"
+                }
+            }
+        ],
+        "category": {
+            "id": 12,
+            "label_name": "Profile Updates",
+            "label_color": "orange",
+            "created_at": "2018-11-23T11:18:08.000000Z",
+            "updated_at": "2018-11-23T11:18:08.000000Z",
+            "out_source": 0
+        },
+        "owner": {
+            "id": 1119,
+            "title": null,
+            "education": null,
+            "name": "Asilia",
+            "surname": "Asumini",
+            "birth_date": null,
+            "sex": null,
+            "nationality": null,
+            "created_at": "2019-06-24T16:25:45.000000Z",
+            "updated_at": "2020-03-04T19:59:09.000000Z",
+            "customer_group_id": null,
+            "is_customer": 1,
+            "deleted_at": null
+        }
+    }
+}

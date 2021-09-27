@@ -1,0 +1,141 @@
+{
+    "current_page": 1,
+    "data": [
+        {
+            "id": 3,
+            "agent_id": 1,
+            "user_id": 22,
+            "amount": 500,
+            "last_controlled_balance_history_id": 17,
+            "created_at": "2021-06-10T10:47:16.000000Z",
+            "updated_at": "2021-06-10T10:47:16.000000Z",
+            "user": {
+                "id": 22,
+                "name": "Demo User",
+                "email": "demo@inensus.com",
+                "created_at": "2020-04-22T21:03:26.000000Z",
+                "updated_at": "2020-04-22T21:03:26.000000Z"
+            },
+            "agent": {
+                "id": 1,
+                "person_id": 5383,
+                "mini_grid_id": 1,
+                "agent_commission_id": 1,
+                "name": "Anthony",
+                "email": "a@micropowermanager.com",
+                "fire_base_token": "f9gtgfpaR5G9jEiXGxZa9_:APA91bG1aoA_KGEmzbn9SM17ESw-4m6NNaxxp_2UbrOZlDfXrCpig9zDn5sgM1jNQh3_Rmrqk9MjgAnVlYcNHGgGyZUsr-oNV0FLOHYOj6AAumupjy5cbkYCCbcXARhfBCzjc6kKykOQ",
+                "balance": -1335.9,
+                "commission_revenue": 0,
+                "due_to_energy_supplier": 1335.9,
+                "created_at": "2020-11-10T21:30:39.000000Z",
+                "updated_at": "2021-06-10T10:47:17.000000Z"
+            },
+            "history": {
+                "id": 17,
+                "agent_id": 1,
+                "trigger_type": "agent_receipt",
+                "trigger_id": 2,
+                "amount": 1200,
+                "available_balance": -3376,
+                "due_to_supplier": 3035.9,
+                "transaction_id": 2,
+                "created_at": "2021-05-06T07:39:52.000000Z",
+                "updated_at": "2021-05-06T07:39:52.000000Z"
+            }
+        },
+        {
+            "id": 2,
+            "agent_id": 1,
+            "user_id": 22,
+            "amount": 1200,
+            "last_controlled_balance_history_id": 16,
+            "created_at": "2021-05-06T07:39:52.000000Z",
+            "updated_at": "2021-05-06T07:39:52.000000Z",
+            "user": {
+                "id": 22,
+                "name": "Demo User",
+                "email": "demo@inensus.com",
+                "created_at": "2020-04-22T21:03:26.000000Z",
+                "updated_at": "2020-04-22T21:03:26.000000Z"
+            },
+            "agent": {
+                "id": 1,
+                "person_id": 5383,
+                "mini_grid_id": 1,
+                "agent_commission_id": 1,
+                "name": "Anthony",
+                "email": "a@micropowermanager.com",
+                "fire_base_token": "f9gtgfpaR5G9jEiXGxZa9_:APA91bG1aoA_KGEmzbn9SM17ESw-4m6NNaxxp_2UbrOZlDfXrCpig9zDn5sgM1jNQh3_Rmrqk9MjgAnVlYcNHGgGyZUsr-oNV0FLOHYOj6AAumupjy5cbkYCCbcXARhfBCzjc6kKykOQ",
+                "balance": -1335.9,
+                "commission_revenue": 0,
+                "due_to_energy_supplier": 1335.9,
+                "created_at": "2020-11-10T21:30:39.000000Z",
+                "updated_at": "2021-06-10T10:47:17.000000Z"
+            },
+            "history": {
+                "id": 16,
+                "agent_id": 1,
+                "trigger_type": "agent_commission",
+                "trigger_id": 1,
+                "amount": 15,
+                "available_balance": 325.1,
+                "due_to_supplier": 2900.9,
+                "transaction_id": 105018,
+                "created_at": "2020-11-17T11:37:52.000000Z",
+                "updated_at": "2020-11-17T11:37:52.000000Z"
+            }
+        },
+        {
+            "id": 1,
+            "agent_id": 1,
+            "user_id": 22,
+            "amount": 163.5,
+            "last_controlled_balance_history_id": 7,
+            "created_at": "2020-11-11T00:18:05.000000Z",
+            "updated_at": "2020-11-11T00:18:05.000000Z",
+            "user": {
+                "id": 22,
+                "name": "Demo User",
+                "email": "demo@inensus.com",
+                "created_at": "2020-04-22T21:03:26.000000Z",
+                "updated_at": "2020-04-22T21:03:26.000000Z"
+            },
+            "agent": {
+                "id": 1,
+                "person_id": 5383,
+                "mini_grid_id": 1,
+                "agent_commission_id": 1,
+                "name": "Anthony",
+                "email": "a@micropowermanager.com",
+                "fire_base_token": "f9gtgfpaR5G9jEiXGxZa9_:APA91bG1aoA_KGEmzbn9SM17ESw-4m6NNaxxp_2UbrOZlDfXrCpig9zDn5sgM1jNQh3_Rmrqk9MjgAnVlYcNHGgGyZUsr-oNV0FLOHYOj6AAumupjy5cbkYCCbcXARhfBCzjc6kKykOQ",
+                "balance": -1335.9,
+                "commission_revenue": 0,
+                "due_to_energy_supplier": 1335.9,
+                "created_at": "2020-11-10T21:30:39.000000Z",
+                "updated_at": "2021-06-10T10:47:17.000000Z"
+            },
+            "history": {
+                "id": 7,
+                "agent_id": 1,
+                "trigger_type": "agent_commission",
+                "trigger_id": 1,
+                "amount": 15,
+                "available_balance": 96.5,
+                "due_to_supplier": 28.5,
+                "transaction_id": 104714,
+                "created_at": "2020-11-11T00:16:50.000000Z",
+                "updated_at": "2020-11-11T00:16:50.000000Z"
+            }
+        }
+    ],
+    "first_page_url": "https:\/\/demo.micropowermanager.com\/api\/agents\/receipt\/1?page=1",
+    "from": 1,
+    "last_page": 1,
+    "last_page_url": "https:\/\/demo.micropowermanager.com\/api\/agents\/receipt\/1?page=1",
+    "next_page_url": null,
+    "path": "https:\/\/demo.micropowermanager.com\/api\/agents\/receipt\/1",
+    "per_page": 15,
+    "prev_page_url": null,
+    "to": 3,
+    "total": 3
+}

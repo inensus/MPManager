@@ -1,0 +1,25 @@
+{
+    "current_page": 1,
+    "data": [
+        {
+            "id": 1,
+            "name": "Demo User",
+            "email": "demo@inensus.com"
+        },
+        {
+            "id": 2,
+            "name": "Admin",
+            "email": "admin@admin.com"
+        }
+    ],
+    "first_page_url": "https:\/\/demo.micropowermanager.com\/api\/admin\/users?page=1",
+    "from": 1,
+    "last_page": 1,
+    "last_page_url": "https:\/\/demo.micropowermanager.com\/api\/admin\/users?page=1",
+    "next_page_url": null,
+    "path": "https:\/\/demo.micropowermanager.com\/api\/admin\/users",
+    "per_page": 15,
+    "prev_page_url": null,
+    "to": 2,
+    "total": 2
+}

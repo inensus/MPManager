@@ -1,0 +1,71 @@
+{
+    "current_page": 1,
+    "data": [
+        {
+            "id": 5,
+            "name": "Some appliance",
+            "price": 10000,
+            "created_at": "2020-10-06T07:52:32.000000Z",
+            "updated_at": "2020-10-06T07:52:32.000000Z",
+            "deleted_at": null
+        },
+        {
+            "id": 7,
+            "name": "60lt Fridge",
+            "price": 25000,
+            "created_at": "2020-10-06T07:52:32.000000Z",
+            "updated_at": "2020-10-06T07:52:32.000000Z",
+            "deleted_at": null
+        },
+        {
+            "id": 8,
+            "name": "Washing Machine",
+            "price": 120000,
+            "created_at": "2020-10-26T09:06:14.000000Z",
+            "updated_at": "2020-10-26T09:06:14.000000Z",
+            "deleted_at": null
+        },
+        {
+            "id": 9,
+            "name": "Smart TV",
+            "price": 87878,
+            "created_at": "2020-11-07T14:12:52.000000Z",
+            "updated_at": "2020-11-07T14:12:52.000000Z",
+            "deleted_at": null
+        },
+        {
+            "id": 10,
+            "name": "TV Set",
+            "price": 250000,
+            "created_at": "2021-04-28T09:20:45.000000Z",
+            "updated_at": "2021-04-28T09:20:45.000000Z",
+            "deleted_at": null
+        },
+        {
+            "id": 11,
+            "name": "Big speakers",
+            "price": 500000,
+            "created_at": "2021-05-03T13:38:42.000000Z",
+            "updated_at": "2021-05-03T13:38:42.000000Z",
+            "deleted_at": null
+        },
+        {
+            "id": 12,
+            "name": "Waffle Machine",
+            "price": 10000,
+            "created_at": "2021-05-06T07:21:13.000000Z",
+            "updated_at": "2021-05-06T07:21:13.000000Z",
+            "deleted_at": null
+        }
+    ],
+    "first_page_url": "https:\/\/demo.micropowermanager.com\/api\/assets\/types?page=1",
+    "from": 1,
+    "last_page": 1,
+    "last_page_url": "https:\/\/demo.micropowermanager.com\/api\/assets\/types?page=1",
+    "next_page_url": null,
+    "path": "https:\/\/demo.micropowermanager.com\/api\/assets\/types",
+    "per_page": 15,
+    "prev_page_url": null,
+    "to": 7,
+    "total": 7
+}

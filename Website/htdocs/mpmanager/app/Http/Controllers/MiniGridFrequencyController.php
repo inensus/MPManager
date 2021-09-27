@@ -7,12 +7,23 @@ use App\Models\MiniGridFrequency;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
+/**
+ * @group   MiniGrid Frequency
+ * Class MiniGridController
+ * @package App\Http\Controllers
+ */
 class MiniGridFrequencyController extends Controller
 {
 
     /**
-     * Store a newly created resource in storage.
-     *
+     * Create
+     * Create mini grid frequency.
+     * @bodyParam mini_grid_id int
+     * @bodyParam node_id int
+     * @bodyParam device_id int
+     * @bodyParam frequency string
+     * @bodyParam frequency_unit string
+     * @bodyParam time_stamp date
      * @param  Request $request
      * @return ApiResource
      */
