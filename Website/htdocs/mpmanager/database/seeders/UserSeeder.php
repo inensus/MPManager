@@ -15,10 +15,18 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
+
+        $randomPass = str_random(8);
         DB::table('users')->insert([
             'name' => 'Admin',
             'email' => 'admin@admin.com',
-            'password' => Hash::make('basic-password'),
+            'password' => Hash::make($randomPass),
         ]);
+
+        $this->command->alert('Your Random Password is generated.');
+        $this->command->info('Your credential is: ');
+        $this->command->info('Login: Admin@admin.com');
+        $this->command->info('Password: ' .$randomPass);
+        $this->command->alert('Please do not forget to copy and note the password.!');
     }
 }
