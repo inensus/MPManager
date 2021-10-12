@@ -32,14 +32,22 @@ class RevenueService
     private $meter_token;
 
     /**
+     * @var Transaction
+     */
+    private $transaction;
+
+    /**
      * RevenueService constructor.
      *
      * @param Meter $meter
+     * @param MeterToken $meter_token
+     * @param Transaction $transaction
      */
-    public function __construct(Meter $meter, MeterToken $meter_token)
+    public function __construct(Meter $meter, MeterToken $meter_token, Transaction $transaction)
     {
         $this->meter = $meter;
         $this->meter_token = $meter_token;
+        $this->transaction = $transaction;
     }
 
 
@@ -90,7 +98,7 @@ class RevenueService
 
     private function getMeterTransactionsByWeeklyPeriod($meters, $period)
     {
-        return $this->meter->transactions()
+        return $this->transaction->newQuery()
             ->selectRaw('DATE_FORMAT(created_at,\'%Y-%m\') as period ,DATE_FORMAT(created_at,\'%Y-%u\') ' .
                 ' as week, SUM(amount) as revenue')
             ->whereHasMorph(
@@ -126,13 +134,14 @@ class RevenueService
      */
     public function getMeterTransactions($meters, array $period): Collection
     {
-        return $this->meter->transactions()
+
+        return $this->transaction->newQuery()
             ->selectRaw('COUNT(id) as amount, SUM(amount) as revenue')
             ->whereHasMorph(
                 'originalTransaction',
                 '*',
                 static function ($q) {
-                    $q->where('status', 1);
+                    return $q->where('status', 1);
                 }
             )
             ->whereIn('message', $meters->pluck('serial_number'))
@@ -142,7 +151,8 @@ class RevenueService
 
     private function getClusterTransactionsByMonthlyPeriod($clusterId, $period, $connectionType = null)
     {
-        return Transaction::selectRaw('DATE_FORMAT(created_at,\'%Y-%m\') as period , SUM(amount) as revenue')
+        return $this->transaction->newQuery()
+            ::selectRaw('DATE_FORMAT(created_at,\'%Y-%m\') as period , SUM(amount) as revenue')
             ->whereHas(
                 'meter',
                 function ($q) use ($clusterId, $connectionType) {
@@ -180,7 +190,8 @@ class RevenueService
 
     private function getMiniGridTransactionsByMonthlyPeriod($miniGridId, $period)
     {
-        return Transaction::selectRaw('DATE_FORMAT(created_at,\'%Y-%m\') as period , SUM(amount) as revenue')
+        return $this->transaction->newQuery()
+            ::selectRaw('DATE_FORMAT(created_at,\'%Y-%m\') as period , SUM(amount) as revenue')
             ->whereHas(
                 'meter',
                 function ($q) use ($miniGridId) {
