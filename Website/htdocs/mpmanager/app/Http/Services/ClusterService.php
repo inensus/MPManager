@@ -11,6 +11,7 @@ namespace App\Http\Services;
 
 use App\Models\City;
 use App\Models\Cluster;
+use App\Services\ClusterRevenueService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -25,21 +26,33 @@ class ClusterService
 
     private $cityService;
 
+    private $periodService;
+
+    private $revenueService;
+
+    private $clusterRevenueService;
+
     /**
      * ClusterService constructor.
      *
-     * @param MeterService       $meterService
+     * @param MeterService $meterService
      * @param TransactionService $transactionService
-     * @param CityService        $cityService
+     * @param CityService $cityService
      */
     public function __construct(
         MeterService $meterService,
         TransactionService $transactionService,
-        CityService $cityService
+        CityService $cityService,
+        PeriodService $periodService,
+        RevenueService $revenueService,
+        ClusterRevenueService $clusterRevenueService
     ) {
         $this->meterService = $meterService;
         $this->cityService = $cityService;
         $this->transactionService = $transactionService;
+        $this->periodService = $periodService;
+        $this->revenueService = $revenueService;
+        $this->clusterRevenueService = $clusterRevenueService;
     }
 
     /**
@@ -49,6 +62,21 @@ class ClusterService
     public function getClusterCities($clusterId)
     {
         return Cluster::query()->with('cities')->find($clusterId);
+    }
+
+    /**
+     * @param $id
+     * @return Builder|Builder[]|Collection|Model|null
+     */
+    public function getCluster($id)
+    {
+        $dateRange[0] = date('Y-m-d', strtotime('today - 31 days'));
+        $dateRange[1] = date('Y-m-d', strtotime('today - 1 days'));
+        $cluster = Cluster::with('miniGrids.location')->find($id);
+        $cluster->meterCount = $this->meterService->getMeterCountInCluster($cluster->id);
+        $cluster->revenue = $this->transactionService->totalClusterTransactions($cluster->id, $dateRange);
+        $cluster->population = $this->cityService->getClusteropulation($cluster->id);
+        return $cluster;
     }
 
     /**
@@ -71,6 +99,9 @@ class ClusterService
             $clusters[$index]->meterCount = $this->meterService->getMeterCountInCluster($cluster->id);
             $clusters[$index]->revenue = $this->transactionService->totalClusterTransactions($cluster->id, $range);
             $clusters[$index]->population = $this->cityService->getClusteropulation($cluster->id);
+            $clusters[$index]->citiesRevenue = $this->clusterRevenueService->getMiniGridBasedRevenue($cluster->id);
+            $clusters[$index]->revenueAnalysis = $this->clusterRevenueService->getRevenueAnalysis($cluster->id);
+            $clusters[$index]->clusterData = $this->getCluster($cluster->id);
         }
         return $clusters;
     }
@@ -103,4 +134,6 @@ class ClusterService
         $cluster = Cluster::select('geo_data')->find($clusterId);
         return $cluster->geo_data;
     }
+
+
 }

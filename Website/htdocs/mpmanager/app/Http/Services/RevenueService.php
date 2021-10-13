@@ -120,7 +120,7 @@ class RevenueService
      */
     public function getMeterSoldEnergy($meters, array $period): ?Collection
     {
-        return $this->meter_token
+        return $this->meter_token->newQuery()
             ->selectRaw('COUNT(id) as amount, SUM(energy) as energy')
             ->whereIn('meter_id', $meters->pluck('id'))
             ->whereBetween('created_at', $period)
@@ -152,7 +152,7 @@ class RevenueService
     private function getClusterTransactionsByMonthlyPeriod($clusterId, $period, $connectionType = null)
     {
         return $this->transaction->newQuery()
-            ::selectRaw('DATE_FORMAT(created_at,\'%Y-%m\') as period , SUM(amount) as revenue')
+            ->selectRaw('DATE_FORMAT(created_at,\'%Y-%m\') as period , SUM(amount) as revenue')
             ->whereHas(
                 'meter',
                 function ($q) use ($clusterId, $connectionType) {
@@ -191,7 +191,7 @@ class RevenueService
     private function getMiniGridTransactionsByMonthlyPeriod($miniGridId, $period)
     {
         return $this->transaction->newQuery()
-            ::selectRaw('DATE_FORMAT(created_at,\'%Y-%m\') as period , SUM(amount) as revenue')
+            ->selectRaw('DATE_FORMAT(created_at,\'%Y-%m\') as period , SUM(amount) as revenue')
             ->whereHas(
                 'meter',
                 function ($q) use ($miniGridId) {
