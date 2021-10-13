@@ -144,6 +144,9 @@ export default {
         clusterId: {
             type: Number,
             default: 1,
+        },
+        clustersRevenue: {
+            required: true,
         }
     },
     data () {
@@ -187,33 +190,28 @@ export default {
             },
             disabled: {
                 customPredictor:
-                        function (date) {
-                            let today = new Date()
-                            let minDate = new Date('2018-01-01')
-                            // disables the date if it is a multiple of 5
-                            if (date > today || date < minDate) {
-                                return true
-                            }
+                    function (date) {
+                        let today = new Date()
+                        let minDate = new Date('2018-01-01')
+                        // disables the date if it is a multiple of 5
+                        if (date > today || date < minDate) {
+                            return true
                         }
+                    }
             },
         }
-    },
-    mounted () {
-        this.getClusterFinancialData()
     },
     methods: {
         showPeriod () {
             this.setPeriod = !this.setPeriod
         },
         async getClusterFinancialData () {
-
             try {
                 this.loading = true
                 let from = this.period.from !== null ? moment(this.period.from).format('YYYY-MM-DD') : null
                 let to = this.period.to !== null ? moment(this.period.to).format('YYYY-MM-DD') : null
 
                 this.financialData = await this.clusterService.getAllRevenues('monthly', from, to)
-
                 this.loaded = true
 
                 if (from !== null) {
@@ -225,6 +223,7 @@ export default {
                 this.alertNotify('error', e.message)
 
             }
+
             this.setPeriod = false
             this.loading = false
         },
@@ -270,16 +269,22 @@ export default {
                 text: message
             })
         },
+    }, watch: {
+        clustersRevenue (revenue) {
+            this.financialData = revenue
+            this.clusterService.financialData = revenue
+            this.loaded = true
+        }
     }
 }
 </script>
 
 <style>
-    .datepicker-right .vdp-datepicker__calendar {
-        right: 0;
-    }
+.datepicker-right .vdp-datepicker__calendar {
+    right: 0;
+}
 
-    .chart-card {
-        margin-bottom: 1vh;
-    }
+.chart-card {
+    margin-bottom: 1vh;
+}
 </style>

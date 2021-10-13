@@ -12,8 +12,8 @@
 
 <script>
 import Widget from '../../shared/widget'
-import { ClusterService } from '../../services/ClusterService'
 import Map from '../../shared/Map'
+import { mapGetters } from 'vuex'
 
 export default {
     name: 'ClusterMap',
@@ -23,30 +23,27 @@ export default {
     },
     data () {
         return {
-            clusterService: new ClusterService(),
-            geoData: null,
             center: [
                 this.$store.getters['settings/getMapSettings'].latitude,
                 this.$store.getters['settings/getMapSettings'].longitude],
             clusterGeo: {},
         }
     },
-    mounted () {
-        this.getGeoData()
-    },
-    methods: {
-        async getGeoData () {
-            let clusters = await this.clusterService.getClusters()
+    computed: {
+        ...mapGetters({
+            clustersCacheData: 'clusterDashboard/getClustersData'
+        }),
+        geoData () {
             let geoData = []
-            clusters.forEach((e) => {
-                if(e.geo_data !== null ){
+            this.clustersCacheData.clustersList.forEach((e) => {
+                if (e.geo_data !== null) {
                     this.clusterGeo = e.geo_data
                     this.clusterGeo.clusterId = e.id
                     geoData.push(this.clusterGeo)
                 }
             })
-            this.geoData = geoData
-        },
-    },
+            return geoData
+        }
+    }
 }
 </script>
