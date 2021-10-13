@@ -58,6 +58,7 @@ import TargetRepository from './TargetRepository'
 import MeterDetailRepository from './MeterDetailRepository'
 import UserPasswordRepository from './UserPasswordRepository'
 import AppliancePaymentRepository from './AppliancePaymentRepository'
+import ClustersDashboardCacheDataRepository from './ClustersDashboardCacheDataRepository'
 
 const repositories = {
     'address': AddressRepository,
@@ -109,17 +110,18 @@ const repositories = {
     'countryList': CountriesRepository,
     'languagesList': LanguagesRepository,
     'ticketSettings': TicketSettingsRepository,
-    'smsBodies':SmsBodiesRepository,
-    'smsResendInformationKeys':SmsResendInformationKeyRepository,
-    'smsApplianceRemindRates':SmsApplianceRemindRateRepository,
-    'smsAndroidSetting':SmsAndroidSettingRepository,
-    'smsVariableDefaultValue':SmsVariableDefaultValueRepository,
+    'smsBodies': SmsBodiesRepository,
+    'smsResendInformationKeys': SmsResendInformationKeyRepository,
+    'smsApplianceRemindRates': SmsApplianceRemindRateRepository,
+    'smsAndroidSetting': SmsAndroidSettingRepository,
+    'smsVariableDefaultValue': SmsVariableDefaultValueRepository,
     'target': TargetRepository,
     'batchRevenue': BatchRevenueRepository,
     'paymentHistory': PaymentHistoryRepository,
     'meterDetail': MeterDetailRepository,
     'userPassword': UserPasswordRepository,
-    'appliancePayment': AppliancePaymentRepository
+    'appliancePayment': AppliancePaymentRepository,
+    'clustersDashboardCacheData': ClustersDashboardCacheDataRepository
 }
 
 export default {
