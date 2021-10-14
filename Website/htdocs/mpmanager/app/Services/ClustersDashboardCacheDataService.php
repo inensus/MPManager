@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Services;
 
 use App\Http\Services\ClusterService;
@@ -14,10 +13,11 @@ class ClustersDashboardCacheDataService
     private $clusterService;
     private $periodService;
     private $revenueService;
-    public function __construct(ClusterService $clusterService,
+    public function __construct(
+        ClusterService $clusterService,
         PeriodService $periodService,
-        RevenueService $revenueService)
-    {
+        RevenueService $revenueService
+    ) {
         $this->clusterService = $clusterService;
         $this->periodService = $periodService;
         $this->revenueService = $revenueService;
@@ -36,7 +36,6 @@ class ClustersDashboardCacheDataService
         $clusters = $this->clusterService->getClusterList();
         $data = $this->clusterService->fetchClusterData($clusters, $dateRange);
         Cache::forever($key, $data);
-
     }
     public function setClustersRevenues($key)
     {
@@ -83,9 +82,8 @@ class ClustersDashboardCacheDataService
 
     public function getData()
     {
-        $data['clustersList'] = Cache::get('ClustersList')? Cache::get('ClustersList'):[];
-        $data['clustersRevenue'] = Cache::get('ClustersRevenue')?Cache::get('ClustersRevenue'):[];
+        $data['clustersList'] = Cache::get('ClustersList') ? Cache::get('ClustersList') : [];
+        $data['clustersRevenue'] = Cache::get('ClustersRevenue') ? Cache::get('ClustersRevenue') : [];
         return $data;
     }
-
 }

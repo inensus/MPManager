@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Services;
-
 
 use App\Http\Services\CityService;
 use App\Http\Services\MeterService;

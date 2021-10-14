@@ -6,7 +6,6 @@ use App\Http\Resources\ApiResource;
 use App\Services\ClustersDashboardCacheDataService;
 use Illuminate\Support\Facades\Artisan;
 
-
 class ClustersDashboardCacheDataController extends Controller
 {
     private $clustersDashboardCacheDataService;

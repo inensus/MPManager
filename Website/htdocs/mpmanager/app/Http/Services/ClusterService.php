@@ -134,6 +134,4 @@ class ClusterService
         $cluster = Cluster::select('geo_data')->find($clusterId);
         return $cluster->geo_data;
     }
-
-
 }
