@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateMiniGridRequest;
 use App\Http\Resources\ApiResource;
 use App\Models\MiniGrid;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 
 class MiniGridController extends Controller
 {
@@ -24,6 +25,7 @@ class MiniGridController extends Controller
     public function store(StoreMiniGridRequest $request): ApiResource
     {
         $miniGrid = $this->miniGrid::query()->create($request->only('cluster_id', 'name'));
+        Artisan::call('update:cachedClustersDashboardData');
         return new ApiResource($miniGrid);
     }
 

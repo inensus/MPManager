@@ -3,20 +3,18 @@
     <widget :id="'revenue-trends'" :title="'Revenue Trends'">
         <div class="col-sm-12">
             <GChart
-                    type="ColumnChart"
-                    :data="clusterService.trendChartData.base"
-                    :options="chartOptions"
-                    :resizeDebounce="500"
+                type="ColumnChart"
+                :data="clusterService.trendChartData.base"
+                :options="chartOptions"
+                :resizeDebounce="500"
             />
         </div>
-
-
         <div class="col-sm-12">
             <GChart
-                    type="LineChart"
-                    :data="clusterService.trendChartData.overview"
-                    :options="chartOptions"
-                    :resizeDebounce="500"
+                type="LineChart"
+                :data="clusterService.trendChartData.overview"
+                :options="chartOptions"
+                :resizeDebounce="500"
             />
         </div>
     </widget>
@@ -28,19 +26,23 @@ import { ClusterService } from '../../services/ClusterService'
 
 export default {
     name: 'RevenueTrends',
-    components: {Widget},
+    components: { Widget },
     props: {
         clusterId: {
             type: String,
             required: true,
+        },
+        clusterRevenueAnalysis: {
+            required: true,
         }
     },
-    created () {
-        this.getTrends()
+    mounted () {
+        this.clusterService.clusterTrends = this.clusterRevenueAnalysis
+        this.clusterService.fillTrends()
     },
     data () {
         return {
-            clusterService : new ClusterService(),
+            clusterService: new ClusterService(),
             period: {},
             chartOptions: {
                 chart: {
@@ -79,24 +81,7 @@ export default {
             },
         }
     },
-    methods: {
-        async getTrends () {
-            try {
-                await this.clusterService.getClusterTrends(this.clusterId, this.period.from, this.period.to)
-            }catch (e) {
-                this.alertNotify('error', e.message)
-            }
-        },
-        alertNotify (type, message) {
-            this.$notify({
-                group: 'notify',
-                type: type,
-                title: type + ' !',
-                text: message
-            })
-        },
 
-    },
 }
 </script>
 

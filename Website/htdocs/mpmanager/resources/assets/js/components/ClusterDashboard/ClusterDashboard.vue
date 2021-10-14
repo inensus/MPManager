@@ -1,61 +1,59 @@
 <template>
-    <div>
-        <md-card style="margin-bottom: 3rem">
-            <md-card-header>
-                {{ $tc('words.cluster') }} : <span style="font-size: 1.3rem; font-weight: bold"
-                                v-if="clusterData"> {{clusterData.name}}</span>
-            </md-card-header>
-        </md-card>
-
+    <div v-if="Object.keys(clusterData.clusterData).length">
+        <md-toolbar style="margin-bottom: 3rem" class="md-dense">
+            <div class="md-toolbar-row">
+                <div class="md-toolbar-section-start">
+                    {{ $tc('words.cluster') }} : <span style="font-size: 1.3rem; font-weight: bold"
+                                                       v-if="clusterData"> {{ clusterData.name }}</span>
+                </div>
+                <div class="md-toolbar-section-end">
+                    <md-button class="md-raised" @click="updateCacheData">
+                        <md-icon>update</md-icon>
+                        Refresh Data
+                        <md-progress-bar v-if="updateProgress" md-mode="indeterminate"></md-progress-bar>
+                    </md-button>
+                </div>
+            </div>
+        </md-toolbar>
         <div class="md-layout md-gutter md-size-100">
-            <div v-if="clusterData" class="md-layout-item
+            <div class="md-layout-item
        md-size-100">
                 <box-group
-                    :cluster="clusterData"
+                    :cluster="clusterData.clusterData"
                 />
 
             </div>
-            <div v-if="clusterId" class="md-layout-item
+            <div class="md-layout-item
        md-size-100">
                 <financial-overview
                     :cluster-id="clusterId"
+                    :financial-data="clusterData.citiesRevenue"
                     @complete="addRevenue"
                 />
 
             </div>
-            <div v-if="clusterData" class="md-layout-item
+            <div class="md-layout-item
        md-size-100" style="margin-top: 2vh;">
                 <md-card>
                     <md-card-content>
                         <Map
-                                :geoData="geoData"
-                                :markerLocations="constantLocations"
-                                :markerUrl="miniGridIcon"
-                                :center="center"
-                                :markingInfos="markingInfos"
-                                :parentName="'Top-MiniGrid'"
-                                :zoom="7"
+                            :geoData="mappingService.focusLocation(clusterData.clusterData.geo_data)"
+                            :markerLocations="constantLocations"
+                            :markerUrl="miniGridIcon"
+                            :center="center"
+                            :markingInfos="markingInfos"
+                            :parentName="'Top-MiniGrid'"
+                            :zoom="7"
                         />
                     </md-card-content>
 
                 </md-card>
-
-
             </div>
-            <div v-if="clusterData && 1===-1" class="md-layout-item
+            <div class="md-layout-item
        md-size-100">
-                <target-list
-                        :target-id="clusterId"
-                        target-type="cluster"
-                        :base="base"
-                        :compared="compared"
-                        @complete="addConnections"
-                />
-            </div>
-            <div v-if="clusterData" class="md-layout-item
-       md-size-100">
-                <revenue-trends :cluster-id="clusterId"/>
-
+                <revenue-trends
+                    :cluster-id="clusterId"
+                    :cluster-revenue-analysis="clusterData.revenueAnalysis"/>
             </div>
         </div>
 
@@ -69,17 +67,13 @@ import Map from '../../shared/Map'
 import BoxGroup from './BoxGroup'
 import FinancialOverview from './FinancialOverview'
 import RevenueTrends from './RevenueTrends'
-import TargetList from '../MiniGrid/TargetList'
-import { ClusterService } from '../../services/ClusterService'
 import { MappingService } from '../../services/MappingService'
 import miniGridIcon from '../../../icons/miniGrid.png'
-import moment from 'moment'
+import { mapGetters } from 'vuex'
 
 export default {
     name: 'ClusterList',
-
     components: {
-        TargetList,
         RevenueTrends,
         FinancialOverview,
         BoxGroup,
@@ -87,18 +81,17 @@ export default {
     },
     data () {
         return {
-            clusterService: new ClusterService(),
             mappingService: new MappingService(),
             miniGridIcon: miniGridIcon,
             clusterId: null,
-            clusterData: null,
-            clusters: null,
             geoData: null,
             constantLocations: [],
             markingInfos: [],
-            center: [this.$store.getters['settings/getMapSettings'].latitude,this.$store.getters['settings/getMapSettings'].longitude],
-            base: {},
-            compared: {},
+            updateProgress: false,
+            center: [
+                this.$store.getters['settings/getMapSettings'].latitude,
+                this.$store.getters['settings/getMapSettings'].longitude
+            ],
             boxData: {
                 'revenue': {
                     'period': '-',
@@ -112,47 +105,36 @@ export default {
     },
     created () {
         this.clusterId = this.$route.params.id
+        this.$store.dispatch('clusterDashboard/get', this.$route.params.id)
     },
-
     mounted () {
-
-        this.initDates()
-        this.getMiniGridList()
-
+        this.setMiniGridsOfClusterMapSettings()
     },
-
     methods: {
-        initDates () {
-            this.base = {
-                from: moment().startOf('month').format('YYYY-MM-DD hh:mm'),
-                to: moment().endOf('month').format('YYYY-MM-DD hh:mm')
-            }
-            this.compared = {
-                from: moment().add(1, 'months').startOf('month').format('YYYY-MM-DD hh:mm'),
-                to: moment().add(1, 'months').endOf('month').format('YYYY-MM-DD hh:mm')
-            }
-        },
-        async getMiniGridList () {
-            this.clusterData = await this.clusterService.getDetails(this.clusterId)
-
-            let clusterGeoData = await this.clusterService.getClusterGeoLocation(this.clusterId)
-            this.center = [clusterGeoData.lat, clusterGeoData.lon]
-            this.geoData = this.mappingService.focusLocation(clusterGeoData)
-            this.boxData['mini_grids'] = this.clusterData.mini_grids.length
-            for (let i in this.clusterData.mini_grids) {
-                let miniGrids = this.clusterData.mini_grids
+        async setMiniGridsOfClusterMapSettings () {
+            this.center = [this.clusterData.geo_data.lat, this.clusterData.geo_data.lon]
+            this.boxData['mini_grids'] = this.clusterData.clusterData.mini_grids.length
+            for (let i in this.clusterData.clusterData.mini_grids) {
+                let miniGrids = this.clusterData.clusterData.mini_grids
                 let points = miniGrids[i].location.points.split(',')
                 let lat = points[0]
                 let lon = points[1]
-
-                let markingInfo = this.mappingService.createMarkingInformation(miniGrids[i].id, miniGrids[i].name, null, lat, lon,miniGrids[i].data_stream)
-
+                let markingInfo = this.mappingService.createMarkingInformation(miniGrids[i].id, miniGrids[i].name,
+                    null, lat, lon, miniGrids[i].data_stream)
                 this.markingInfos.push(markingInfo)
                 this.constantLocations.push([lat, lon])
-
             }
         },
-
+        async updateCacheData () {
+            this.updateProgress = true
+            try {
+                await this.$store.dispatch('clusterDashboard/update')
+                this.alertNotify('success', 'Dashboard refreshed successfully.')
+            } catch (e) {
+                this.alertNotify('error', e.message)
+            }
+            this.updateProgress = false
+        },
         addRevenue (data) {
             this.boxData['revenue'] = {
                 'total': data['sum'],
@@ -172,6 +154,11 @@ export default {
             })
         },
     },
+    computed: {
+        ...mapGetters({
+            clusterData: 'clusterDashboard/getClusterData'
+        })
+    }
 
 }
 </script>

@@ -6,6 +6,7 @@ import * as auth from '../store/modules/authentication'
 import * as settings from '../store/modules/settings'
 import * as resolution from '../store/modules/resolution'
 import * as breadcrumb from '../store/modules/breadcrumb'
+import * as clusterDashboard from '../store/modules/clusterDashboard'
 import VuexPersist from 'vuex-persist'
 
 Vue.use(Vuex)
@@ -14,18 +15,22 @@ const vuexLocalStorage = new VuexPersist({
         auth: {
             authenticateUser: state.auth.authenticateUser,
         },
-        settings:{
+        settings: {
             mainSettings: state.settings.mainSettings,
             ticketSettings: state.settings.ticketSettings,
-            mapSettings:state.settings.mapSettings,
+            mapSettings: state.settings.mapSettings,
         },
-        resolution:{
+        resolution: {
             width: state.resolution.width,
             height: state.resolution.height,
             isMobile: state.resolution.isMobile
         },
-        breadcrumb:{
+        breadcrumb: {
             breadcrumb: state.breadcrumb
+        },
+        clusterDashboard: {
+            clustersCacheData: state.clusterDashboard.clustersCacheData
+
         }
     }),
     key: 'vuex',
@@ -36,7 +41,8 @@ export default new Vuex.Store({
         auth,
         settings,
         resolution,
-        breadcrumb
+        breadcrumb,
+        clusterDashboard
     },
     plugins: [vuexLocalStorage.plugin],
     state: {

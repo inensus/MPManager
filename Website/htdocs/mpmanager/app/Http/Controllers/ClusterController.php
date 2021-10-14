@@ -13,6 +13,8 @@ use App\Http\Requests\ClusterRequest;
 use App\Http\Resources\ApiResource;
 use App\Http\Services\ClusterService;
 use App\Models\Cluster;
+use Illuminate\Support\Facades\Artisan;
+use mysql_xdevapi\Exception;
 
 class ClusterController
 {
@@ -58,7 +60,7 @@ class ClusterController
 
     public function show($id): ApiResource
     {
-        $cluster = Cluster::with('miniGrids.location')->find($id);
+        $cluster = $this->clusterService->getCluster($id);
         return new ApiResource($cluster);
     }
 
@@ -73,6 +75,7 @@ class ClusterController
         $cluster = Cluster::query()->create(
             request()->only(['name', 'manager_id', 'geo_data'])
         );
+        Artisan::call('update:cachedClustersDashboardData');
         return new ApiResource($cluster);
     }
 }
