@@ -35,20 +35,20 @@ services:
       - ./Website/config/php/php.ini:/usr/local/etc/php/php.ini
       - ./Website/htdocs:/var/www/html
 
-  queue:
-    image: ipunktbs/laravel-queue-worker
-    container_name: queue
+  'worker':
+    container_name: worker
     restart: unless-stopped
+    build:
+      context: Docker/
+      dockerfile: DockerfileQueueWorker
     volumes:
-      - ./Website/htdocs/mpmanager:/var/www/app
+      - ./Website/htdocs/mpmanager:/var/www/laravel
+      - ./Website/config/php/php.ini:/usr/local/etc/php/php.ini
     depends_on:
       - maria
-      - redis
     links:
-      - redis:redis
       - maria:db
-    environment:
-      - LARAVEL_HORIZON=true
+      - redis:redis
 
   'composer':
     container_name: mpmanager_composer
