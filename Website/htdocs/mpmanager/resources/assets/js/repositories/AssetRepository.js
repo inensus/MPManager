@@ -9,8 +9,8 @@ export default {
         return Client.post(`${resource}`, asset)
     },
 
-    update (id, asset) {
-        return Client.put(`${resource}/${id}`, asset)
+    update (asset) {
+        return Client.put(`${resource}/${asset.id}`, asset)
     },
 
     delete (id) {

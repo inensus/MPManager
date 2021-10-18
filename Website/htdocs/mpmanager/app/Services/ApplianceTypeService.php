@@ -32,7 +32,9 @@ class ApplianceTypeService
 
     public function updateApplianceType($request, $appliance)
     {
-        return $appliance->update($request->only(['name', 'price']));
+        $appliance->update($request->only(['name', 'price']));
+        $appliance->fresh();
+        return $appliance;
     }
 
     public function deleteApplianceType($applianceType)
