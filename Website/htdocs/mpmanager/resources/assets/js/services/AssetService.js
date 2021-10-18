@@ -63,7 +63,7 @@ export class AssetService {
 
     async updateAsset (asset) {
         try {
-            let response = await this.repository.update(asset.id, asset)
+            const response = await this.repository.update(asset)
             if (response.status === 200 || response.status === 201) {
                 return response
             } else {
