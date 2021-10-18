@@ -54,28 +54,41 @@
                             </md-field>
                         </div>
                         <div class="md-layout-item md-size-100" v-if="tab ==='person'">
-                            <div class="row">
-                                <span v-for="receiver in smsService.receiverList" style="margin: 3px;"
-                                      :key="receiver.display">
-                                    <button
-                                        @click="smsService.removeReceiver(receiver)"
-                                        class="btn btn-primary btn-sm"
-                                        style="margin: 0.3vh 0;">
-                                            {{ receiver.display }}
-                                    </button>
-                                </span>
-                            </div>
-                            <md-autocomplete
-                                v-model="customerSearchTerm"
-                                :md-options="smsService.resultList"
-                                @md-changed="searchForPerson"
-                                @md-selected="addReceiver"
-                            >
-                                <label for="receiver">{{ $tc('words.receiver') }}</label>
-                                <template slot="md-autocomplete-item" slot-scope="{ item }" id="receiver">
-                                    {{ item.display }}
+                            <multiselect v-model="smsService.receiverList"
+                                         id="customer"
+                                         name="customer"
+                                         track-by="phone"
+                                         label="display"
+                                         placeholder="Type to search"
+                                         open-direction="bottom"
+                                         :options="smsService.resultList"
+                                         @tag="addNumberToReceivers"
+                                         :taggable="true"
+                                         :multiple="true"
+                                         :searchable="true"
+                                         :loading="isLoading"
+                                         :internal-search="false"
+                                         :clear-on-select="false"
+                                         :close-on-select="false"
+                                         :options-limit="300"
+                                         :limit="10"
+                                         :max-height="600"
+                                         :show-no-results="false"
+                                         :hide-selected="true"
+                                         @search-change="searchForPerson">
+                                <template slot="tag" slot-scope="{ option, remove }"><span
+                                    class="custom__tag"><span>{{ option.display }}</span>
+                                    <span class="custom__remove"
+                                          @click="remove(option)">❌</span></span>
                                 </template>
-                            </md-autocomplete>
+                                <template slot="clear" slot-scope="props">
+                                    <div class="multiselect__clear" v-if="receivers.length"
+                                         @mousedown.prevent.stop="clearAll(props.search)"></div>
+                                </template>
+                                <span
+                                    slot="noResult">No customer found. Consider changing the search term.</span>
+
+                            </multiselect>
                         </div>
                         <div class="md-layout-item md-size-100" v-if="tab==='type' || tab ==='group'">
                             <md-field>
@@ -91,15 +104,18 @@
                             </md-field>
                         </div>
                         <div class="md-layout-item md-size-100">
-                            <md-field>
+                            <md-field :class="{'md-invalid': errors.has('message')}">
                                 <label for="message">{{ $tc('words.message') }}</label>
                                 <md-textarea
+                                    name="message"
                                     rows="10"
                                     class="form-control"
                                     id="message"
                                     v-model="message"
                                     placeholder="Message"
+                                    v-validate="'required|max:160|min:3'"
                                 ></md-textarea>
+                                <span class="md-error">{{ errors.first('message') }}</span>
                             </md-field>
                         </div>
                     </div>
@@ -117,82 +133,82 @@
 
 <script>
 import Widget from '../../shared/widget'
-import {MiniGridService} from '../../services/MiniGridService'
-import {SmsService} from '../../services/SmsService'
+import { MiniGridService } from '../../services/MiniGridService'
+import { SmsService } from '../../services/SmsService'
+
 const debounce = require('debounce')
+import Multiselect from 'vue-multiselect'
 
 export default {
     name: 'NewSms',
-    components: {Widget},
+    components: { Widget, Multiselect },
     props: {
         show: {
             type: Boolean,
             default: false,
         }
     },
-    mounted() {
+    mounted () {
         this.getMiniGrids()
     },
-    data() {
+    data () {
         return {
-            customerSearchTerm: '',
+            customerSearchTerm: null,
+            customers: [],
+            receivers: [],
             smsService: new SmsService(),
             miniGridService: new MiniGridService(),
             message: '',
             tab: 'person',
             miniGrid: 0,
+            isLoading: false,
             senderId: this.$store.getters['auth/getAuthenticateUser'].id
         }
     },
-
-    watch: {
-        tab: function () {
-            this.smsService.resetLists()
-            if (this.tab === 'group') {
-                this.searchForConnectionGroup()
-            } else if (this.tab === 'type') {
-                this.searchForConnectionType()
-            }
-        },
-    },
     methods: {
-        getMiniGrids() {
+        async getMiniGrids () {
             try {
-                this.miniGridService.getMiniGrids()
+                await this.miniGridService.getMiniGrids()
             } catch (e) {
                 this.alertNotify('error', e.message)
             }
         },
-
-        searchForPerson: debounce(function (input) {
-            if (input.length < 3) {
-                return
-            }
-            this.smsService.searchPerson(input)
-            return this.smsService.resultList
-        }, 500),
-
-        searchForConnectionGroup() {
-            try {
-                this.smsService.connectionGroupList()
-            } catch (e) {
-                this.alertNotify('error', e.message)
-            }
-        },
-
-        async searchForConnectionType() {
+        async searchForConnectionType () {
             try {
                 await this.smsService.connectionTypeList()
             } catch (e) {
                 this.alertNotify('error', e.message)
             }
         },
-
-        addReceiver(receiver) {
-            this.smsService.addReceiver(receiver)
+        searchForPerson: debounce(async function (input) {
+            if (input.length < 3) {
+                return
+            }
+            await this.smsService.searchPerson(input)
+        }, 500),
+        clearAll () {
+            this.smsService.receiverList = []
+            this.smsService.resultList = []
         },
-
-        sendConfirm() {
+        addNumberToReceivers (phone) {
+            this.smsService.receiverList.push({
+                id: -1,
+                display: phone,
+                phone: phone
+            })
+        },
+        searchForConnectionGroup () {
+            try {
+                this.smsService.connectionGroupList()
+            } catch (e) {
+                this.alertNotify('error', e.message)
+            }
+        },
+        async sendConfirm () {
+            const validator = await this.$validator.validateAll()
+            if (!validator) {
+                return
+            }
             this.$swal({
                 type: 'question',
                 allowOutsideClick: false,
@@ -202,19 +218,16 @@ export default {
                 showCancelButton: true,
             }).then((value) => {
                 if (value.value === true)
-                    this.send()
+                    try {
+                        this.smsService.sendBulk(this.tab, this.message, this.senderId, this.miniGrid)
+                        this.alertNotify('success', this.$tc('phrases.bulksms', 2))
+                    } catch (exception) {
+                        this.alertNotify('error', 'SMS service failed with following error' + exception.message)
+                    }
             })
         },
-        send() {
-            try {
-                this.smsService.sendBulk(this.tab, this.message, this.senderId, this.miniGrid)
-                this.alertNotify('success', this.$tc('phrases.bulksms', 2))
-            }
-            catch (exception) {
-                this.alertNotify('error', 'SMS service failed with following error' +exception.message)
-            }
-        },
-        alertNotify(type, message) {
+
+        alertNotify (type, message) {
             this.$notify({
                 group: 'notify',
                 type: type,
@@ -222,11 +235,33 @@ export default {
                 text: message
             })
         },
+    },
+    watch: {
+        tab: function () {
+            this.smsService.resetLists()
+            if (this.tab === 'group') {
+                this.searchForConnectionGroup()
+            } else if (this.tab === 'type') {
+                this.searchForConnectionType()
+            }
+        }
+        ,
     }
+    ,
+
 }
 </script>
-
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>
 <style scoped>
+.multiselect {
+    border: 1px solid gray;
+    border-radius: 5px;
+}
+
+.multiselect .input :focus {
+    border: 1px solid #2196f3 !important;
+}
+
 .comment-box {
     border-bottom: 1px dotted #ccc;
     padding: 5px;
@@ -309,13 +344,15 @@ export default {
     -webkit-transform: scale(1.1);
     transform: scale(1.1);
 }
-@media screen and (max-width: 600px){
-    .tabs{
+
+@media screen and (max-width: 600px) {
+    .tabs {
         display: none;
     }
 }
-@media screen and (min-width: 601px){
-    .mobile-tabs{
+
+@media screen and (min-width: 601px) {
+    .mobile-tabs {
         display: none;
     }
 }
