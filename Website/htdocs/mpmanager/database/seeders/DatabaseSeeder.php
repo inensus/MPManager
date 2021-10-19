@@ -26,5 +26,6 @@ class DatabaseSeeder extends Seeder
         $this->call(SmsBodiesSeeder::class);
         $this->call(SmsResendInformationKeySeeder::class);
         $this->call(SmsVariableDefaultValuesSeeder::class);
+        $this->call(MailSettingsSeeder::class);
     }
 }

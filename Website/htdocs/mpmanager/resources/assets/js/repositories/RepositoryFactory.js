@@ -58,6 +58,7 @@ import TargetRepository from './TargetRepository'
 import MeterDetailRepository from './MeterDetailRepository'
 import UserPasswordRepository from './UserPasswordRepository'
 import AppliancePaymentRepository from './AppliancePaymentRepository'
+import MailSettingsRepository from './MailSettingsRepository'
 
 const repositories = {
     'address': AddressRepository,
@@ -119,7 +120,8 @@ const repositories = {
     'paymentHistory': PaymentHistoryRepository,
     'meterDetail': MeterDetailRepository,
     'userPassword': UserPasswordRepository,
-    'appliancePayment': AppliancePaymentRepository
+    'appliancePayment': AppliancePaymentRepository,
+    'mailSettings': MailSettingsRepository
 }
 
 export default {

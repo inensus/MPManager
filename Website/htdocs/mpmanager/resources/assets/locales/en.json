@@ -471,6 +471,9 @@
     "yesterday": "Yesterday",
     "notice": "Notice",
     "key": "Key",
-    "callback": "Callback"
+    "callback": "Callback",
+    "host": "Host",
+    "port": "Port",
+    "encryption": "Encryption"
   }
 }

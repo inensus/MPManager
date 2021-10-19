@@ -207,6 +207,9 @@ Route::group(['prefix' => 'ticket-settings'], static function () {
 Route::group(['prefix' => 'settings'], static function () {
     Route::get('/main', 'MainSettingsController@index');
     Route::put('/main/{mainSettings}', ['uses' => 'MainSettingsController@update', 'middleware' => 'jwt.verify']);
+    Route::get('/mail', 'MailSettingsController@index');
+    Route::post('/mail', ['uses' => 'MailSettingsController@store', 'middleware' => 'jwt.verify']);
+    Route::put('/mail/{mailSettings}', ['uses' => 'MailSettingsController@update', 'middleware' => 'jwt.verify']);
     Route::get('/currency-list', 'CurrencyController@index');
     Route::get('/country-list', 'CountryListController@index');
     Route::get('/languages-list', 'LanguageController@index');
