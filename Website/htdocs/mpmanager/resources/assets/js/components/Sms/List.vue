@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="wide-screen-sms-list md-layout md-gutter" >
+        <div class="wide-screen-sms-list md-layout md-gutter">
             <div class="md-layout-item md-size-30 md-medium-size-40 md-small-size-100" v-if="checkScreen('numberList')">
                 <widget
                     :subscriber="subscriber"
@@ -13,7 +13,7 @@
                             ></md-input>
                         </md-field>
                     </div>
-                    <div class="sms-scrollable" >
+                    <div class="sms-scrollable">
                         <md-table>
                             <md-table-row v-for="sms in numberList" :key="sms.number"
                                           style="cursor:pointer;"
@@ -28,15 +28,19 @@
                                         </div>
                                         <div class="md-layout-item md-size-70">
                                             <div class="md-layout md-layout-item md-size-100">
-                                                <div class="md-layout-item md-size-100 sms-owner" v-if="sms.owner">{{sms.owner.name}}  {{sms.owner.surname}}</div>
+                                                <div class="md-layout-item md-size-100 sms-owner" v-if="sms.owner">
+                                                    {{ sms.owner.name }} {{ sms.owner.surname }}
+                                                </div>
                                                 <div class="md-layout-item md-size-100" v-else>---</div>
-                                                <div class="md-layout-item md-size-100"><small>{{sms.number}}</small></div>
+                                                <div class="md-layout-item md-size-100"><small>{{ sms.number }}</small>
+                                                </div>
                                             </div>
 
                                         </div>
                                         <div class="md-layout-item md-size-15">
                                             <small class="sms-total"> {{
-                                                    sms.total}}
+                                                    sms.total
+                                                }}
                                             </small>
                                         </div>
                                     </div>
@@ -54,11 +58,14 @@
                     <div class="sticky sms-detail-head">
                         <div class="md-layout-item md-layout md-gutter">
                             <div class="md-layout-item md-size-95">
-                                <md-icon>perm_phone_msg</md-icon> {{selectedNumber}}
+                                <md-icon>perm_phone_msg</md-icon>
+                                {{ selectedNumber }}
                             </div>
                             <div class="md-layout-item md-size-5">
                                 <md-icon v-if="!isMobile">sms</md-icon>
-                                <md-button class="md-icon-button" v-if="isMobile" @click="showNumberList = true"><md-icon>reply</md-icon></md-button>
+                                <md-button class="md-icon-button" v-if="isMobile" @click="showNumberList = true">
+                                    <md-icon>reply</md-icon>
+                                </md-button>
                             </div>
                         </div>
                         <hr>
@@ -67,17 +74,17 @@
                     <div class="sms-detail-scrollable">
                         <div class="md-layout"
                              v-for="sms in list" :key="sms.id">
-                            <div class="md-layout-item md-layout md-size-100 md-gutter" >
+                            <div class="md-layout-item md-layout md-size-100 md-gutter">
                                 <div class="md-layout-item md-size-60" v-if="sms.direction === 0">
                                     <div class="md-layout-item md-layout md-gutter">
                                         <div class="sms-body-triangle left-arrow"></div>
-                                        <div class="md-layout-item sms-body sms-body-left">{{sms.body}}</div>
+                                        <div class="md-layout-item sms-body sms-body-left">{{ sms.body }}</div>
                                     </div>
                                 </div>
                                 <div class="md-layout-item md-size-40"></div>
                                 <div class="md-layout-item md-size-60" v-if="sms.direction === 1">
                                     <div class="md-layout-item md-layout md-gutter">
-                                        <div class="md-layout-item sms-body">{{sms.body}}</div>
+                                        <div class="md-layout-item sms-body">{{ sms.body }}</div>
                                         <div class="sms-body-triangle right-arrow"></div>
                                     </div>
                                 </div>
@@ -86,7 +93,7 @@
                                 <div class="md-layout-item md-size-100">
                                     <small :class="sms.direction === 1 ? 'created-date-right':'created-date-left' ">
                                         <md-icon>schedule</md-icon>
-                                        {{formatDate(sms.created_at)}} - {{getTimeAgo(sms.created_at)}}
+                                        {{ formatDate(sms.created_at) }} - {{ getTimeAgo(sms.created_at) }}
                                     </small>
 
                                 </div>
@@ -96,10 +103,14 @@
                     </div>
                     <div class="md-layout md-gutter message-area">
                         <div class="md-layout-item md-size-100">
-                            <md-field>
+                            <md-field :class="{'md-invalid': errors.has('message')}">
                                 <label>{{ $tc('phrases.messageText') }}</label>
                                 <md-textarea v-model="message" style="min-height: 75px!important;"
-                                ></md-textarea>
+                                             id="message"
+                                             name="message"
+                                             v-validate="'required|max:160|min:3'"
+                                />
+                                <span class="md-error">{{ errors.first('message') }}</span>
                             </md-field>
                             <md-progress-bar md-mode="indeterminate" v-if="loading"/>
                         </div>
@@ -127,7 +138,7 @@ const debounce = require('debounce')
 
 export default {
     name: 'List',
-    components: {  Widget },
+    components: { Widget },
     watch: {
         filterNumber: debounce(function () {
             this.searchSms(this.filterNumber)
@@ -158,29 +169,29 @@ export default {
             windowWidth: 0,
         }
     },
-    computed:{
-        isMobile(){
+    computed: {
+        isMobile () {
             return this.$store.getters['resolution/getDevice']
         }
     },
     methods: {
-        checkScreen(type){
+        checkScreen (type) {
             let x
-            if(this.isMobile === false){
+            if (this.isMobile === false) {
                 x = true
-            }else{
-                if(this.showNumberList === true){
-                    if(type === 'numberList'){
+            } else {
+                if (this.showNumberList === true) {
+                    if (type === 'numberList') {
                         x = true
                     }
-                    if(type === 'detail'){
+                    if (type === 'detail') {
                         x = false
                     }
-                }else{
-                    if(type === 'numberList'){
+                } else {
+                    if (type === 'numberList') {
                         x = false
                     }
-                    if(type === 'detail'){
+                    if (type === 'detail') {
                         x = true
                     }
                 }
@@ -198,7 +209,7 @@ export default {
         async reloadList (subscriber, data) {
             if (subscriber !== this.subscriber) return
             this.numberList = await this.smsService.updateList(data)
-            EventBus.$emit('widgetContentLoaded',this.subscriber,this.numberList.length)
+            EventBus.$emit('widgetContentLoaded', this.subscriber, this.numberList.length)
         },
         async loadList () {
             this.list = []
@@ -219,17 +230,17 @@ export default {
             this.list = await this.smsService.getDetail(phone)
         },
         async sendSms () {
-            if (this.message.length <= 3) {
-                this.alertNotify('warn', this.$tc('phrases.smsListNotify',1))
+            const validator = await this.$validator.validateAll()
+            if (!validator) {
                 return
             }
             try {
                 this.loading = true
                 await this.smsService.sendToNumber('person', this.message, this.selectedNumber, this.senderId)
                 this.loading = false
-                this.alertNotify('success', this.$tc('phrases.smsListNotify',2))
+                this.alertNotify('success', this.$tc('phrases.smsListNotify', 2))
                 this.message = ''
-                this.smsDetail(this.selectedNumber)
+                await this.smsDetail(this.selectedNumber)
             } catch (e) {
                 this.loading = false
                 this.alertNotify('error', e.message)
@@ -252,115 +263,129 @@ export default {
 </script>
 
 <style scoped>
-    [data-letters]:before {
-        content: attr(data-letters);
-        display: inline-block;
-        font-size: 1em;
-        width: 2.5em;
-        height: 2.5em;
-        line-height: 2.5em;
-        text-align: center;
-        border-radius: 50%;
-        background: #313131;
-        vertical-align: middle;
-        margin-right: 1em;
-        color: white;
-    }
-    .person-icon{
-        width: 1.3em;
-        height: 1.3em;
-        text-align: center;
-        border-radius: 50%;
-        background: #313131;
-        vertical-align: middle;
-        margin-right: 1em;
-        color: white!important;
-    }
+[data-letters]:before {
+    content: attr(data-letters);
+    display: inline-block;
+    font-size: 1em;
+    width: 2.5em;
+    height: 2.5em;
+    line-height: 2.5em;
+    text-align: center;
+    border-radius: 50%;
+    background: #313131;
+    vertical-align: middle;
+    margin-right: 1em;
+    color: white;
+}
 
-    td.active {
-        background-color: #E2F3FD !important;
-    }
+.person-icon {
+    width: 1.3em;
+    height: 1.3em;
+    text-align: center;
+    border-radius: 50%;
+    background: #313131;
+    vertical-align: middle;
+    margin-right: 1em;
+    color: white !important;
+}
+
+td.active {
+    background-color: #E2F3FD !important;
+}
 
 
-    .sticky{
-        position: sticky;
-        top:0;
-        height: 20%!important;
+.sticky {
+    position: sticky;
+    top: 0;
+    height: 20% !important;
 
-    }
-    .sms-detail-head{
-        margin-top: 23px;
+}
 
-    }
+.sms-detail-head {
+    margin-top: 23px;
 
-    .sms-scrollable{
-        overflow:auto;
-        max-height: 73vh;
-    }
-    .sms-detail-scrollable{
-        overflow:auto;
-        height: 60vh;
-        max-height:60vh;
-    }
-    .created-date-right{
-        float: right;
-        margin-right: 5px;
-    }
-    .created-date-left{
-        float: left;
-        margin-left: 5px;
-    }
-    .sms-body{
-        padding: 20px;
-        background-color: #E2F3FD;
-        margin:10px;
-        d-webkit-border-radius: 10px;
-        -moz-border-radius: 10px;
-        border-radius: 10px;
-    }
-    .sms-body-left{
-        background-color:#ffebee!important;
-    }
-    .sms-body-triangle{
-        width: 0;
-        height: 0;
-        border-top: 8px solid transparent;
-        border-bottom: 8px solid transparent;
-        margin-top: 40px;
+}
 
-    }
-    .right-arrow{
-        border-left: 8px solid  #E2F3FD;
-        margin-left: -10px;
-        margin-right: -20px;
-    }
-    .left-arrow{
-        border-right: 8px solid  #ffebee;
-        margin-right: -10px;
-        margin-left: -20px;
-    }
-    .send-button{
-        width: 10vw;
-        right: 0;
-        float: right;
-    }
-    .message-area{
-        margin-top: 2vh;
-    }
-    .sms-total{
-        position: absolute;
-        right: 1vw;
-        background-color: #F2622D;
-        text-align: center;
-        border-radius: 50%;
-        vertical-align: middle;
-        color: whitesmoke;
-        width: 1.5em;
-        height: 1.5em;
-    }
-    .sms-owner{
-        font-weight: 500;
-    }
+.sms-scrollable {
+    overflow: auto;
+    max-height: 73vh;
+}
+
+.sms-detail-scrollable {
+    overflow: auto;
+    height: 60vh;
+    max-height: 60vh;
+}
+
+.created-date-right {
+    float: right;
+    margin-right: 5px;
+}
+
+.created-date-left {
+    float: left;
+    margin-left: 5px;
+}
+
+.sms-body {
+    padding: 20px;
+    background-color: #E2F3FD;
+    margin: 10px;
+    d-webkit-border-radius: 10px;
+    -moz-border-radius: 10px;
+    border-radius: 10px;
+}
+
+.sms-body-left {
+    background-color: #ffebee !important;
+}
+
+.sms-body-triangle {
+    width: 0;
+    height: 0;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    margin-top: 40px;
+
+}
+
+.right-arrow {
+    border-left: 8px solid #E2F3FD;
+    margin-left: -10px;
+    margin-right: -20px;
+}
+
+.left-arrow {
+    border-right: 8px solid #ffebee;
+    margin-right: -10px;
+    margin-left: -20px;
+}
+
+.send-button {
+    width: 10vw;
+    right: 0;
+    float: right;
+}
+
+.message-area {
+    margin-top: 2vh;
+}
+
+.sms-total {
+    position: absolute;
+    right: 1vw;
+    background-color: #F2622D;
+    text-align: center;
+    border-radius: 50%;
+    vertical-align: middle;
+    color: whitesmoke;
+    width: 1.5em;
+    height: 1.5em;
+}
+
+.sms-owner {
+    font-weight: 500;
+}
 
 
 </style>
