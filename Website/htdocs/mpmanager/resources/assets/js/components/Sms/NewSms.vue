@@ -4,10 +4,10 @@
             <md-card class="md-size-80">
                 <md-card-header>
                     <md-list class="mobile-tabs">
-                        <md-list-item @click="tab='person'">{{$tc('words.people')}}</md-list-item>
-                        <md-list-item @click="tab='group'">{{$tc('phrases.connectionGroup')}}</md-list-item>
-                        <md-list-item @click="tab='type'">{{$tc('phrases.connectionType')}}</md-list-item>
-                        <md-list-item @click="tab='all'">{{$tc('phrases.wholeVillage')}}</md-list-item>
+                        <md-list-item @click="tab='person'">{{ $tc('words.people') }}</md-list-item>
+                        <md-list-item @click="tab='group'">{{ $tc('phrases.connectionGroup') }}</md-list-item>
+                        <md-list-item @click="tab='type'">{{ $tc('phrases.connectionType') }}</md-list-item>
+                        <md-list-item @click="tab='all'">{{ $tc('phrases.wholeVillage') }}</md-list-item>
                     </md-list>
                     <md-tabs class="tabs">
                         <md-tab
@@ -224,6 +224,7 @@ export default {
                     } catch (exception) {
                         this.alertNotify('error', 'SMS service failed with following error' + exception.message)
                     }
+                this.message = ''
             })
         },
 
