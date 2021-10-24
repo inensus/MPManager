@@ -1,13 +1,11 @@
 import Repository from '../repositories/RepositoryFactory'
-import {ErrorHandler} from '../Helpers/ErrorHander'
-import {Paginator} from '../classes/paginator'
-import {resources} from '../resources'
-import {EventBus} from '../shared/eventbus'
-import {SmsAutoComplete} from '../entities/SmsAutoComplete'
-
+import { ErrorHandler } from '../Helpers/ErrorHander'
+import { Paginator } from '../classes/paginator'
+import { resources } from '../resources'
+import { EventBus } from '../shared/eventbus'
 
 export class SmsService {
-    constructor() {
+    constructor () {
         this.repository = Repository.get('sms')
         this.connectionGroupRepository = Repository.get('connectionGroups')
         this.connectionTypeRepository = Repository.get('connectionTypes')
@@ -28,17 +26,17 @@ export class SmsService {
 
     }
 
-    search(term) {
+    search (term) {
         this.paginator = new Paginator(resources.sms.search)
-        EventBus.$emit('loadPage', this.paginator, {'term': term})
+        EventBus.$emit('loadPage', this.paginator, { 'term': term })
     }
 
-    showAll() {
+    showAll () {
         this.paginator = new Paginator(resources.sms.list)
         EventBus.$emit('loadPage', this.paginator)
     }
 
-    updateList(smsList) {
+    updateList (smsList) {
         this.numberList = smsList.map(sms => {
             let smsObj = {
                 id: sms.id,
@@ -59,7 +57,7 @@ export class SmsService {
         return this.numberList
     }
 
-    searchSms(text) {
+    searchSms (text) {
 
         if (text.length === 0) {
             return this.numberList
@@ -71,7 +69,7 @@ export class SmsService {
         })
     }
 
-    addReceiver(receiverToAdd) {
+    addReceiver (receiverToAdd) {
         const searchForReeciver = this.receiverList.filter(function (receiver) {
             return (receiverToAdd.stored && receiver.id === receiverToAdd.id) || (!receiverToAdd.stored && receiver.phone === receiverToAdd.phone)
         })
@@ -81,17 +79,17 @@ export class SmsService {
         }
     }
 
-    addConnectionGroupReceiver(receiverToAdd) {
+    addConnectionGroupReceiver (receiverToAdd) {
         this.receiverList = [receiverToAdd]
     }
 
-    removeReceiver(receiverToRemove) {
+    removeReceiver (receiverToRemove) {
         this.receiverList = this.receiverList.filter(function (receiver) {
             return receiverToRemove.display !== receiver.display
         })
     }
 
-    async getList(personId) {
+    async getList (personId) {
         try {
             let response = await this.repository.list('list', personId)
             if (response.status === 200) {
@@ -108,7 +106,7 @@ export class SmsService {
 
     }
 
-    async getDetail(phone) {
+    async getDetail (phone) {
         try {
             let response = await this.repository.detail(phone)
             if (response.status === 200) {
@@ -122,7 +120,7 @@ export class SmsService {
         }
     }
 
-    async sendMaintenanceSms(maintenanceData) {
+    async sendMaintenanceSms (maintenanceData) {
         try {
             let sendSmsPM = {
                 'person_id': maintenanceData.assigned,
@@ -144,7 +142,7 @@ export class SmsService {
         }
     }
 
-    async sendToNumber(type, message, phone, senderId) {
+    async sendToNumber (type, message, phone, senderId) {
         let sendSmsPM = {
             'type': type,
             'message': message,
@@ -163,7 +161,7 @@ export class SmsService {
         }
     }
 
-    async sendToPerson(message, personId, senderId) {
+    async sendToPerson (message, personId, senderId) {
         let sendSmsPM = {
             'message': message,
             'person_id': personId,
@@ -181,10 +179,10 @@ export class SmsService {
         }
     }
 
-    async sendBulk(type, message, senderId, miniGrid) {
+    async sendBulk (type, message, senderId, miniGrid) {
         let receivers
         if (type === 'person') {
-            receivers = this.receiverList.map(function (receiver) {
+            receivers = this.receiverList.filter(receiver => receiver.phone != null).map(function (receiver) {
                 return receiver.phone
             })
         } else if (type === 'group' || type === 'type') {
@@ -211,9 +209,9 @@ export class SmsService {
         }
     }
 
-    async connectionGroupList() {
+    async connectionGroupList () {
         try {
-            const {data, status} = await this.connectionGroupRepository.list()
+            const { data, status } = await this.connectionGroupRepository.list()
             return status === 200 ?
                 this.fetchGroupsSearchResult(data.data) :
                 new ErrorHandler('Get connection groups ended with ' + status, 'http', status)
@@ -222,9 +220,9 @@ export class SmsService {
         }
     }
 
-    async connectionTypeList() {
+    async connectionTypeList () {
         try {
-            const {data, status} = await this.connectionTypeRepository.list()
+            const { data, status } = await this.connectionTypeRepository.list()
             return status === 200 ?
                 this.fetchGroupsSearchResult(data.data) :
                 new ErrorHandler('Get connection groups ended with ' + status, 'http', status)
@@ -233,28 +231,27 @@ export class SmsService {
         }
     }
 
-    async searchPerson(term) {
+    async searchPerson (term) {
         try {
-            const {data, status} = await this.repository.search(term)
+            const { data, status } = await this.repository.search(term)
             return status === 200 ?
-                this.fetchSearchResult(data.data, term) : new ErrorHandler('Sms resulted with status code ' + status, 'http', status)
+                this.fetchSearchResult(data.data) : new ErrorHandler('Sms resulted with status code ' + status, 'http', status)
         } catch (e) {
             return new ErrorHandler(e, 'http')
         }
     }
 
-    fetchSearchResult(searchedList, term) {
+    fetchSearchResult (searchedList) {
         this.resultList = searchedList.map(function (person) {
-            return new SmsAutoComplete(person.id, true, person.phone, person.display)
-
+            return {
+                id: person.id,
+                phone: person.phone,
+                display: person.display
+            }
         })
-        // fallback for an unstored number
-        this.resultList.push(
-            new SmsAutoComplete(-1, false, term, `Use ${term}`)
-        )
     }
 
-    fetchGroupsSearchResult(searchedList) {
+    fetchGroupsSearchResult (searchedList) {
         this.resultList = searchedList.map(function (connectionGroups) {
             return {
                 id: connectionGroups.id,
@@ -263,7 +260,7 @@ export class SmsService {
         })
     }
 
-    resetLists() {
+    resetLists () {
         this.resultList = []
         this.receiverList = []
     }

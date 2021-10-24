@@ -16,45 +16,81 @@
                     <md-table-head v-for="(item, index) in headers" :key="index">{{ item }}</md-table-head>
                 </md-table-row>
 
-                <md-table-row v-for="(asset_type,index) in assetService.list" style="cursor:pointer;" :key="index">
+                <md-table-row v-for="(asset,index) in assetService.list" :key="index">
 
-                    <md-table-cell> {{ asset_type.id }}
+                    <md-table-cell> {{ asset.id }}
                     </md-table-cell>
 
                     <md-table-cell>
-                        <div class="md-layout" v-if="!asset_type.edit">
-                            {{ asset_type.name }}&nbsp;&nbsp;
-                        </div>
-                        <div class="md-layout-item" v-else>
-                            <md-field>
-                                <md-input type="text" v-model="asset_type.name"></md-input>
+                        <div class="md-layout" v-if="updateAppliance === index">
+                            <md-field :class="{'md-invalid': errors.has('Appliance Name')}">
+                                <label for="applianceName"></label>
+                                <md-input
+                                    name="Appliance Name"
+                                    type="text"
+                                    v-model="asset.name"
+                                    v-validate="'required|min:5'"
+                                ></md-input>
+                                <span class="md-error">{{ errors.first('Appliance Name') }}</span>
                             </md-field>
                         </div>
+                        <div class="md-layout-item" v-else>
+                            {{ asset.name }}&nbsp;
+                        </div>
                     </md-table-cell>
 
                     <md-table-cell>
-                        {{ asset_type.price }} {{ $store.getters['settings/getMainSettings'].currency }}
+                        <div class="md-layout">
+                            <div class="md-layout-item" v-if="updateAppliance === index">
+                                <md-field :class="{'md-invalid': errors.has('Appliance Price')}">
+                                    <label for="price">Price</label>
+                                    <span class="md-prefix">{{ currency }}</span>
+                                    <md-input
+                                        name="Appliance Price"
+                                        type="number"
+                                        v-model="asset.price"
+                                        v-validate="'required|numeric|min_value:1'"
+                                    ></md-input>
+                                    <span class="md-error">{{ errors.first('Appliance Price') }}</span>
+                                </md-field>
+
+                            </div>
+                            <div class="md-layout-item" v-else>
+                                {{ asset.price }} {{ currency }}
+                            </div>
+                        </div>
                     </md-table-cell>
 
-                    <md-table-cell class="hidden-xs">{{ asset_type.updated_at }}</md-table-cell>
+                    <md-table-cell>{{ asset.updated_at }}</md-table-cell>
                     <md-table-cell>
-                        <div class="md-layout-item" style="display: inline-block; cursor: pointer; color: #2b542c"
-                             v-if="asset_type.edit"
-                             @click="updateAssetType(asset_type)">
-                            <md-icon>save</md-icon>
-                            {{ $tc('words.save') }}
+                        <div class="md-layout md-gutter" style="cursor: pointer;" v-if="updateAppliance === index">
+                            <md-button class="md-primary md-dense"
+                                 @click="updateAssetType(asset)">
+                                <md-icon class="md-primary">save</md-icon>
+                                <span class="md-primary">{{ $tc('words.save') }}</span>
+                            </md-button>
+                            <md-button class="md-accent md-dense"
+                                 @click="closeApplianceUpdate">
+                                <md-icon class="md-accent">close</md-icon>
+                                <span class="md-accent">{{ $tc('words.close') }}</span>
+                            </md-button>
                         </div>
-                        <div class="md-layout-item" v-else :disabled="loading"
-                             style="display: inline-block; cursor: pointer; color:#ac2925; float:right"
-                             @click="deleteAssetType(asset_type)">
-                            <md-icon>delete</md-icon>
-                            {{ $tc('words.delete') }}
+                        <div class="md-layout md-gutter" style="cursor: pointer;" v-else>
+                            <md-button class="md-primary md-dense" @click="openApplianceUpdate(index)">
+                                <md-icon>edit</md-icon>
+                                {{ $tc('words.edit') }}
+                            </md-button>
+                            <md-button class="md-primary md-accent" :disabled="loading"
+                                 @click="deleteAssetType(asset)">
+                                <md-icon class="md-accent">delete</md-icon>
+                                {{ $tc('words.delete') }}
+                            </md-button>
                         </div>
+                        <md-progress-bar md-mode="indeterminate" v-if="loading"/>
                     </md-table-cell>
 
                 </md-table-row>
 
-                <md-progress-bar md-mode="indeterminate" v-if="loading"/>
             </md-table>
         </widget>
     </div>
@@ -77,9 +113,11 @@ export default {
             subscriber: 'asset-list',
             assetService: new AssetService(),
             assetTypes: [],
-            headers: [this.$tc('words.id'), this.$tc('words.name'), this.$tc('words.price'), this.$tc('phrases.lastUpdate'), '#'],
+            headers: [this.$tc('words.id'), this.$tc('words.name'), this.$tc('words.price'), this.$tc('phrases.lastUpdate'), ''],
             resetKey: 0,
             loading: false,
+            updateAppliance: null,
+            currency: this.$store.getters['settings/getMainSettings'].currency
         }
     },
     mounted () {
@@ -117,15 +155,33 @@ export default {
             this.assetService.list.push(asset_t)
         },
 
-        async updateAssetType (asset_type) {
-            asset_type.edit = false
-            try {
-                await this.assetService.updateAsset(asset_type)
-                this.alertNotify('success', this.$tc('phrases.deleteAssetType',3))
-                this.resetKey++
-            } catch (e) {
-                this.alertNotify('error', e.message)
+        async updateAssetType (asset) {
+            let validator = await this.$validator.validateAll()
+            if (!validator) {
+                return
             }
+            this.loading = true
+            this.$swal({
+                type: 'question',
+                title: 'Update Appliance Type',
+                text: 'Are you sure to update the asset type ?',
+                showCancelButton: true,
+                cancelButtonText: this.$tc('words.cancel'),
+                confirmButtonText: this.$tc('words.update')
+            }).then(async response => {
+                if(response.value){
+                    this.updateAppliance = false
+                    try {
+                        await this.assetService.updateAsset(asset)
+                        this.alertNotify('success', 'Appliance Type Updated Successfully.')
+                        this.resetKey++
+                    } catch (e) {
+                        this.alertNotify('error', e.message)
+                    }
+                }
+            })
+            this.loading = false
+
         },
 
         async deleteAssetType (asset_type) {
@@ -137,7 +193,7 @@ export default {
                 cancelButtonText: this.$tc('words.cancel'),
                 confirmButtonText: this.$tc('words.delete')
             }).then(async response => {
-                if(response){
+                if(response.value){
                     try {
                         this.loading = true
                         await this.assetService.deleteAsset(asset_type)
@@ -152,6 +208,16 @@ export default {
 
             })
 
+        },
+        openApplianceUpdate (index) {
+            if (this.updateAppliance === index) {
+                this.updateAppliance = null
+            } else {
+                this.updateAppliance = index
+            }
+        },
+        closeApplianceUpdate(){
+            this.updateAppliance = null
         },
         closeAddComponent (data) {
             this.addNewAssetType = data

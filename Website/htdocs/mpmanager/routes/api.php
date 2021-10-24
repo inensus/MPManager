@@ -90,7 +90,7 @@ Route::group(['prefix' => 'batteries'], static function () {
 });
 // Clusters
 Route::group(['prefix' => '/clusters', 'middleware' => 'jwt.verify'], static function () {
-    Route::post('/{id}/revenue/analysis', 'RevenueController@getRevenueAnalysisForCluster');
+    Route::get('/{id}/revenue/analysis', 'RevenueController@getRevenueAnalysisForCluster');
     Route::get('/', 'ClusterController@index');
     Route::get('/revenue', 'RevenueController@getPeriodicClustersRevenue');
     Route::get('/{id}/revenue', 'RevenueController@getClusterRevenue');
@@ -98,6 +98,12 @@ Route::group(['prefix' => '/clusters', 'middleware' => 'jwt.verify'], static fun
     Route::get('/{id}', 'ClusterController@show');
     Route::get('/{id}/geo', 'ClusterController@showGeo');
     Route::get('/{id}/cities-revenue', 'RevenueController@getPeriodicMiniGridsRevenue');
+});
+// Dashboard data from cache
+Route::group(['prefix' => '/dashboard', 'middleware' => 'jwt.verify'], static function () {
+    Route::get('/clusters', 'ClustersDashboardCacheDataController@index');
+    Route::put('/clusters', 'ClustersDashboardCacheDataController@update');
+    Route::get('/clusters/{clusterId}', 'ClustersDashboardCacheDataController@show');
 });
 // Connection-Groups
 Route::group(['prefix' => 'connection-groups', 'middleware' => 'jwt.verify'], static function () {

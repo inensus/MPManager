@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 
 class UserService implements IUserService
@@ -91,5 +92,18 @@ class UserService implements IUserService
     {
         return User::with(['addressDetails'])
             ->where('id', $id)->firstOrFail();
+    }
+
+    public function resetAdminPassword()
+    {
+        $firstUser = User::query()->get()->first();
+        $randomPassword = str_random(8);
+        $firstUser->update(['password' => $randomPassword]) ;
+        $firstUser->save();
+
+        $admin['email'] = $firstUser->email;
+        $admin['password'] = $randomPassword;
+
+        return $admin;
     }
 }

@@ -13,7 +13,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        $this->call(UserSeeder::class);
         $this->call(ConnectionTypeSeeder::class);
         $this->call(ManufacturerSeeder::class);
         $this->call(SubConnectionTypeSeeder::class);
@@ -27,5 +26,6 @@ class DatabaseSeeder extends Seeder
         $this->call(SmsResendInformationKeySeeder::class);
         $this->call(SmsVariableDefaultValuesSeeder::class);
         $this->call(MailSettingsSeeder::class);
+        $this->call(UserSeeder::class);
     }
 }

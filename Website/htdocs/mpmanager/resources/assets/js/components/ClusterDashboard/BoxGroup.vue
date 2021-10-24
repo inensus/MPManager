@@ -16,11 +16,9 @@
         </div>
         <div class="md-layout-item md-medium-size-50 md-xsmall-size-100 md-size-25 small-size-style">
             <box
-                v-if="'population' in clusterData"
-
                 :center-text="true"
                 :color="[ '#ffa726','#fb8c00']"
-                :sub-text="clusterData['population'].toString()"
+                :sub-text="cluster.population.toString()"
                 :header-text-color="'#dddddd'"
                 :header-text="$tc('words.people')"
                 :sub-text-color="'#e3e3e3'"
@@ -31,11 +29,9 @@
         </div>
         <div class="md-layout-item md-medium-size-50 md-xsmall-size-100 md-size-25 small-size-style">
             <box
-                v-if="'meterCount' in clusterData"
-
                 :center-text="true"
                 :color="[ '#ef5350','#e53935']"
-                :sub-text="clusterData['meterCount'].toString()"
+                :sub-text="cluster.meterCount.toString()"
                 :header-text-color="'#dddddd'"
                 :header-text="$tc('phrases.connectedMeters')"
                 :sub-text-color="'#e3e3e3'"
@@ -45,10 +41,10 @@
         </div>
         <div class="md-layout-item md-medium-size-50 md-xsmall-size-100 md-size-25 small-size-style">
             <box
-                v-if=" 'revenue' in clusterData"
+                v-if="cluster.revenue.toString()"
                 :center-text="true"
                 :color="[ '#6eaa44','#578839']"
-                :sub-text="readable(clusterData['revenue']) + $store.getters['settings/getMainSettings'].currency"
+                :sub-text="readable(cluster.revenue) + $store.getters['settings/getMainSettings'].currency"
                 :header-text-color="'#dddddd'"
                 :header-text="$tc('words.revenue') +' ('+ $tc('phrases.lastXDays',1,{x: 30})+ ')' "
                 :sub-text-color="'#e3e3e3'"
@@ -63,7 +59,6 @@
 <script>
 import Box from '../Box'
 import { currency } from '../../mixins/currency'
-import { ClusterService } from '../../services/ClusterService'
 
 export default {
     name: 'BoxGroup',
@@ -76,62 +71,18 @@ export default {
         },
 
     },
-    mounted () {
-        this.getClusterData()
-    },
     data: () => ({
         boxData: [],
-        clusterService: new ClusterService(),
-        clusterData: [],
-    }),
-    methods: {
-        async getClusterData () {
-            this.clusterData = await this.clusterService.getClusterRevenues(this.cluster.id, 'monthly')
-
-        },
-    },
-    computed: {
-        population () {
-            return 0
-            /*let population = 0
-            for (let c in this.clusters) {
-                for (let city in this.clusters[c].cities) {
-                    population += this.clusters[c].cities[city].population
-                }
-            }
-            return population*/
-        },
-        connections() {
-            let connections = 0
-            return connections
-            /*for (let c in this.clusters) {
-                for (let city in this.clusters[c].cities) {
-                    connections += this.clusters[c].cities[city].metersCount
-                }
-            }
-            return connections*/
-        },
-        revenue() {
-            let revenue = 0
-            return revenue
-            /*for (let c in this.clusters) {
-                for (let city in this.clusters[c].cities) {
-                    revenue += this.clusters[c].cities[city].revenue
-                }
-            }
-            return revenue*/
-        },
-    },
-
+    })
 }
 </script>
 
 <style>
-    @media screen and (max-width: 1280px) {
-        .small-size-style{
-            margin-bottom: 1rem !important;
-            min-height: unset;
-        }
+@media screen and (max-width: 1280px) {
+    .small-size-style {
+        margin-bottom: 1rem !important;
+        min-height: unset;
     }
+}
 
 </style>

@@ -137,11 +137,14 @@ import { ClusterService } from '../../services/ClusterService'
 
 export default {
     name: 'FinancialOverview',
-    components: {  Widget },
+    components: { Widget },
     props: {
         clusterId: {
             type: String,
             default: '1'
+        },
+        financialData: {
+            required: true
         }
     },
     data () {
@@ -158,7 +161,6 @@ export default {
             },
             setPeriod: false,
             clicks: 0, //to detect a double click on a chart
-            financialData: null,
             chartOptions: {
                 chart: {
                     title: 'Customer Payment Flow',
@@ -182,19 +184,19 @@ export default {
             },
             disabled: {
                 customPredictor:
-                        function (date) {
-                            let today = new Date()
-                            let minDate = new Date('2018-01-01')
-                            // disables the date if it is a multiple of 5
-                            if (date > today || date < minDate) {
-                                return true
-                            }
+                    function (date) {
+                        let today = new Date()
+                        let minDate = new Date('2018-01-01')
+                        // disables the date if it is a multiple of 5
+                        if (date > today || date < minDate) {
+                            return true
                         }
+                    }
             },
         }
     },
     mounted () {
-        this.getClusterFinancialData()
+        this.clusterService.financialData = this.financialData
     },
     methods: {
         showPeriod () {
@@ -206,12 +208,10 @@ export default {
                 let from = this.period.from !== null ? moment(this.period.from).format('YYYY-MM-DD') : null
                 let to = this.period.to !== null ? moment(this.period.to).format('YYYY-MM-DD') : null
 
-
                 this.financialData = await this.clusterService.getClusterCitiesRevenue(this.clusterId, 'monthly',
                     from, to)
 
                 this.loading = false
-
 
                 if (from !== null) {
 
@@ -228,7 +228,7 @@ export default {
         financialDataChart (type, summary = false) {
             let data = []
             if (type === 'column') {
-                return this.clusterService.columnChartData(summary,type = 'miniGrid')
+                return this.clusterService.columnChartData(summary, type = 'miniGrid')
             } else if (type === 'line') {
                 return this.clusterService.lineChartData(summary)
             }
@@ -273,27 +273,27 @@ export default {
 </script>
 
 <style lang="scss">
-    .datepicker-right .vdp-datepicker__calendar {
-        right: 0;
-    }
+.datepicker-right .vdp-datepicker__calendar {
+    right: 0;
+}
 
-    .period-selector {
-        position: absolute;
-        top: 0;
-        right: 0;
-        z-index: 9999;
-        padding: 15px;
-        background-color: white;
-        border: 1px solid #ccc;
-    }
+.period-selector {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 9999;
+    padding: 15px;
+    background-color: white;
+    border: 1px solid #ccc;
+}
 
-    .md-datepicker-dialog {
-        z-index: 1000 !important;
-    }
+.md-datepicker-dialog {
+    z-index: 1000 !important;
+}
 
-    .chart-card {
-        margin-bottom: 1vh;
-    }
+.chart-card {
+    margin-bottom: 1vh;
+}
 
 
 </style>

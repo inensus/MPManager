@@ -38,7 +38,7 @@ abstract class SmsSender
             );
             return;
         }
-        if (!($this->data instanceof Transaction) && !($this->data instanceof AssetRate)) {
+        if (($this->data instanceof Transaction) || ($this->data instanceof AssetRate)) {
             $nullSmsBodies = $this->smsBodyService->getNullBodies();
             if (count($nullSmsBodies)) {
                 Log::critical('Send sms rejected, some of sms bodies are null', ['Sms Bodies' => $nullSmsBodies]);
