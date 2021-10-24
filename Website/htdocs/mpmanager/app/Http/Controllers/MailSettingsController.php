@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use AdvancedJsonRpc\Request;
 use App\Http\Requests\MailSettingsRequest;
 use App\Http\Resources\ApiResource;
 use App\Models\MailSettings;
 use App\Services\MailSettingsService;
-use Illuminate\Http\Resources\Json\JsonResource;
 
 class MailSettingsController extends Controller
 {
@@ -20,8 +18,8 @@ class MailSettingsController extends Controller
 
     public function __construct(
         MailSettings $mailSettings,
-        MailSettingsService $mailSettingsService)
-    {
+        MailSettingsService $mailSettingsService
+    ) {
         $this->mailSettings = $mailSettings;
         $this->mailSettingsService = $mailSettingsService;
     }
@@ -34,7 +32,6 @@ class MailSettingsController extends Controller
     public function update(MailSettingsRequest $request, MailSettings $mailSettings): ApiResource
     {
         return new ApiResource($this->mailSettingsService->update($request, $mailSettings));
-
     }
 
     public function store(MailSettingsRequest $request): ApiResource

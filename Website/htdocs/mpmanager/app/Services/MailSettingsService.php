@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Services;
-
 
 use App\Models\MailSettings;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -50,5 +48,4 @@ class MailSettingsService
 
         return $mailSettings->first();
     }
-
 }
