@@ -58,6 +58,7 @@ import TargetRepository from './TargetRepository'
 import MeterDetailRepository from './MeterDetailRepository'
 import UserPasswordRepository from './UserPasswordRepository'
 import AppliancePaymentRepository from './AppliancePaymentRepository'
+import MailSettingsRepository from './MailSettingsRepository'
 import ClustersDashboardCacheDataRepository from './ClustersDashboardCacheDataRepository'
 
 const repositories = {
@@ -121,6 +122,7 @@ const repositories = {
     'meterDetail': MeterDetailRepository,
     'userPassword': UserPasswordRepository,
     'appliancePayment': AppliancePaymentRepository,
+    'mailSettings': MailSettingsRepository,
     'clustersDashboardCacheData': ClustersDashboardCacheDataRepository
 }
 
