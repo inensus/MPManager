@@ -179,4 +179,23 @@ class PersonService
 
         return $this->person;
     }
+
+    public function livingInCluster(int $clusterId)
+    {
+        return $this->person->livingInClusterQuery($clusterId);
+    }
+
+    public function getBulkDetails(array $peopleId): Builder
+    {
+        return $this->person::with(
+            [
+                'addresses' => fn ($q) => $q->where('is_primary','=',1),
+                'addresses.city',
+                'citizenship',
+                'roleOwner.definitions',
+                'meters.meter',
+                'meters.tariff',
+            ]
+        )->whereIn('id', $peopleId);
+    }
 }
