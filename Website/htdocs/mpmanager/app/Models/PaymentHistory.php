@@ -110,14 +110,17 @@ class PaymentHistory extends BaseModel
         return $sth->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function findCustomersPaidInRange(array $customerIds,CarbonImmutable $startDate, CarbonImmutable $endDate): Collection
-    {
-        return  Db::table($this->getTable())
+    public function findCustomersPaidInRange(
+        array $customerIds,
+        CarbonImmutable $startDate,
+        CarbonImmutable $endDate
+    ): Collection {
+        return Db::table($this->getTable())
             ->select('payer_id as customer_id')
-            ->whereDate('created_at' , '>=' ,$startDate)
-            ->whereDate('created_at' , '<=', $endDate)
+            ->whereDate('created_at', '>=', $startDate)
+            ->whereDate('created_at', '<=', $endDate)
             ->whereIn('payer_id', $customerIds)
-            ->where('payer_type' , '=','person')
+            ->where('payer_type', '=', 'person')
             ->groupBy('payer_id')
             ->get();
     }

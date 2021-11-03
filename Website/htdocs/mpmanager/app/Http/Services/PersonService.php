@@ -189,7 +189,7 @@ class PersonService
     {
         return $this->person::with(
             [
-                'addresses' => fn ($q) => $q->where('is_primary','=',1),
+                'addresses' => fn ($q) => $q->where('is_primary', '=', 1),
                 'addresses.city',
                 'citizenship',
                 'roleOwner.definitions',

@@ -22,7 +22,7 @@ class PaymentHistoryService
         CarbonImmutable $startDate,
         CarbonImmutable $endDate
     ) {
-        return $this->paymentHistory->findCustomersPaidInRange($customerIds,$startDate, $endDate);
+        return $this->paymentHistory->findCustomersPaidInRange($customerIds, $startDate, $endDate);
     }
 
     public function findCustomerLastPayment(int $customerId): PaymentHistory
@@ -32,6 +32,4 @@ class PaymentHistoryService
             ->latest('created_at')
             ->first();
     }
-
-
 }

@@ -13,7 +13,6 @@ use Carbon\CarbonImmutable;
 use Illuminate\Console\Command;
 use Illuminate\Support\Collection;
 
-
 class SendNonPayingCustomerMailCommand extends Command
 {
     private const EMAIL_TEMPLATE = 'templates.mail.non_paying_mail';
@@ -30,7 +29,8 @@ class SendNonPayingCustomerMailCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Creates a report that includes a list of customers that didnt buy anything in the given period';
+    protected $description = 'Creates a report that includes a list of customers
+     that didnt buy anything in the given period';
 
     private PaymentHistoryService $paymentHistoryService;
     private ClusterService $clusterService;
@@ -108,15 +108,16 @@ class SendNonPayingCustomerMailCommand extends Command
 
             //send mail
             $mailService->sendWithAttachment(
-                self::EMAIL_TEMPLATE, [
+                self::EMAIL_TEMPLATE,
+                [
                     'manager' => $cluster->manager,
                     'cluster_name' => $cluster->name,
-                    'period' =>  $startDate->format('d-m') . ' & '.$endDate->format('d-m-Y')
-            ],
+                    'period' => $startDate->format('d-m') . ' & ' . $endDate->format('d-m-Y')
+                ],
                 [
                     'to' => $cluster->manager->email,
                     'from' => 'alchalade@gmail.com',
-                    'title' => 'Monthly payment report for '.$cluster->name,
+                    'title' => 'Monthly payment report for ' . $cluster->name,
                 ],
                 [$generatedPdfs[$cluster->name]]
             );

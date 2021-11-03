@@ -112,21 +112,21 @@ class Person extends BaseModel implements HasAddressesInterface, RoleInterface
         return sprintf('%s %s', $this->name, $this->surname);
     }
 
-    public function livingInClusterQuery( int $clusterId)
+    public function livingInClusterQuery(int $clusterId)
     {
         return DB::table($this->getTable())
             ->select('people.id')
-            ->leftJoin('addresses', function(JoinClause $q) {
+            ->leftJoin('addresses', function (JoinClause $q) {
                 $q->on('addresses.owner_id', '=', 'people.id');
                 $q->where('addresses.owner_type', 'person');
                 $q->where('addresses.is_primary', '=', 1);
             })
-            ->leftJoin('cities', function(JoinClause $jc) {
+            ->leftJoin('cities', function (JoinClause $jc) {
                 $jc->on('cities.id', '=', 'addresses.city_id');
             })
-            ->leftJoin('clusters', function(JoinClause $jc) {
-                $jc->on('clusters.id',  '=', 'cities.cluster_id');
-            })->where('clusters.id','=', $clusterId)
+            ->leftJoin('clusters', function (JoinClause $jc) {
+                $jc->on('clusters.id', '=', 'cities.cluster_id');
+            })->where('clusters.id', '=', $clusterId)
             ->orderBy('people.id')
             ->orderBy('cities.id');
     }
