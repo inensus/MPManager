@@ -31,6 +31,7 @@ class ClusterService
     private $revenueService;
 
     private $clusterRevenueService;
+    private Cluster $cluster;
 
     /**
      * ClusterService constructor.
@@ -45,7 +46,8 @@ class ClusterService
         CityService $cityService,
         PeriodService $periodService,
         RevenueService $revenueService,
-        ClusterRevenueService $clusterRevenueService
+        ClusterRevenueService $clusterRevenueService,
+        Cluster $cluster
     ) {
         $this->meterService = $meterService;
         $this->cityService = $cityService;
@@ -53,6 +55,7 @@ class ClusterService
         $this->periodService = $periodService;
         $this->revenueService = $revenueService;
         $this->clusterRevenueService = $clusterRevenueService;
+        $this->cluster = $cluster;
     }
 
     /**
@@ -133,5 +136,12 @@ class ClusterService
     {
         $cluster = Cluster::select('geo_data')->find($clusterId);
         return $cluster->geo_data;
+    }
+
+    public function findManagerId(int $clusterId): ?int
+    {
+        return  $this->cluster->where('id', $clusterId)
+            ->select('managerId')
+            ->first();
     }
 }

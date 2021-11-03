@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use App\Models\Transaction\Transaction;
+use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use PDO;
 
@@ -106,5 +108,20 @@ class PaymentHistory extends BaseModel
         $sth->bindValue(':payer_type', $payer_type, PDO::PARAM_STR);
         $sth->execute();
         return $sth->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function findCustomersPaidInRange(
+        array $customerIds,
+        CarbonImmutable $startDate,
+        CarbonImmutable $endDate
+    ): Collection {
+        return Db::table($this->getTable())
+            ->select('payer_id as customer_id')
+            ->whereDate('created_at', '>=', $startDate)
+            ->whereDate('created_at', '<=', $endDate)
+            ->whereIn('payer_id', $customerIds)
+            ->where('payer_type', '=', 'person')
+            ->groupBy('payer_id')
+            ->get();
     }
 }
