@@ -46,4 +46,5 @@ class City extends BaseModel
     {
         return $this->morphOne(GeographicalInformation::class, 'owner');
     }
+
 }
