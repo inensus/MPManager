@@ -46,6 +46,9 @@ class BelongsToMorph extends BelongsTo
      * @param  array|mixed $columns
      * @return Builder
      */
+    /**
+     * @deprecated
+     **\
     public function getRelationQuery(Builder $query, Builder $parent, $columns = ['*'])
     {
         $table = $this->getParent()->getTable();

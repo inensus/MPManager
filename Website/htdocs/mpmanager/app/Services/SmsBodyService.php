@@ -27,7 +27,7 @@ class SmsBodyService
     {
 
         $smsBodies = $this->smsBody->newQuery()->get();
-        collect($smsBodiesData)->each(function ($smsBody) use ($smsBodies) {
+        collect($smsBodiesData[0])->each(function ($smsBody) use ($smsBodies) {
             $smsBodies->filter(function ($body) use ($smsBody) {
                 return $body['id'] === $smsBody['id'];
             })->first()->update([

@@ -87,23 +87,31 @@ class EnergyController extends Controller
 
     public function show(Request $request, $miniGridId): ApiResource
     {
-        $energyReadings = $this->energy->newQuery()
+        $startDate = request()->input('start_date');
+        $endDate = request()->input('end_date');
+        $limit = request()->input('per_page');
+        $withWeather = request()->input('weather');
+
+        $query = $this->energy->newQuery()
             ->where('mini_grid_id', $miniGridId);
 
-        if ($startDate = $request->input('start_date')) {
-            $energyReadings->where(
-                'read_out',
-                '>=',
-                Carbon::createFromTimestamp($startDate)->format('Y-m-d H:i:s')
-            );
+        if ($startDate) {
+            $query->where('created_at', '>=', $startDate);
         }
-        if ($endDate = $request->input('end_date')) {
-            $energyReadings->where(
-                'read_out',
-                '<=',
-                Carbon::createFromTimestamp($endDate)->format('Y-m-d H:i:s')
-            );
+
+        if ($endDate) {
+            $query->where('created_at', '<=', $endDate);
         }
-        return new ApiResource($energyReadings->get());
+
+        if ($withWeather)
+        {
+            $query->with('weatherData');
+        }
+
+        if ($limit) {
+            $query->take($limit);
+        }
+
+        return new ApiResource($query->get());
     }
 }
