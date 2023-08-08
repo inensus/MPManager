@@ -99,12 +99,16 @@ class PersonService
     public function searchPerson(string $searchTerm, mixed $paginate): LengthAwarePaginator| Collection
     {
         $peopleQuery = $this->person::query()->with('addresses.city', 'meters.meter')->whereHas(
-            'addresses', function ($q) use ($searchTerm) {
+            'addresses',
+            function ($q) use ($searchTerm) {
                 $q->where('phone', 'LIKE', '%' . $searchTerm . '%');
-            })->orWhereHas(
-            'meters.meter', function ($q) use ($searchTerm) {
+            }
+        )->orWhereHas(
+            'meters.meter',
+            function ($q) use ($searchTerm) {
                 $q->where('serial_number', 'LIKE', '%' . $searchTerm . '%');
-            })->orWhere('name', 'LIKE', '%' . $searchTerm . '%')
+            }
+        )->orWhere('name', 'LIKE', '%' . $searchTerm . '%')
             ->orWhere('surname', 'LIKE', '%' . $searchTerm . '%');
 
         if ($paginate === 1) {

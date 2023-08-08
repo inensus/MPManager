@@ -20,7 +20,6 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
  */
 class MiniGrid extends Model
 {
-
     protected $guarded = [];
 
 

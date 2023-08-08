@@ -8,8 +8,6 @@ use PDO;
 
 class Revenue extends Model
 {
-
-
     public function registeredMetersByTariff($tariffId, $startDate, $endDate, $limit = null)
     {
         //get meters which are registered in the given period

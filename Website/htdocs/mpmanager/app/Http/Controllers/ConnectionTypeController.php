@@ -8,8 +8,6 @@ use Illuminate\Http\Request;
 
 class ConnectionTypeController extends Controller
 {
-
-
     /**
      * @var ConnectionType
      */

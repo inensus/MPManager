@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class AgentAssignedApplianceService implements IAgentRelatedService
 {
-
     /**
      * @param $agentId
      * @return LengthAwarePaginator

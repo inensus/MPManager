@@ -16,7 +16,6 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
  */
 class City extends BaseModel
 {
-
     public function targets(): HasMany
     {
         return $this->hasMany(Target::class);

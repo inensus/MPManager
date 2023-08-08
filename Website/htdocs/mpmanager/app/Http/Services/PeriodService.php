@@ -14,7 +14,6 @@ use DatePeriod;
 
 class PeriodService
 {
-
     public function generatePeriodicList(string $startDate, string $endDate, string $interval, mixed $initialData): array
     {
         $result = [];

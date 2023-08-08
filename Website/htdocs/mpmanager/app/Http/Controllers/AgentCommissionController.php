@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 
 class AgentCommissionController extends Controller
 {
-
     private $agentCommissionService;
 
     public function __construct(AgentCommissionService $agentCommissionService)

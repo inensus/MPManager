@@ -14,8 +14,6 @@ use App\Models\Meter\MeterTariff;
  */
 class TariffController extends Controller
 {
-
-
     private $meterTariffService;
 
     public function __construct(MeterTariffService $meterTariffService)

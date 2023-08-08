@@ -18,7 +18,6 @@ use Illuminate\Http\Request;
  */
 class RestrictionMiddleware
 {
-
     /**
      * @var Restriction
      */

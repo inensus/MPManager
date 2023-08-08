@@ -18,7 +18,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class RolesService
 {
-
     public function __construct(private Roles $role)
     {
     }

@@ -23,7 +23,6 @@ use Illuminate\Validation\ValidationException;
  */
 class MeterController extends Controller
 {
-
     /**
      * @var Meter
      */

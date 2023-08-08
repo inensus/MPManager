@@ -18,7 +18,6 @@ use Throwable;
 
 trait RestExceptionHandler
 {
-
     /**
      * Creates a new response based on exception type
      *

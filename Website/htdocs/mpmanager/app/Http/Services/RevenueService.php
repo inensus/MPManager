@@ -18,7 +18,6 @@ class RevenueService
 {
     public function __construct(private MeterToken $meter_token, private Transaction $transaction)
     {
-
     }
 
     public function clustersRevenueByPeriod(int $clusterId, array $period, $periodType, int $connectionType = null): Collection

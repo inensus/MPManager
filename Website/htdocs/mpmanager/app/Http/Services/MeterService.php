@@ -12,7 +12,6 @@ namespace App\Http\Services;
 use App\Models\City;
 use App\Models\Meter\Meter;
 use Exception;
-
 use Illuminate\Database\Eloquent\Collection;
 
 use function count;
@@ -28,21 +27,21 @@ class MeterService
     {
         return $this->meter->newQuery()
             ->whereHas(
-            'meterParameter',
-            function ($q) use ($clusterId) {
-                $q->whereHas(
-                    'address',
-                    function ($q) use ($clusterId) {
-                        $q->whereHas(
-                            'city',
-                            function ($q) use ($clusterId) {
-                                $q->where('cluster_id', $clusterId);
-                            }
-                        );
-                    }
-                );
-            }
-        )->count();
+                'meterParameter',
+                function ($q) use ($clusterId) {
+                    $q->whereHas(
+                        'address',
+                        function ($q) use ($clusterId) {
+                            $q->whereHas(
+                                'city',
+                                function ($q) use ($clusterId) {
+                                    $q->where('cluster_id', $clusterId);
+                                }
+                            );
+                        }
+                    );
+                }
+            )->count();
     }
 
     public function getMetersInCity(City $city): City
@@ -69,24 +68,24 @@ class MeterService
     {
         return $this->meter->newQuery()
             ->whereHas(
-            'meterParameter',
-            static function ($q) use ($miniGridId) {
+                'meterParameter',
+                static function ($q) use ($miniGridId) {
                 //meter.meter_parameter
-                $q->whereHas(
-                    'address',
-                    function ($q) use ($miniGridId) {
-                        //meter.meter_parameter.address
-                        $q->whereHas(
-                            'city',
-                            function ($q) use ($miniGridId) {
-                                //meter.meter_parameter.address.city
-                                $q->where('mini_grid_id', $miniGridId);
-                            }
-                        );
-                    }
-                );
-            }
-        )->get();
+                    $q->whereHas(
+                        'address',
+                        function ($q) use ($miniGridId) {
+                            //meter.meter_parameter.address
+                            $q->whereHas(
+                                'city',
+                                function ($q) use ($miniGridId) {
+                                    //meter.meter_parameter.address.city
+                                    $q->where('mini_grid_id', $miniGridId);
+                                }
+                            );
+                        }
+                    );
+                }
+            )->get();
     }
 
     public function updateMeterGeoLocations(array $meters): array

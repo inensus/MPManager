@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class AgentSoldApplianceService implements IAgentRelatedService
 {
-
     /**
      * @return LengthAwarePaginator
      */

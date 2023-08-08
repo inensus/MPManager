@@ -13,7 +13,6 @@ use App\Models\Transaction\Transaction;
 
 class TransactionService
 {
-
     public function totalClusterTransactions(int $clusterId, array $range)
     {
         return   Transaction::query()->whereHas(

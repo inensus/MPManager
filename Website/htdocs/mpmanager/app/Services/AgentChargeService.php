@@ -8,7 +8,6 @@ use App\Models\AgentCharge;
 
 class AgentChargeService
 {
-
     public function create(Agent $agent, array $data)
     {
         $agentCharge = AgentCharge::query()->create(

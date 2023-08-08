@@ -22,7 +22,6 @@ use Illuminate\Support\Facades\Log;
  */
 class CalinMeterReader extends Command
 {
-
     /**
      * The name and signature of the command
      *

@@ -15,7 +15,8 @@ use App\Models\Person\Person;
 class CityService
 {
     public function __construct(private Person $person)
-    {}
+    {
+    }
 
     public function getClusterPopulation(int $clusterId, bool $onlyCustomers = true): int
     {
@@ -36,16 +37,16 @@ class CityService
         } else {
             $population = $this->person->newQuery()
                 ->whereHas(
-                'addresses',
-                function ($q) use ($clusterId) {
-                    $q->where('is_primary', 1)->whereHas(
-                        'city',
-                        function ($q) use ($clusterId) {
-                            $q->where('cluster_id', $clusterId);
-                        }
-                    );
-                }
-            )->count();
+                    'addresses',
+                    function ($q) use ($clusterId) {
+                        $q->where('is_primary', 1)->whereHas(
+                            'city',
+                            function ($q) use ($clusterId) {
+                                $q->where('cluster_id', $clusterId);
+                            }
+                        );
+                    }
+                )->count();
         }
 
         return $population;

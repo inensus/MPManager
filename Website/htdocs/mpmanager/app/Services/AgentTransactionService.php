@@ -10,7 +10,6 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class AgentTransactionService implements IAgentRelatedService
 {
-
     /**
      * @return LengthAwarePaginator
      */

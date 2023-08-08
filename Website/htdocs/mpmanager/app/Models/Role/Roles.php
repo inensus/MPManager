@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class Roles extends BaseModel
 {
-
     /**
      * @return belongsTo
      */
