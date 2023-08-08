@@ -11,8 +11,6 @@ use Illuminate\Http\Request;
 
 class AgentCustomerService
 {
-
-
     private $agent;
 
     public function __construct(Agent $agent)

@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class AgentBalanceHistoryService
 {
-
     public function agentBalanceHistories(int $agentId): \Illuminate\Contracts\Pagination\LengthAwarePaginator
     {
         return AgentBalanceHistory::query()

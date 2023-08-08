@@ -103,8 +103,7 @@ class EnergyController extends Controller
             $query->where('created_at', '<=', $endDate);
         }
 
-        if ($withWeather)
-        {
+        if ($withWeather) {
             $query->with('weatherData');
         }
 

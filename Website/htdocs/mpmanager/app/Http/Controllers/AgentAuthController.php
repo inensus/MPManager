@@ -14,7 +14,6 @@ use Illuminate\Http\JsonResponse;
  */
 class AgentAuthController extends Controller
 {
-
     private $agentService;
 
     /**

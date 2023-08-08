@@ -10,7 +10,6 @@ use App\Models\TimeOfUsage;
 
 class MeterTariffObserver
 {
-
     public function created(MeterTariff $tariff): void
     {
         if ($accessRate = request()->input('access_rate')) {

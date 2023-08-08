@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class SolarService implements ISolarService
 {
-
     public function create()
     {
         $solarData = request()->input('solar_reading');
@@ -77,8 +76,7 @@ class SolarService implements ISolarService
             $query->where('created_at', '<=', $endDate);
         }
 
-        if ($withWeather)
-        {
+        if ($withWeather) {
             $query->with('weatherData');
         }
 

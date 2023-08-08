@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Loan extends Model
 {
-
     //related payment histories which are made for that loan
     public function paymentHistories(): HasMany
     {

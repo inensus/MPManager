@@ -19,7 +19,6 @@ use Inensus\Ticket\Services\TicketService;
 
 class AssetRateChecker extends Command
 {
-
     protected $signature = 'asset-rate:check';
 
 

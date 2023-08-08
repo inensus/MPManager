@@ -11,7 +11,6 @@ use Illuminate\Http\Request;
 
 class AgentSoldApplianceController extends Controller
 {
-
     private $agentSoldApplianceService;
 
     public function __construct(AgentSoldApplianceService $agentSoldApplianceService)

@@ -16,14 +16,8 @@ use Illuminate\Http\Request;
 
 class AddressService
 {
-    /**
-     * @var Address
-     */
-    private $address;
-
-    public function __construct(Address $address)
+    public function __construct(private Address $address)
     {
-        $this->address = $address;
     }
 
     // fills the object and returns it without saving.
@@ -41,8 +35,11 @@ class AddressService
     /**
      * @return Model|false
      */
-    public function assignAddressToOwner(HasAddressesInterface $owner, Address $address)
+    public function assignAddressToOwner(HasAddressesInterface $owner, Address $address): Address
     {
-        return $owner->addresses()->save($address);
+        /** @var Address $address */
+        $address =  $owner->addresses()->save($address);
+
+        return $address;
     }
 }

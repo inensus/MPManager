@@ -10,7 +10,6 @@ use Illuminate\Http\Response;
 
 class AgentCustomerController extends Controller
 {
-
     private $agentCustomerService;
 
     public function __construct(AgentCustomerService $agentCustomerService)

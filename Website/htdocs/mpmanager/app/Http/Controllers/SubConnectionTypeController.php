@@ -11,7 +11,6 @@ use Illuminate\Http\Response;
 
 class SubConnectionTypeController extends Controller
 {
-
     /**
      * @var SubConnectionType
      */

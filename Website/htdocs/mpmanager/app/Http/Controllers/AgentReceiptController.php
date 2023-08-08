@@ -12,7 +12,6 @@ use Illuminate\Http\Request;
 
 class AgentReceiptController extends Controller
 {
-
     private $agentReceiptService;
 
     public function __construct(AgentReceiptService $agentReceiptService)

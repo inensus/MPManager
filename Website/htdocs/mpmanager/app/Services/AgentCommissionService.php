@@ -9,8 +9,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class AgentCommissionService
 {
-
-
     /**
      * @return Model|Builder
      */

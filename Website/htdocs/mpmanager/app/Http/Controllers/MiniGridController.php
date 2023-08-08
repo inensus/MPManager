@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Artisan;
 
 class MiniGridController extends Controller
 {
-
     /**
      * @var MiniGrid
      */

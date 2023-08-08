@@ -3,19 +3,15 @@
 namespace App\Http\Services;
 
 use App\Exceptions\InvalidBingApiKeyException;
+use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 
 class BingMapApiService
 {
-
-    private $httpClient;
-
-    public function __construct(Client $httpClient)
+    public function __construct(private Client $httpClient)
     {
-        $this->httpClient = $httpClient;
     }
-
 
     /**
      * @throws InvalidBingApiKeyException
@@ -35,7 +31,8 @@ class BingMapApiService
         try {
             $jsonBody = json_decode($body, true, 512, JSON_THROW_ON_ERROR);
             $authenticated = $jsonBody['statusDescription'] === "OK";
-        } catch (\JsonException $exception) {
+        } catch (Exception $e) {
+            unset($e);
             $authenticated = false;
         }
         return $authenticated;

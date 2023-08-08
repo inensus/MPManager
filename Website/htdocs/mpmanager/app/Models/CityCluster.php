@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CityCluster extends Model
 {
-
     public function cities(): BelongsTo
     {
         return $this->belongsTo(City::class);

@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class MaintenanceUsers extends Model
 {
-
     protected $fillable = ['person_id', 'mini_gird_id'];
 
     public function person(): BelongsTo

@@ -76,7 +76,7 @@ class SendNonPayingCustomerMailCommand extends Command
         //fetch non-paying customers in all clusters for the given time range
         $clusters->each(function (Cluster $cluster) use ($startDate, $endDate, &$generatedPdfs, $mailService) {
             $nonPayingCustomers = [];
-            $this->personService->livingInCluster($cluster->id)->chunk(
+            $this->personService->livingInClusterQuery($cluster->id)->chunk(
                 50,
                 function (Collection $people) use ($startDate, $endDate, &$nonPayingCustomers, $cluster) {
                     $customersToExclude = $this->paymentHistoryService->findPayingCustomersInRange(

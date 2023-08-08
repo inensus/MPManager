@@ -7,7 +7,6 @@ use Illuminate\Console\Command;
 
 class AdminPasswordResetter extends Command
 {
-
     private $userService;
 
     /**

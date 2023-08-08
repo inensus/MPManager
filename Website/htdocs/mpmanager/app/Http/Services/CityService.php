@@ -14,49 +14,14 @@ use App\Models\Person\Person;
 
 class CityService
 {
-
-    /**
-     * @var City
-     */
-    private $city;
-    /**
-     * @var Person
-     */
-    private $person;
-
-    public function __construct(City $city, Person $person)
+    public function __construct(private Person $person)
     {
-        $this->city = $city;
-        $this->person = $person;
     }
 
-    public function getCityPopulation($cityId, $onlyCustomers = true)
+    public function getClusterPopulation(int $clusterId, bool $onlyCustomers = true): int
     {
         if ($onlyCustomers) {
-            $population = $this->person
-                ->where('is_customer', 1)
-                ->whereHas(
-                    'addresses',
-                    function ($q) use ($cityId) {
-                        $q->where('city_id', $cityId)->where('is_primary', 1);
-                    }
-                )->count();
-        } else {
-            $population = $this->person->whereHas(
-                'addresses',
-                function ($q) use ($cityId) {
-                    $q->where('city_id', $cityId)->where('is_primary', 1);
-                }
-            )->count();
-        }
-
-        return $population;
-    }
-
-    public function getClusteropulation($clusterId, $onlyCustomers = true)
-    {
-        if ($onlyCustomers) {
-            $population = $this->person
+            $population = $this->person->newQuery()
                 ->where('is_customer', 1)
                 ->whereHas(
                     'addresses',
@@ -70,19 +35,19 @@ class CityService
                     }
                 )->count();
         } else {
-            $population = $this->person->whereHas(
-                'addresses',
-                function ($q) use ($clusterId) {
-                    $q->where('is_primary', 1)->whereHas(
-                        'city',
-                        function ($q) use ($clusterId) {
-                            $q->where('cluster_id', $clusterId);
-                        }
-                    );
-                }
-            )->count();
+            $population = $this->person->newQuery()
+                ->whereHas(
+                    'addresses',
+                    function ($q) use ($clusterId) {
+                        $q->where('is_primary', 1)->whereHas(
+                            'city',
+                            function ($q) use ($clusterId) {
+                                $q->where('cluster_id', $clusterId);
+                            }
+                        );
+                    }
+                )->count();
         }
-
 
         return $population;
     }
