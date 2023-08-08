@@ -9,8 +9,6 @@
 
 namespace App\Http\Services;
 
-use App;
-use App\Models\Address\Address;
 use App\Models\MaintenanceUsers;
 use App\Models\Person\Person;
 use App\Models\Country;
@@ -22,21 +20,15 @@ use Illuminate\Http\Request;
 
 class PersonService
 {
-    /**
-     * @var Person
-     */
-    private $person;
-
-    public function __construct(Person $person)
+    public function __construct(private Person $person)
     {
-        $this->person = $person;
     }
 
     public function createFromRequest(Request $request): Model
     {
-
-        $person = $this->person::create(
-            request()->only(
+        /** @var Person $person */
+        $person = $this->person::query()->create(
+            $request->only(
                 [
                 'title',
                 'education',
@@ -50,13 +42,13 @@ class PersonService
         );
 
 
-        $countryService = App::make(CountryService::class);
+        $countryService = app()->make(CountryService::class);
         $country = $countryService->getByCode(request('nationality') ?? 'TZ');
         if ($country !== null) {
             $person = $this->addCitizenship($person, $country);
         }
 
-        $addressService = App::make(AddressService::class);
+        $addressService = app()->make(AddressService::class);
 
         $addressParams = [
             'city_id' => request('city_id') ?? 1,
@@ -79,21 +71,16 @@ class PersonService
         return $person->citizenship()->associate($country);
     }
 
-    //assign an address to the person
-    /**
-     * @return Model|false
-     */
-    public function addAddress(Person $person, Address $address)
-    {
-        return $person->addresses()->save($address);
-    }
-
-    public function getDetails(int $personID, bool $allRelations = false)
+    public function getDetails(int $personID, bool $allRelations = false): ?Person
     {
         if (!$allRelations) {
-            return $this->person->find($personID);
+            /** @var null|Person $person */
+            $person = $this->person->newQuery()->find($personID);
+
+            return $person;
         }
-        return $this->person::with(
+        /** @var null|Person $person */
+        $person = $this->person::with(
             [
             'addresses' =>
                 function ($q) {
@@ -104,45 +91,27 @@ class PersonService
             'meters.meter',
             ]
         )->find($personID);
+
+
+        return $person;
     }
 
-    /**
-     * @param string $searchTerm could either phone, name or surname
-     * @param Request|array|int|string $paginate
-     *
-     * @return Builder[]|Collection|LengthAwarePaginator
-     *
-     * @psalm-return Collection|LengthAwarePaginator|array<array-key, Builder>
-     */
-    public function searchPerson($searchTerm, $paginate)
+    public function searchPerson(string $searchTerm, mixed $paginate): LengthAwarePaginator| Collection
     {
+        $peopleQuery = $this->person::query()->with('addresses.city', 'meters.meter')->whereHas(
+            'addresses', function ($q) use ($searchTerm) {
+                $q->where('phone', 'LIKE', '%' . $searchTerm . '%');
+            })->orWhereHas(
+            'meters.meter', function ($q) use ($searchTerm) {
+                $q->where('serial_number', 'LIKE', '%' . $searchTerm . '%');
+            })->orWhere('name', 'LIKE', '%' . $searchTerm . '%')
+            ->orWhere('surname', 'LIKE', '%' . $searchTerm . '%');
+
         if ($paginate === 1) {
-            return $this->person::with('addresses.city', 'meters.meter')->whereHas(
-                'addresses',
-                function ($q) use ($searchTerm) {
-                    $q->where('phone', 'LIKE', '%' . $searchTerm . '%');
-                }
-            )->orWhereHas(
-                'meters.meter',
-                function ($q) use ($searchTerm) {
-                        $q->where('serial_number', 'LIKE', '%' . $searchTerm . '%');
-                }
-            )->orWhere('name', 'LIKE', '%' . $searchTerm . '%')
-                ->orWhere('surname', 'LIKE', '%' . $searchTerm . '%')->paginate(15);
+            return $peopleQuery->paginate(15);
         }
 
-        return $this->person::with('addresses.city', 'meters.meter')->whereHas(
-            'addresses',
-            function ($q) use ($searchTerm) {
-                $q->where('phone', 'LIKE', '%' . $searchTerm . '%');
-            }
-        )->orWhereHas(
-            'meters.meter',
-            function ($q) use ($searchTerm) {
-                    $q->where('serial_number', 'LIKE', '%' . $searchTerm . '%');
-            }
-        )->orWhere('name', 'LIKE', '%' . $searchTerm . '%')
-            ->orWhere('surname', 'LIKE', '%' . $searchTerm . '%')->get();
+        return $peopleQuery->get();
     }
 
 
@@ -156,7 +125,7 @@ class PersonService
         $this->person->save();
 
 
-        $addressService = App::make(AddressService::class);
+        $addressService = app()->make(AddressService::class);
 
         $addressParams = [
             'city_id' => $request->get('city_id') ?? 1,
@@ -171,7 +140,7 @@ class PersonService
         $addressService->assignAddressToOwner($this->person, $address);
 
 
-        $maintenance = App::make(MaintenanceUsers::class);
+        $maintenance = app()->make(MaintenanceUsers::class);
 
         $maintenance->person_id = $this->person->id;
         $maintenance->mini_grid_id = $request->get('mini_grid_id');
@@ -180,7 +149,7 @@ class PersonService
         return $this->person;
     }
 
-    public function livingInCluster(int $clusterId)
+    public function livingInClusterQuery(int $clusterId): \Illuminate\Database\Query\Builder
     {
         return $this->person->livingInClusterQuery($clusterId);
     }

@@ -800,7 +800,7 @@ class RevenueController extends Controller
 
         $cluster->meterCount = $this->meterService->getMeterCountInCluster($cluster->id);
         $cluster->revenue = $this->transactionService->totalClusterTransactions($cluster->id, $dateRange);
-        $cluster->population = $this->cityService->getClusteropulation($cluster->id);
+        $cluster->population = $this->cityService->getClusterPopulation($cluster->id);
 
         return new ApiResource($cluster);
     }

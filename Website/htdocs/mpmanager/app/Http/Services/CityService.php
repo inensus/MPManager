@@ -14,49 +14,13 @@ use App\Models\Person\Person;
 
 class CityService
 {
+    public function __construct(private Person $person)
+    {}
 
-    /**
-     * @var City
-     */
-    private $city;
-    /**
-     * @var Person
-     */
-    private $person;
-
-    public function __construct(City $city, Person $person)
-    {
-        $this->city = $city;
-        $this->person = $person;
-    }
-
-    public function getCityPopulation($cityId, $onlyCustomers = true)
+    public function getClusterPopulation(int $clusterId, bool $onlyCustomers = true): int
     {
         if ($onlyCustomers) {
-            $population = $this->person
-                ->where('is_customer', 1)
-                ->whereHas(
-                    'addresses',
-                    function ($q) use ($cityId) {
-                        $q->where('city_id', $cityId)->where('is_primary', 1);
-                    }
-                )->count();
-        } else {
-            $population = $this->person->whereHas(
-                'addresses',
-                function ($q) use ($cityId) {
-                    $q->where('city_id', $cityId)->where('is_primary', 1);
-                }
-            )->count();
-        }
-
-        return $population;
-    }
-
-    public function getClusteropulation($clusterId, $onlyCustomers = true)
-    {
-        if ($onlyCustomers) {
-            $population = $this->person
+            $population = $this->person->newQuery()
                 ->where('is_customer', 1)
                 ->whereHas(
                     'addresses',
@@ -70,7 +34,8 @@ class CityService
                     }
                 )->count();
         } else {
-            $population = $this->person->whereHas(
+            $population = $this->person->newQuery()
+                ->whereHas(
                 'addresses',
                 function ($q) use ($clusterId) {
                     $q->where('is_primary', 1)->whereHas(
@@ -82,7 +47,6 @@ class CityService
                 }
             )->count();
         }
-
 
         return $population;
     }

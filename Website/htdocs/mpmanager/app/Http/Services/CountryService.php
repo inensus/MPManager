@@ -13,12 +13,8 @@ use App\Models\Country;
 
 class CountryService
 {
-
-    private $country;
-
-    public function __construct(Country $country)
+    public function __construct(private Country $country)
     {
-        $this->country = $country;
     }
 
     public function getByCode(string $countryCode)
