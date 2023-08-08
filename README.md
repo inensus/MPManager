@@ -5,51 +5,49 @@ PHP ^8.0
 Node ^v14.3
 
 ## Installation
-1. Clone or download the repository
-2. Build the docker containers with `docker-compose up`
+1. Clone or download the repository.
+2. Build the docker containers with `docker-compose up`.
 
+## Installing Dependencies
+All dependencies will be automatically installed during the installation step. However, if you require additional dependencies, install them in the `laravel` container. To install additional PHP dependencies, enter the Docker container named `laravel`, navigate to `mpmanager`, and run `composer install XXX`.
 
-## Installing Dependencies 
-All  dependencies will be automatically installed on the installation step. However, if you need additional dependencies, install them in the `laravel` container.
-To Install additional php dependencies enter the Docker-Container named `laravel`  navigate to `mpmanager`  & run `php ../composer.phar install XXX`
+## Migrate the Database
+- Run `docker exec -it laravel /bin/bash` to enter the Laravel container.
+- Navigate to the `mpmanager` directory with `cd mpmanager`.
+- Run `php artisan migrate --seed` to initialize the database. The `--seed` option will create the default user for login.
+- The default login credentials are `admin@admin.com` and password will be given in the output of the seed command.
 
-## Migrate the database 
-  - Run `docker exec -it laravel /bin/bash` to jump into the laravel container
-  - navigate to `mpmanager` directory with `cd mpmanager`
-  - Run `php artisan migrate --seed` to initialize the Database. The `--seed`  option will create the default user to login.
-  - The default user to login is `admin@admin.com` and password will be given in the output of the seed command.
+## phpMyAdmin
+The project also includes phpMyAdmin (**only in the DEV environment**), enabling quick database operations without installing third-party software or writing commands in the terminal.
 
-## phpMyAdmin 
-To project also includes phpMyAdmin which enables quick database operations without installing  third-party software or writing any single line into the terminal.
-
-The default credentials for the database are; 
+The default credentials for the database are:
 ```
-username : laravel
-password: laravel
+Username: laravel
+Password: laravel
 ```
-**Please don't forget to change these before you publish your project**
+**Please remember to change these before publishing your project.**
 
 ## Building the Frontend
-The project will automatically build the frontend in the **production** mode. If you want to  build the project in **development** mode, change `NMP_MODE` variable in the `.env` file.
+The project will automatically build the frontend in **production** mode. If you want to build the project in **development** mode, change the `NMP_MODE` variable in the `.env` file.
 
 ## Essential Configurations
-There are bound services like the Payment Services (Vodacom Tanzania and Airtel Tanzania), Ticketing Service(Trello API), Critical Logging notification(Slack Channel), WebSocket(Pusher), etc. if you plan to get your payments through these services you need to change/edit following files/configurations
+The system has various bound services like Payment Services (Vodacom Tanzania and Airtel Tanzania), Ticketing Service (Trello API), Critical Logging Notification (Slack Channel), WebSocket (Pusher), etc. If you plan to use these services for payments, you need to modify the following files/configurations.
 
 ### Mobile Payment Configurations - Vodacom
-1. `ips` array element in `services.php`. The file is located under `app/config/`. The element `ips` holds a list of authorized IP-addresses that are allowed to send transaction data.
-2. Following changes should be done in the `.env` file
+1. Edit the `ips` array element in `services.php`, located under `app/config/`. The `ips` element contains a list of authorized IP addresses allowed to send transaction data.
+2. Modify the following entries in the `.env` file:
 ```bash
 VODACOM_SPID=YOUR-SPID
 VODACOM_SPPASSWORD="YOUR-PASSWORD"
-VODACOM_REQUEST_URL="END-POINT WHERE YOU CONFIRM THE TRANSACTION"
+VODACOM_REQUEST_URL="ENDPOINT-WHERE-YOU-CONFIRM-THE-TRANSACTION"
 VODACOM_BROKER_CRT="LOCATION-OF-.CRT-FILE"
 VODACOM_SLL_KEY="LOCATION-OF-.KEY-FILE"
 VODACOM_CERTIFICATE_AUTHORITY="LOCATION-OF-.CER-FILE"
 VODACOM_SSL_CERT="LOCATION-OF-.PEM-FILE"
-```
+
 
 ### Mobile Payment Configurations - Airtel
-When we set up the second payment provider in our live system, we were not that experienced by setting up **VPN Tunnels** that's why we go with the idea 'one tunnel per host`. Thatswhy the airtel payment integration is on a separate project for now. We're planning to migrate it into this project soon. 
+As of now, Airtel payment integration is on a separate project due to the absence of experience in setting up VPN tunnels for multiple hosts. The link to the project will be provided upon uploading to GitHub. Modify the api_user, api_password, and ips entries in services.php:
 
  --> **The project link comes as soon as we uploaded the project to GitHub** <-- 
 
@@ -64,26 +62,26 @@ Change the `api_user`, `api_password`, and `ips` in `services.php`
         ],
     ]
 ```
-The following change should be done in the `.env` file
+Additionally, change the AIRTEL_REQUEST_URL in the `.env` file:
 ```bash
-AIRTEL_REQUEST_URL="AIRTEL SERVICE URL"
+AIRTEL_REQUEST_URL="AIRTEL-SERVICE-URL"
 ```
 
 ### STS Meter Configuration
-Currently, the system supports only CALIN-STS meters. To be able to communicate with Calin and generate STS-Tokens, the following changes should be done;
-1. Your key and the endpoint where you create those tokens. 
+The system currently supports only CALIN-STS meters. To communicate with Calin and generate STS Tokens, make the following changes:
+1. Provide your key and the endpoint for creating tokens in the .env file:
 ``` bash
 CALIN_KEY="CALIN-KEY"
 CALIN_CLIENT_URL="CALIN-CLIENT-URL"
 ```
-2. If you have meters which can send their consumption data to CALIN's server please fill the below-listed variables too 
+2. If you have meters sending consumption data to CALIN's server, fill in these variables: 
 ```bash
 METER_DATA_URL="REMOTE-METER-READING-URL"
 METER_DATA_KEY="METER-READING-KEY"
 METER_DATA_USER="METER-READING-USER"
 ```
 ### Pusher(Web Socket)
-Pusher is used to notify your admins when a new ticket is been created.
+Pusher notifies admins when a new ticket is created.
 ```
 PUSHER_APP_ID="PUSHER-APP-ID"
 PUSHER_APP_KEY="PUSHER-KEY"
@@ -92,16 +90,14 @@ PUSHER_APP_CLUSTER="YOUR-CLUSTER ex. eu"
 ```
 
 ### Slack
-Slack is the current critical logging service that alerts the admins when something went wrong. Like a transaction is been canceled.
-
+Slack serves as the critical logging service, alerting admins about issues such as canceled transactions.
 ```bash
 LOG_SLACK_WEBHOOK_URL="SLACK-WEBHOOK-URL"
 ```
 
 
 ## Installing  Customer Registration App (Android)
-Please read the project documentation to get an idea of why we're using a separate app to register customers via an Android-App.
-Follow the link to get to the Customer Register App Project
+Refer to the project documentation for details on why a separate Android app is used for customer registration. Follow the provided link to access the Customer Register App Project.
 
 ## Setup Sms Communication
 There are currently two supported SMS-Gateways.
