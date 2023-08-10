@@ -28,7 +28,8 @@ Password: laravel
 **Please remember to change these before publishing your project.**
 
 ## Building the Frontend
-The project will automatically build the frontend in **production** mode. If you want to build the project in **development** mode, change the `NMP_MODE` variable in the `.env` file.
+The project will automatically build the frontend in **development** mode. 
+If you want to build the project in **production** mode, change the `APP_ENV` variable in the `.env` file.
 
 ## Essential Configurations
 The system has various bound services like Payment Services (Vodacom Tanzania and Airtel Tanzania), Ticketing Service (Trello API), Critical Logging Notification (Slack Channel), WebSocket (Pusher), etc. If you plan to use these services for payments, you need to modify the following files/configurations.
