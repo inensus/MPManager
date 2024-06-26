@@ -11,6 +11,7 @@ The current version of MPM, developed in the [EnAccess repository](https://githu
 
 - The Frontend/UI is now operated as a standalone application.
 - Core functionalities such as Provider, Meter, and other plugins are integrated into the MPM application itself, eliminating the need for installation via external repositories like Packagist (https://packagist.org/?query=micropowermanager).
+- The new MPM version supports advanced use cases, including Solar Home Systems (SHS), extending its applicability beyond just mini-grid setups.
 
 Which improves the overall user and developer experience with the project.
 
