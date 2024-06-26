@@ -1,6 +1,6 @@
 # ⚠️ IMPORTANT NOTE
 
-This is repository is **deprecated**.
+This repository is **deprecated**.
 Please upgrade to [MicroPowerManager](https://github.com/EnAccess/micropowermanager).
 
 **Background:**
