@@ -1,3 +1,29 @@
+# ⚠️ IMPORTANT NOTE
+
+This repository is **deprecated**.
+Work on the MicroPowerManager is continued in the [EnAccess](https://enaccess.org/) fork of the repo [here](https://github.com/EnAccess/micropowermanager).
+
+**Background:**
+
+The MicroPowerManager was orginally developed by [Inensus](https://inensus.com/) and published under and Open Source license in this current repository.
+However, it is no longer maintained in it's current form.
+In 2024 EnAccess took over development and maintenance of the MicroPowerManager project.
+
+To benefit from
+
+- Future feature developments
+- Additional provider integrations
+- Bug and security fixes
+
+It is highly-recommended that you move to the EnAccess version of the MicroPowerManager.
+
+**Further information:**
+
+- <https://micropowermanager.io/>
+- <https://enaccess.org/materials/micropowermanager-mpm/>
+
+---
+
 ## System Requirements
 
 PHP ^8.0
