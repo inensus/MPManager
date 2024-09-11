@@ -5,9 +5,15 @@ Work on the MicroPowerManager is continued in the [EnAccess](https://enaccess.or
 
 **Background:**
 
-The MicroPowerManager was orginally developed by [Inensus](https://inensus.com/) and published under and Open Source license in this current repository.
-However, it is no longer maintained in it's current form.
-In 2024 EnAccess took over development and maintenance of the MicroPowerManager project.
+Up until October 2022, the MicroPowerManager (MPM) was developed by [Inensus](https://inensus.com/) in the [INENSUS repository](https://github.com/inensus/MPManager) (referred to as MPMv1 in this document) and published under and Open Source license in this current repository.
+
+The current version of MPM, developed in the [EnAccess repository](https://github.com/EnAccess/micropowermanager), significantly differs in design and structure from MPMv1. Key differences include:
+
+- The Frontend/UI is now operated as a standalone application.
+- Core functionalities such as Provider, Meter, and other plugins are integrated into the MPM application itself, eliminating the need for installation via external repositories like Packagist (https://packagist.org/?query=micropowermanager).
+- The new MPM version supports advanced use cases, including Solar Home Systems (SHS), extending its applicability beyond just mini-grid setups.
+
+Which improves the overall user and developer experience with the project.
 
 To benefit from
 
