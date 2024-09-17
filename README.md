@@ -1,3 +1,35 @@
+# ⚠️ IMPORTANT NOTE
+
+This repository is **deprecated**.
+Work on the MicroPowerManager is continued in the [EnAccess](https://enaccess.org/) fork of the repo [here](https://github.com/EnAccess/micropowermanager).
+
+**Background:**
+
+Up until October 2022, the MicroPowerManager (MPM) was developed by [Inensus](https://inensus.com/) in the [INENSUS repository](https://github.com/inensus/MPManager) (referred to as MPMv1 in this document) and published under and Open Source license in this current repository.
+
+The current version of MPM, developed in the [EnAccess repository](https://github.com/EnAccess/micropowermanager), significantly differs in design and structure from MPMv1. Key differences include:
+
+- The Frontend/UI is now operated as a standalone application.
+- Core functionalities such as Provider, Meter, and other plugins are integrated into the MPM application itself, eliminating the need for installation via external repositories like Packagist (https://packagist.org/?query=micropowermanager).
+- The new MPM version supports advanced use cases, including Solar Home Systems (SHS), extending its applicability beyond just mini-grid setups.
+
+Which improves the overall user and developer experience with the project.
+
+To benefit from
+
+- Future feature developments
+- Additional provider integrations
+- Bug and security fixes
+
+It is highly-recommended that you move to the EnAccess version of the MicroPowerManager.
+
+**Further information:**
+
+- <https://micropowermanager.io/>
+- <https://enaccess.org/materials/micropowermanager-mpm/>
+
+---
+
 ## System Requirements
 
 PHP ^8.0
